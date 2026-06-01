@@ -1,0 +1,6 @@
+{
+  "name": "Leapmotor Mexico Event Landing",
+  "description": "Landing page vanguardista para eventos de Leapmotor Mexico con portal en vivo en tiempo real para asesores comerciales y tablero de control analitico.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

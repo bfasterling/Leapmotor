@@ -1,0 +1,92 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    
+    // Default-deny Catch-all
+    match /{document=**} {
+      allow read, write: if false;
+    }
+    
+    // Global Primitives
+    function isValidId(id) { 
+      return id is string && id.size() <= 128 && id.matches('^[a-zA-Z0-9_\\-]+$'); 
+    }
+    
+    function incoming() { 
+      return request.resource.data; 
+    }
+    
+    function existing() { 
+      return resource.data; 
+    }
+    
+    // Validates a Lead's shape during creation or update
+    function isValidLead(data) {
+      return data.name is string && data.name.size() > 0 && data.name.size() <= 100
+        && data.lastName is string && data.lastName.size() > 0 && data.lastName.size() <= 100
+        && data.email is string && data.email.size() > 0 && data.email.size() <= 100
+        && data.phone is string && data.phone.size() > 0 && data.phone.size() <= 30
+        && (!('city' in data) || data.city == null || (data.city is string && data.city.size() <= 100))
+        && (!('postalCode' in data) || data.postalCode == null || (data.postalCode is string && data.postalCode.size() <= 15))
+        && data.state is string && data.state.size() > 0 && data.state.size() <= 100
+        && data.distributor is string && data.distributor.size() > 0 && data.distributor.size() <= 100
+        && data.modelOfInterest is string && (data.modelOfInterest == "B10" || data.modelOfInterest == "T03" || data.modelOfInterest == "C10" || data.modelOfInterest == "C11" || data.modelOfInterest == "C16")
+        && data.status is string && (data.status == "waiting" || data.status == "attending" || data.status == "attended" || data.status == "lost")
+        && (!('requestType' in data) || (data.requestType is string && (data.requestType == "cotizacion" || data.requestType == "prueba" || data.requestType == "asesor")))
+        && (!('contactMethod' in data) || (data.contactMethod is string && (data.contactMethod == "whatsapp" || data.contactMethod == "llamada" || data.contactMethod == "email")))
+        && (!('advisorId' in data) || data.advisorId == null || (data.advisorId is string && data.advisorId.size() <= 100))
+        && (!('advisorName' in data) || data.advisorName == null || (data.advisorName is string && data.advisorName.size() <= 100));
+    }
+
+    function isValidAdvisor(data) {
+      return data.name is string && data.name.size() > 0 && data.name.size() <= 100
+        && data.email is string && data.email.size() > 0 && data.email.size() <= 100
+        && data.password is string && data.password.size() > 0 && data.password.size() <= 100
+        && data.active is bool;
+    }
+
+    match /advisors/{advisorId} {
+      allow read: if true;
+      allow create, update: if isValidId(advisorId) && isValidAdvisor(incoming());
+      allow delete: if true;
+    }
+
+    match /leads/{leadId} {
+      allow create: if (
+        isValidId(leadId) 
+        && isValidLead(incoming()) 
+        && incoming().status == "waiting"
+        && incoming().createdAt == request.time
+      );
+      
+      allow update: if (
+        isValidId(leadId)
+        // Terminal state lock: cannot update once status is 'attended' or 'lost'
+        && existing().status != "attended"
+        && existing().status != "lost"
+        // Prevent client data modification (immutability)
+        && incoming().name == existing().name
+        && incoming().email == existing().email
+        && incoming().phone == existing().phone
+        && incoming().modelOfInterest == existing().modelOfInterest
+        && incoming().createdAt == existing().createdAt
+        && (!('lastName' in existing()) || (incoming().lastName == existing().lastName))
+        && (!('city' in existing()) || (incoming().city == existing().city))
+        && (!('postalCode' in existing()) || (incoming().postalCode == existing().postalCode))
+        && (!('state' in existing()) || (incoming().state == existing().state))
+        && (!('distributor' in existing()) || (incoming().distributor == existing().distributor))
+        // Enforce updater fields (action checks)
+        && (
+          // Action 1: Attending (waiting -> attending)
+          (existing().status == "waiting" && incoming().status == "attending" && incoming().attendedAt == request.time && (!('advisorId' in incoming()) || incoming().advisorId is string) && (!('advisorName' in incoming()) || incoming().advisorName is string) && incoming().diff(existing()).affectedKeys().hasOnly(['status', 'attendedAt', 'advisorId', 'advisorName']))
+          ||
+          // Action 2: Outcome notes (attending -> attended or lost)
+          (existing().status == "attending" && (incoming().status == "attended" || incoming().status == "lost") && incoming().completedAt == request.time && incoming().notes is string && incoming().notes.size() <= 1000 && incoming().diff(existing()).affectedKeys().hasOnly(['status', 'completedAt', 'notes']))
+        )
+      );
+
+      allow read: if true; // Allowed in this preview context so anyone can listen to leads
+      allow delete: if true; // Allowed for reset/demo cleaning
+    }
+  }
+}

@@ -1,0 +1,129 @@
+{
+  "entities": {
+    "Lead": {
+      "title": "Lead",
+      "description": "Un registro de prospecto interesado en Leapmotor Mexico para el evento",
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string",
+          "description": "Nombre del prospecto"
+        },
+        "lastName": {
+          "type": "string",
+          "description": "Apellido del prospecto"
+        },
+        "email": {
+          "type": "string",
+          "description": "Correo electrónico del prospecto"
+        },
+        "phone": {
+          "type": "string",
+          "description": "Número de teléfono/WhatsApp del prospecto"
+        },
+        "modelOfInterest": {
+          "type": "string",
+          "description": "Modelo de auto Leapmotor de interes",
+          "enum": ["B10", "T03", "C10", "C11", "C16"]
+        },
+        "city": {
+          "type": "string",
+          "description": "Ciudad de residencia en Mexico"
+        },
+        "postalCode": {
+          "type": "string",
+          "description": "Código postal del prospecto (opcional)"
+        },
+        "state": {
+          "type": "string",
+          "description": "Estado de la república mexicana"
+        },
+        "distributor": {
+          "type": "string",
+          "description": "Distribuidor seleccionado"
+        },
+        "status": {
+          "type": "string",
+          "description": "Estado de atencion",
+          "enum": ["waiting", "attending", "attended", "lost"]
+        },
+        "notes": {
+          "type": "string",
+          "description": "Notas del asesor de ventas posterior a la atencion"
+        },
+        "advisorId": {
+          "type": "string",
+          "description": "ID del asesor de ventas que atiende"
+        },
+        "advisorName": {
+          "type": "string",
+          "description": "Nombre del asesor de ventas"
+        },
+        "createdAt": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Fecha y hora de registro"
+        },
+        "attendedAt": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Fecha y hora en que se inicio la atencion"
+        },
+        "completedAt": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Fecha y hora de finalizacion del lead"
+        },
+        "contactMethod": {
+          "type": "string",
+          "description": "Metodo de contacto preferido"
+        },
+        "requestType": {
+          "type": "string",
+          "description": "Tipo de solicitud (cotizacion, prueba, asesor)",
+          "enum": ["cotizacion", "prueba", "asesor"]
+        }
+      },
+      "required": ["name", "lastName", "email", "phone", "modelOfInterest", "state", "distributor", "status", "createdAt"]
+    },
+    "Advisor": {
+      "title": "Advisor",
+      "description": "Un registro de asesor de ventas que atiende prospectos y gestiona accesos",
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string",
+          "description": "Nombre completo del asesor"
+        },
+        "email": {
+          "type": "string",
+          "description": "Correo electrónico del asesor"
+        },
+        "password": {
+          "type": "string",
+          "description": "Contraseña elegible para login en portal de asesor"
+        },
+        "active": {
+          "type": "boolean",
+          "description": "Define si el asesor está activo para poder recibir auto-asignaciones"
+        },
+        "createdAt": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Fecha y hora de creación"
+        }
+      },
+      "required": ["name", "email", "password", "active"]
+    }
+  },
+  "firestore": {
+    "leads": {
+      "schema": "Lead",
+      "description": "Coleccion global de prospectos registrados en el evento de Leapmotor"
+    },
+    "advisors": {
+      "schema": "Advisor",
+      "description": "Coleccion de asesores comerciales registrados habilitados para login y atencion de leads"
+    }
+  }
+}
