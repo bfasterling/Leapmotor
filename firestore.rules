@@ -30,25 +30,34 @@ service cloud.firestore {
         && (!('postalCode' in data) || data.postalCode == null || (data.postalCode is string && data.postalCode.size() <= 15))
         && data.state is string && data.state.size() > 0 && data.state.size() <= 100
         && data.distributor is string && data.distributor.size() > 0 && data.distributor.size() <= 100
-        && data.modelOfInterest is string && (data.modelOfInterest == "B10" || data.modelOfInterest == "T03" || data.modelOfInterest == "C10" || data.modelOfInterest == "C11" || data.modelOfInterest == "C16")
+        && data.modelOfInterest is string && data.modelOfInterest.size() > 0 && data.modelOfInterest.size() <= 100
         && data.status is string && (data.status == "waiting" || data.status == "attending" || data.status == "attended" || data.status == "lost")
         && (!('requestType' in data) || (data.requestType is string && (data.requestType == "cotizacion" || data.requestType == "prueba" || data.requestType == "asesor")))
         && (!('contactMethod' in data) || (data.contactMethod is string && (data.contactMethod == "whatsapp" || data.contactMethod == "llamada" || data.contactMethod == "email")))
         && (!('advisorId' in data) || data.advisorId == null || (data.advisorId is string && data.advisorId.size() <= 100))
-        && (!('advisorName' in data) || data.advisorName == null || (data.advisorName is string && data.advisorName.size() <= 100));
+        && (!('advisorName' in data) || data.advisorName == null || (data.advisorName is string && data.advisorName.size() <= 100))
+        && (!('landing' in data) || data.landing is string && data.landing.size() <= 100)
+        && (!('selectedBrand' in data) || data.selectedBrand is string && data.selectedBrand.size() <= 100)
+        && (!('testDriveDate' in data) || data.testDriveDate == null || (data.testDriveDate is string && data.testDriveDate.size() <= 100));
     }
 
     function isValidAdvisor(data) {
       return data.name is string && data.name.size() > 0 && data.name.size() <= 100
         && data.email is string && data.email.size() > 0 && data.email.size() <= 100
         && data.password is string && data.password.size() > 0 && data.password.size() <= 100
-        && data.active is bool;
+        && data.active is bool
+        && (!('createdAt' in data) || data.createdAt is timestamp)
+        && (!('distributor' in data) || (data.distributor is string && data.distributor.size() <= 150));
     }
 
     match /advisors/{advisorId} {
       allow read: if true;
       allow create, update: if isValidId(advisorId) && isValidAdvisor(incoming());
       allow delete: if true;
+    }
+
+    match /distributors/{distId} {
+      allow read, write: if true;
     }
 
     match /leads/{leadId} {
@@ -74,11 +83,14 @@ service cloud.firestore {
         && (!('city' in existing()) || (incoming().city == existing().city))
         && (!('postalCode' in existing()) || (incoming().postalCode == existing().postalCode))
         && (!('state' in existing()) || (incoming().state == existing().state))
-        && (!('distributor' in existing()) || (incoming().distributor == existing().distributor))
+        && (!('distributor' in existing()) || (incoming().distributor == existing().distributor || (existing().status == "waiting" && incoming().status == "attending" && incoming().distributor is string)))
+        && (!('landing' in existing()) || (incoming().landing == existing().landing))
+        && (!('selectedBrand' in existing()) || (incoming().selectedBrand == existing().selectedBrand))
+        && (!('testDriveDate' in existing()) || (incoming().testDriveDate == existing().testDriveDate))
         // Enforce updater fields (action checks)
         && (
           // Action 1: Attending (waiting -> attending)
-          (existing().status == "waiting" && incoming().status == "attending" && incoming().attendedAt == request.time && (!('advisorId' in incoming()) || incoming().advisorId is string) && (!('advisorName' in incoming()) || incoming().advisorName is string) && incoming().diff(existing()).affectedKeys().hasOnly(['status', 'attendedAt', 'advisorId', 'advisorName']))
+          (existing().status == "waiting" && incoming().status == "attending" && incoming().attendedAt == request.time && (!('advisorId' in incoming()) || incoming().advisorId is string) && (!('advisorName' in incoming()) || incoming().advisorName is string) && (!('distributor' in incoming()) || incoming().distributor is string) && incoming().diff(existing()).affectedKeys().hasOnly(['status', 'attendedAt', 'advisorId', 'advisorName', 'distributor']))
           ||
           // Action 2: Outcome notes (attending -> attended or lost)
           (existing().status == "attending" && (incoming().status == "attended" || incoming().status == "lost") && incoming().completedAt == request.time && incoming().notes is string && incoming().notes.size() <= 1000 && incoming().diff(existing()).affectedKeys().hasOnly(['status', 'completedAt', 'notes']))

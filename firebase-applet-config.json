@@ -1,10 +1,10 @@
 {
-  "projectId": "studio-9013208802-ccda8",
-  "appId": "1:1046535183601:web:b4372e39704881cc4a1d50",
-  "apiKey": "AIzaSyBfV03kv5sWonZAtb1_Oaoq9UDQusel0rM",
-  "authDomain": "studio-9013208802-ccda8.firebaseapp.com",
-  "firestoreDatabaseId": "ai-studio-034d3c24-983d-4566-b368-3c6043516bd9",
-  "storageBucket": "studio-9013208802-ccda8.firebasestorage.app",
-  "messagingSenderId": "1046535183601",
-  "measurementId": ""
+  "projectId": "leapmotor-landing",
+  "appId": "1:553989018582:web:5e4dba09bb6761f8968a77",
+  "apiKey": "AIzaSyBkBz7Ufff3nw7Bwzzy77g2jZwO6hpEfTM",
+  "authDomain": "leapmotor-landing.firebaseapp.com",
+  "firestoreDatabaseId": "(default)",
+  "storageBucket": "leapmotor-landing.firebasestorage.app",
+  "messagingSenderId": "553989018582",
+  "measurementId": "G-XC4VZ12PQP"
 }

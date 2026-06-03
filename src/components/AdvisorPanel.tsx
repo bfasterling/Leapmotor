@@ -38,12 +38,30 @@ import {
   Smile, 
   UserCheck,
   FileText,
-  Key 
+  Key,
+  Calendar,
+  Sun,
+  Moon
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import LeapmotorLogo from './LeapmotorLogo';
 
 // Custom Advisor identification details (can be toggled in UI)
+const getLeadSourceText = (lead: Lead) => {
+  const brand = lead.selectedBrand || (lead.landing === 'jeep' ? 'Jeep' : 'Leapmotor');
+  return `${brand} ${lead.modelOfInterest}`;
+};
+
+const getLeadSourceBadgeClass = (lead: Lead) => {
+  if (lead.landing === 'jeep') {
+    return 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/20';
+  }
+  if (lead.landing === 'multimarca') {
+    return 'bg-indigo-500/10 text-indigo-400 border border-indigo-500/20';
+  }
+  return 'bg-blue-500/10 text-blue-400 border border-blue-500/20';
+};
+
 // Default safety fallbacks for offline states or seeding initial data
 const DEFAULT_ADVISORS = [
   { id: 'ADV-01', name: 'Arturo Stellantis', email: 'arturo@leapmotor.com', password: '123', active: true },
@@ -52,6 +70,34 @@ const DEFAULT_ADVISORS = [
 ];
 
 export default function AdvisorPanel() {
+  const [theme, setTheme] = useState<'dark' | 'light'>(() => {
+    try {
+      return (localStorage.getItem('advisor_theme') as 'dark' | 'light') || 'dark';
+    } catch (_) {
+      return 'dark';
+    }
+  });
+
+  const isDark = theme === 'dark';
+
+  // Theme styling helpers to keep code clean and robust
+  const colBg = isDark ? 'bg-slate-900/45 border-slate-900' : 'bg-white border-slate-200 shadow-md';
+  const borderCol = isDark ? 'border-slate-800/60' : 'border-slate-200';
+  const borderSub = isDark ? 'border-slate-850' : 'border-slate-200';
+  const cardBg = isDark ? 'bg-slate-950' : 'bg-white border-slate-200';
+  const textTitle = isDark ? 'text-white' : 'text-slate-900';
+  const textBody = isDark ? 'text-slate-100' : 'text-slate-700';
+  const textSub = isDark ? 'text-slate-200' : 'text-slate-500';
+  const itemBg = isDark ? 'bg-slate-950' : 'bg-slate-100/60';
+
+  const toggleTheme = () => {
+    const next = theme === 'dark' ? 'light' : 'dark';
+    setTheme(next);
+    try {
+      localStorage.setItem('advisor_theme', next);
+    } catch (_) {}
+  };
+
   const [advisors, setAdvisors] = useState<any[]>([]);
   const [loggedInAdvisor, setLoggedInAdvisor] = useState<any | null>(() => {
     try {
@@ -73,11 +119,22 @@ export default function AdvisorPanel() {
   const [notesInput, setNotesInput] = useState<{ [leadId: string]: string }>({});
   
   // Audio configuration & control
-  const [audioEnabled, setAudioEnabled] = useState(false);
+  const [audioEnabled, setAudioEnabled] = useState(true);
   const [lastNotificationLeadId, setLastNotificationLeadId] = useState<string>('');
   
   // Keep track of which lead IDs we have already warned about to prevent duplicate alarms
   const warnedLeadsRef = useRef<Set<string>>(new Set());
+
+  // Request browser Notification permission on mount or login
+  useEffect(() => {
+    if (loggedInAdvisor && typeof window !== 'undefined' && 'Notification' in window) {
+      if (Notification.permission === 'default') {
+        Notification.requestPermission().catch((err) => {
+          console.error('Error requesting web notification permissions:', err);
+        });
+      }
+    }
+  }, [loggedInAdvisor]);
 
   // Subscribe to ADVISORS collection so we support real-time user management & additions
   useEffect(() => {
@@ -166,7 +223,10 @@ export default function AdvisorPanel() {
           createdAt: data.createdAt,
           attendedAt: data.attendedAt,
           completedAt: data.completedAt,
-          contactMethod: data.contactMethod || 'whatsapp'
+          contactMethod: data.contactMethod || 'whatsapp',
+          landing: data.landing || 'leapmotor',
+          selectedBrand: data.selectedBrand || 'Leapmotor',
+          testDriveDate: data.testDriveDate || null
         };
 
         // Filter: Keep only leads assigned to this specific advisor
@@ -191,6 +251,24 @@ export default function AdvisorPanel() {
         if (audioEnabled) {
           playNewLeadAlert();
           speakNewLeadAnnouncement(leadToAlert.name);
+        }
+
+        // Web Notification trigger
+        if (typeof window !== 'undefined' && 'Notification' in window) {
+          if (Notification.permission === 'granted') {
+            const brandText = leadToAlert.selectedBrand || (leadToAlert.landing === 'jeep' ? 'Jeep' : 'Leapmotor');
+            try {
+              new Notification('🚗 ¡Nuevo Lead Comercial!', {
+                body: `Cliente: ${leadToAlert.name} ${leadToAlert.lastName || ''}\nMarca: ${brandText}\nModelo: ${leadToAlert.modelOfInterest}\nTel: ${leadToAlert.phone}`,
+                tag: leadToAlert.id,
+                requireInteraction: true
+              });
+            } catch (err) {
+              console.error('Error triggering push notification:', err);
+            }
+          } else if (Notification.permission === 'default') {
+            Notification.requestPermission();
+          }
         }
       }
     }, (error) => {
@@ -251,12 +329,20 @@ export default function AdvisorPanel() {
     try {
       if (!loggedInAdvisor) return;
       const docRef = doc(db, 'leads', leadId);
-      await updateDoc(docRef, {
+      
+      const payload: any = {
         status: LeadStatus.ATTENDING,
         attendedAt: serverTimestamp(),
         advisorId: loggedInAdvisor.id,
         advisorName: loggedInAdvisor.name
-      });
+      };
+
+      // Assign distributor associated to the advisor
+      if (loggedInAdvisor.distributor) {
+        payload.distributor = loggedInAdvisor.distributor;
+      }
+
+      await updateDoc(docRef, payload);
     } catch (err) {
       console.error(err);
       try {
@@ -317,28 +403,85 @@ export default function AdvisorPanel() {
     return `${diffSec} s`;
   };
 
+  const formatFullDateTime = (timestamp: any) => {
+    if (!timestamp) return 'No disponible';
+    let date: Date;
+    if (timestamp.toDate && typeof timestamp.toDate === 'function') {
+      date = timestamp.toDate();
+    } else {
+      date = new Date(timestamp);
+    }
+    return date.toLocaleString('es-MX', {
+      day: '2-digit',
+      month: 'short',
+      year: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit',
+      second: '2-digit',
+      hour12: true
+    });
+  };
+
+  const formatDuration = (lead: Lead) => {
+    if (!lead.createdAt || !lead.attendedAt) return 'No disponible';
+    
+    let created: Date = lead.createdAt.toDate ? lead.createdAt.toDate() : new Date(lead.createdAt);
+    let attended: Date = lead.attendedAt.toDate ? lead.attendedAt.toDate() : new Date(lead.attendedAt);
+    
+    const diffSec = Math.floor((attended.getTime() - created.getTime()) / 1000);
+    if (diffSec <= 0) return '1 s';
+    if (diffSec < 60) return `${diffSec} s`;
+    
+    const mins = Math.floor(diffSec / 60);
+    const secs = diffSec % 60;
+    if (mins < 60) {
+      return `${mins} min ${secs} s`;
+    }
+    const hours = Math.floor(mins / 60);
+    const remMins = mins % 60;
+    return `${hours} h ${remMins} min ${secs} s`;
+  };
+
   if (!loggedInAdvisor) {
     return (
-      <div className="w-full min-h-[90vh] text-slate-100 flex justify-center items-center font-sans px-4 py-12 bg-slate-950">
+      <div className={`w-full min-h-[90vh] flex justify-center items-center font-sans px-4 py-12 transition-colors duration-500 ${
+        isDark ? 'bg-slate-950 text-slate-100' : 'bg-slate-100 text-slate-850'
+      }`}>
         <motion.div 
           initial={{ opacity: 0, y: 15 }}
           animate={{ opacity: 1, y: 0 }}
-          className="w-full max-w-md bg-slate-900 border border-slate-800 p-8 rounded-3xl shadow-2xl relative overflow-hidden"
+          className={`w-full max-w-md p-8 rounded-3xl shadow-2xl relative overflow-hidden border transition-colors ${
+            isDark ? 'bg-slate-900 border-slate-800' : 'bg-white border-slate-200'
+          }`}
         >
+          {/* Aesthetic Theme Toggle (Sun/Moon) */}
+          <button
+            onClick={toggleTheme}
+            type="button"
+            className={`absolute top-4 right-4 p-2 rounded-full border transition-all ${
+              isDark 
+                ? 'bg-slate-800 border-white/10 text-amber-400 hover:bg-slate-700' 
+                : 'bg-slate-100 border-slate-200 text-indigo-650 text-indigo-600 hover:bg-slate-200'
+            }`}
+            title={isDark ? "Cambiar a Diseño Claro (Blanco)" : "Cambiar a Diseño Obscuro (Negro)"}
+          >
+            {isDark ? <Sun className="w-4 h-4" /> : <Moon className="w-4 h-4" />}
+          </button>
+
           {/* Accent Glow */}
           <div className="absolute top-0 right-0 w-44 h-44 bg-blue-600/10 blur-[60px] rounded-full pointer-events-none" />
           
           <div className="flex flex-col items-center text-center gap-3 mb-8">
-            <LeapmotorLogo size="md" className="text-white" />
+            <LeapmotorLogo size="md" className={isDark ? "text-white" : "text-slate-900"} />
             <div className="mt-2">
-              <h2 className="text-xl font-bold tracking-tight text-white uppercase font-sans">Portal del Asesor</h2>
-              <p className="text-xs text-slate-400 mt-1">Inicie sesión para atender sus prospectos asignados en tiempo real</p>
+              <h2 className={`text-xl font-bold tracking-tight uppercase font-sans ${isDark ? "text-white" : "text-slate-900"}`}>Portal del Asesor</h2>
+              <p className={`text-xs font-semibold mt-1 ${isDark ? "text-white" : "text-slate-500"}`}>Inicie sesión para atender sus prospectos asignados en tiempo real</p>
             </div>
           </div>
 
           <form onSubmit={handleLoginSubmit} className="space-y-5">
             <div>
-              <label className="block text-xs font-mono uppercase tracking-wider text-slate-400 font-bold mb-2">Seleccione su Usuario:</label>
+              <label className={`block text-xs font-mono uppercase tracking-wider font-extrabold mb-2 ${isDark ? "text-white" : "text-slate-700"}`}>Seleccione su Usuario:</label>
               <div className="relative">
                 <select
                   value={selectedLoginId}
@@ -346,26 +489,28 @@ export default function AdvisorPanel() {
                     setSelectedLoginId(e.target.value);
                     setLoginError('');
                   }}
-                  className="w-full bg-slate-950 border border-slate-800 text-sm rounded-xl px-4 py-3 text-slate-200 font-medium focus:border-blue-500/50 outline-none transition appearance-none"
+                  className={`w-full text-sm rounded-xl px-4 py-3 font-medium outline-none transition appearance-none border ${
+                    isDark ? 'bg-slate-950 border-slate-805 text-slate-200 focus:border-blue-500/50' : 'bg-slate-50 border-slate-200 text-slate-800 focus:border-indigo-500/50'
+                  }`}
                 >
                   {advisors.length === 0 ? (
                     <option value="">Cargando asesores...</option>
                   ) : (
                     advisors.map((adv) => (
-                      <option key={adv.id} value={adv.id}>
+                      <option key={adv.id} value={adv.id} className={isDark ? "bg-slate-900 text-white" : "bg-white text-slate-800"}>
                         {adv.name} ({adv.active !== false ? 'Activo' : 'Inactivo'})
                       </option>
                     ))
                   )}
                 </select>
-                <div className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none">
+                <div className={`absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none ${isDark ? "text-slate-400" : "text-slate-550"}`}>
                   ▼
                 </div>
               </div>
             </div>
 
             <div>
-              <label className="block text-xs font-mono uppercase tracking-wider text-slate-400 font-bold mb-2">Contraseña:</label>
+              <label className={`block text-xs font-mono uppercase tracking-wider font-extrabold mb-2 ${isDark ? "text-white" : "text-slate-700"}`}>Contraseña:</label>
               <input
                 type="password"
                 placeholder="Ingrese contraseña de asesor"
@@ -374,12 +519,14 @@ export default function AdvisorPanel() {
                   setLoginPassword(e.target.value);
                   setLoginError('');
                 }}
-                className="w-full bg-slate-950 border border-slate-800 text-sm rounded-xl px-4 py-3 text-slate-200 placeholder-slate-600 focus:border-blue-500/50 outline-none transition"
+                className={`w-full text-sm rounded-xl px-4 py-3 outline-none transition font-semibold border ${
+                  isDark ? 'bg-slate-950 border-slate-800 text-white placeholder-slate-400 focus:border-blue-500/50' : 'bg-slate-50 border-slate-200 text-slate-800 placeholder-slate-400 focus:border-indigo-500/50'
+                }`}
               />
             </div>
 
             {loginError && (
-              <p className="text-xs font-medium text-red-400 bg-red-500/10 border border-red-500/20 p-3 rounded-xl">
+              <p className="text-xs font-medium text-red-500 bg-red-500/10 border border-red-500/20 p-3 rounded-xl">
                 ⚠️ {loginError}
               </p>
             )}
@@ -393,7 +540,7 @@ export default function AdvisorPanel() {
             </button>
           </form>
           
-          <div className="mt-6 text-center text-[11px] text-slate-500 font-mono">
+          <div className={`mt-6 text-center text-[11px] font-bold font-mono ${isDark ? "text-white/90" : "text-slate-500"}`}>
             ¿No aparece en la lista? Comuníquese con administración desde el Tablero de Mando.
           </div>
         </motion.div>
@@ -402,8 +549,10 @@ export default function AdvisorPanel() {
   }
 
   return (
-    <div className={`w-full min-h-screen text-slate-100 transition-colors duration-500 font-sans pt-1 px-4 md:pt-2 md:px-6 pb-24 ${
-      hasWaiting ? 'bg-red-950/20' : 'bg-slate-950'
+    <div className={`w-full min-h-screen transition-colors duration-500 font-sans pt-1 px-4 md:pt-2 md:px-6 pb-24 ${
+      isDark 
+        ? (hasWaiting ? 'bg-red-950/20 text-slate-100' : 'bg-slate-950 text-slate-100') 
+        : (hasWaiting ? 'bg-red-50 text-slate-800' : 'bg-slate-50 text-slate-800')
     }`}>
       {/* Alert Header if New Leads are Waiting */}
       <AnimatePresence>
@@ -440,37 +589,56 @@ export default function AdvisorPanel() {
 
       <div className="max-w-7xl mx-auto">
         {/* Advisor Controls Console */}
-        <div className="bg-slate-900 border border-slate-800 rounded-2xl p-4 md:p-6 mb-8 flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
+        <div className={`border rounded-2xl p-4 md:p-6 mb-8 flex flex-col md:flex-row justify-between items-start md:items-center gap-6 transition-colors duration-300 ${
+          isDark ? 'bg-slate-900 border-slate-800' : 'bg-white border-slate-205 border-slate-200 text-slate-800 shadow-md'
+        }`}>
           <div className="space-y-1">
-            <h2 className="text-xl font-bold text-white flex items-center gap-2 font-sans tracking-tight">
-              <UserCheck className="w-5 h-5 text-emerald-400" /> Consola del Asesor Comercial
+            <h2 className={`text-2xl font-black flex items-center gap-2 font-sans tracking-tight ${isDark ? 'text-white' : 'text-slate-900'}`}>
+              <UserCheck className={`w-6 h-6 ${isDark ? 'text-emerald-400' : 'text-emerald-600'}`} /> Consola del Asesor Comercial
             </h2>
-            <p className="text-slate-400 text-xs">
-              Bienvenido, <strong className="text-emerald-400">{loggedInAdvisor.name}</strong> ({loggedInAdvisor.email}). Estás atendiendo tus leads asignados en tiempo real.
+            <p className={`text-sm font-bold ${isDark ? 'text-white' : 'text-slate-650 text-slate-600'}`}>
+              Bienvenido, <strong className={isDark ? 'text-emerald-400' : 'text-emerald-600 font-extrabold'}>{loggedInAdvisor.name}</strong> ({loggedInAdvisor.email}).
             </p>
           </div>
 
-          <div className="flex flex-wrap items-center gap-3 w-full md:w-auto">
+          <div className="flex flex-wrap items-center gap-2 w-full md:w-auto justify-end">
+            {/* Visual style selector (Sun/Moon) */}
+            <button
+              onClick={toggleTheme}
+              type="button"
+              className={`flex items-center gap-1 px-3 py-2.5 rounded-xl text-xs font-black transition-all border ${
+                isDark 
+                  ? 'bg-slate-800 border-white/10 text-white hover:bg-slate-700' 
+                  : 'bg-slate-100 border-slate-200 text-slate-800 hover:bg-slate-200'
+              }`}
+              title={`Estilo de Pantalla: ${isDark ? 'NEGRO' : 'BLANCO'}`}
+            >
+              {isDark ? <Sun className="w-4 h-4 text-amber-400 shrink-0" /> : <Moon className="w-4 h-4 text-indigo-600 shrink-0" />}
+              <span>{isDark ? 'NEGRO' : 'BLANCO'}</span>
+            </button>
+
             {/* Audio Settings Pill */}
             <button
               onClick={() => setAudioEnabled(!audioEnabled)}
-              className={`flex items-center gap-1.5 px-4 py-2.5 rounded-xl text-xs font-bold transition-all border ${
+              className={`flex items-center gap-1 px-3 py-2.5 rounded-xl text-xs font-black transition-all border ${
                 audioEnabled 
-                  ? 'bg-emerald-500/15 text-emerald-400 border-emerald-500/40' 
-                  : 'bg-slate-950 text-slate-400 border-slate-800'
+                  ? (isDark ? 'bg-emerald-500/20 text-white border-emerald-500/40' : 'bg-emerald-50 text-emerald-700 border-emerald-205') 
+                  : (isDark ? 'bg-slate-950 text-slate-200 border-slate-800 hover:text-white' : 'bg-slate-100 text-slate-600 border-slate-200')
               }`}
+              title={`Alerta de Sonido: ${audioEnabled ? 'SÍ' : 'NO'}`}
             >
-              <Bell className={`w-4 h-4 ${audioEnabled ? 'animate-bounce text-emerald-400' : 'text-slate-400'}`} />
-              <span>Alertas con sonido: {audioEnabled ? 'ENCENDIDO' : 'SILENCIADO'}</span>
+              <Bell className={`w-4 h-4 shrink-0 ${audioEnabled ? 'animate-bounce text-emerald-400' : (isDark ? 'text-slate-400' : 'text-slate-400')}`} />
+              <span>{audioEnabled ? 'SÍ' : 'NO'}</span>
             </button>
 
             {/* Logout CTA */}
             <button
               onClick={handleLogout}
-              className="px-4 py-2.5 bg-red-500/10 hover:bg-red-500/20 text-red-400 rounded-xl text-xs font-bold transition border border-red-500/20 flex items-center gap-1"
+              className="px-3 py-2.5 bg-red-500/10 hover:bg-red-500/20 text-red-400 rounded-xl text-xs font-black transition border border-red-500/20 flex items-center gap-1"
+              title="Cerrar sesión de asesor"
             >
-              <X className="w-3.5 h-3.5" />
-              <span>Cerrar sesión</span>
+              <X className="w-3.5 h-3.5 shrink-0" />
+              <span>SALIR</span>
             </button>
           </div>
         </div>
@@ -479,15 +647,15 @@ export default function AdvisorPanel() {
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           
           {/* COLUMN 1: WAITING EN ESPERA (The Blink Red target) */}
-          <div className="bg-slate-900/45 border border-slate-900 rounded-2xl p-4 flex flex-col">
-            <div className="flex justify-between items-center pb-4 mb-4 border-b border-slate-800/60">
+          <div className={`${colBg} border rounded-2xl p-4 flex flex-col transition-all duration-300`}>
+            <div className={`flex justify-between items-center pb-4 mb-4 border-b ${borderCol}`}>
               <div className="flex items-center gap-2">
                 <span className="w-2.5 h-2.5 rounded-full bg-amber-500 animate-ping" />
                 <h3 className="font-bold text-sm tracking-wide text-amber-500 uppercase font-mono">
                   1) En Espera ({waitingLeads.length})
                 </h3>
               </div>
-              <span className="text-[10px] bg-amber-500/10 text-amber-500 px-2 py-0.5 rounded-full font-bold font-mono">Realtime</span>
+              <span className={`text-[10px] px-2 py-0.5 rounded-full font-bold font-mono ${isDark ? 'bg-amber-500/10 text-amber-500' : 'bg-amber-50 text-amber-600 border border-amber-200'}`}>Realtime</span>
             </div>
 
             <div className="space-y-4 flex-1">
@@ -496,11 +664,13 @@ export default function AdvisorPanel() {
                   <motion.div 
                     initial={{ opacity: 0 }}
                     animate={{ opacity: 1 }}
-                    className="p-8 border border-dashed border-slate-850 rounded-xl text-center flex flex-col items-center justify-center text-slate-500 h-64"
+                    className={`p-8 border border-dashed rounded-xl text-center flex flex-col items-center justify-center h-64 ${
+                      isDark ? 'border-slate-700/60 text-white' : 'border-slate-300 text-slate-850 bg-slate-50'
+                    }`}
                   >
-                    <Smile className="w-8 h-8 text-emerald-500/50 mb-3" />
-                    <p className="text-xs font-semibold">Base libre de espera</p>
-                    <p className="text-[10px] text-slate-650 max-w-[200px] mt-1 leading-relaxed">
+                    <Smile className={`w-8 h-8 mb-3 ${isDark ? 'text-emerald-400' : 'text-emerald-600'}`} />
+                    <p className={`text-sm font-extrabold ${isDark ? 'text-white' : 'text-slate-900'}`}>Base libre de espera</p>
+                    <p className={`text-xs max-w-[200px] mt-1.5 leading-relaxed font-semibold ${isDark ? 'text-slate-200' : 'text-slate-500'}`}>
                       No hay clientes esperando atención actualmente. ¡Buen trabajo de respuesta rápida!
                     </p>
                   </motion.div>
@@ -513,69 +683,73 @@ export default function AdvisorPanel() {
                       animate={{ scale: 1, opacity: 1 }}
                       exit={{ scale: 0.9, opacity: 0 }}
                       transition={{ type: 'spring', stiffness: 220, damping: 22 }}
-                      className="border-2 border-red-500/90 bg-slate-950 p-4 rounded-xl shadow-xl space-y-4 relative overflow-hidden group alert-card-pulse"
+                      className={`border-2 border-red-500/90 p-3 pt-2.5 pb-3.5 rounded-xl shadow-xl space-y-3 relative overflow-hidden group alert-card-pulse ${
+                        isDark ? 'bg-slate-950 text-white' : 'bg-white text-slate-800'
+                      }`}
                       style={{
-                        animation: 'blinkRed 1.8s infinite'
+                        animation: isDark ? 'blinkRed 1.8s infinite' : 'blinkRedLight 1.8s infinite'
                       }}
                     >
                       <div className="flex justify-between items-start gap-2">
                         <div>
                           <div className="flex flex-wrap gap-1.5 items-center mb-2">
-                            <div className="inline-flex items-center gap-1 text-[10px] font-bold font-mono bg-blue-500/10 text-blue-400 border border-blue-500/20 px-2.5 py-0.5 rounded-full uppercase">
-                              <Car className="w-3 h-3" /> Leap {lead.modelOfInterest}
+                            <div className={`inline-flex items-center gap-1 text-[10px] font-bold font-mono px-2.5 py-0.5 rounded-full uppercase ${getLeadSourceBadgeClass(lead)}`}>
+                              <Car className="w-3 h-3" /> {getLeadSourceText(lead)}
                             </div>
+                            {lead.testDriveDate && (
+                              <span className="inline-flex items-center gap-1 text-[9px] font-black font-mono bg-amber-500/15 text-white border border-amber-500/40 px-2 py-0.5 rounded uppercase">
+                                <Calendar className="w-3 h-3 shrink-0 text-white" /> Cita {lead.testDriveDate}
+                              </span>
+                            )}
                             {lead.requestType === 'cotizacion' && (
-                              <span className="inline-flex items-center gap-1 text-[9px] font-bold font-mono bg-[#00a845]/15 text-emerald-300 border border-[#00a845]/25 px-2 py-0.5 rounded uppercase">
+                              <span className="inline-flex items-center gap-1 text-[9px] font-black font-mono bg-[#00a845]/20 text-white border border-[#00a845]/40 px-2 py-0.5 rounded uppercase">
                                 <FileText className="w-3 h-3 shrink-0" /> Cotización
                               </span>
                             )}
                             {lead.requestType === 'prueba' && (
-                              <span className="inline-flex items-center gap-1 text-[9px] font-bold font-mono bg-indigo-500/15 text-indigo-300 border border-indigo-500/25 px-2 py-0.5 rounded uppercase">
+                              <span className="inline-flex items-center gap-1 text-[9px] font-black font-mono bg-indigo-600/30 text-white border border-indigo-500/40 px-2 py-0.5 rounded uppercase">
                                 <Key className="w-3 h-3 shrink-0" /> Prueba de Manejo
                               </span>
                             )}
                             {(!lead.requestType || lead.requestType === 'asesor') && (
-                              <span className="inline-flex items-center gap-1 text-[9px] font-bold font-mono bg-blue-500/15 text-blue-300 border border-blue-500/25 px-2 py-0.5 rounded uppercase">
+                              <span className="inline-flex items-center gap-1 text-[9px] font-black font-mono bg-blue-600/30 text-white border border-blue-500/45 px-2 py-0.5 rounded uppercase">
                                 <MessageSquare className="w-3 h-3 shrink-0" /> Hablar con Asesor
                               </span>
                             )}
                           </div>
-                          <h4 className="font-sans font-extrabold text-base text-white uppercase tracking-tight leading-snug">
+                          <h4 className={`font-sans font-extrabold text-base uppercase tracking-tight leading-snug ${textTitle}`}>
                             {lead.name} {lead.lastName || ''}
                           </h4>
                         </div>
                         <div className="text-right flex flex-col items-end">
-                          <span className="text-[10px] text-red-400 flex items-center gap-1 font-mono font-bold uppercase animate-pulse">
+                          <span className="text-[10px] text-red-500 flex items-center gap-1 font-mono font-bold uppercase animate-pulse">
                             <Clock className="w-3.5 h-3.5" /> urgente
                           </span>
-                          <span className="text-[9px] text-slate-500 font-mono mt-1">
+                          <span className={`text-[10px] font-bold font-mono mt-1 ${textSub}`}>
                             {formatTimeAgo(lead.createdAt)}
                           </span>
                         </div>
                       </div>
 
-                      <div className="space-y-1.5 text-xs text-slate-300 font-mono">
+                      <div className={`space-y-1.5 text-xs font-semibold font-mono ${isDark ? 'text-slate-100' : 'text-slate-750 text-slate-705'}`}>
                         <div className="flex items-start gap-1.5">
-                          <MapPin className="w-3.5 h-3.5 text-slate-500 mt-0.5 shrink-0" />
+                          <MapPin className={`w-3.5 h-3.5 mt-0.5 shrink-0 ${isDark ? 'text-slate-200' : 'text-slate-500'}`} />
                           <div className="leading-snug">
-                            <div className="font-bold text-white">{lead.distributor || 'Distribuidor Digital'}</div>
-                            <div className="text-[10px] text-slate-400 font-semibold">{lead.state || 'N/A'}{lead.postalCode ? ` • CP: ${lead.postalCode}` : ''}</div>
+                            <div className={`font-bold ${textTitle}`}>{lead.distributor || 'Distribuidor Digital'}</div>
+                            <div className={`text-[11px] font-black ${isDark ? 'text-white' : 'text-slate-600'}`}>{lead.state || 'N/A'}{lead.postalCode ? ` • CP: ${lead.postalCode}` : ''}</div>
                           </div>
                         </div>
-                        <div className="flex items-center gap-1.5">
-                          <Phone className="w-3.5 h-3.5 text-slate-500 shrink-0" />
+                        <div className={`flex items-center gap-1.5 ${isDark ? 'text-white' : 'text-slate-800'}`}>
+                          <Phone className={`w-3.5 h-3.5 shrink-0 ${isDark ? 'text-slate-200' : 'text-slate-550'}`} />
                           <span>{lead.phone}</span>
                         </div>
-                        <div className="flex items-center gap-1.5">
-                          <MessageSquare className="w-3.5 h-3.5 text-slate-500" />
-                          <span>Canal: <strong className="text-cyan-400 uppercase">{lead.contactMethod || 'whatsapp'}</strong></span>
-                        </div>
+
                       </div>
 
                       {/* Attend Now button */}
                       <button
                         onClick={() => handleStartAttending(lead.id)}
-                        className="w-full bg-red-600 hover:bg-red-500 text-white font-sans font-black py-3 rounded-lg text-xs transition duration-200 uppercase tracking-widest flex items-center justify-center gap-2 relative overflow-hidden active:scale-95"
+                        className="w-full bg-red-650 bg-red-600 hover:bg-red-500 text-white font-sans font-black py-3 rounded-lg text-xs transition duration-200 uppercase tracking-widest flex items-center justify-center gap-2 relative overflow-hidden active:scale-95"
                       >
                         <Zap className="w-4 h-4 fill-white shrink-0 animate-bounce" />
                         <span>¡Atender Ahora!</span>
@@ -588,24 +762,26 @@ export default function AdvisorPanel() {
           </div>
 
           {/* COLUMN 2: IN ATTENTION (Attending state) */}
-          <div className="bg-slate-900/45 border border-slate-900 rounded-2xl p-4 flex flex-col">
-            <div className="flex justify-between items-center pb-4 mb-4 border-b border-slate-800/60">
+          <div className={`${colBg} border rounded-2xl p-4 flex flex-col transition-all duration-300`}>
+            <div className={`flex justify-between items-center pb-4 mb-4 border-b ${borderCol}`}>
               <div className="flex items-center gap-2">
                 <span className="w-2.5 h-2.5 rounded-full bg-cyan-400" />
                 <h3 className="font-bold text-sm tracking-wide text-cyan-400 uppercase font-mono">
                   2) En Atención ({attendingLeads.length})
                 </h3>
               </div>
-              <span className="text-[10px] bg-cyan-400/10 text-cyan-400 px-2.5 py-0.5 rounded-full font-bold">Llamada/WA</span>
+              <span className={`text-[10px] px-2.5 py-0.5 rounded-full font-bold ${isDark ? 'bg-cyan-400/10 text-cyan-405 text-cyan-400' : 'bg-cyan-50 text-cyan-700 border border-cyan-200'}`}>Llamada/WA</span>
             </div>
 
             <div className="space-y-4 flex-1">
               <AnimatePresence mode="popLayout">
                 {attendingLeads.length === 0 ? (
-                  <div className="p-8 border border-dashed border-slate-850 rounded-xl text-center flex flex-col items-center justify-center text-slate-500 h-64">
-                    <User className="w-8 h-8 text-cyan-500/20 mb-3" />
-                    <p className="text-xs font-semibold">Consola de llamada vacía</p>
-                    <p className="text-[10px] text-slate-650 max-w-[200px] mt-1 leading-relaxed">
+                  <div className={`p-8 border border-dashed rounded-xl text-center flex flex-col items-center justify-center h-64 ${
+                    isDark ? 'border-slate-700/60 text-white' : 'border-slate-300 text-slate-850 bg-slate-50'
+                  }`}>
+                    <User className={`w-8 h-8 mb-3 ${isDark ? 'text-cyan-400' : 'text-cyan-600'}`} />
+                    <p className={`text-sm font-extrabold ${textTitle}`}>Consola de llamada vacía</p>
+                    <p className={`text-xs mt-1.5 leading-relaxed font-semibold ${textSub}`}>
                       Los leads asignados aparecerán aquí para contacto telefónico o WhatsApp.
                     </p>
                   </div>
@@ -618,83 +794,101 @@ export default function AdvisorPanel() {
                         initial={{ scale: 0.9, opacity: 0 }}
                         animate={{ scale: 1, opacity: 1 }}
                         exit={{ scale: 0.9, opacity: 0 }}
-                        className="bg-slate-950 border border-cyan-500/30 p-4 rounded-xl space-y-4 relative"
+                        className={`p-3 pt-2 px-3 pb-3.5 rounded-xl space-y-3 relative border transition-all ${
+                          isDark ? 'bg-slate-950 border-cyan-500/35' : 'bg-white border-cyan-400 shadow-sm shadow-cyan-400/5'
+                        }`}
                       >
                         <div>
+                          {/* Top-aligned Model Name & Response React Time */}
                           <div className="flex justify-between items-center">
-                            <span className="text-[10px] font-mono text-cyan-400 bg-cyan-500/10 px-2 py-0.5 rounded font-semibold uppercase">
-                              Contacto Activo
-                            </span>
-                            <span className="text-[10px] text-slate-500 font-mono">
-                              React: <strong>{getResponseTime(lead)}</strong>
-                            </span>
-                          </div>
-                          
-                          <div className="flex flex-wrap gap-1.5 items-center mt-2.5">
-                            <div className="inline-flex items-center gap-0.5 text-[9px] font-bold font-mono bg-blue-500/10 text-blue-300 border border-blue-500/20 px-1.5 py-0.5 rounded font-bold">
-                              Leap {lead.modelOfInterest}
+                            <div className={`inline-flex items-center gap-0.5 text-[9px] font-black font-mono px-1.5 py-0.5 rounded uppercase ${getLeadSourceBadgeClass(lead)}`}>
+                              <Car className="w-3 h-3 shrink-0" /> {getLeadSourceText(lead)}
                             </div>
-                            {lead.requestType === 'cotizacion' && (
-                              <span className="inline-flex items-center gap-1 text-[9px] font-bold font-mono bg-[#00a845]/10 text-emerald-300 border border-[#00a845]/20 px-1.5 py-0.5 rounded uppercase font-bold">
-                                <FileText className="w-3 h-3 shrink-0" /> Cotización
-                              </span>
-                            )}
-                            {lead.requestType === 'prueba' && (
-                              <span className="inline-flex items-center gap-1 text-[9px] font-bold font-mono bg-indigo-500/10 text-indigo-300 border border-indigo-500/20 px-1.5 py-0.5 rounded uppercase font-bold">
-                                <Key className="w-3 h-3 shrink-0" /> Prueba de Manejo
-                              </span>
-                            )}
-                            {(!lead.requestType || lead.requestType === 'asesor') && (
-                              <span className="inline-flex items-center gap-1 text-[9px] font-bold font-mono bg-blue-500/10 text-blue-300 border border-blue-500/20 px-1.5 py-0.5 rounded uppercase font-bold">
-                                <MessageSquare className="w-3 h-3 shrink-0" /> Hablar con Asesor
-                              </span>
-                            )}
+                            <span className={`text-[10px] font-extrabold font-mono ${textSub}`}>
+                              React: <strong className={isDark ? 'text-white' : 'text-slate-900'}>{getResponseTime(lead)}</strong>
+                            </span>
                           </div>
                           
-                          <h4 className="font-sans font-bold text-sm text-white uppercase tracking-tight mt-2.5">
+                          {/* Secondary request badges */}
+                          {(lead.testDriveDate || lead.requestType === 'cotizacion' || lead.requestType === 'prueba') && (
+                            <div className="flex flex-wrap gap-1 items-center mt-1.5">
+                              {lead.testDriveDate && (
+                                <span className="inline-flex items-center gap-1 text-[9px] font-black font-mono bg-amber-500/20 text-white border border-amber-500/40 px-1.5 py-0.5 rounded uppercase">
+                                  <Calendar className="w-3 h-3 shrink-0" /> Cita {lead.testDriveDate}
+                                </span>
+                              )}
+                              {lead.requestType === 'cotizacion' && (
+                                <span className="inline-flex items-center gap-1 text-[9px] font-black font-mono bg-[#00a845]/20 text-white border border-[#00a845]/40 px-1.5 py-0.5 rounded uppercase">
+                                  <FileText className="w-3 h-3 shrink-0" /> Cotización
+                                </span>
+                              )}
+                              {lead.requestType === 'prueba' && (
+                                <span className="inline-flex items-center gap-1 text-[9px] font-black font-mono bg-indigo-600/30 text-white border border-indigo-500/40 px-1.5 py-0.5 rounded uppercase">
+                                  <Key className="w-3 h-3 shrink-0" /> Prueba de Manejo
+                                </span>
+                              )}
+                            </div>
+                          )}
+                          
+                          <h4 className={`font-sans font-black text-base uppercase tracking-tight mt-2.5 ${textTitle}`}>
                             {lead.name} {lead.lastName || ''}
                           </h4>
-                          <div className="text-[10px] text-slate-400 font-mono mt-1">
-                            <span className="text-cyan-400 font-semibold">{lead.distributor || 'Distribuidor Digital'}</span> ({lead.state || 'N/A'})
+                          
+                          <div className={`text-[11px] font-mono mt-1.5 font-semibold ${textSub}`}>
+                            <span className="text-cyan-600 font-semibold">{lead.distributor || 'Distribuidor Digital'}</span>
                           </div>
-                          <span className="text-[10px] text-slate-500 font-mono mt-1.5 block">
+
+                          {/* Contact information with action inline to the right of the phone number */}
+                          <div className="flex items-center justify-between bg-slate-100/60 dark:bg-slate-900/40 px-2.5 py-1.5 rounded-lg mt-2 border border-slate-200/50 dark:border-slate-800/50">
+                            <div className={`flex items-center gap-1.5 text-xs font-mono font-extrabold ${isDark ? 'text-slate-100' : 'text-slate-800'}`}>
+                              <Phone className={`w-3.5 h-3.5 shrink-0 ${isDark ? 'text-cyan-400' : 'text-cyan-600'}`} />
+                              <span>{lead.phone}</span>
+                            </div>
+                            <a
+                              href={`tel:${lead.phone}`}
+                              className={`px-2 py-1 rounded-md text-[10px] font-bold uppercase tracking-tight transition border flex items-center gap-1 shrink-0 ${
+                                isDark 
+                                  ? 'bg-slate-800 hover:bg-slate-700 border-slate-705 text-cyan-400 hover:text-cyan-300' 
+                                  : 'bg-white hover:bg-slate-50 border-slate-200 text-cyan-600 hover:text-cyan-700 shadow-sm'
+                              }`}
+                              title="Realizar llamada"
+                            >
+                              <Phone className="w-3 h-3 shrink-0" />
+                              <span>Realizar llamada</span>
+                            </a>
+                          </div>
+
+                          <span className={`text-[10px] font-bold font-mono mt-2 block ${isDark ? 'text-slate-400' : 'text-slate-550'}`}>
                             Atendido por: {lead.advisorName}
                           </span>
-                        </div>
-
-                        {/* Interactive contact quick actions */}
-                        <div className="pt-1">
-                          <a
-                            href={`tel:${lead.phone}`}
-                            className="w-full bg-slate-800 hover:bg-slate-750 text-slate-200 border border-slate-750 text-[11px] font-bold py-2.5 rounded-lg flex items-center justify-center gap-1.5 transition"
-                          >
-                            <Phone className="w-3.5 h-3.5 shrink-0 text-cyan-400" /> Llamar
-                          </a>
-                        </div>
-
-                        {/* Note Input */}
-                        <div className="space-y-1.5">
-                          <label className="text-[10px] uppercase font-mono text-slate-400 font-bold block">
-                            Notas de la Consulta / Seguimiento
-                          </label>
-                          <textarea
-                            placeholder="Escribe el resultado del contacto. Ej: Interesado en C10 con financiamiento, cita programada para el Sábado."
-                            value={notesInput[lead.id] || ''}
-                            onChange={(e) => {
-                              const v = e.target.value;
-                              setNotesInput(p => ({ ...p, [lead.id]: v }));
-                            }}
-                            className="w-full bg-slate-900 text-slate-200 border border-slate-800 focus:border-cyan-400 rounded-lg p-2.5 text-xs outline-none h-16 resize-none transition"
-                          />
+                          
+                          <div className={`mt-2 text-[10px] font-mono leading-normal border-t border-dashed pt-2 ${isDark ? 'border-slate-800/80 text-slate-400' : 'border-slate-205 text-slate-500'}`}>
+                            <div className="flex flex-wrap justify-between gap-x-2 gap-y-0.5">
+                              <div>
+                                <span>Generado:</span>{' '}
+                                <strong className={`${isDark ? 'text-white' : 'text-slate-900'} font-extrabold`}>
+                                  {formatFullDateTime(lead.createdAt)}
+                                </strong>
+                              </div>
+                              <div>
+                                <span>Atendido:</span>{' '}
+                                <strong className={`${isDark ? 'text-cyan-405 text-cyan-400' : 'text-cyan-600'} font-extrabold`}>
+                                  {formatDuration(lead)}
+                                </strong>
+                              </div>
+                            </div>
+                          </div>
                         </div>
 
                         {/* Conclude outcomes */}
-                        <div className="grid grid-cols-2 gap-2 pt-1 border-t border-slate-900">
+                        <div className={`grid grid-cols-2 gap-2 pt-1 border-t ${isDark ? 'border-slate-900' : 'border-slate-100'}`}>
                           <button
                             onClick={() => handleConcludeLead(lead.id, LeadStatus.LOST)}
-                            className="bg-slate-900 border border-red-500/30 hover:border-red-500/60 text-red-400 text-[10px] font-black uppercase py-2.5 rounded-lg flex items-center justify-center gap-1 transition"
+                            className={`text-[10px] font-black uppercase py-2.5 rounded-lg flex items-center justify-center gap-1 transition border ${
+                              isDark ? 'bg-slate-900 border-amber-500/30 hover:border-amber-500/60 text-amber-400' : 'bg-amber-50 hover:bg-amber-100 border-amber-200 text-amber-700'
+                            }`}
                           >
-                            <X className="w-3.5 h-3.5 shrink-0" /> No Interesado
+                            <X className="w-3.5 h-3.5 shrink-0" /> No Asistió
                           </button>
                           <button
                             onClick={() => handleConcludeLead(lead.id, LeadStatus.ATTENDED)}
@@ -712,24 +906,28 @@ export default function AdvisorPanel() {
           </div>
 
           {/* COLUMN 3: HISTORIC CLIENTS */}
-          <div className="bg-slate-900/45 border border-slate-900 rounded-2xl p-4 flex flex-col">
-            <div className="flex justify-between items-center pb-4 mb-4 border-b border-slate-800/60">
+          <div className={`${colBg} border rounded-2xl p-4 flex flex-col transition-all duration-300`}>
+            <div className={`flex justify-between items-center pb-4 mb-4 border-b ${borderCol}`}>
               <div className="flex items-center gap-2">
                 <span className="w-2.5 h-2.5 rounded-full bg-emerald-500" />
                 <h3 className="font-bold text-sm tracking-wide text-emerald-500 uppercase font-mono">
                   3) Concluidos ({concludedLeads.length})
                 </h3>
               </div>
-              <span className="text-[10px] bg-emerald-500/10 text-emerald-400 px-2 py-0.5 rounded-full font-bold">Historial</span>
+              <span className={`text-[10px] border px-2 py-0.5 rounded-full font-bold ${
+                isDark ? 'bg-emerald-500/20 text-white border-emerald-500/30' : 'bg-emerald-50 text-emerald-700 border-emerald-250'
+              }`}>Historial</span>
             </div>
 
             <div className="space-y-3.5 flex-1 max-h-[500px] overflow-y-auto pr-1">
               <AnimatePresence>
                 {concludedLeads.length === 0 ? (
-                  <div className="p-8 border border-dashed border-slate-850 rounded-xl text-center flex flex-col items-center justify-center text-slate-500 h-64">
-                    <Smile className="w-8 h-8 text-slate-700 mb-3" />
-                    <p className="text-xs font-semibold">Sin historial de atención</p>
-                    <p className="text-[10px] text-slate-650 max-w-[200px] mt-1 text-center">
+                  <div className={`p-8 border border-dashed rounded-xl text-center flex flex-col items-center justify-center h-64 ${
+                    isDark ? 'border-slate-700/60 text-white' : 'border-slate-300 text-slate-850 bg-slate-50'
+                  }`}>
+                    <Smile className={`w-8 h-8 mb-3 ${isDark ? 'text-emerald-400' : 'text-emerald-600'}`} />
+                    <p className={`text-sm font-extrabold ${textTitle}`}>Sin historial de atención</p>
+                    <p className={`text-xs mt-1.5 leading-relaxed font-semibold ${textSub}`}>
                       Aquí aparecerán los prospectos atendidos durante el día.
                     </p>
                   </div>
@@ -739,32 +937,41 @@ export default function AdvisorPanel() {
                       key={lead.id}
                       initial={{ opacity: 0 }}
                       animate={{ opacity: 1 }}
-                      className="bg-slate-950/80 border border-slate-900 p-3.5 rounded-xl space-y-2.5 text-xs text-slate-300"
+                      className={`p-3.5 rounded-xl space-y-2.5 text-xs font-semibold border transition-colors ${
+                        isDark ? 'bg-slate-950 border-slate-850 text-slate-100' : 'bg-slate-50 border-slate-200 text-slate-800'
+                      }`}
                     >
                       <div className="flex justify-between items-start gap-1">
                         <div>
-                          <h4 className="font-bold text-slate-200 uppercase leading-snug">{lead.name} {lead.lastName || ''}</h4>
-                          <div className="flex flex-col text-[9px] text-slate-500 font-mono mt-0.5 leading-normal">
-                            <span className="uppercase text-slate-400">Leap {lead.modelOfInterest}</span>
-                            <span className="text-emerald-500/80">{lead.distributor || 'Distribuidor Digital'} • {lead.state || 'N/A'}</span>
+                          <h4 className={`font-black uppercase leading-snug text-sm ${textTitle}`}>{lead.name} {lead.lastName || ''}</h4>
+                          <div className={`flex flex-col text-[10px] font-mono mt-0.5 leading-normal font-semibold ${textSub}`}>
+                            <span className={`uppercase font-extrabold px-1 py-0.5 rounded w-max mb-1 ${isDark ? 'text-white bg-slate-800' : 'text-slate-800 bg-slate-200'}`}>{getLeadSourceText(lead)}</span>
+                            {lead.testDriveDate && (
+                              <span className="text-amber-500 font-extrabold block">Test Drive: {lead.testDriveDate}</span>
+                            )}
+                            <span className={`font-bold block ${isDark ? 'text-emerald-450 text-emerald-400' : 'text-emerald-700'}`}>{lead.distributor || 'Distribuidor Digital'} • {lead.state || 'N/A'}</span>
                           </div>
                         </div>
-                        <span className={`px-2 py-0.5 rounded text-[8px] font-black uppercase font-mono ${
+                        <span className={`px-2 py-1 rounded text-[8px] font-black uppercase font-mono ${
                           lead.status === LeadStatus.ATTENDED 
-                            ? 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/20' 
-                            : 'bg-red-500/10 text-red-400 border border-red-500/20'
+                            ? (isDark ? 'bg-emerald-500/20 text-white border border-emerald-500/35' : 'bg-emerald-50 text-emerald-700 border border-emerald-300') 
+                            : (isDark ? 'bg-red-500/20 text-white border border-red-500/35' : 'bg-red-50 text-red-700 border border-red-300')
                         }`}>
                           {lead.status === LeadStatus.ATTENDED ? 'Atendido' : 'Descartado'}
                         </span>
                       </div>
 
-                      <div className="bg-slate-900/60 p-2 rounded text-[11px] text-slate-400 italic">
+                      <div className={`p-2.5 rounded text-[11px] italic font-medium leading-relaxed border ${
+                        isDark ? 'bg-slate-900 border-slate-800/80 text-white' : 'bg-white border-slate-150 text-slate-700 shadow-sm'
+                      }`}>
                         {lead.notes || 'Sin anotaciones de contacto.'}
                       </div>
 
-                      <div className="flex justify-between items-center text-[9px] font-mono text-slate-500/80 pt-1 border-t border-slate-900">
+                      <div className={`flex justify-between items-center text-[10px] font-mono font-bold pt-1 border-t ${
+                        isDark ? 'border-slate-800 text-slate-200' : 'border-slate-200 text-slate-550'
+                      }`}>
                         <span>Contacto: {lead.phone}</span>
-                        <span className="text-emerald-500">Resp: {getResponseTime(lead) || 'N/D'}</span>
+                        <span className={`font-black ${isDark ? 'text-emerald-400' : 'text-emerald-750'}`}>Resp: {getResponseTime(lead) || 'N/D'}</span>
                       </div>
                     </motion.div>
                   ))
@@ -784,7 +991,17 @@ export default function AdvisorPanel() {
             box-shadow: 0 0 15px rgba(239, 68, 68, 0.5);
           }
           50% {
-            border-color: rgba(30, 41, 59, 0.8);
+            border-color: rgba(15, 23, 42, 0.8);
+            box-shadow: 0 0 0px rgba(0, 0, 0, 0);
+          }
+        }
+        @keyframes blinkRedLight {
+          0%, 100% {
+            border-color: rgba(239, 68, 68, 0.95);
+            box-shadow: 0 0 10px rgba(239, 68, 68, 0.3);
+          }
+          50% {
+            border-color: rgba(226, 232, 240, 0.9);
             box-shadow: 0 0 0px rgba(0, 0, 0, 0);
           }
         }

@@ -23,8 +23,7 @@
         },
         "modelOfInterest": {
           "type": "string",
-          "description": "Modelo de auto Leapmotor de interes",
-          "enum": ["B10", "T03", "C10", "C11", "C16"]
+          "description": "Modelo de auto seleccionado de interes"
         },
         "city": {
           "type": "string",
@@ -82,6 +81,18 @@
           "type": "string",
           "description": "Tipo de solicitud (cotizacion, prueba, asesor)",
           "enum": ["cotizacion", "prueba", "asesor"]
+        },
+        "landing": {
+          "type": "string",
+          "description": "Landing page de orígen: leapmotor, jeep, o multimarca"
+        },
+        "selectedBrand": {
+          "type": "string",
+          "description": "Marca seleccionada por el prospecto"
+        },
+        "testDriveDate": {
+          "type": "string",
+          "description": "Fecha seleccionada para la prueba de manejo (opcional para cotización/contacto)"
         }
       },
       "required": ["name", "lastName", "email", "phone", "modelOfInterest", "state", "distributor", "status", "createdAt"]

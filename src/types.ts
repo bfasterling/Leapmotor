@@ -20,7 +20,7 @@ export interface Lead {
   postalCode?: string;
   state: string;
   distributor: string;
-  modelOfInterest: 'B10' | 'T03' | 'C10' | 'C11' | 'C16';
+  modelOfInterest: string; // Dynamic brands can lead to different model strings
   status: LeadStatus;
   notes?: string;
   advisorId?: string;
@@ -30,4 +30,7 @@ export interface Lead {
   completedAt?: any; // Firestore Timestamp
   contactMethod?: string;
   requestType?: 'cotizacion' | 'prueba' | 'asesor';
+  landing?: 'leapmotor' | 'jeep' | 'multimarca' | string;
+  selectedBrand?: string;
+  testDriveDate?: string;
 }
