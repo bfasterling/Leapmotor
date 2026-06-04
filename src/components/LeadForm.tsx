@@ -388,13 +388,15 @@ export default function LeadForm({ c10ImgUrl, t03ImgUrl, b10ImgUrl }: LeadFormPr
   };
 
   useEffect(() => {
+    const host = window.location.hostname.toLowerCase();
     const searchParams = new URLSearchParams(window.location.search);
     const landingParam = searchParams.get('landing') || searchParams.get('campaign') || searchParams.get('site');
-    if (landingParam === 'jeep') {
+    
+    if (landingParam === 'jeep' || host.startsWith('jeep')) {
       handleLandingSwitch('jeep');
-    } else if (landingParam === 'multimarca') {
+    } else if (landingParam === 'multimarca' || host.startsWith('multimarca') || host.startsWith('stellantis')) {
       handleLandingSwitch('multimarca');
-    } else if (landingParam === 'leapmotor') {
+    } else if (landingParam === 'leapmotor' || host.startsWith('leapmotor')) {
       handleLandingSwitch('leapmotor');
     }
   }, []);
@@ -598,73 +600,75 @@ export default function LeadForm({ c10ImgUrl, t03ImgUrl, b10ImgUrl }: LeadFormPr
       };
     }
     return {
-      accent: 'bg-blue-600',
-      hoverAccent: 'hover:bg-blue-500',
-      bgPill: 'bg-blue-950/40 border-blue-500/20',
-      textAccent: 'text-blue-400',
-      borderAccent: 'border-blue-500',
-      btnBg: 'bg-blue-600 hover:bg-blue-500',
-      successGradient: 'from-blue-400 to-indigo-300',
-      thankYouBadge: 'bg-blue-500/10 text-blue-400 border border-blue-500/20'
+      accent: 'bg-[#035F1D]',
+      hoverAccent: 'hover:bg-[#009100]',
+      bgPill: 'bg-[#035F1D]/20 border-[#009100]/30',
+      textAccent: 'text-[#009100]',
+      borderAccent: 'border-[#009100]/40',
+      btnBg: 'bg-[#035F1D] hover:bg-[#009100] hover:scale-[1.02] hover:shadow-[0_0_20px_rgba(0,145,0,0.4)] transition-all duration-300',
+      successGradient: 'from-[#035F1D] to-[#009100]',
+      thankYouBadge: 'bg-[#009100]/10 text-[#009100] border border-[#009100]/25'
     };
   };
 
   const theme = getThemeColors();
 
+  // Dynamic input styling based on active branding (Leapmotor Pantone 2427C #035F1D and Highlight #009100)
+  const rowClass = activeLanding === 'leapmotor'
+    ? 'space-y-1 bg-[#035F1D]/10 p-2.5 rounded-xl border border-[#009100]/25 hover:border-[#009100]/40 hover:bg-[#035F1D]/15 transition-all duration-350'
+    : 'space-y-1 bg-slate-900/60 p-2.5 rounded-xl border border-white/15 hover:border-white/20 transition-all duration-350';
+
+  const inputClass = activeLanding === 'leapmotor'
+    ? 'w-full bg-[#010602] border border-[#009100]/25 focus:border-[#009100] focus:ring-1 focus:ring-[#009100]/40 rounded-xl pl-9 pr-3 py-2.5 text-xs text-slate-100 placeholder-slate-505 outline-none transition font-semibold font-sans'
+    : (activeLanding === 'jeep'
+       ? 'w-full bg-[#0a0f18] border border-white/20 focus:border-emerald-400 focus:ring-1 focus:ring-emerald-400/40 rounded-xl pl-9 pr-3 py-2.5 text-xs text-white placeholder-slate-400 outline-none transition font-semibold'
+       : 'w-full bg-[#0a0f18] border border-white/25 focus:border-indigo-400 focus:ring-1 focus:ring-indigo-400/40 rounded-xl pl-9 pr-3 py-2.5 text-xs text-white placeholder-slate-400 outline-none transition font-semibold');
+
   return (
     <div className="w-full text-slate-100 flex flex-col justify-start items-center" id="landing-page-view">
       
-      {/* Immersive Client Selector Slider at top */}
-      <div className="w-full max-w-md mx-auto px-4 pt-4 pb-2 z-30">
-        <div className="bg-[#0b0f17]/90 backdrop-blur-md border border-white/5 p-1 rounded-2xl grid grid-cols-3 gap-1 relative overflow-hidden shadow-lg shadow-black/80">
-          <button
-            onClick={() => handleLandingSwitch('leapmotor')}
-            className={`py-2 rounded-xl text-[10px] font-black uppercase font-mono tracking-wider transition duration-300 relative ${
-              activeLanding === 'leapmotor' 
-                ? 'bg-blue-600/20 text-white font-bold border border-blue-500/40 shadow' 
-                : 'text-slate-200 hover:text-white'
-            }`}
-          >
-            Leapmotor
-          </button>
-          <button
-            onClick={() => handleLandingSwitch('jeep')}
-            className={`py-2 rounded-xl text-[10px] font-black uppercase font-mono tracking-wider transition duration-300 relative ${
-              activeLanding === 'jeep' 
-                ? 'bg-emerald-600/20 text-white font-bold border border-emerald-500/40 shadow' 
-                : 'text-slate-200 hover:text-white'
-            }`}
-          >
-            Jeep Landing
-          </button>
-          <button
-            onClick={() => handleLandingSwitch('multimarca')}
-            className={`py-2 rounded-xl text-[10px] font-black uppercase font-mono tracking-wider transition duration-300 relative ${
-              activeLanding === 'multimarca' 
-                ? 'bg-indigo-600/20 text-white font-bold border border-indigo-500/40 shadow' 
-                : 'text-slate-200 hover:text-white'
-            }`}
-          >
-            Multimarca
-          </button>
-        </div>
-      </div>
-
-      {/* Outer Mobile Mock Wrapper */}
-      <div className="w-full max-w-md mx-auto min-h-[82vh] bg-[#05070a] border border-white/10 rounded-[40px] shadow-2xl relative overflow-hidden flex flex-col justify-between mt-1 mb-6">
+      {/* Outer Mobile Mock Wrapper with Pantone 2427C and Highlight R0 G145 B0 theme */}
+      <div className={`w-full max-w-md mx-auto min-h-[82vh] border rounded-[40px] shadow-2xl relative overflow-hidden flex flex-col justify-between mt-1 mb-6 transition-all duration-500 ${
+        activeLanding === 'leapmotor'
+          ? 'bg-gradient-to-b from-[#010602] via-[#035F1D]/80 to-[#010502] border-[#009100]/40 shadow-[0_0_35px_rgba(0,145,0,0.25)]'
+          : 'bg-[#05070a] border-white/10'
+      }`}>
         
         {/* Subtle Decorative Auras tailored by theme */}
-        <div className={`absolute top-20 left-12 w-60 h-60 ${activeLanding === 'jeep' ? 'bg-emerald-600/5' : (activeLanding === 'multimarca' ? 'bg-indigo-600/5' : 'bg-blue-600/10')} blur-[80px] rounded-full pointer-events-none -translate-x-1/2`} />
-        <div className={`absolute bottom-20 right-12 w-60 h-60 ${activeLanding === 'jeep' ? 'bg-teal-600/5' : (activeLanding === 'multimarca' ? 'bg-purple-600/5' : 'bg-purple-600/10')} blur-[80px] rounded-full pointer-events-none translate-x-1/2`} />
+        {activeLanding === 'leapmotor' ? (
+          <>
+            <div className="absolute top-0 right-0 w-80 h-80 bg-gradient-to-bl from-[#009100]/20 to-transparent blur-[70px] rounded-full pointer-events-none" />
+            <div className="absolute bottom-0 left-0 w-80 h-80 bg-gradient-to-tr from-[#035F1D]/30 to-transparent blur-[90px] rounded-full pointer-events-none" />
+            
+            {/* Architectural Layout Guide Corner lines imitating layout references */}
+            <div className="absolute top-4 left-4 w-7 h-7 border-t border-l border-[#009100]/50 pointer-events-none" />
+            <div className="absolute top-4 right-4 w-7 h-7 border-t border-r border-[#009100]/50 pointer-events-none" />
+            <div className="absolute bottom-4 left-4 w-7 h-7 border-b border-l border-[#009100]/50 pointer-events-none" />
+            <div className="absolute bottom-4 right-4 w-7 h-7 border-b border-r border-[#009100]/50 pointer-events-none" />
+            
+            {/* Tech line dividers */}
+            <div className="absolute top-10 inset-x-5 h-[1px] bg-[#009100]/15 pointer-events-none" />
+            <div className="absolute bottom-10 inset-x-5 h-[1px] bg-[#009100]/15 pointer-events-none" />
+          </>
+        ) : (
+          <>
+            <div className={`absolute top-20 left-12 w-60 h-60 ${activeLanding === 'jeep' ? 'bg-emerald-600/5' : (activeLanding === 'multimarca' ? 'bg-indigo-600/5' : 'bg-blue-600/10')} blur-[80px] rounded-full pointer-events-none -translate-x-1/2`} />
+            <div className={`absolute bottom-20 right-12 w-60 h-60 ${activeLanding === 'jeep' ? 'bg-teal-600/5' : (activeLanding === 'multimarca' ? 'bg-purple-600/5' : 'bg-purple-600/10')} blur-[80px] rounded-full pointer-events-none translate-x-1/2`} />
+          </>
+        )}
 
         {/* Brand Header */}
-        <div className="px-6 py-4 flex justify-between items-center bg-[#05070a]/90 backdrop-blur-md border-b border-white/5 sticky top-0 z-25">
+        <div className={`px-6 py-4 flex justify-between items-center backdrop-blur-md sticky top-0 z-25 ${
+          activeLanding === 'leapmotor'
+            ? 'bg-[#010602]/95 border-b border-[#009100]/25'
+            : 'bg-[#05070a]/90 border-b border-white/5'
+        }`}>
           {activeLanding === 'leapmotor' && (
             <>
               <div className="flex items-center gap-1.5">
                 <LeapmotorLogo size="sm" className="text-white" style={{ height: '62px' }} imgStyle={{ height: '84px' }} />
               </div>
-              <span className="text-[10px] font-black font-mono text-blue-400 tracking-wider bg-blue-500/10 px-2 py-0.5 rounded">B10 EV</span>
+              <span className="text-[10px] font-black font-mono text-[#009100] tracking-widest bg-[#009100]/10 border border-[#009100]/30 px-2.5 py-0.5 rounded-lg uppercase">B10 EV</span>
             </>
           )}
 
@@ -703,66 +707,73 @@ export default function LeadForm({ c10ImgUrl, t03ImgUrl, b10ImgUrl }: LeadFormPr
               transition={{ duration: 0.3 }}
               className="px-6 py-4 flex flex-col justify-start gap-4 flex-1"
             >
-              {/* LEAPMOTOR LANDING VIEW */}
+              {/* LEAPMOTOR LANDING VIEW - Professional Presentation Deck Layout */}
               {activeLanding === 'leapmotor' && (
                 <div className="space-y-4 text-center mt-1">
-                  <h1 className="text-3xl font-light tracking-wide text-white leading-tight">
-                    Descubre el nuevo <br />
-                    <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-indigo-450 font-black">B10 SUV EV</span>
-                  </h1>
+                  <div className="space-y-1">
+                    <span className="text-[10px] font-black tracking-[0.25em] text-[#009100] uppercase block">
+                      TECNOLOGÍA INTELIGENTE
+                    </span>
+                    <h1 className="text-3xl font-extralight tracking-tight text-white leading-tight font-sans">
+                      Descubre el nuevo <br />
+                      <span className="text-transparent bg-clip-text bg-gradient-to-r from-white via-[#009100] to-[#035F1D] font-extrabold text-3xl tracking-tighter">
+                        B10
+                      </span>
+                    </h1>
+                  </div>
                   
-                  <p className="text-white text-xs font-semibold max-w-xs mx-auto leading-relaxed">
-                    Movilidad premium 100% eléctrica diseñada por Stellantis Venture. Lanza tu experiencia inteligente.
+                  <p className="text-slate-300 text-xs font-medium max-w-xs mx-auto leading-relaxed">
+                    Movilidad premium 100% eléctrica concebida bajo los estándares internacionales de Stellantis. Domina el camino inteligente.
                   </p>
 
-                  {/* Central Car Graphic Showcase */}
-                  <div className="relative aspect-[16/10] my-2 select-none overflow-hidden rounded-2xl border border-blue-500/30 group bg-slate-900/35 shadow-[0_0_20px_rgba(59,130,246,0.25)]">
+                  {/* Central Car Graphic Showcase with Highlight Green framing & glow */}
+                  <div className="relative aspect-[16/10] my-2 select-none overflow-hidden rounded-2xl border border-[#009100]/40 group bg-slate-900/35 shadow-[0_0_25px_rgba(0,145,0,0.25)]">
                     <img 
                       src={b10ImgUrl || "https://picsum.photos/seed/purpleb10/600/375"} 
                       alt="Leapmotor B10"
                       referrerPolicy="no-referrer"
-                      className="w-full h-full object-cover rounded-2xl transform transition-transform duration-700 group-hover:scale-105 brightness-[1.25] contrast-[1.08] saturate-[1.1]"
+                      className="w-full h-full object-cover rounded-2xl transform transition-transform duration-700 group-hover:scale-105 brightness-[1.2] contrast-[1.05] saturate-[1.05]"
                     />
-                    <div className="absolute inset-0 bg-gradient-to-t from-[#05070a]/70 via-transparent to-transparent opacity-40" />
+                    <div className="absolute inset-0 bg-gradient-to-t from-[#010602]/85 via-transparent to-transparent opacity-65" />
                   </div>
 
-                  {/* Highlights Grid */}
-                  <div className="grid grid-cols-3 gap-2 py-3 border-y border-white/5">
+                  {/* Highlights Grid matching Slide 2 details with Pantone 2427C & Highlight Green theme */}
+                  <div className="grid grid-cols-3 gap-2 py-3 border-y border-[#009100]/20">
                     <div className="flex flex-col items-center gap-1">
-                      <div className="w-8 h-8 rounded-full bg-blue-500/10 border border-blue-500/20 flex items-center justify-center text-blue-400 shadow-inner">
-                        <Zap className="w-4 h-4" />
+                      <div className="w-8 h-8 rounded-full bg-[#035F1D]/20 border border-[#009100]/30 flex items-center justify-center text-[#009100] shadow-inner">
+                        <Zap className="w-4 h-4 fill-[#009100]" />
                       </div>
                       <span className="text-[9px] text-white font-bold leading-normal font-mono uppercase">100% Eléctrico</span>
                     </div>
                     <div className="flex flex-col items-center gap-1">
-                      <div className="w-8 h-8 rounded-full bg-blue-500/10 border border-blue-500/20 flex items-center justify-center text-blue-400 shadow-inner">
+                      <div className="w-8 h-8 rounded-full bg-[#035F1D]/20 border border-[#009100]/30 flex items-center justify-center text-[#009100] shadow-inner">
                         <Settings className="w-4 h-4" />
                       </div>
-                      <span className="text-[9px] text-white font-bold leading-normal font-mono uppercase">Smart Tech</span>
+                      <span className="text-[9px] text-white font-bold leading-normal font-mono uppercase">Autonomía Eléctrica</span>
                     </div>
                     <div className="flex flex-col items-center gap-1">
-                      <div className="w-8 h-8 rounded-full bg-blue-500/10 border border-blue-500/20 flex items-center justify-center text-blue-400 shadow-inner">
+                      <div className="w-8 h-8 rounded-full bg-[#035F1D]/20 border border-[#009100]/30 flex items-center justify-center text-[#009100] shadow-inner">
                         <BatteryCharging className="w-4 h-4" />
                       </div>
-                      <span className="text-[9px] text-white font-bold leading-normal font-mono uppercase">Carga Súper</span>
+                      <span className="text-[9px] text-white font-bold leading-normal font-mono uppercase">Carga Rápida</span>
                     </div>
                   </div>
 
-                  {/* Dual CTA Buttons (Cotizar vs Recibir atención) */}
+                  {/* Dual CTA Buttons customized with Pantone 2427C as base & Highlight R0 G145 B0 online */}
                   <div className="grid grid-cols-2 gap-3 pt-2">
                     <button
                       onClick={() => launchFormWithRequest('cotizacion', 'B10')}
-                      className="bg-blue-600 hover:bg-blue-500 text-white font-extrabold py-3.5 px-4 rounded-xl text-[10px] uppercase tracking-wider flex items-center justify-center gap-1.5 transition-all duration-300 active:scale-95 shadow-lg shadow-blue-500/20"
+                      className="bg-[#035F1D] hover:bg-[#009100] text-white font-extrabold py-3.5 px-4 rounded-xl text-[10px] uppercase tracking-widest flex items-center justify-center gap-1.5 transition-all duration-300 active:scale-95 shadow-lg shadow-[#035F1D]/30 border border-[#009100]/30"
                     >
                       <FileText className="w-3.5 h-3.5" />
                       <span>Cotizar</span>
                     </button>
                     <button
                       onClick={() => launchFormWithRequest('asesor', 'B10')}
-                      className="bg-white/5 hover:bg-white/10 text-emerald-400 border border-emerald-500/30 hover:border-emerald-500/60 font-extrabold py-3.5 px-4 rounded-xl text-[10px] uppercase tracking-wider flex items-center justify-center gap-1.5 transition-all duration-300 active:scale-95"
+                      className="bg-white/5 hover:bg-[#009100]/10 text-[#009100] border border-[#009100]/40 hover:border-[#009100]/80 font-extrabold py-3.5 px-4 rounded-xl text-[10px] uppercase tracking-widest flex items-center justify-center gap-1.5 transition-all duration-300 active:scale-95"
                     >
-                      <Zap className="w-3.5 h-3.5 fill-emerald-400" />
-                      <span>Atención personalizada</span>
+                      <Zap className="w-3.5 h-3.5 fill-[#009100]" />
+                      <span>Atención VIP</span>
                     </button>
                   </div>
                 </div>
@@ -1015,7 +1026,7 @@ export default function LeadForm({ c10ImgUrl, t03ImgUrl, b10ImgUrl }: LeadFormPr
                 <form onSubmit={handleSubmit} className="space-y-3.5">
                   {/* Name and Last Name in elegant side-by-side layout */}
                   <div className="grid grid-cols-2 gap-3">
-                    <div className="space-y-1 bg-slate-900/60 p-2 rounded-xl border border-white/15">
+                    <div className={rowClass}>
                       <label id="frm-name-label" htmlFor="name" className="text-[11px] uppercase font-mono tracking-wider text-white font-extrabold block mb-0.5">
                         Nombre *
                       </label>
@@ -1029,12 +1040,12 @@ export default function LeadForm({ c10ImgUrl, t03ImgUrl, b10ImgUrl }: LeadFormPr
                           placeholder="Tu nombre"
                           value={formData.name}
                           onChange={handleChange}
-                          className="w-full bg-[#0a0f18] border border-white/25 focus:border-indigo-400 focus:ring-1 focus:ring-indigo-400 rounded-xl pl-9 pr-3 py-2.5 text-xs text-white placeholder-slate-400 outline-none transition font-semibold"
+                          className={inputClass}
                         />
                       </div>
                     </div>
 
-                    <div className="space-y-1 bg-slate-900/60 p-2 rounded-xl border border-white/15">
+                    <div className={rowClass}>
                       <label id="frm-lastname-label" htmlFor="lastName" className="text-[11px] uppercase font-mono tracking-wider text-white font-extrabold block mb-0.5">
                         Apellido *
                       </label>
@@ -1048,7 +1059,7 @@ export default function LeadForm({ c10ImgUrl, t03ImgUrl, b10ImgUrl }: LeadFormPr
                           placeholder="Tu apellido"
                           value={formData.lastName}
                           onChange={handleChange}
-                          className="w-full bg-[#0a0f18] border border-white/25 focus:border-indigo-400 focus:ring-1 focus:ring-indigo-400 rounded-xl pl-9 pr-3 py-2.5 text-xs text-white placeholder-slate-400 outline-none transition font-semibold"
+                          className={inputClass}
                         />
                       </div>
                     </div>
@@ -1057,7 +1068,7 @@ export default function LeadForm({ c10ImgUrl, t03ImgUrl, b10ImgUrl }: LeadFormPr
                   {/* Phone & Postal Code fields in the same row */}
                   <div className="grid grid-cols-2 gap-2">
                     {/* Phone field */}
-                    <div className="space-y-1 bg-slate-900/60 p-2 rounded-xl border border-white/15">
+                    <div className={rowClass}>
                       <label id="frm-phone-label" htmlFor="phone" className="text-[11px] uppercase font-mono tracking-wider text-white font-extrabold block mb-0.5 truncate">
                         Teléfono *
                       </label>
@@ -1071,13 +1082,13 @@ export default function LeadForm({ c10ImgUrl, t03ImgUrl, b10ImgUrl }: LeadFormPr
                           placeholder="10 dígitos"
                           value={formData.phone}
                           onChange={handleChange}
-                          className="w-full bg-[#0a0f18] border border-white/25 focus:border-indigo-400 focus:ring-1 focus:ring-indigo-400 rounded-xl pl-9 pr-3 py-2.5 text-xs text-white placeholder-slate-400 outline-none transition font-semibold"
+                          className={inputClass}
                         />
                       </div>
                     </div>
 
                     {/* Postal Code field */}
-                    <div className="space-y-1 bg-slate-900/60 p-2 rounded-xl border border-white/15">
+                    <div className={rowClass}>
                       <label id="frm-postalcode-label" htmlFor="postalCode" className="text-[11px] uppercase font-mono tracking-wider text-white font-extrabold block mb-0.5 truncate" title="Código Postal *">
                         Código Postal *
                       </label>
@@ -1095,14 +1106,14 @@ export default function LeadForm({ c10ImgUrl, t03ImgUrl, b10ImgUrl }: LeadFormPr
                              const cleaned = e.target.value.replace(/[^0-9]/g, '');
                              setFormData(prev => ({ ...prev, postalCode: cleaned }));
                           }}
-                          className="w-full bg-[#0a0f18] border border-white/25 focus:border-indigo-400 focus:ring-1 focus:ring-indigo-400 rounded-xl pl-9 pr-3 py-2.5 text-xs text-white placeholder-slate-400 outline-none transition font-semibold"
+                          className={inputClass}
                         />
                       </div>
                     </div>
                   </div>
 
                   {/* Models dropdown list tailored by Selected Brand */}
-                  <div className="space-y-1 bg-slate-900/60 p-2 rounded-xl border border-white/15">
+                  <div className={rowClass}>
                     <label id="frm-model-label" className="text-[11px] uppercase font-mono tracking-wider text-white font-extrabold block mb-0.5">
                       Modelo Seleccionado *
                     </label>
@@ -1140,7 +1151,11 @@ export default function LeadForm({ c10ImgUrl, t03ImgUrl, b10ImgUrl }: LeadFormPr
                           disabled={selectedBrand === 'Leapmotor'}
                           value={formData.modelOfInterest}
                           onChange={handleChange}
-                          className="w-full bg-[#0a0f18] text-white border border-white/25 focus:border-indigo-400 rounded-xl pl-11 pr-7 py-2.5 text-xs outline-none appearance-none transition uppercase font-mono font-bold disabled:opacity-85 disabled:cursor-not-allowed"
+                          className={`w-full text-white rounded-xl pl-11 pr-7 py-2.5 text-xs outline-none appearance-none transition uppercase font-mono font-bold disabled:opacity-85 disabled:cursor-not-allowed ${
+                            activeLanding === 'leapmotor'
+                              ? 'bg-[#010602] border border-[#009100]/25 focus:border-[#009100]'
+                              : 'bg-[#0a0f18] border border-white/25 focus:border-indigo-400'
+                          }`}
                         >
                           {activeModelsList.map(m => (
                             <option key={m} value={m} className="bg-slate-900 text-white">
@@ -1276,10 +1291,16 @@ export default function LeadForm({ c10ImgUrl, t03ImgUrl, b10ImgUrl }: LeadFormPr
                   </p>
                 )}
 
-                {/* Show brand graphic mockup preview */}
-                <div className="relative aspect-video max-w-xs mx-auto rounded-xl border border-indigo-500/30 select-none bg-slate-900/40 my-2 overflow-hidden shadow-[0_0_15px_rgba(99,102,241,0.2)]">
+                {/* Show brand graphic mockup preview with dynamic branding border & shadow */}
+                <div className={`relative aspect-video max-w-xs mx-auto rounded-xl border select-none bg-slate-900/40 my-2 overflow-hidden shadow-lg transition-all duration-300 ${
+                  selectedBrand === 'Leapmotor'
+                    ? 'border-[#009100]/40 shadow-[0_0_20px_rgba(0,145,0,0.25)]'
+                    : (selectedBrand === 'Jeep'
+                       ? 'border-emerald-500/30 shadow-[0_0_15px_rgba(16,185,129,0.15)]'
+                       : 'border-indigo-500/30 shadow-[0_0_15px_rgba(99,102,241,0.2)]')
+                }`}>
                   <img 
-                    src={activeLanding === 'jeep' ? JEEP_IMG : (activeLanding === 'multimarca' ? STELLANTIS_IMG : b10ImgUrl || "https://picsum.photos/seed/purpleb10/600/375")} 
+                    src={selectedBrand === 'Jeep' ? JEEP_IMG : (selectedBrand === 'Leapmotor' ? b10ImgUrl : STELLANTIS_IMG)} 
                     alt={selectedBrand}
                     referrerPolicy="no-referrer"
                     className="w-full h-full object-cover brightness-[1.25] contrast-[1.08] saturate-[1.1]"
@@ -1440,11 +1461,14 @@ export default function LeadForm({ c10ImgUrl, t03ImgUrl, b10ImgUrl }: LeadFormPr
               {/* Models List Scrollable body */}
               <div className="p-3 overflow-y-auto space-y-2.5 flex-1 select-none">
                 {activeModelsList.map((m) => {
-                  const details = MODEL_DETAILS[selectedBrand]?.[m] || {
+                  let details = MODEL_DETAILS[selectedBrand]?.[m] || {
                     name: `${selectedBrand} ${m}`,
                     desc: 'Innovación, tecnología y excelencia Stellantis.',
                     img: 'https://images.unsplash.com/photo-1542282088-fe8426682b8f?w=350&q=80'
                   };
+                  if (selectedBrand === 'Leapmotor' && m === 'B10' && b10ImgUrl) {
+                    details = { ...details, img: b10ImgUrl };
+                  }
                   const isChosen = formData.modelOfInterest === m;
 
                   return (

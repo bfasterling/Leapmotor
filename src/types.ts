@@ -33,4 +33,5 @@ export interface Lead {
   landing?: 'leapmotor' | 'jeep' | 'multimarca' | string;
   selectedBrand?: string;
   testDriveDate?: string;
+  coordinatorNotes?: string;
 }

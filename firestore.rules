@@ -38,7 +38,8 @@ service cloud.firestore {
         && (!('advisorName' in data) || data.advisorName == null || (data.advisorName is string && data.advisorName.size() <= 100))
         && (!('landing' in data) || data.landing is string && data.landing.size() <= 100)
         && (!('selectedBrand' in data) || data.selectedBrand is string && data.selectedBrand.size() <= 100)
-        && (!('testDriveDate' in data) || data.testDriveDate == null || (data.testDriveDate is string && data.testDriveDate.size() <= 100));
+        && (!('testDriveDate' in data) || data.testDriveDate == null || (data.testDriveDate is string && data.testDriveDate.size() <= 100))
+        && (!('coordinatorNotes' in data) || data.coordinatorNotes == null || (data.coordinatorNotes is string && data.coordinatorNotes.size() <= 2000));
     }
 
     function isValidAdvisor(data) {
@@ -89,11 +90,20 @@ service cloud.firestore {
         && (!('testDriveDate' in existing()) || (incoming().testDriveDate == existing().testDriveDate))
         // Enforce updater fields (action checks)
         && (
-          // Action 1: Attending (waiting -> attending)
-          (existing().status == "waiting" && incoming().status == "attending" && incoming().attendedAt == request.time && (!('advisorId' in incoming()) || incoming().advisorId is string) && (!('advisorName' in incoming()) || incoming().advisorName is string) && (!('distributor' in incoming()) || incoming().distributor is string) && incoming().diff(existing()).affectedKeys().hasOnly(['status', 'attendedAt', 'advisorId', 'advisorName', 'distributor']))
+          // Action 1: Reassign Lead to an Advisor (by Coordinator)
+          (incoming().diff(existing()).affectedKeys().hasOnly(['advisorId', 'advisorName']))
           ||
-          // Action 2: Outcome notes (attending -> attended or lost)
-          (existing().status == "attending" && (incoming().status == "attended" || incoming().status == "lost") && incoming().completedAt == request.time && incoming().notes is string && incoming().notes.size() <= 1000 && incoming().diff(existing()).affectedKeys().hasOnly(['status', 'completedAt', 'notes']))
+          // Action 2: Save Coordinator Notes (by Coordinator)
+          (incoming().diff(existing()).affectedKeys().hasOnly(['coordinatorNotes']))
+          ||
+          // Action 3: Start Attending (waiting -> attending) - handles optional distributor assignment as well
+          (existing().status == "waiting" && incoming().status == "attending" && (incoming().attendedAt == request.time || incoming().attendedAt is timestamp || incoming().attendedAt is string) && (!('advisorId' in incoming()) || incoming().advisorId is string) && (!('advisorName' in incoming()) || incoming().advisorName is string) && (!('distributor' in incoming()) || incoming().distributor is string) && incoming().diff(existing()).affectedKeys().hasOnly(['status', 'attendedAt', 'advisorId', 'advisorName', 'distributor']))
+          ||
+          // Action 4: Conclude Lead (attending -> attended or lost) (by Advisor)
+          (existing().status == "attending" && (incoming().status == "attended" || incoming().status == "lost") && (incoming().completedAt == request.time || incoming().completedAt is timestamp || incoming().completedAt is string) && incoming().notes is string && incoming().notes.size() <= 1000 && incoming().diff(existing()).affectedKeys().hasOnly(['status', 'completedAt', 'notes']))
+          ||
+          // Action 5: Coordinator Closing (waiting/attending -> attended or lost)
+          ((existing().status == "waiting" || existing().status == "attending") && (incoming().status == "attended" || incoming().status == "lost") && (incoming().completedAt == request.time || incoming().completedAt is timestamp || incoming().completedAt is string) && incoming().diff(existing()).affectedKeys().hasOnly(['status', 'completedAt']))
         )
       );
 

@@ -39,7 +39,10 @@ import {
   Sparkles,
   Sun,
   Moon,
-  Pencil
+  Pencil,
+  Search,
+  Filter,
+  CheckCircle
 } from 'lucide-react';
 import { motion } from 'motion/react';
 
@@ -92,6 +95,23 @@ export default function Dashboard() {
   const [mgmtSuccess, setMgmtSuccess] = useState('');
   const [editingAdvisorId, setEditingAdvisorId] = useState<string | null>(null);
 
+  // Estados para panel de administración de leads del coordinador
+  const [leadSearch, setLeadSearch] = useState('');
+  const [leadStatusFilter, setLeadStatusFilter] = useState<string>('all');
+  const [leadAgencyFilter, setLeadAgencyFilter] = useState('all');
+  const [leadAdvisorFilter, setLeadAdvisorFilter] = useState('all');
+  const [leadDateFilter, setLeadDateFilter] = useState<string>('all');
+  const [leadSearchStartDate, setLeadSearchStartDate] = useState('');
+  const [leadSearchEndDate, setLeadSearchEndDate] = useState('');
+
+  // Estados para edición de notas de coordinador
+  const [editingNotesLeadId, setEditingNotesLeadId] = useState<string | null>(null);
+  const [editingNotesText, setEditingNotesText] = useState('');
+
+  // Estado para reasignación de asesor
+  const [reassigningLeadId, setReassigningLeadId] = useState<string | null>(null);
+  const [selectedReassignAdvisorId, setSelectedReassignAdvisorId] = useState('');
+
   // Subscribe to leads
   useEffect(() => {
     const q = query(collection(db, 'leads'), orderBy('createdAt', 'desc'));
@@ -120,7 +140,8 @@ export default function Dashboard() {
           requestType: d.requestType,
           landing: d.landing || 'leapmotor',
           selectedBrand: d.selectedBrand || 'Leapmotor',
-          testDriveDate: d.testDriveDate || null
+          testDriveDate: d.testDriveDate || null,
+          coordinatorNotes: d.coordinatorNotes || ''
         });
       });
       setLeads(parsed);
@@ -361,6 +382,67 @@ export default function Dashboard() {
     }
   };
 
+  // Guardar comentarios específicos de coordinador
+  const handleSaveCoordinatorNotes = async (leadId: string, notesText: string) => {
+    try {
+      await updateDoc(doc(db, 'leads', leadId), {
+        coordinatorNotes: notesText.trim()
+      });
+      setEditingNotesLeadId(null);
+    } catch (err) {
+      console.error("Error saving coordinator notes:", err);
+    }
+  };
+
+  // Reasignar prospecto a un asesor
+  const handleReassignLead = async (leadId: string, advId: string) => {
+    if (!advId) return;
+    const advisorObj = advisors.find(a => a.id === advId);
+    if (!advisorObj) return;
+
+    try {
+      await updateDoc(doc(db, 'leads', leadId), {
+        advisorId: advisorObj.id,
+        advisorName: advisorObj.name
+      });
+      setReassigningLeadId(null);
+      setSelectedReassignAdvisorId('');
+    } catch (err) {
+      console.error("Error reassigning lead:", err);
+    }
+  };
+
+  // Cancelar prospecto desde el panel de espera
+  const handleCancelLead = async (leadId: string) => {
+    if (!window.confirm('¿Desea cancelar este prospecto?')) return;
+    try {
+      await updateDoc(doc(db, 'leads', leadId), {
+        status: LeadStatus.LOST,
+        completedAt: new Date()
+      });
+    } catch (err) {
+      console.error("Error canceling lead:", err);
+    }
+  };
+
+  // Cerrar prospectos estancados en atención
+  const handleCloseLeadInAttending = async (leadId: string, outcome: 'no_asistio' | 'ok') => {
+    const confirmMsg = outcome === 'no_asistio'
+      ? '¿Cerrar prospecto como "No Asistió"?'
+      : '¿Cerrar prospecto como "OK" (Exitoso)?';
+
+    if (!window.confirm(confirmMsg)) return;
+
+    try {
+      await updateDoc(doc(db, 'leads', leadId), {
+        status: outcome === 'no_asistio' ? LeadStatus.LOST : LeadStatus.ATTENDED,
+        completedAt: new Date()
+      });
+    } catch (err) {
+      console.error("Error manual closing lead in attention:", err);
+    }
+  };
+
   // Compute stats based on the selected date filters
   const totalLeads = filteredLeads.length;
   
@@ -437,6 +519,62 @@ export default function Dashboard() {
     .map(([dist, val]) => ({ name: dist.replace('Leapmotor ', ''), Cantidad: val as number }))
     .sort((a, b) => b.Cantidad - a.Cantidad)
     .slice(0, 5);
+
+  // Filtrado de prospectos para la sección de administración del coordinador
+  const uniqueLeadDistributors = Array.from(new Set(leads.map(l => l.distributor).filter(Boolean))).sort();
+
+  const filteredCoordinatorLeads = leads.filter(lead => {
+    // 1. Búsqueda por nombre, apellido, correo o teléfono
+    if (leadSearch.trim()) {
+      const q = leadSearch.toLowerCase().trim();
+      const fullName = `${lead.name} ${lead.lastName || ''}`.toLowerCase();
+      const email = (lead.email || '').toLowerCase();
+      const phone = lead.phone || '';
+      if (!fullName.includes(q) && !email.includes(q) && !phone.includes(q)) {
+        return false;
+      }
+    }
+
+    // 2. Filtro por Estado
+    if (leadStatusFilter !== 'all') {
+      if (lead.status !== leadStatusFilter) return false;
+    }
+
+    // 3. Filtro por Agencia
+    if (leadAgencyFilter !== 'all') {
+      if (lead.distributor !== leadAgencyFilter) return false;
+    }
+
+    // 4. Filtro por Asesor asignado
+    if (leadAdvisorFilter !== 'all') {
+      if (leadAdvisorFilter === 'unassigned') {
+        if (lead.advisorId) return false;
+      } else {
+        if (lead.advisorId !== leadAdvisorFilter) return false;
+      }
+    }
+
+    // 5. Filtro por Rango / Fecha de hoy
+    const leadDate = lead.createdAt?.toDate ? lead.createdAt.toDate() : new Date(lead.createdAt || Date.now());
+    if (leadDateFilter === 'today') {
+      const todayStart = new Date();
+      todayStart.setHours(0, 0, 0, 0);
+      const todayEnd = new Date();
+      todayEnd.setHours(23, 59, 59, 999);
+      if (leadDate < todayStart || leadDate > todayEnd) return false;
+    } else if (leadDateFilter === 'range') {
+      if (leadSearchStartDate) {
+        const start = new Date(leadSearchStartDate + "T00:00:00");
+        if (leadDate < start) return false;
+      }
+      if (leadSearchEndDate) {
+        const end = new Date(leadSearchEndDate + "T23:59:59");
+        if (leadDate > end) return false;
+      }
+    }
+
+    return true;
+  });
 
   if (loading) {
     return (
@@ -1020,6 +1158,370 @@ export default function Dashboard() {
             <p className={`text-[11px] mt-2.5 font-mono font-semibold ${subColor}`}>
               * Nota: Al suspender un asesor, éste conservará acceso para atender sus leads vigentes, pero no recibirá prospectos adicionales desde el formulario de la Landing.
             </p>
+          </div>
+        </div>
+      </div>
+
+      {/* GESTIÓN Y ADMINISTRACIÓN GENERAL DE PROSPECTOS/LEADS POR COORDINADOR */}
+      <div className={`mt-8 border rounded-3xl p-6 transition-all duration-300 relative overflow-hidden ${cardBg}`} id="coordinator-leads-management-section">
+        <div className="absolute top-0 right-0 w-64 h-64 bg-blue-500/5 blur-[80px] rounded-full pointer-events-none" />
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
+          <div>
+            <h3 className={`text-sm font-black tracking-widest uppercase font-mono mb-1.5 flex items-center gap-2 ${titleColor}`}>
+              <Filter className="w-4 h-4 text-blue-400" /> ADMINISTRACIÓN GENERAL DE PROSPECTOS
+            </h3>
+            <p className={`text-xs font-semibold leading-relaxed ${subColor}`}>
+              Filtre, busque, asigne o reasigne prospectos originarios de todas las campañas en tiempo real.
+            </p>
+          </div>
+          <div className="flex items-center gap-2 bg-blue-500/15 text-blue-400 text-[11px] font-mono font-bold uppercase tracking-wider px-3 py-1.5 rounded-xl border border-blue-500/25">
+            Leads Filtrados: {filteredCoordinatorLeads.length}
+          </div>
+        </div>
+
+        {/* Fila de Filtros Avanzados */}
+        <div className={`grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-4 mb-6 p-4 rounded-2xl border ${isDark ? 'bg-slate-950/40 border-slate-850' : 'bg-slate-50 border-slate-205 border-slate-200'}`}>
+          {/* 1. Búsqueda por Texto */}
+          <div>
+            <label className={`block text-[10px] font-mono tracking-wider uppercase font-extrabold mb-1.5 ${isDark ? 'text-white' : 'text-slate-600'}`}>Buscar Cliente:</label>
+            <div className="relative">
+              <input
+                type="text"
+                placeholder="Nombre, Telefono, Correo..."
+                value={leadSearch}
+                onChange={(e) => setLeadSearch(e.target.value)}
+                className={`w-full border rounded-xl pl-9 pr-3 py-2 text-xs outline-none transition font-semibold ${
+                  isDark ? 'bg-slate-900 border-slate-800 text-white placeholder-slate-500 focus:border-blue-500/50' : 'bg-white border-slate-200 text-slate-800 placeholder-slate-400 focus:border-indigo-500/50'
+                }`}
+              />
+              <Search className="w-4 h-4 text-slate-400 absolute left-3 top-2.5" />
+            </div>
+          </div>
+
+          {/* 2. Filtro de Estado */}
+          <div>
+            <label className={`block text-[10px] font-mono tracking-wider uppercase font-extrabold mb-1.5 ${isDark ? 'text-white' : 'text-slate-600'}`}>Filtrar por Estado:</label>
+            <select
+              value={leadStatusFilter}
+              onChange={(e) => setLeadStatusFilter(e.target.value)}
+              className={`w-full border rounded-xl px-3 py-2 text-xs outline-none transition font-semibold cursor-pointer ${
+                isDark ? 'bg-slate-900 border-slate-800 text-white focus:border-blue-500/50' : 'bg-white border-slate-200 text-slate-800 focus:border-indigo-500/50'
+              }`}
+            >
+              <option value="all">TODOS LOS ESTADOS</option>
+              <option value={LeadStatus.WAITING}>EN ESPERA DE ATENCIÓN</option>
+              <option value={LeadStatus.ATTENDING}>EN ATENCIÓN ACTIVA</option>
+              <option value={LeadStatus.ATTENDED}>ATENDIDOS CON ÉXITO / OK</option>
+              <option value={LeadStatus.LOST}>DESCARTADOS / CANCELADOS</option>
+            </select>
+          </div>
+
+          {/* 3. Filtro por Agencia */}
+          <div>
+            <label className={`block text-[10px] font-mono tracking-wider uppercase font-extrabold mb-1.5 ${isDark ? 'text-white' : 'text-slate-600'}`}>Filtrar por Agencia:</label>
+            <select
+              value={leadAgencyFilter}
+              onChange={(e) => setLeadAgencyFilter(e.target.value)}
+              className={`w-full border rounded-xl px-3 py-2 text-xs outline-none transition font-semibold cursor-pointer ${
+                isDark ? 'bg-slate-900 border-slate-800 text-white focus:border-blue-500/50' : 'bg-white border-slate-200 text-slate-800 focus:border-indigo-500/50'
+              }`}
+            >
+              <option value="all">TODAS LAS AGENCIAS</option>
+              {uniqueLeadDistributors.map(dist => (
+                <option key={dist} value={dist}>{dist}</option>
+              ))}
+            </select>
+          </div>
+
+          {/* 4. Filtro por Asesor */}
+          <div>
+            <label className={`block text-[10px] font-mono tracking-wider uppercase font-extrabold mb-1.5 ${isDark ? 'text-white' : 'text-slate-600'}`}>Filtrar por Asesor:</label>
+            <select
+              value={leadAdvisorFilter}
+              onChange={(e) => setLeadAdvisorFilter(e.target.value)}
+              className={`w-full border rounded-xl px-3 py-2 text-xs outline-none transition font-semibold cursor-pointer ${
+                isDark ? 'bg-slate-900 border-slate-800 text-white focus:border-blue-500/50' : 'bg-white border-slate-200 text-slate-800 focus:border-indigo-500/50'
+              }`}
+            >
+              <option value="all">TODOS LOS ASESORES</option>
+              <option value="unassigned">SIN ASIGNAR (FILA DE ESPERA)</option>
+              {advisors.map(adv => (
+                <option key={adv.id} value={adv.id}>{adv.name} {adv.active === false ? '(Inactivo)' : ''}</option>
+              ))}
+            </select>
+          </div>
+
+          {/* 5. Filtro de Tiempo */}
+          <div>
+            <label className={`block text-[10px] font-mono tracking-wider uppercase font-extrabold mb-1.5 ${isDark ? 'text-white' : 'text-slate-600'}`}>Filtro Temporal:</label>
+            <select
+              value={leadDateFilter}
+              onChange={(e) => setLeadDateFilter(e.target.value)}
+              className={`w-full border rounded-xl px-3 py-2 text-xs outline-none transition font-semibold cursor-pointer ${
+                isDark ? 'bg-slate-900 border-slate-800 text-white focus:border-blue-500/50' : 'bg-white border-slate-200 text-slate-800 focus:border-indigo-500/50'
+              }`}
+            >
+              <option value="all">HISTÓRICO COMPLETO</option>
+              <option value="today">SÓLO HOY</option>
+              <option value="range">RANGO PERSONALIZADO</option>
+            </select>
+          </div>
+        </div>
+
+        {/* Rango de fechas condicional */}
+        {leadDateFilter === 'range' && (
+          <div className={`grid grid-cols-1 sm:grid-cols-2 gap-4 mb-6 p-4 rounded-xl border ${isDark ? 'bg-slate-950/20 border-slate-850' : 'bg-slate-50 border-slate-200'}`}>
+            <div>
+              <label className={`block text-[10px] font-mono tracking-wider uppercase font-extrabold mb-1 ${isDark ? 'text-slate-400' : 'text-slate-600'}`}>Fecha Inicial:</label>
+              <input
+                type="date"
+                value={leadSearchStartDate}
+                onChange={(e) => setLeadSearchStartDate(e.target.value)}
+                className={`w-full border rounded-xl px-3 py-2 text-xs outline-none transition font-semibold ${
+                  isDark ? 'bg-slate-900 border-slate-800 text-white' : 'bg-white border-slate-200 text-slate-800'
+                }`}
+              />
+            </div>
+            <div>
+              <label className={`block text-[10px] font-mono tracking-wider uppercase font-extrabold mb-1 ${isDark ? 'text-slate-400' : 'text-slate-600'}`}>Fecha Final:</label>
+              <input
+                type="date"
+                value={leadSearchEndDate}
+                onChange={(e) => setLeadSearchEndDate(e.target.value)}
+                className={`w-full border rounded-xl px-3 py-2 text-xs outline-none transition font-semibold ${
+                  isDark ? 'bg-slate-900 border-slate-800 text-white' : 'bg-white border-slate-200 text-slate-800'
+                }`}
+              />
+            </div>
+          </div>
+        )}
+
+        {/* Tabla de Resultados de Leads */}
+        <div className="w-full overflow-x-auto">
+          <div className={`border rounded-xl overflow-hidden transition-all ${isDark ? 'bg-slate-950/30 border-slate-800' : 'bg-white border-slate-200'}`}>
+            <table className="w-full text-[11px] text-left border-collapse">
+              <thead>
+                <tr className={`border-b font-mono uppercase text-[9px] tracking-wider font-black ${isDark ? 'bg-slate-950/80 border-slate-700 text-white' : 'bg-slate-100 border-slate-200 text-slate-700'}`}>
+                  <th className="p-3">Prospecto / Contacto</th>
+                  <th className="p-3">Interés / Campaña</th>
+                  <th className="p-3">Agencia</th>
+                  <th className="p-3">Asesor Asignado</th>
+                  <th className="p-3">Fecha Registro</th>
+                  <th className="p-3">Fila de Coordinador (Hover)</th>
+                  <th className="p-3">Estado</th>
+                  <th className="p-3 text-right">Acciones de Coordinación</th>
+                </tr>
+              </thead>
+              <tbody className={`divide-y ${isDark ? 'divide-slate-805 divide-slate-800/50' : 'divide-slate-150 divide-slate-100'}`}>
+                {filteredCoordinatorLeads.length === 0 ? (
+                  <tr>
+                    <td colSpan={8} className={`p-8 text-center font-bold italic text-xs ${mutedColor}`}>
+                      No se encontraron prospectos con los filtros actuales...
+                    </td>
+                  </tr>
+                ) : (
+                  filteredCoordinatorLeads.map((lead) => {
+                    // Formateo de fecha de creación
+                    let dateStr = 'Hoy';
+                    if (lead.createdAt) {
+                      const dateObj = lead.createdAt.toDate ? lead.createdAt.toDate() : new Date(lead.createdAt);
+                      dateStr = dateObj.toLocaleDateString('es-MX', {
+                        day: '2-digit',
+                        month: 'short',
+                        year: 'numeric',
+                        hour: '2-digit',
+                        minute: '2-digit'
+                      });
+                    }
+
+                    return (
+                      <tr key={lead.id} className={`transition-colors font-medium ${isDark ? 'text-slate-100 hover:bg-slate-850/30' : 'text-slate-800 hover:bg-slate-50'}`}>
+                        {/* Prospecto / Contacto */}
+                        <td className="p-3">
+                          <div className={`font-black text-xs ${titleColor}`}>{lead.name} {lead.lastName || ''}</div>
+                          <div className="font-mono text-[10px] text-sky-400 mt-0.5">{lead.phone}</div>
+                          <div className="text-[10px] text-slate-450">{lead.email}</div>
+                        </td>
+
+                        {/* Interés / Campaña */}
+                        <td className="p-3">
+                          <div className="font-mono font-extrabold rounded bg-blue-500/10 border border-blue-500/20 text-blue-400 px-1.5 py-0.5 inline-block text-[9px] uppercase tracking-wide">
+                            {lead.selectedBrand || 'Leapmotor'} - {lead.modelOfInterest}
+                          </div>
+                          {lead.landing && (
+                            <div className="text-[10px] text-slate-500 font-mono mt-1">
+                              Campaña: <span className="font-bold underline">{lead.landing.toUpperCase()}</span>
+                            </div>
+                          )}
+                        </td>
+
+                        {/* Agencia */}
+                        <td className="p-3">
+                          <div className={`font-bold ${isDark ? 'text-white' : 'text-slate-800'}`}>
+                            {lead.distributor || 'Distribuidor Digital'}
+                          </div>
+                          {lead.state && (
+                            <div className="text-[9px] font-mono mt-0.5 text-slate-500 uppercase">{lead.state}</div>
+                          )}
+                        </td>
+
+                        {/* Asesor Asignado */}
+                        <td className="p-3">
+                          {lead.advisorId ? (
+                            <div className="flex flex-col">
+                              <span className={`font-bold ${titleColor}`}>👤 {lead.advisorName || 'Desconocido'}</span>
+                              <span className="font-mono text-[9px] text-slate-400">ID: {lead.advisorId}</span>
+                            </div>
+                          ) : (
+                            <span className="font-bold font-mono text-[10px] text-amber-500 uppercase flex items-center gap-1 animate-pulse">
+                              ⚠️ Sin Asesor
+                            </span>
+                          )}
+                        </td>
+
+                        {/* Fecha Registro */}
+                        <td className="p-3 font-mono text-[10px] text-slate-400">
+                          {dateStr}
+                        </td>
+
+                        {/* Fila de Coordinador - Tooltip sobre mouse_over */}
+                        <td className="p-3 relative group">
+                          {editingNotesLeadId === lead.id ? (
+                            <div className="flex gap-1.5 items-center">
+                              <input
+                                type="text"
+                                value={editingNotesText}
+                                onChange={(e) => setEditingNotesText(e.target.value)}
+                                className={`px-2 py-1 text-xs rounded-lg border ${inputStyle}`}
+                                placeholder="Comentario..."
+                                autoFocus
+                                onKeyDown={(e) => {
+                                  if (e.key === 'Enter') {
+                                    handleSaveCoordinatorNotes(lead.id, editingNotesText);
+                                  }
+                                }}
+                              />
+                              <button
+                                onClick={() => handleSaveCoordinatorNotes(lead.id, editingNotesText)}
+                                className="bg-emerald-500 hover:bg-emerald-400 text-slate-950 px-2 py-1 rounded-lg text-xs font-black cursor-pointer shadow"
+                              >
+                                ✓
+                              </button>
+                              <button
+                                onClick={() => setEditingNotesLeadId(null)}
+                                className="bg-slate-550 hover:bg-slate-400 text-white px-2 py-1 rounded-lg text-xs font-black cursor-pointer shadow bg-slate-600"
+                              >
+                                X
+                              </button>
+                            </div>
+                          ) : (
+                            <div className="flex items-center gap-1.5">
+                              <div className="max-w-[125px] overflow-hidden truncate">
+                                <span className={`italic text-[10px] font-semibold ${lead.coordinatorNotes ? 'text-cyan-400 font-bold border-b border-dashed border-cyan-400' : 'text-slate-500'}`}>
+                                  {lead.coordinatorNotes || '(Sin comentarios)'}
+                                </span>
+                              </div>
+                              <button
+                                onClick={() => {
+                                  setEditingNotesLeadId(lead.id);
+                                  setEditingNotesText(lead.coordinatorNotes || '');
+                                }}
+                                className="text-blue-400 hover:text-blue-300 transition cursor-pointer"
+                                title="Editar comentario"
+                              >
+                                <Pencil className="w-3 h-3" />
+                              </button>
+
+                              {/* Tooltip con hover nativo */}
+                              {lead.coordinatorNotes && (
+                                <div className="absolute bottom-full left-0 mb-2 w-64 p-3 bg-slate-900 border border-slate-700 text-slate-100 text-xs rounded-xl shadow-2xl hidden group-hover:block z-50 pointer-events-none break-words">
+                                  <div className="text-blue-400 font-bold mb-1 border-b border-slate-700/60 pb-1 flex items-center gap-1 font-mono uppercase tracking-wider text-[10px]">
+                                    <CheckCircle className="w-3.5 h-3.5" /> Notas de Coordinador:
+                                  </div>
+                                  <span className="font-sans font-medium text-slate-200">{lead.coordinatorNotes}</span>
+                                </div>
+                              )}
+                            </div>
+                          )}
+                        </td>
+
+                        {/* Estado del Lead */}
+                        <td className="p-3">
+                          <span className={`inline-block px-2.5 py-1 rounded-full text-[9px] font-black uppercase font-mono border ${
+                            lead.status === LeadStatus.WAITING ? 'bg-amber-500/15 text-amber-400 border-amber-500/30' :
+                            lead.status === LeadStatus.ATTENDING ? 'bg-cyan-500/15 text-cyan-400 border-cyan-500/30 font-extrabold' :
+                            lead.status === LeadStatus.ATTENDED ? 'bg-emerald-500/15 text-emerald-400 border-emerald-500/30 font-bold' :
+                            'bg-slate-500/15 text-slate-400 border-slate-500/30'
+                          }`}>
+                            {lead.status === LeadStatus.WAITING ? 'Espera' :
+                             lead.status === LeadStatus.ATTENDING ? 'Atención' :
+                             lead.status === LeadStatus.ATTENDED ? 'Atendido / OK' :
+                             'Cancelado'}
+                          </span>
+                        </td>
+
+                        {/* Acciones de Coordinación */}
+                        <td className="p-3 text-right">
+                          {/* 1) Para leads en espera, reasignación designada o cancelar */}
+                          {lead.status === LeadStatus.WAITING && (
+                            <div className="flex gap-2 justify-end items-center">
+                              <select
+                                value=""
+                                onChange={(e) => {
+                                  if (e.target.value) {
+                                    handleReassignLead(lead.id, e.target.value);
+                                  }
+                                }}
+                                className={`px-2 py-1 text-[10px] uppercase font-mono font-bold rounded-lg border cursor-pointer ${inputStyle}`}
+                              >
+                                <option value="">Asignar a...</option>
+                                {advisors.map(adv => (
+                                  <option key={adv.id} value={adv.id}>{adv.name}</option>
+                                ))}
+                              </select>
+                              <button
+                                onClick={() => handleCancelLead(lead.id)}
+                                className="text-[10px] uppercase font-black border border-red-500/35 hover:bg-red-500/10 text-red-400 px-2.5 py-1 rounded-lg transition duration-200 cursor-pointer"
+                                title="Cancelar prospecto"
+                              >
+                                Cancelar
+                              </button>
+                            </div>
+                          )}
+
+                          {/* 3) Para leads en atención estancados */}
+                          {lead.status === LeadStatus.ATTENDING && (
+                            <div className="flex gap-1.5 justify-end items-center">
+                              <button
+                                onClick={() => handleCloseLeadInAttending(lead.id, 'ok')}
+                                className="bg-emerald-500/20 hover:bg-emerald-500/30 text-emerald-400 hover:text-emerald-300 text-[9px] uppercase border border-emerald-500/25 px-2.5 py-1 rounded-lg font-black transition cursor-pointer"
+                                title="Cerrar prospecto como atendido con éxito / OK"
+                              >
+                                Cerrar OK
+                              </button>
+                              <button
+                                onClick={() => handleCloseLeadInAttending(lead.id, 'no_asistio')}
+                                className="bg-red-500/15 hover:bg-red-500/25 text-red-400 hover:text-red-350 text-[9px] uppercase border border-red-500/20 px-2.5 py-1 rounded-lg font-black transition cursor-pointer"
+                                title="Cerrar prospecto indicando que no asistió"
+                              >
+                                No Asistió
+                              </button>
+                            </div>
+                          )}
+
+                          {/* Si el lead ya está finalizado */}
+                          {(lead.status === LeadStatus.ATTENDED || lead.status === LeadStatus.LOST) && (
+                            <span className="text-[10px] font-bold font-mono text-slate-500 uppercase italic">
+                              Cerrado/Inalterable
+                            </span>
+                          )}
+                        </td>
+                      </tr>
+                    );
+                  })
+                )}
+              </tbody>
+            </table>
           </div>
         </div>
       </div>

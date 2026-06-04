@@ -13,7 +13,7 @@ import LeapmotorLogo from './components/LeapmotorLogo';
 
 import C10_IMG from './assets/images/leapmotor_c10_cdmx_1779978633850.png';
 import T03_IMG from './assets/images/leapmotor_t03_urban_1779978654553.png';
-import B10_IMG from './assets/images/leapmotor_b10_purple_1779982160286.png';
+import B10_IMG from './assets/images/leapmotor_b10_blue_optimized_1780583624316.png';
 
 enum MainRole {
   CLIENT = 'client',
@@ -24,8 +24,18 @@ enum MainRole {
 export default function App() {
   const [currentRole, setCurrentRole] = useState<MainRole>(MainRole.CLIENT);
 
-  // Helper to parse role from URL
+  // Helper to parse role from URL or Domain Hostname
   const determineRoleFromUrl = (): MainRole => {
+    const host = window.location.hostname.toLowerCase();
+    
+    // Domain-based routing (subdomains)
+    if (host.startsWith('asesor') || host.startsWith('advisor') || host.startsWith('consultor')) {
+      return MainRole.ADVISOR;
+    }
+    if (host.startsWith('tablero') || host.startsWith('dashboard') || host.startsWith('board') || host.startsWith('admin')) {
+      return MainRole.BOARD;
+    }
+
     const searchParams = new URLSearchParams(window.location.search);
     const paramVal = searchParams.get('view') || searchParams.get('role') || searchParams.get('app');
     
