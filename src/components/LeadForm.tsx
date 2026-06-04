@@ -755,7 +755,7 @@ export default function LeadForm({ c10ImgUrl, t03ImgUrl, b10ImgUrl }: LeadFormPr
                       <div className="w-8 h-8 rounded-full bg-[#035F1D]/20 border border-[#009100]/30 flex items-center justify-center text-[#009100] shadow-inner">
                         <BatteryCharging className="w-4 h-4" />
                       </div>
-                      <span className="text-[9px] text-white font-bold leading-normal font-mono uppercase">Carga Rápida</span>
+                      <span className="text-[9px] text-white font-bold leading-normal font-mono uppercase">Carga súper Rápida</span>
                     </div>
                   </div>
 
