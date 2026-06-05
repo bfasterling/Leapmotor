@@ -43,12 +43,14 @@ import {
   Cpu,
   Route,
   Star,
-  Wrench
+  Wrench,
+  UserCheck
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import LeapmotorLogo from './LeapmotorLogo';
 import StellantisLogo from './StellantisLogo';
 import { PRIVACY_TEXT_ES } from '../privacyText';
+import { ALL_DEALERS } from '../data/dealers';
 
 // Import newly generated design assets
 import JEEP_IMG from '../assets/images/jeep_cherokee_green_1780407967325.png';
@@ -283,13 +285,13 @@ const SUB_BRAND_DETAILS: Record<string, {
 }> = {
   'Leapmotor': {
     name: 'Leapmotor',
-    modelName: 'LEAPMOTOR C10',
+    modelName: 'LEAPMOTOR B10',
     tagline: 'MOVILIDAD INTELIGENTE, TECNOLOGÍA EN CADA CARGA.',
     bgImage: 'https://images.unsplash.com/photo-1617788138017-80ad40651399?w=600&q=80',
-    pantoneHex: '#005F9E',
-    accentBg: 'from-[#005F9E]/90 via-[#005F9E]/30 to-[#0c0d0f]/10',
-    btnBg: 'bg-[#005F9E] hover:bg-[#007cd0]',
-    btnBorder: 'border-[#005F9E]/35',
+    pantoneHex: '#035F1D',
+    accentBg: 'from-[#035F1D]/90 via-[#035F1D]/35 to-[#2D2926]/40',
+    btnBg: 'bg-[#035F1D] hover:bg-[#009100]',
+    btnBorder: 'border-[#035F1D]/35',
     highlights: [
       { title: 'Tecnología 100% Eléctrica', desc: 'Sistemas inteligentes de propulsión de alta eficiencia cero emisiones.' },
       { title: 'Conectividad Inteligente', desc: 'Cabina inmersiva integrada con control remoto y seguridad ADAS avanzada.' },
@@ -428,99 +430,122 @@ export default function LeadForm({ c10ImgUrl, t03ImgUrl, b10ImgUrl }: LeadFormPr
     switch (brandName) {
       case 'Leapmotor':
         return (
-          <div className="flex flex-col items-center justify-center gap-0.5 w-full px-0.5" id="brand-logo-leapmotor">
+          <div className="flex flex-col items-center justify-center w-full px-0.5" id="brand-logo-leapmotor">
             <svg 
-              viewBox="0 0 120 40" 
-              className={`w-full ${isLarge ? 'max-w-[155px] sm:max-w-[190px] h-11 sm:h-13' : 'max-w-[62px] sm:max-w-[75px] h-6.5 sm:h-7.5'} fill-current ${activeColor} transition-all duration-300`} 
+              viewBox="0 0 250 42" 
+              className={`w-full ${isLarge ? 'max-w-[200px] sm:max-w-[245px] h-10 sm:h-12' : 'max-w-[105px] sm:max-w-[125px] h-6.5 sm:h-7.5'} fill-current ${activeColor} transition-all duration-300`} 
               xmlns="http://www.w3.org/2000/svg"
             >
-              <g transform="translate(18, 11)" className="fill-current">
-                <rect x="0" y="2" width="4.5" height="15" rx="2" />
-                <rect x="8.5" y="7" width="4.5" height="10" rx="2" />
+              <g transform="translate(18, 0)" fill="currentColor">
+                {/* LP Monogram Emblem */}
+                <path d="M 0,10 L 10.5,1 L 22.5,1 L 22.5,7 L 13,7 L 7.5,12.5 L 7.5,23.5 L 13,29 L 22.5,29 L 22.5,35 L 10.5,35 L 0,26 Z" />
+                <path d="M 16.5,7 L 22.5,7 L 22.5,29 L 16.5,29 Z" opacity="0.8" />
+                {/* Modern futuristic text track and style */}
+                <text x="36" y="27" className="font-sans font-extrabold tracking-[0.24em] text-[20px]" style={{ fontWeight: 800 }}>LEAPMOTOR</text>
               </g>
-              <text x="82" y="25" textAnchor="middle" className="font-sans font-black tracking-widest text-[12px] uppercase">
-                LEAP
-              </text>
             </svg>
           </div>
         );
       case 'Jeep':
         return (
-          <div className="flex flex-col items-center justify-center gap-0.5 w-full px-0.5" id="brand-logo-jeep">
+          <div className="flex flex-col items-center justify-center w-full px-0.5" id="brand-logo-jeep">
             <svg 
-              viewBox="0 0 24 24" 
-              className={`w-full ${isLarge ? 'max-w-[110px] sm:max-w-[135px] h-10 sm:h-12' : 'max-w-[48px] sm:max-w-[58px] h-6 sm:h-7'} fill-current ${activeColor} transition-all duration-300`} 
+              viewBox="0 0 120 40" 
+              className={`w-full ${isLarge ? 'max-w-[110px] sm:max-w-[130px] h-9 sm:h-11' : 'max-w-[62px] sm:max-w-[72px] h-6 sm:h-7'} fill-current ${activeColor} transition-all duration-300`} 
               xmlns="http://www.w3.org/2000/svg"
             >
-              <path d="M4.1651 7.1687v5.2011c0 .6762-.444 1.0777-1.1628 1.0777-.7185 0-1.0992-.5283-1.0992-1.0992v-.9299H0v.9514c0 .972.296 2.7068 3.0235 2.7068 2.7272 0 3.1082-1.8614 3.1082-2.7488V7.1687Zm4.9177 2.1562c-1.7973 0-2.6003 1.6485-2.6003 3.0657 0 1.4168.9094 2.7912 2.7695 2.7912 1.6285.021 2.707-1.0361 2.707-1.8187h-1.7977s-.2113.5078-.8458.5078c-.6343 0-.9934-.3596-.9934-1.2265h3.6576c0-2.7277-1.3526-3.3195-2.897-3.3195zm5.8471 0c-1.7968 0-2.6007 1.6485-2.6007 3.0657 0 1.4168.9094 2.7912 2.7705 2.7912 1.628.021 2.7067-1.0361 2.7067-1.8187h-1.7978s-.2116.5078-.8454.5078c-.6348 0-.9942-.3596-.9942-1.2265h3.6574c0-2.7277-1.3523-3.3195-2.8965-3.3195zm6.7435.0635c-.9132 0-1.3186.4962-1.3401.522-.1283.1538-.2875.3165-.2875-.0782v-.2959h-1.8193v7.295h1.8398V14.822c0-.148.1478-.126.2543 0 .1063.1277.5711.4443 1.3752.4443C23.155 15.2663 24 13.9978 24 12.264c0-2.2415-1.4162-2.8757-2.3266-2.8756Zm-12.401 1.1203c.6766 0 .972.5073.972 1.0365H8.3843c0-.5718.2327-1.0365.8882-1.0365zm5.8468 0c.6767 0 .9724.5073.9724 1.0365H14.231c0-.5718.2332-1.0365.8883-1.0365zm5.9204.296c.9318 0 1.1.7189 1.1 1.4593 0 .74-.1272 1.7124-1.0141 1.7124-.8884 0-1.1212-.5709-1.1017-1.6486.022-1.0788.4441-1.523 1.0158-1.523zm2.2813 4.5664a.5855.5855 0 0 0-.5856.5857c0 .3233.2617.5856.5856.5856.3218 0 .585-.2623.585-.5856 0-.3233-.2632-.5857-.585-.5857zm0 .062a.524.524 0 0 1 .5236.5237c0 .2884-.2346.5246-.5236.5246a.5258.5258 0 0 1-.525-.5246c0-.289.2352-.5236.525-.5236zm-.2108.2024v.6208h.0725v-.2689h.1764l.1159.269h.0806l-.1216-.2873c.0386-.0133.0514-.0227.072-.0447.0266-.0287.0434-.0739.0434-.115 0-.1034-.0796-.174-.195-.174zm.0705.0676h.1722c.072 0 .1177.041.1177.1045 0 .072-.0485.1168-.1278.1168h-.1621z" />
+              <g fill="currentColor" transform="translate(26, 0)">
+                <path d="M 12,2 L 12,22 C 12,25.5 10.5,27 8,27 C 5.5,27 4.2,25.5 4.2,22 L 4.2,18.5 H 0 V 22 C 0,27.5 3,31 8,31 C 13,31 16.2,27.5 16.2,22 L 16.2,2 H 12 Z M 29.5,12.5 C 24,12.5 21,17.5 21,22 C 21,26.5 24,31 29.5,31 C 33.5,31 36.2,29 36.5,25.5 H 32 C 31.7,26.5 31,27 30,27 C 29,27 28.5,26.2 28.5,24.5 H 37 C 37,17.5 34.5,12.5 29.5,12.5 Z M 44.5,12.5 C 39,12.5 36,17.5 36,22 C 36,26.5 39,31 44.5,31 C 48.5,31 51.2,29 51.5,25.5 H 47 C 46.7,26.5 46,27 45,27 C 44,27 43.5,26.2 43.5,24.5 H 52 C 52,17.5 49.5,12.5 44.5,12.5 Z M 60,12.5 C 57.5,12.5 55.5,13.8 54.5,15.5 V 13 H 50 V 36.5 H 54.5 V 26.5 C 55.5,28.2 57.5,29.5 60,29.5 C 64.5,29.5 68,25 68,21 C 68,17 64.5,12.5 60,12.5 Z M 29.5,16.5 C 31,16.5 31.5,17.5 31.5,19 H 27.5 C 27.5,17.5 28,16.5 29.5,16.5 Z M 44.5,16.5 C 46,16.5 46.5,17.5 46.5,19 H 42.5 C 42.5,17.5 43,16.5 44.5,16.5 Z M 59,16.5 C 61,16.5 62,18 62,21.5 C 62,25 61,26.5 59,26.5 C 57,26.5 56,25 56,21.5 C 56,18 57,16.5 59,16.5 Z" />
+              </g>
             </svg>
           </div>
         );
       case 'Ram':
         return (
-          <div className="flex flex-col items-center justify-center gap-0.5 w-full px-0.5" id="brand-logo-ram">
+          <div className="flex flex-col items-center justify-center w-full px-0.5" id="brand-logo-ram">
             <svg 
-              viewBox="0 0 140 40" 
-              className={`w-full ${isLarge ? 'max-w-[210px] sm:max-w-[250px] h-11 sm:h-13' : 'max-w-[80px] sm:max-w-[95px] h-6.5 sm:h-7.5'} fill-current ${activeColor} transition-all duration-300`} 
+              viewBox="0 0 220 54" 
+              className={`w-full ${isLarge ? 'max-w-[160px] sm:max-w-[200px] h-10 sm:h-12' : 'max-w-[110px] sm:max-w-[130px] h-7 sm:h-8'} fill-current ${activeColor} transition-all duration-300`} 
               xmlns="http://www.w3.org/2000/svg"
             >
-              <g transform="translate(10, 5)" className="fill-none stroke-current">
-                <path d="M 12 2 C 18 2, 23 5, 23 11 C 23 15, 19 19, 12 28 C 5 19, 1 15, 1 11 C 1 5, 6 2, 12 2 Z" strokeWidth="1.8" />
-                <path d="M 11 5 C 7 5, 4 8, 4 11 C 4 14, 7 14, 9 12 C 9 9, 6 9, 5 11" strokeWidth="1.2" />
-                <path d="M 13 5 C 17 5, 20 8, 20 11 C 20 14, 17 14, 15 12 C 15 9, 18 9, 19 11" strokeWidth="1.2" />
-                <path d="M 12 9 L 12 20" strokeWidth="1.8" />
-                <path d="M 9 19 L 15 19" strokeWidth="1.5" />
+              <g transform="translate(13, 0)">
+                <g transform="translate(1, 4)" className="fill-current">
+                  <path d="M29.8 1.5c-7.2 0-14.4 3.1-18.8 8.4-4.4 5.3-5.8 12.3-4 19.3 1.2 4.7 3.9 8.8 7.6 11.8 1.4-1.2 2-2.8 1.4-4.5-1.1-2.9-2.7-7-2.7-10.7 0-4.3 3.6-7.8 8.1-7.8s8.1 3.5 8.1 7.8c0 4.1-1.6 8.5-3.1 11.2-1.1 2-2.8 3.5-3.1 5.5-.3 2.1 1.2 3.9 3.2 3.9s3.5-1.8 3.5-3.9v-6.7c0-1.8 1-3.3 2.5-4.1l2.5-1.3c1.5-.8 2.5-2.3 2.5-4.1v-6.1c0-4.3 3.6-7.8 8.1-7.8s8.1 3.5 8.1 7.8c0 3.7-1.6 7.8-2.7 10.7-.6 1.7 0 3.3 1.4 4.5 3.7-3 6.4-7.1 7.6-11.8 1.8-7 .4-14-4-19.3-4.4-5.3-11.6-8.4-18.8-8.4z" />
+                  <path d="M29.8 16.5c-4-.8-8.2.8-10.3 4.1l6.2 12.4H34l6.2-12.4c-2.1-3.3-6.4-4.9-10.4-4.1z" />
+                  <path d="M23.6 37l6.2 11.2 6.2-11.2c-3.1.8-9.3.8-12.4 0z" />
+                </g>
+                <g fill="currentColor" transform="translate(72, 8)">
+                  <path d="M8 4h18a7 7 0 0 1 7 7v3a7 7 0 0 1-5 6.7l6 10.3h-8.5l-5.5-10.3H16v10.3H8V4zm8 7v6h9a3 3 0 0 0 0-6H16z" />
+                  <path d="M40 4h14l8 27h-8.5l-2-7h-8l-2 7H33L40 4zm6.5 5l-2.5 8h5.5l-3-8z" />
+                  <path d="M68 4h9l5.5 16l5.5-16h9v27h-8V12l-6.5 19H81l-6.5-19v19H68V4z" />
+                </g>
               </g>
-              <text x="82" y="28" className="font-sans font-black tracking-widest text-[23px] uppercase" style={{ fontWeight: 900 }}>RAM</text>
             </svg>
           </div>
         );
       case 'Dodge':
         return (
-          <div className="flex flex-col items-center justify-center gap-0.5 w-full px-0.5" id="brand-logo-dodge">
+          <div className="flex flex-col items-center justify-center w-full px-0.5" id="brand-logo-dodge">
             <svg 
-              viewBox="0 0 145 40" 
-              className={`w-full ${isLarge ? 'max-w-[200px] sm:max-w-[240px] h-11 sm:h-13' : 'max-w-[85px] sm:max-w-[100px] h-6.5 sm:h-7.5'} fill-current ${activeColor} transition-all duration-300`} 
+              viewBox="0 0 200 40" 
+              className={`w-full ${isLarge ? 'max-w-[180px] sm:max-w-[210px] h-10 sm:h-12' : 'max-w-[100px] sm:max-w-[115px] h-6.5 sm:h-7.5'} ${activeColor} transition-all duration-300`} 
               xmlns="http://www.w3.org/2000/svg"
             >
-              <text x="8" y="28" className="font-sans font-extrabold tracking-wide text-[21px] uppercase" style={{ fontWeight: 950 }}>DODGE</text>
-              <g transform="translate(108, 12)" className="fill-red-500">
-                <path d="M 0,16 L 6,16 L 15,0 L 9,0 Z" />
-                <path d="M 8,16 L 14,16 L 23,0 L 17,0 Z" />
+              <g transform="translate(10, 0)">
+                <g fill="currentColor">
+                  {/* D */}
+                  <path d="M 10,11 H 24 A 9,9 0 0 1 33,20 V 20 A 9,9 0 0 1 24,29 H 10 Z M 16,14.5 V 25.5 H 23 A 4,4 0 0 0 27,21.5 V 18.5 A 4,4 0 0 0 23,14.5 Z" />
+                  {/* O */}
+                  <path d="M 44,11 H 48 A 9,9 0 0 1 57,20 V 20 A 9,9 0 0 1 48,29 H 44 A 9,9 0 0 1 35,20 V 20 A 9,9 0 0 1 44,11 Z M 44,14.5 A 4,4 0 0 0 40,18.5 V 21.5 A 4,4 0 0 0 44,25.5 H 48 A 4,4 0 0 0 52,21.5 V 18.5 A 4,4 0 0 0 48,14.5 Z" />
+                  {/* D */}
+                  <path d="M 58,11 H 72 A 9,9 0 0 1 81,20 V 20 A 9,9 0 0 1 72,29 H 58 Z M 64,14.5 V 25.5 H 71 A 4,4 0 0 0 75,21.5 V 18.5 A 4,4 0 0 0 71,14.5 Z" />
+                  {/* G */}
+                  <path d="M 92,11 H 96 A 9,9 0 0 1 105,20 V 20 A 9,9 0 0 1 96,29 H 92 A 9,9 0 0 1 83,20 V 20 A 9,9 0 0 1 92,11 Z M 92,14.5 C 90,14.5 89,16 89,18.5 V 21.5 C 89,24 90,25.5 92,25.5 H 96 V 21.5 H 93 V 18.5 H 100 V 25.5 C 100,27 99,29 96,29 H 92 C 89,29 88,27 88,25.5 V 21.5 C 88,18.5 89,14.5 92,14.5 Z" />
+                  {/* E */}
+                  <path d="M 109,11 H 125 V 15 H 115 V 18 H 123 V 21 H 115 V 25 H 125 V 29 H 109 Z" />
+                </g>
+                <g transform="translate(142, 6) scale(1.15)" fill="none" stroke="#DA291C" strokeWidth="2" strokeLinejoin="round">
+                  <polygon points="12,1 23,20 1,20" strokeLinejoin="miter" strokeWidth="2.4" />
+                  <polygon points="12,4 20,18.5 4,18.5" opacity="0.6" strokeWidth="1" />
+                  <polygon points="12,7 17,16 7,16" className="text-red-500" fill="#DA291C" />
+                </g>
               </g>
             </svg>
           </div>
         );
       case 'Fiat':
         return (
-          <div className="flex flex-col items-center justify-center gap-0.5 w-full px-0.5" id="brand-logo-fiat">
+          <div className="flex flex-col items-center justify-center w-full px-0.5" id="brand-logo-fiat">
             <svg 
               viewBox="0 0 120 40" 
-              className={`w-full ${isLarge ? 'max-w-[125px] sm:max-w-[150px] h-11 sm:h-13' : 'max-w-[58px] sm:max-w-[75px] h-6.5 sm:h-7.5'} fill-current ${activeColor} transition-all duration-300`} 
+              className={`w-full ${isLarge ? 'max-w-[110px] sm:max-w-[130px] h-10 sm:h-12' : 'max-w-[55px] sm:max-w-[65px] h-6 sm:h-7'} fill-current ${activeColor} transition-all duration-300`} 
               xmlns="http://www.w3.org/2000/svg"
             >
-              <g fill="currentColor">
-                <path d="M 22,6 L 31,6 L 31,13 L 26.5,13 L 26.5,17.5 L 30.5,17.5 L 30.5,23.5 L 26.5,23.5 L 26.5,34 L 22,34 Z" />
-                <path d="M 36,6 L 40.5,6 L 40.5,34 L 36,34 Z" />
-                <path d="M 45,6 L 50,6 L 54.5,34 L 49.5,34 L 48.5,27.5 L 45.5,27.5 L 44.5,34 L 40,34 Z M 46,22.5 L 48,22.5 L 47.25,12.5 Z" />
-                <path d="M 58.5,6 L 68.5,6 L 68.5,12 L 65.5,12 L 65.5,34 L 61,34 L 61,12 L 58.5,12 Z" />
+              <g fill="currentColor" transform="translate(23.5, 0)">
+                <path d="M 12,2 L 23,2 L 23,6 L 17.5,6 L 17.5,16 L 22.5,16 L 22.5,20 L 17.5,20 L 17.5,38 L 12,38 Z" />
+                <path d="M 27,2 L 32.5,2 L 32.5,38 L 27,38 Z" />
+                <path d="M 36.5,2 L 47.5,2 L 53.5,38 L 47.5,38 L 46.2,30 L 41,30 L 39.8,38 L 33.8,38 Z M 43.6,12 L 45.2,25.5 L 41.8,25.5 Z" />
+                <path d="M 57,2 L 73,2 L 73,6 L 67.8,6 L 67.8,38 L 62.2,38 L 62.2,6 L 57,6 Z" />
               </g>
             </svg>
           </div>
         );
       case 'Peugeot':
         return (
-          <div className="flex items-center justify-center gap-1.5 w-full px-0.5" id="brand-logo-peugeot">
+          <div className="flex items-center justify-center w-full px-0.5" id="brand-logo-peugeot">
             <svg 
-              viewBox="0 0 145 40" 
-              className={`w-full ${isLarge ? 'max-w-[200px] sm:max-w-[245px] h-12 sm:h-14' : 'max-w-[90px] sm:max-w-[105px] h-6.5 sm:h-7.5'} fill-current ${activeColor} transition-all duration-300`} 
+              viewBox="0 0 100 110" 
+              className={`w-full ${isLarge ? 'max-w-[70px] sm:max-w-[85px] h-14 sm:h-16' : 'max-w-[42px] sm:max-w-[50px] h-9 sm:h-10'} fill-current ${activeColor} transition-all duration-300`} 
               xmlns="http://www.w3.org/2000/svg"
             >
-              <g transform="translate(6, 6)" className="fill-current">
-                <path d="M 11 1 L 20 4 L 18 20 C 18 25, 15 29, 11 31 C 7 29, 4 25, 4 20 L 2 4 Z" fill="none" stroke="currentColor" strokeWidth="1.6" />
-                <path d="M 8 9 C 10 9.8, 13 9.8, 14 11.6 L 12 12.5 C 14 13.4, 15.8 16.1, 13.1 17.9 C 12.2 18.8, 10.4 17.9, 9.5 16.1 L 7.7 17 L 8.6 12.5 Z" />
+              <path d="M 50,2 C 78,2 96,8 96,28 C 96,55 90,83 50,108 C 10,83 4,55 4,28 C 4,8 22,2 50,2 Z" fill="none" stroke="currentColor" strokeWidth="3" strokeLinejoin="round" />
+              <path d="M 50,6 C 74,6 91,11 91,29 C 91,53 85,79 50,102 C 15,79 9,53 9,29 C 9,11 26,6 50,6 Z" fill="none" stroke="currentColor" strokeWidth="1" opacity="0.6" />
+              <text x="50" y="21" textAnchor="middle" className="font-sans text-[7.5px]" style={{ fontWeight: 800, letterSpacing: '0.22em' }} fill="currentColor">PEUGEOT</text>
+              <line x1="20" y1="26" x2="80" y2="26" stroke="currentColor" strokeWidth="1.2" />
+              <g transform="translate(16, 26) scale(0.68)" fill="currentColor">
+                <path d="M 50,7 C 46,12 40,15 36,12 C 32,9 26,4 20,4 C 18,7 20,11 18,14 C 15,14 12,11 10,8 C 7,12 8,17 12,20 C 13,21 12,22 10,23 C 8,24 5,23 2,21 C 2,26 6,30 11,31 C 15,32 18,29 20,27 C 18,31 15,36 10,38 C 12,42 16,42 20,40 C 23,38 24,33 25,32 M 50,7 C 54,12 55,20 52,28 C 50,32 46,36 41,38 C 36,40 31,41 27,42 M 52,28 C 58,26 64,28 66,35 C 68,42 64,50 56,54 C 48,58 38,58 30,55 C 24,52 20,47 22,43 C 24,39 28,39 31,42 C 33,44 33,47 31,50 M 56,54 C 54,60 48,66 40,68 C 32,70 24,67 18,62 C 14,58 12,52 14,48 M 41,38 C 43,45 40,52 35,55" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" fill="none" />
+                <path d="M 45,21 Q 48,15 44,11 M 36,25 Q 40,25 41,20" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
               </g>
-              <text x="82" y="27" className="font-sans tracking-[0.2em] text-[14px] uppercase" style={{ fontWeight: 700 }}>PEUGEOT</text>
             </svg>
           </div>
         );
@@ -565,6 +590,38 @@ export default function LeadForm({ c10ImgUrl, t03ImgUrl, b10ImgUrl }: LeadFormPr
     }
   }, []);
 
+  // Update selected state and distributor automatically based on landing selection or brand selection
+  useEffect(() => {
+    if (activeLanding === 'leapmotor') {
+      setFormData(prev => ({
+        ...prev,
+        state: 'Ciudad de México (CDMX)',
+        distributor: 'Leapmotor Santa Fe'
+      }));
+    } else {
+      const activeBrandKey = activeLanding === 'jeep' ? 'JEEP' : selectedBrand.toUpperCase();
+      const brandDealers = ALL_DEALERS.filter(d => d.brand === activeBrandKey).length > 0
+        ? ALL_DEALERS.filter(d => d.brand === activeBrandKey)
+        : ALL_DEALERS;
+      
+      const availableStates = Array.from(new Set(brandDealers.map(d => d.state))).sort();
+      
+      // Attempt to stay with previously selected state if it exists for this brand, otherwise default to "CIUDAD DE MÉXICO" or first
+      const defaultState = availableStates.includes(formData.state) 
+        ? formData.state 
+        : (availableStates.includes('CIUDAD DE MÉXICO') ? 'CIUDAD DE MÉXICO' : (availableStates[0] || ''));
+      
+      const dealersInState = brandDealers.filter(d => d.state === defaultState);
+      const defaultDealer = dealersInState[0]?.name || '';
+
+      setFormData(prev => ({
+        ...prev,
+        state: defaultState,
+        distributor: defaultDealer
+      }));
+    }
+  }, [activeLanding, selectedBrand]);
+
   const handleBrandSelect = (brand: string) => {
     setSelectedBrand(brand);
     // Auto-select first model of selected brand
@@ -586,13 +643,49 @@ export default function LeadForm({ c10ImgUrl, t03ImgUrl, b10ImgUrl }: LeadFormPr
     }
   };
 
+  // Helper to dynamically get clean and fully reset form parameters
+  const getInitialFormData = (
+    landing: 'leapmotor' | 'jeep' | 'multimarca',
+    brand: string,
+    presetModel?: string,
+    reqType: 'cotizacion' | 'prueba' | 'asesor' = 'asesor'
+  ) => {
+    let defaultState = 'Ciudad de México (CDMX)';
+    let defaultDistributor = 'Leapmotor Santa Fe';
+
+    if (landing !== 'leapmotor') {
+      const activeBrandKey = landing === 'jeep' ? 'JEEP' : brand.toUpperCase();
+      const brandDealers = ALL_DEALERS.filter(d => d.brand === activeBrandKey).length > 0
+        ? ALL_DEALERS.filter(d => d.brand === activeBrandKey)
+        : ALL_DEALERS;
+      
+      const availableStates = Array.from(new Set(brandDealers.map(d => d.state))).sort();
+      defaultState = availableStates.includes('CIUDAD DE MÉXICO') 
+        ? 'CIUDAD DE MÉXICO' 
+        : (availableStates[0] || '');
+      
+      const dealersInState = brandDealers.filter(d => d.state === defaultState);
+      defaultDistributor = dealersInState[0]?.name || '';
+    }
+
+    return {
+      name: '',
+      lastName: '',
+      email: '',
+      phone: '',
+      postalCode: '',
+      state: defaultState,
+      distributor: defaultDistributor,
+      modelOfInterest: presetModel || (landing === 'leapmotor' ? 'B10' : (brand === 'Jeep' ? 'Grand Cherokee' : BRAND_MODELS[brand]?.[0] || 'Grand Cherokee')),
+      contactMethod: 'whatsapp',
+      testDriveDate: '',
+      requestType: reqType
+    };
+  };
+
   // Launch Form sheet instantly from landing CTA clicks
   const launchFormWithRequest = (reqType: 'cotizacion' | 'prueba' | 'asesor', presetModel?: string) => {
-    setFormData(prev => ({ 
-      ...prev, 
-      requestType: reqType,
-      modelOfInterest: presetModel || prev.modelOfInterest
-    }));
+    setFormData(getInitialFormData(activeLanding, selectedBrand, presetModel, reqType));
     setPrivacyAccepted(false);
     setShowPrivacyText(false);
     setFormActive(true);
@@ -742,6 +835,23 @@ export default function LeadForm({ c10ImgUrl, t03ImgUrl, b10ImgUrl }: LeadFormPr
     }
   };
 
+  // Get active brand based on landing or selection
+  const activeBrandKey = activeLanding === 'jeep' ? 'JEEP' : selectedBrand.toUpperCase();
+  
+  // Filter dealers. Fallback to all dealers if activeBrandKey is empty or not found in CSV (e.g. Leapmotor or Peugeot)
+  const activeDealers = ALL_DEALERS.filter(d => d.brand === activeBrandKey).length > 0
+    ? ALL_DEALERS.filter(d => d.brand === activeBrandKey)
+    : ALL_DEALERS;
+
+  // Get list of states from activeDealers
+  const availableStates = Array.from(new Set(activeDealers.map(d => d.state))).sort();
+
+  // Get dealers in the currently selected state, fully deduplicated by name to prevent duplication, and sorted alphabetically
+  const stateDealers = activeDealers.filter(d => d.state === formData.state);
+  const filteredDealers = stateDealers
+    .filter((d, idx) => stateDealers.findIndex(x => x.name === d.name) === idx)
+    .sort((a, b) => a.name.localeCompare(b.name));
+
   // Determine standard dropdown models list for selection
   const activeModelsList = BRAND_MODELS[selectedBrand] || BRAND_MODELS['Leapmotor'];
 
@@ -791,7 +901,7 @@ export default function LeadForm({ c10ImgUrl, t03ImgUrl, b10ImgUrl }: LeadFormPr
     : 'space-y-1 bg-slate-900/60 p-2.5 rounded-xl border border-white/15 hover:border-white/20 transition-all duration-350';
 
   const inputClass = activeLanding === 'leapmotor'
-    ? 'w-full bg-[#010602] border border-[#009100]/25 focus:border-[#009100] focus:ring-1 focus:ring-[#009100]/40 rounded-xl pl-9 pr-3 py-2.5 text-xs text-slate-100 placeholder-slate-505 outline-none transition font-semibold font-sans'
+    ? 'w-full bg-[#2D2926] border border-[#009100]/25 focus:border-[#009100] focus:ring-1 focus:ring-[#009100]/40 rounded-xl pl-9 pr-3 py-2.5 text-xs text-slate-100 placeholder-slate-500 outline-none transition font-semibold font-sans'
     : (activeLanding === 'jeep'
        ? 'w-full bg-[#0a0f18] border border-white/20 focus:border-emerald-400 focus:ring-1 focus:ring-emerald-400/40 rounded-xl pl-9 pr-3 py-2.5 text-xs text-white placeholder-slate-400 outline-none transition font-semibold'
        : 'w-full bg-[#0a0f18] border border-white/25 focus:border-indigo-400 focus:ring-1 focus:ring-indigo-400/40 rounded-xl pl-9 pr-3 py-2.5 text-xs text-white placeholder-slate-400 outline-none transition font-semibold');
@@ -802,7 +912,7 @@ export default function LeadForm({ c10ImgUrl, t03ImgUrl, b10ImgUrl }: LeadFormPr
       {/* Outer Mobile Mock Wrapper with Pantone 2427C and Highlight R0 G145 B0 theme */}
       <div className={`w-full max-w-md mx-auto min-h-[82vh] border rounded-[40px] shadow-2xl relative overflow-hidden flex flex-col justify-between mt-1 mb-6 transition-all duration-500 ${
         activeLanding === 'leapmotor'
-          ? 'bg-gradient-to-b from-[#010602] via-[#035F1D]/80 to-[#010502] border-[#009100]/40 shadow-[0_0_35px_rgba(0,145,0,0.25)]'
+          ? 'bg-gradient-to-b from-[#2D2926] via-[#035F1D]/80 to-[#2D2926] border-[#009100]/40 shadow-[0_0_35px_rgba(0,145,0,0.25)]'
           : 'bg-[#05070a] border-white/10'
       }`}>
         
@@ -830,18 +940,20 @@ export default function LeadForm({ c10ImgUrl, t03ImgUrl, b10ImgUrl }: LeadFormPr
         )}
 
         {/* Brand Header */}
-        <div className={`px-6 py-4 flex ${activeLanding === 'multimarca' ? 'justify-center' : 'justify-between'} items-center backdrop-blur-md sticky top-0 z-25 ${
+        <div className={`px-6 ${activeLanding === 'leapmotor' ? 'py-1' : 'py-4'} flex ${activeLanding === 'multimarca' || activeLanding === 'leapmotor' ? 'justify-center' : 'justify-between'} items-center backdrop-blur-md sticky top-0 z-25 relative ${
           activeLanding === 'leapmotor'
-            ? 'bg-[#010602]/95 border-b border-[#009100]/25'
+            ? 'bg-[#2D2926]/95 border-b border-[#009100]/25'
             : 'bg-[#05070a]/90 border-b border-white/5'
         }`}>
           {activeLanding === 'leapmotor' && (
-            <>
-              <div className="flex items-center gap-1.5">
-                <LeapmotorLogo size="sm" className="text-white" style={{ height: '81px' }} imgStyle={{ height: '109px' }} />
-              </div>
-              <span className="text-[10px] font-black font-mono text-[#009100] tracking-widest bg-[#009100]/10 border border-[#009100]/30 px-2.5 py-0.5 rounded-lg uppercase">B10 EV</span>
-            </>
+            <div className="flex items-center justify-center w-full max-w-full">
+              <LeapmotorLogo 
+                size="sm" 
+                className="text-white mx-auto" 
+                style={{ height: 'clamp(65px, 16vw, 136px)', aspectRatio: 'auto', maxWidth: '100%', width: 'auto' }} 
+                imgStyle={{ height: 'clamp(65px, 16vw, 136px)', width: 'auto', objectFit: 'contain' }} 
+              />
+            </div>
           )}
 
           {activeLanding === 'jeep' && (
@@ -874,25 +986,25 @@ export default function LeadForm({ c10ImgUrl, t03ImgUrl, b10ImgUrl }: LeadFormPr
               animate={{ opacity: 1, scale: 1 }}
               exit={{ opacity: 0, scale: 0.98 }}
               transition={{ duration: 0.3 }}
-              className="px-6 py-4 flex flex-col justify-start gap-4 flex-1"
+              className={`px-6 ${activeLanding === 'leapmotor' ? 'pt-1 pb-3 gap-2.5' : 'py-4 gap-4'} flex flex-col justify-start flex-1`}
             >
               {/* LEAPMOTOR LANDING VIEW - Professional Presentation Deck Layout */}
               {activeLanding === 'leapmotor' && (
-                <div className="space-y-4 text-center mt-1">
+                <div className="space-y-2.5 text-center mt-0">
                   <div className="space-y-1">
                     <span className="text-[10px] font-black tracking-[0.25em] text-[#009100] uppercase block">
                       Tranquilidad sin límites
                     </span>
                     <h1 className="text-3xl font-extralight tracking-tight text-white leading-tight font-sans">
                       INCREÍBLE TODOS LOS DIAS <br />
-                      <span className="text-[#00d400] font-extrabold text-4xl tracking-tighter inline-block mt-0.5">
-                        B10
+                      <span className="text-[#009100] font-extrabold text-4xl tracking-tighter inline-block mt-0.5">
+                        LEAPMOTOR B10
                       </span>
                     </h1>
                   </div>
                   
                   <p className="text-slate-300 text-xs font-medium max-w-xs mx-auto leading-relaxed">
-                    Leapmotor te da confianza y seguridad para tu camino. Única marca con más de 85 años de respaldo en México.
+                    LEAPMOTOR te da confianza y seguridad para tu camino. Una marca con más de 85 años de respaldo en México
                   </p>
 
                   {/* Central Car Graphic Showcase with Highlight Green framing & glow */}
@@ -901,28 +1013,28 @@ export default function LeadForm({ c10ImgUrl, t03ImgUrl, b10ImgUrl }: LeadFormPr
                       src={b10ImgUrl || "https://picsum.photos/seed/purpleb10/600/375"} 
                       alt="Leapmotor B10"
                       referrerPolicy="no-referrer"
-                      className="w-full h-full object-cover rounded-2xl transform transition-transform duration-700 group-hover:scale-105 brightness-[1.2] contrast-[1.05] saturate-[1.05]"
+                      className="w-full h-full object-cover rounded-2xl transform transition-transform duration-700 group-hover:scale-105"
                     />
-                    <div className="absolute inset-0 bg-gradient-to-t from-[#010602]/85 via-transparent to-transparent opacity-65" />
+                    <div className="absolute inset-0 bg-gradient-to-t from-[#2D2926]/85 via-transparent to-transparent opacity-65" />
                   </div>
 
                   {/* Highlights Grid matching Slide 2 details with Pantone 2427C & Highlight Green theme */}
                   <div className="grid grid-cols-3 gap-2 py-3 border-y border-[#009100]/20">
                     <div className="flex flex-col items-center gap-1">
                       <div className="w-8 h-8 rounded-full bg-[#035F1D]/20 border border-[#009100]/30 flex items-center justify-center text-[#009100] shadow-inner">
-                        <Cpu className="w-4 h-4 text-[#00cc00]" />
+                        <Cpu className="w-4 h-4 text-[#009100]" />
                       </div>
                       <span className="text-[8px] text-white font-bold leading-tight font-mono uppercase text-center max-w-[85px]">Tecnología Ultra Híbrida</span>
                     </div>
                     <div className="flex flex-col items-center gap-1">
                       <div className="w-8 h-8 rounded-full bg-[#035F1D]/20 border border-[#009100]/30 flex items-center justify-center text-[#009100] shadow-inner">
-                        <Route className="w-4 h-4 text-[#00cc00]" />
+                        <Route className="w-4 h-4 text-[#009100]" />
                       </div>
                       <span className="text-[8px] text-white font-bold leading-tight font-mono uppercase text-center max-w-[85px]">Autonomía hasta 990 Kms</span>
                     </div>
                     <div className="flex flex-col items-center gap-1">
                       <div className="w-8 h-8 rounded-full bg-[#035F1D]/20 border border-[#009100]/30 flex items-center justify-center text-[#009100] shadow-inner">
-                        <Wrench className="w-4 h-4 text-[#00cc00]" />
+                        <Wrench className="w-4 h-4 text-[#009100]" />
                       </div>
                       <span className="text-[8px] text-white font-bold leading-tight font-mono uppercase text-center max-w-[85px]">Respaldo de Mopar</span>
                     </div>
@@ -939,9 +1051,9 @@ export default function LeadForm({ c10ImgUrl, t03ImgUrl, b10ImgUrl }: LeadFormPr
                     </button>
                     <button
                       onClick={() => launchFormWithRequest('asesor', 'B10')}
-                      className="bg-white/5 hover:bg-[#009100]/10 text-[#009100] border border-[#009100]/40 hover:border-[#009100]/80 font-extrabold py-3.5 px-4 rounded-xl text-[10px] uppercase tracking-widest flex items-center justify-center gap-1.5 transition-all duration-300 active:scale-95"
+                      className="bg-[#009100] hover:bg-[#035F1D] text-white font-extrabold py-3.5 px-4 rounded-xl text-[10px] uppercase tracking-widest flex items-center justify-center gap-1.5 transition-all duration-300 active:scale-95 shadow-lg shadow-[#009100]/30 border border-[#009100]/30"
                     >
-                      <Zap className="w-3.5 h-3.5 fill-[#009100]" />
+                      <UserCheck className="w-3.5 h-3.5 text-white shrink-0" />
                       <span>Atención VIP</span>
                     </button>
                   </div>
@@ -1032,44 +1144,19 @@ export default function LeadForm({ c10ImgUrl, t03ImgUrl, b10ImgUrl }: LeadFormPr
 
                       {/* Stacked Brand boxes (All identical size, stacked vertically, centering the brand logos) */}
                       <div className="flex flex-col gap-2.5 pt-1">
-                        {[
-                          {
-                            brand: 'Leapmotor',
-                            classes: 'border-[#035F1D]/25 bg-[#035F1D]/05 hover:bg-[#035F1D]/15 hover:border-[#035F1D]/55'
-                          },
-                          {
-                            brand: 'Jeep',
-                            classes: 'border-[#1E2A22]/25 bg-[#1E2A22]/08 hover:bg-[#1E2A22]/20 hover:border-[#1E2A22]/60'
-                          },
-                          {
-                            brand: 'Fiat',
-                            classes: 'border-[#C8102E]/20 bg-[#C8102E]/05 hover:bg-[#C8102E]/15 hover:border-[#C8102E]/50'
-                          },
-                          {
-                            brand: 'Dodge',
-                            classes: 'border-[#DA291C]/20 bg-[#DA291C]/05 hover:bg-[#DA291C]/15 hover:border-[#DA291C]/50'
-                          },
-                          {
-                            brand: 'Peugeot',
-                            classes: 'border-[#041E42]/25 bg-[#041E42]/08 hover:bg-[#041E42]/20 hover:border-[#041E42]/60'
-                          },
-                          {
-                            brand: 'Ram',
-                            classes: 'border-[#2D2926]/25 bg-[#2D2926]/05 hover:bg-[#2D2926]/15 hover:border-[#2D2926]/45'
-                          }
-                        ].map((card) => {
+                        {['Leapmotor', 'Jeep', 'Fiat', 'Dodge', 'Peugeot', 'Ram'].map((brand) => {
                           return (
                             <button
-                              key={card.brand}
+                              key={brand}
                               onClick={() => {
-                                handleBrandSelect(card.brand);
-                                setSelectedSubBrand(card.brand);
+                                handleBrandSelect(brand);
+                                setSelectedSubBrand(brand);
                               }}
-                              className={`group relative overflow-hidden rounded-2xl border ${card.classes} h-22 sm:h-24 w-full flex items-center justify-center select-none transition-all duration-300 transform active:scale-[0.99] shadow-lg shadow-black/20`}
+                              className="group relative overflow-hidden rounded-2xl border border-white/10 bg-slate-900/50 hover:bg-slate-900/85 hover:border-white/20 h-22 sm:h-24 w-full flex items-center justify-center select-none transition-all duration-300 transform active:scale-[0.99] shadow-lg shadow-black/20"
                             >
                               {/* Centralized Brand Logo */}
-                              <div className="z-10 flex items-center justify-center w-full px-8 pointer-events-none transition-transform duration-300 group-hover:scale-102">
-                                {renderBrandLogo(card.brand, true, true)}
+                              <div className="z-10 flex items-center justify-center w-full px-8 pointer-events-none transition-transform duration-300 group-hover:scale-[1.03]">
+                                {renderBrandLogo(brand, true, true)}
                               </div>
                               
                               {/* Right arrow interactive indicator */}
@@ -1157,9 +1244,9 @@ export default function LeadForm({ c10ImgUrl, t03ImgUrl, b10ImgUrl }: LeadFormPr
                               onClick={() => launchFormWithRequest('cotizacion', BRAND_MODELS[selectedSubBrand]?.[0])}
                               className="group w-full p-3.5 rounded-2xl bg-[#1b1c1e]/60 hover:bg-[#25272a]/75 border border-white/5 hover:border-white/15 flex items-center gap-4 text-left transition-all duration-300 shadow-md transform active:scale-[0.99]"
                             >
-                              {/* Golden outlined badge for Tag */}
-                              <div className="w-11 h-11 rounded-xl bg-amber-500/10 border border-amber-500/25 flex items-center justify-center shrink-0 transition-colors duration-300 group-hover:bg-amber-500/20">
-                                <Tag className="w-5 h-5 text-amber-400 fill-current" />
+                              {/* White outlined badge represent request for quotation */}
+                              <div className="w-11 h-11 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center shrink-0 transition-colors duration-300 group-hover:bg-white/10">
+                                <FileText className="w-5 h-5 text-white" />
                               </div>
                               
                               <div className="flex flex-col">
@@ -1175,26 +1262,28 @@ export default function LeadForm({ c10ImgUrl, t03ImgUrl, b10ImgUrl }: LeadFormPr
                             </button>
 
                             {/* PRUEBA DE MANEJO */}
-                            <button
-                              onClick={() => launchFormWithRequest('prueba', BRAND_MODELS[selectedSubBrand]?.[0])}
-                              className="group w-full p-3.5 rounded-2xl bg-[#1b1c1e]/60 hover:bg-[#25272a]/75 border border-white/5 hover:border-white/15 flex items-center gap-4 text-left transition-all duration-300 shadow-md transform active:scale-[0.99]"
-                            >
-                              {/* White/Silver outlined badge for Calendar */}
-                              <div className="w-11 h-11 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center shrink-0 transition-colors duration-300 group-hover:bg-white/10">
-                                <Calendar className="w-5 h-5 text-white animate-pulse-slow" />
-                              </div>
-                              
-                              <div className="flex flex-col">
-                                <span className="font-bold text-xs sm:text-sm text-white tracking-wider uppercase font-encode">
-                                  PRUEBA DE MANEJO
-                                </span>
-                                <span className="text-[10px] sm:text-[11px] text-slate-400 font-medium">
-                                  Agenda tu prueba de manejo
-                                </span>
-                              </div>
-                              
-                              <ChevronRight className="w-4 h-4 text-slate-500 group-hover:text-slate-300 group-hover:translate-x-0.5 transition-all duration-300 shrink-0 ml-auto" />
-                            </button>
+                            {selectedSubBrand !== 'Leapmotor' && (
+                              <button
+                                onClick={() => launchFormWithRequest('prueba', BRAND_MODELS[selectedSubBrand]?.[0])}
+                                className="group w-full p-3.5 rounded-2xl bg-[#1b1c1e]/60 hover:bg-[#25272a]/75 border border-white/5 hover:border-white/15 flex items-center gap-4 text-left transition-all duration-300 shadow-md transform active:scale-[0.99]"
+                              >
+                                {/* White/Silver outlined badge for Calendar */}
+                                <div className="w-11 h-11 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center shrink-0 transition-colors duration-300 group-hover:bg-white/10">
+                                  <Calendar className="w-5 h-5 text-white animate-pulse-slow" />
+                                </div>
+                                
+                                <div className="flex flex-col">
+                                  <span className="font-bold text-xs sm:text-sm text-white tracking-wider uppercase font-encode">
+                                    PRUEBA DE MANEJO
+                                  </span>
+                                  <span className="text-[10px] sm:text-[11px] text-slate-400 font-medium">
+                                    Agenda tu prueba de manejo
+                                  </span>
+                                </div>
+                                
+                                <ChevronRight className="w-4 h-4 text-slate-500 group-hover:text-slate-300 group-hover:translate-x-0.5 transition-all duration-300 shrink-0 ml-auto" />
+                              </button>
+                            )}
                           </div>
                         </div>
                       );
@@ -1227,7 +1316,7 @@ export default function LeadForm({ c10ImgUrl, t03ImgUrl, b10ImgUrl }: LeadFormPr
                   <span>{activeLanding === 'leapmotor' ? 'Regresar' : 'Volver a la Landing'}</span>
                 </button>
 
-                <h2 className="text-xl font-black tracking-wide text-white mb-1 uppercase font-sans">
+                <h2 className={`text-xl tracking-wide text-white mb-1 uppercase font-sans ${activeLanding === 'leapmotor' ? 'font-semibold' : 'font-black'}`}>
                   {activeLanding === 'leapmotor' 
                     ? 'Déjanos tus datos' 
                     : `Registro de ${formData.requestType === 'cotizacion' ? 'Cotización' : (formData.requestType === 'prueba' ? 'Prueba de Manejo' : 'Atención personalizada')}`}
@@ -1249,7 +1338,7 @@ export default function LeadForm({ c10ImgUrl, t03ImgUrl, b10ImgUrl }: LeadFormPr
                   {/* Name and Last Name in elegant side-by-side layout */}
                   <div className="grid grid-cols-2 gap-3">
                     <div className={rowClass}>
-                      <label id="frm-name-label" htmlFor="name" className="text-[11px] uppercase font-mono tracking-wider text-white font-extrabold block mb-0.5">
+                      <label id="frm-name-label" htmlFor="name" className={`text-[11px] uppercase font-mono tracking-wider block mb-0.5 ${activeLanding === 'leapmotor' ? 'font-semibold text-slate-300' : 'text-white font-extrabold'}`}>
                         Nombre *
                       </label>
                       <div className="relative">
@@ -1268,7 +1357,7 @@ export default function LeadForm({ c10ImgUrl, t03ImgUrl, b10ImgUrl }: LeadFormPr
                     </div>
 
                     <div className={rowClass}>
-                      <label id="frm-lastname-label" htmlFor="lastName" className="text-[11px] uppercase font-mono tracking-wider text-white font-extrabold block mb-0.5">
+                      <label id="frm-lastname-label" htmlFor="lastName" className={`text-[11px] uppercase font-mono tracking-wider block mb-0.5 ${activeLanding === 'leapmotor' ? 'font-semibold text-slate-300' : 'text-white font-extrabold'}`}>
                         Apellido *
                       </label>
                       <div className="relative">
@@ -1291,7 +1380,7 @@ export default function LeadForm({ c10ImgUrl, t03ImgUrl, b10ImgUrl }: LeadFormPr
                   <div className="grid grid-cols-2 gap-2">
                     {/* Phone field */}
                     <div className={rowClass}>
-                      <label id="frm-phone-label" htmlFor="phone" className="text-[11px] uppercase font-mono tracking-wider text-white font-extrabold block mb-0.5 truncate">
+                      <label id="frm-phone-label" htmlFor="phone" className={`text-[11px] uppercase font-mono tracking-wider block mb-0.5 truncate ${activeLanding === 'leapmotor' ? 'font-semibold text-slate-300' : 'text-white font-extrabold'}`}>
                         Teléfono *
                       </label>
                       <div className="relative">
@@ -1311,7 +1400,7 @@ export default function LeadForm({ c10ImgUrl, t03ImgUrl, b10ImgUrl }: LeadFormPr
 
                     {/* Postal Code field */}
                     <div className={rowClass}>
-                      <label id="frm-postalcode-label" htmlFor="postalCode" className="text-[11px] uppercase font-mono tracking-wider text-white font-extrabold block mb-0.5 truncate" title="Código Postal *">
+                      <label id="frm-postalcode-label" htmlFor="postalCode" className={`text-[11px] uppercase font-mono tracking-wider block mb-0.5 truncate ${activeLanding === 'leapmotor' ? 'font-semibold text-slate-300' : 'text-white font-extrabold'}`} title="Código Postal *">
                         Código Postal *
                       </label>
                       <div className="relative">
@@ -1336,7 +1425,7 @@ export default function LeadForm({ c10ImgUrl, t03ImgUrl, b10ImgUrl }: LeadFormPr
 
                   {/* Models dropdown list tailored by Selected Brand */}
                   <div className={rowClass}>
-                    <label id="frm-model-label" className="text-[11px] uppercase font-mono tracking-wider text-white font-extrabold block mb-0.5">
+                    <label id="frm-model-label" className={`text-[11px] uppercase font-mono tracking-wider block mb-0.5 ${activeLanding === 'leapmotor' ? 'font-semibold text-slate-300' : 'text-white font-extrabold'}`}>
                       Modelo Seleccionado *
                     </label>
                     
@@ -1373,10 +1462,10 @@ export default function LeadForm({ c10ImgUrl, t03ImgUrl, b10ImgUrl }: LeadFormPr
                           disabled={selectedBrand === 'Leapmotor'}
                           value={formData.modelOfInterest}
                           onChange={handleChange}
-                          className={`w-full text-white rounded-xl pl-11 pr-7 py-2.5 text-xs outline-none appearance-none transition uppercase font-mono font-bold disabled:opacity-85 disabled:cursor-not-allowed ${
+                          className={`w-full text-white rounded-xl pl-11 pr-7 py-2.5 text-xs outline-none appearance-none transition uppercase font-mono disabled:opacity-85 disabled:cursor-not-allowed ${
                             activeLanding === 'leapmotor'
-                              ? 'bg-[#010602] border border-[#009100]/25 focus:border-[#009100]'
-                              : 'bg-[#0a0f18] border border-white/25 focus:border-indigo-400'
+                              ? 'bg-[#2D2926] border border-[#009100]/25 focus:border-[#009100] font-semibold'
+                              : 'bg-[#0a0f18] border border-white/25 focus:border-indigo-400 font-bold'
                           }`}
                         >
                           {activeModelsList.map(m => (
@@ -1392,29 +1481,69 @@ export default function LeadForm({ c10ImgUrl, t03ImgUrl, b10ImgUrl }: LeadFormPr
                     )}
                   </div>
 
-                  {/* Distribuidor / Distributor field */}
+                  {/* Estado y Distribuidor / State and Distributor cascading selectors */}
                   {activeLanding !== 'leapmotor' && (
-                    <div className="space-y-1 bg-slate-900/60 p-2 rounded-xl border border-white/15">
-                      <label id="frm-distributor-label" htmlFor="distributor" className="text-[11px] uppercase font-mono tracking-wider text-white font-extrabold block mb-0.5">
-                        Distribuidor de Preferencia *
-                      </label>
-                      <div className="relative">
-                        <Settings className="absolute left-3.5 top-3 w-4 h-4 text-slate-300" />
-                        <select
-                          id="distributor"
-                          name="distributor"
-                          required
-                          value={formData.distributor}
-                          onChange={handleChange}
-                          className="w-full bg-[#0a0f18] text-white border border-white/25 focus:border-indigo-400 rounded-xl pl-11 pr-7 py-2.5 text-xs outline-none appearance-none transition font-semibold"
-                        >
-                          {CDMX_DISTRIBUTORS.map(d => (
-                            <option key={d} value={d} className="bg-slate-900 text-white">
-                              {d.replace('Leapmotor ', `${selectedBrand} `)}
-                            </option>
-                          ))}
-                        </select>
-                        <ChevronDown className="absolute right-3 top-3.5 w-4 h-4 text-slate-300 pointer-events-none" />
+                    <div className="space-y-3.5">
+                      {/* Estado selector */}
+                      <div className="space-y-1 bg-slate-900/60 p-2 rounded-xl border border-white/15">
+                        <label id="frm-state-label" htmlFor="state" className="text-[11px] uppercase font-mono tracking-wider text-white font-extrabold block mb-0.5">
+                          Estado *
+                        </label>
+                        <div className="relative">
+                          <MapPin className="absolute left-3.5 top-3.5 w-4 h-4 text-slate-300 pointer-events-none z-10" />
+                          <select
+                            id="state"
+                            name="state"
+                            required
+                            value={formData.state}
+                            onChange={(e) => {
+                              const stateValue = e.target.value;
+                              const stateDealers = activeDealers.filter(d => d.state === stateValue);
+                              const firstDealer = stateDealers[0]?.name || '';
+                              setFormData(prev => ({
+                                ...prev,
+                                state: stateValue,
+                                distributor: firstDealer
+                              }));
+                            }}
+                            className="w-full bg-[#0a0f18] text-white border border-white/25 focus:border-indigo-400 rounded-xl pl-11 pr-7 py-2.5 text-xs outline-none appearance-none transition font-semibold"
+                          >
+                            {availableStates.map(st => (
+                              <option key={st} value={st} className="bg-slate-900 text-white">
+                                {st}
+                              </option>
+                            ))}
+                          </select>
+                          <ChevronDown className="absolute right-3 top-3.5 w-4 h-4 text-slate-300 pointer-events-none" />
+                        </div>
+                      </div>
+
+                      {/* Distribuidor de Preferencia selector */}
+                      <div className="space-y-1 bg-slate-900/60 p-2 rounded-xl border border-white/15">
+                        <label id="frm-distributor-label" htmlFor="distributor" className="text-[11px] uppercase font-mono tracking-wider text-white font-extrabold block mb-0.5">
+                          Distribuidor de Preferencia *
+                        </label>
+                        <div className="relative">
+                          <Settings className="absolute left-3.5 top-3.5 w-4 h-4 text-slate-300 pointer-events-none z-10" />
+                          <select
+                            id="distributor"
+                            name="distributor"
+                            required
+                            value={formData.distributor}
+                            onChange={(e) => {
+                              const dealerValue = e.target.value;
+                              setFormData(prev => ({ ...prev, distributor: dealerValue }));
+                            }}
+                            className="w-full bg-[#0a0f18] text-white border border-white/25 focus:border-indigo-400 rounded-xl pl-11 pr-7 py-2.5 text-xs outline-none appearance-none transition font-semibold"
+                          >
+                            {filteredDealers.map(d => (
+                              <option key={d.id + '-' + d.name} value={d.name} className="bg-slate-900 text-white">
+                                {d.name}
+                              </option>
+                            ))}
+                          </select>
+                          <ChevronDown className="absolute right-3 top-3.5 w-4 h-4 text-slate-300 pointer-events-none" />
+                        </div>
                       </div>
                     </div>
                   )}
@@ -1489,12 +1618,12 @@ export default function LeadForm({ c10ImgUrl, t03ImgUrl, b10ImgUrl }: LeadFormPr
                     onChange={(e) => setPrivacyAccepted(e.target.checked)}
                     className="w-4.5 h-4.5 rounded border-white/20 bg-black/40 text-indigo-500 focus:ring-indigo-500/50 focus:ring-offset-slate-950 mt-0.5 shrink-0 accent-indigo-500 cursor-pointer"
                   />
-                  <label htmlFor="privacyActiveCheckbox" className="text-[10px] sm:text-[11px] font-bold text-white uppercase tracking-wider cursor-pointer leading-relaxed">
+                  <label htmlFor="privacyActiveCheckbox" className={`text-[10px] sm:text-[11px] uppercase tracking-wider cursor-pointer leading-relaxed ${activeLanding === 'leapmotor' ? 'font-semibold text-slate-300' : 'font-bold text-white'}`}>
                     HE LEIDO Y ACEPTO EL{' '}
                     <button
                       type="button"
                       onClick={() => setShowPrivacyText(!showPrivacyText)}
-                      className="underline text-indigo-400 hover:text-indigo-300 transition-colors uppercase font-black"
+                      className={`underline text-indigo-400 hover:text-indigo-300 transition-colors uppercase ${activeLanding === 'leapmotor' ? 'font-semibold' : 'font-black'}`}
                     >
                       AVISO DE PRIVACIDAD
                     </button>
@@ -1581,7 +1710,7 @@ export default function LeadForm({ c10ImgUrl, t03ImgUrl, b10ImgUrl }: LeadFormPr
                     src={selectedBrand === 'Jeep' ? JEEP_IMG : (selectedBrand === 'Leapmotor' ? b10ImgUrl : STELLANTIS_IMG)} 
                     alt={selectedBrand}
                     referrerPolicy="no-referrer"
-                    className="w-full h-full object-cover brightness-[1.25] contrast-[1.08] saturate-[1.1]"
+                    className={`w-full h-full object-cover ${selectedBrand === 'Leapmotor' ? '' : 'brightness-[1.25] contrast-[1.08] saturate-[1.1]'}`}
                   />
                   <div className="absolute inset-x-0 bottom-2 text-[10px] font-bold tracking-[0.2em] uppercase text-white/90">
                     {selectedBrand} {formData.modelOfInterest}
@@ -1606,19 +1735,7 @@ export default function LeadForm({ c10ImgUrl, t03ImgUrl, b10ImgUrl }: LeadFormPr
                   onClick={() => {
                     setSuccess(false);
                     setFormActive(false);
-                    setFormData({
-                      name: '',
-                      lastName: '',
-                      email: '',
-                      phone: '',
-                      postalCode: '',
-                      state: 'Ciudad de México (CDMX)',
-                      distributor: 'Leapmotor Santa Fe',
-                      modelOfInterest: activeLanding === 'jeep' ? 'Grand Cherokee' : 'B10',
-                      contactMethod: 'whatsapp',
-                      testDriveDate: '',
-                      requestType: 'asesor'
-                    });
+                    setFormData(getInitialFormData(activeLanding, selectedBrand));
                   }}
                   className="w-full bg-white/5 hover:bg-white/10 text-slate-300 border border-white/10 px-6 py-3 rounded-xl text-[10px] font-bold tracking-wider uppercase transition font-mono"
                 >

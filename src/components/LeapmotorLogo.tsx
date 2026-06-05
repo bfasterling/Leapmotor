@@ -28,7 +28,7 @@ export default function LeapmotorLogo({
 
   return (
     <div 
-      className={`relative overflow-hidden shrink-0 flex items-center justify-start ${selectedSizeClass} ${className}`} 
+      className={`relative overflow-hidden shrink-0 flex items-center justify-center ${selectedSizeClass} ${className}`} 
       style={{ aspectRatio: showText ? '6.15 / 1' : '1 / 1', ...style }}
       id="leapmotor-composite-logo"
     >
@@ -37,7 +37,7 @@ export default function LeapmotorLogo({
         alt="Leapmotor Logo"
         referrerPolicy="no-referrer"
         className={`h-full select-none mix-blend-screen ${
-          showText ? 'w-auto object-contain' : 'aspect-square object-cover object-left'
+          showText ? 'w-auto object-contain mx-auto' : 'aspect-square object-cover object-center'
         }`}
         style={imgStyle}
       />
