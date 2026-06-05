@@ -705,8 +705,15 @@ export default function LeadForm({ c10ImgUrl, t03ImgUrl, b10ImgUrl }: LeadFormPr
     const isLeapmotorLanding = activeLanding === 'leapmotor';
     const isDistributorRequired = !isLeapmotorLanding;
 
-    if (!formData.name.trim() || !formData.lastName.trim() || !formData.phone.trim() || !formData.postalCode.trim() || !formData.state.trim() || (isDistributorRequired && !formData.distributor.trim())) {
+    if (!formData.name.trim() || !formData.lastName.trim() || !formData.email.trim() || !formData.phone.trim() || !formData.postalCode.trim() || !formData.state.trim() || (isDistributorRequired && !formData.distributor.trim())) {
       setErrorText('Por favor ingresa todos los campos obligatorios (*).');
+      setLoading(false);
+      return;
+    }
+
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(formData.email.trim())) {
+      setErrorText('Por favor ingresa un correo electrónico válido.');
       setLoading(false);
       return;
     }
@@ -797,8 +804,7 @@ export default function LeadForm({ c10ImgUrl, t03ImgUrl, b10ImgUrl }: LeadFormPr
       const newLeadDoc = doc(leadsCol);
       const leadId = newLeadDoc.id;
 
-      // Ensure email has fallback if empty
-      const cleanEmail = formData.email.trim() || `${formData.name.trim().toLowerCase().replace(/\s+/g, '.')}@stellantis-leads.mx`;
+      const cleanEmail = formData.email.trim().toLowerCase();
 
       const payload = {
         name: formData.name.trim(),
@@ -1420,6 +1426,26 @@ export default function LeadForm({ c10ImgUrl, t03ImgUrl, b10ImgUrl }: LeadFormPr
                           className={inputClass}
                         />
                       </div>
+                    </div>
+                  </div>
+
+                  {/* Mail field */}
+                  <div className={rowClass}>
+                    <label id="frm-email-label" htmlFor="email" className={`text-[11px] uppercase font-mono tracking-wider block mb-0.5 ${activeLanding === 'leapmotor' ? 'font-semibold text-slate-300' : 'text-white font-extrabold'}`}>
+                      Correo Electrónico *
+                    </label>
+                    <div className="relative">
+                      <Mail className="absolute left-3 top-3 w-4 h-4 text-slate-300" />
+                      <input
+                        id="email"
+                        type="email"
+                        name="email"
+                        required
+                        placeholder="tu@correo.com"
+                        value={formData.email}
+                        onChange={handleChange}
+                        className={inputClass}
+                      />
                     </div>
                   </div>
 
