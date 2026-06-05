@@ -42,11 +42,13 @@ import {
   Award,
   Cpu,
   Route,
-  Star
+  Star,
+  Wrench
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import LeapmotorLogo from './LeapmotorLogo';
 import StellantisLogo from './StellantisLogo';
+import { PRIVACY_TEXT_ES } from '../privacyText';
 
 // Import newly generated design assets
 import JEEP_IMG from '../assets/images/jeep_cherokee_green_1780407967325.png';
@@ -413,6 +415,10 @@ export default function LeadForm({ c10ImgUrl, t03ImgUrl, b10ImgUrl }: LeadFormPr
   // Interactive Map Event Callout Section for Jeep Landing
   const [activeJeepEventSpot, setActiveJeepEventSpot] = useState<string>('track');
 
+  // Privacy Policy Acceptance and Display State
+  const [privacyAccepted, setPrivacyAccepted] = useState(false);
+  const [showPrivacyText, setShowPrivacyText] = useState(false);
+
   // Renders premium, responsive vector brand logos for the Multimarca experience
   const renderBrandLogo = (brandName: string, isSelected: boolean, isLarge?: boolean) => {
     const activeColor = isLarge
@@ -529,6 +535,8 @@ export default function LeadForm({ c10ImgUrl, t03ImgUrl, b10ImgUrl }: LeadFormPr
     setFormActive(false);
     setSuccess(false);
     setSelectedSubBrand(null);
+    setPrivacyAccepted(false);
+    setShowPrivacyText(false);
     
     // Clear dynamic states
     if (target === 'leapmotor') {
@@ -585,6 +593,8 @@ export default function LeadForm({ c10ImgUrl, t03ImgUrl, b10ImgUrl }: LeadFormPr
       requestType: reqType,
       modelOfInterest: presetModel || prev.modelOfInterest
     }));
+    setPrivacyAccepted(false);
+    setShowPrivacyText(false);
     setFormActive(true);
   };
 
@@ -592,6 +602,12 @@ export default function LeadForm({ c10ImgUrl, t03ImgUrl, b10ImgUrl }: LeadFormPr
     e.preventDefault && e.preventDefault();
     setLoading(true);
     setErrorText('');
+
+    if (!privacyAccepted) {
+      setErrorText('DEBE ACEPTAR EL AVISO DE PRIVACIDAD PARA CONTINUAR.');
+      setLoading(false);
+      return;
+    }
 
     const isLeapmotorLanding = activeLanding === 'leapmotor';
     const isDistributorRequired = !isLeapmotorLanding;
@@ -905,13 +921,8 @@ export default function LeadForm({ c10ImgUrl, t03ImgUrl, b10ImgUrl }: LeadFormPr
                       <span className="text-[8px] text-white font-bold leading-tight font-mono uppercase text-center max-w-[85px]">Autonomía hasta 990 Kms</span>
                     </div>
                     <div className="flex flex-col items-center gap-1">
-                      <div className="w-8 h-8 rounded-full bg-[#00a6ff]/15 border border-[#00c0ff]/30 flex items-center justify-center shadow-inner">
-                        <svg viewBox="0 0 24 24" className="w-4.5 h-4.5" xmlns="http://www.w3.org/2000/svg">
-                          <path 
-                            d="M3 18h3.2v-7.8l3.8 6.6h3.8l3.8-6.6V18h3.2V6h-4.2L12 12.5 7.2 6H3v12z" 
-                            fill="#00c0ff" 
-                          />
-                        </svg>
+                      <div className="w-8 h-8 rounded-full bg-[#035F1D]/20 border border-[#009100]/30 flex items-center justify-center text-[#009100] shadow-inner">
+                        <Wrench className="w-4 h-4 text-[#00cc00]" />
                       </div>
                       <span className="text-[8px] text-white font-bold leading-tight font-mono uppercase text-center max-w-[85px]">Respaldo de Mopar</span>
                     </div>
@@ -1439,13 +1450,65 @@ export default function LeadForm({ c10ImgUrl, t03ImgUrl, b10ImgUrl }: LeadFormPr
                 </form>
               </div>
 
+              {/* Privacy Policy and Checkbox Section */}
+              <div className="space-y-2 mt-3 mb-1">
+                <AnimatePresence>
+                  {showPrivacyText && (
+                    <motion.div
+                      initial={{ opacity: 0, height: 0 }}
+                      animate={{ opacity: 1, height: 'auto' }}
+                      exit={{ opacity: 0, height: 0 }}
+                      className="overflow-hidden"
+                    >
+                      <div className="bg-slate-950/90 border border-white/10 rounded-xl p-3 text-left shadow-2xl relative z-20">
+                        <div className="flex items-center justify-between border-b border-white/10 pb-1.5 mb-1.5">
+                          <span className="text-[10px] font-extrabold text-amber-400 uppercase tracking-wider font-mono">
+                            AVISO DE PRIVACIDAD (STELLANTIS MÉXICO)
+                          </span>
+                          <button
+                            type="button"
+                            onClick={() => setShowPrivacyText(false)}
+                            className="text-slate-400 hover:text-white transition text-[9px] font-bold font-mono py-0.5 px-2 bg-white/5 border border-white/10 rounded hover:bg-white/10 active:scale-95"
+                          >
+                            CERRAR
+                          </button>
+                        </div>
+                        <div className="max-h-[140px] overflow-y-auto text-[10px] text-slate-300 leading-relaxed font-mono whitespace-pre-wrap pr-1" style={{ scrollbarWidth: 'thin' }}>
+                          {PRIVACY_TEXT_ES}
+                        </div>
+                      </div>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+
+                <div className="flex items-start gap-2.5 py-1.5 select-none text-left">
+                  <input
+                    type="checkbox"
+                    id="privacyActiveCheckbox"
+                    checked={privacyAccepted}
+                    onChange={(e) => setPrivacyAccepted(e.target.checked)}
+                    className="w-4.5 h-4.5 rounded border-white/20 bg-black/40 text-indigo-500 focus:ring-indigo-500/50 focus:ring-offset-slate-950 mt-0.5 shrink-0 accent-indigo-500 cursor-pointer"
+                  />
+                  <label htmlFor="privacyActiveCheckbox" className="text-[10px] sm:text-[11px] font-bold text-white uppercase tracking-wider cursor-pointer leading-relaxed">
+                    HE LEIDO Y ACEPTO EL{' '}
+                    <button
+                      type="button"
+                      onClick={() => setShowPrivacyText(!showPrivacyText)}
+                      className="underline text-indigo-400 hover:text-indigo-300 transition-colors uppercase font-black"
+                    >
+                      AVISO DE PRIVACIDAD
+                    </button>
+                  </label>
+                </div>
+              </div>
+
               {/* Submit registration button */}
-              <div className="pt-2 pb-1">
+              <div className="pt-1 pb-1">
                 <button
                   type="button"
                   onClick={handleSubmit}
-                  disabled={loading}
-                  className={`w-full ${theme.btnBg} active:scale-95 disabled:opacity-55 text-white font-bold py-4 px-6 rounded-2xl text-[11px] uppercase tracking-widest flex items-center justify-center gap-1.5 transition-all duration-300 shadow-xl`}
+                  disabled={loading || !privacyAccepted}
+                  className={`w-full ${theme.btnBg} active:scale-[0.98] disabled:opacity-40 disabled:cursor-not-allowed disabled:pointer-events-none text-white font-bold py-4 px-6 rounded-2xl text-[11px] uppercase tracking-widest flex items-center justify-center gap-1.5 transition-all duration-300 shadow-xl`}
                 >
                   {loading ? (
                     <div className="w-4 h-4 border-2 border-white border-t-transparent animate-spin rounded-full" />
