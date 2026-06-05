@@ -1,5 +1,5 @@
 import React from 'react';
-import logoPng from '../assets/images/leapmotor_logo_1780268613531.png';
+import logoPng from '../assets/images/leapmotor_logo_black_bg_1780690813034.png';
 
 interface LeapmotorLogoProps {
   className?: string; // Standard text color class (preserved for compatibility)

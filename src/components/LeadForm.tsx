@@ -948,7 +948,7 @@ export default function LeadForm({ c10ImgUrl, t03ImgUrl, b10ImgUrl }: LeadFormPr
         {/* Brand Header */}
         <div className={`px-6 ${activeLanding === 'leapmotor' ? 'py-1' : 'py-4'} flex ${activeLanding === 'multimarca' || activeLanding === 'leapmotor' ? 'justify-center' : 'justify-between'} items-center backdrop-blur-md sticky top-0 z-25 relative ${
           activeLanding === 'leapmotor'
-            ? 'bg-[#2D2926]/95 border-b border-[#009100]/25'
+            ? 'bg-transparent border-b border-[#009100]/25'
             : 'bg-[#05070a]/90 border-b border-white/5'
         }`}>
           {activeLanding === 'leapmotor' && (
@@ -1057,9 +1057,9 @@ export default function LeadForm({ c10ImgUrl, t03ImgUrl, b10ImgUrl }: LeadFormPr
                     </button>
                     <button
                       onClick={() => launchFormWithRequest('asesor', 'B10')}
-                      className="bg-[#009100] hover:bg-[#035F1D] text-white font-extrabold py-3.5 px-4 rounded-xl text-[10px] uppercase tracking-widest flex items-center justify-center gap-1.5 transition-all duration-300 active:scale-95 shadow-lg shadow-[#009100]/30 border border-[#009100]/30"
+                      className="bg-[rgb(239,225,58)] hover:bg-[rgb(219,205,38)] text-slate-950 font-extrabold py-3.5 px-4 rounded-xl text-[10px] uppercase tracking-widest flex items-center justify-center gap-1.5 transition-all duration-300 active:scale-95 shadow-lg shadow-[rgba(239,225,58,0.3)] border border-[rgb(239,225,58)]/40"
                     >
-                      <UserCheck className="w-3.5 h-3.5 text-white shrink-0" />
+                      <UserCheck className="w-3.5 h-3.5 text-slate-950 shrink-0" />
                       <span>Atención VIP</span>
                     </button>
                   </div>
