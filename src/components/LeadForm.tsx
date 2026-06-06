@@ -54,6 +54,12 @@ import { ALL_DEALERS } from '../data/dealers';
 
 // Import newly generated design assets
 import LEAPMOTOR_TUNNEL_BG from '../assets/images/leapmotor_b10_tunnel_bg_1780692970544.png';
+import LEAPMOTOR_LOGO_IMG from '../assets/images/leapmotor_logo_black_bg_1780690813034.png';
+import JEEP_LOGO_IMG from '../assets/images/jeep_logo_black_bg_1780707738578.png';
+import FIAT_LOGO_IMG from '../assets/images/fiat_logo_black_bg_1780708832455.png';
+import DODGE_LOGO_IMG from '../assets/images/dodge_logo_black_bg_1780709061838.png';
+import PEUGEOT_LOGO_IMG from '../assets/images/peugeot_logo_black_bg_1780709459994.png';
+import RAM_LOGO_IMG from '../assets/images/ram_logo_black_bg_1780709628383.png';
 import JEEP_IMG from '../assets/images/jeep_cherokee_green_1780407967325.png';
 import JEEP_COMMANDER_IMG from '../assets/images/jeep_commander_1780440413653.png';
 import JEEP_COMPASS_IMG from '../assets/images/jeep_compass_1780440426004.png';
@@ -432,122 +438,67 @@ export default function LeadForm({ c10ImgUrl, t03ImgUrl, b10ImgUrl }: LeadFormPr
       case 'Leapmotor':
         return (
           <div className="flex flex-col items-center justify-center w-full px-0.5" id="brand-logo-leapmotor">
-            <svg 
-              viewBox="0 0 250 42" 
-              className={`w-full ${isLarge ? 'max-w-[200px] sm:max-w-[245px] h-10 sm:h-12' : 'max-w-[105px] sm:max-w-[125px] h-6.5 sm:h-7.5'} fill-current ${activeColor} transition-all duration-300`} 
-              xmlns="http://www.w3.org/2000/svg"
-            >
-              <g transform="translate(18, 0)" fill="currentColor">
-                {/* LP Monogram Emblem */}
-                <path d="M 0,10 L 10.5,1 L 22.5,1 L 22.5,7 L 13,7 L 7.5,12.5 L 7.5,23.5 L 13,29 L 22.5,29 L 22.5,35 L 10.5,35 L 0,26 Z" />
-                <path d="M 16.5,7 L 22.5,7 L 22.5,29 L 16.5,29 Z" opacity="0.8" />
-                {/* Modern futuristic text track and style */}
-                <text x="36" y="27" className="font-sans font-extrabold tracking-[0.24em] text-[20px]" style={{ fontWeight: 800 }}>LEAPMOTOR</text>
-              </g>
-            </svg>
+            <img 
+              src={LEAPMOTOR_LOGO_IMG} 
+              alt="Leapmotor"
+              referrerPolicy="no-referrer"
+              className={`w-full ${isLarge ? 'max-w-[400px] sm:max-w-[490px] h-40 sm:h-48' : 'max-w-[105px] sm:max-w-[125px] h-6.5 sm:h-7.5'} object-contain transition-all duration-300`} 
+            />
           </div>
         );
       case 'Jeep':
         return (
           <div className="flex flex-col items-center justify-center w-full px-0.5" id="brand-logo-jeep">
-            <svg 
-              viewBox="0 0 120 40" 
-              className={`w-full ${isLarge ? 'max-w-[110px] sm:max-w-[130px] h-9 sm:h-11' : 'max-w-[62px] sm:max-w-[72px] h-6 sm:h-7'} fill-current ${activeColor} transition-all duration-300`} 
-              xmlns="http://www.w3.org/2000/svg"
-            >
-              <g fill="currentColor" transform="translate(26, 0)">
-                <path d="M 12,2 L 12,22 C 12,25.5 10.5,27 8,27 C 5.5,27 4.2,25.5 4.2,22 L 4.2,18.5 H 0 V 22 C 0,27.5 3,31 8,31 C 13,31 16.2,27.5 16.2,22 L 16.2,2 H 12 Z M 29.5,12.5 C 24,12.5 21,17.5 21,22 C 21,26.5 24,31 29.5,31 C 33.5,31 36.2,29 36.5,25.5 H 32 C 31.7,26.5 31,27 30,27 C 29,27 28.5,26.2 28.5,24.5 H 37 C 37,17.5 34.5,12.5 29.5,12.5 Z M 44.5,12.5 C 39,12.5 36,17.5 36,22 C 36,26.5 39,31 44.5,31 C 48.5,31 51.2,29 51.5,25.5 H 47 C 46.7,26.5 46,27 45,27 C 44,27 43.5,26.2 43.5,24.5 H 52 C 52,17.5 49.5,12.5 44.5,12.5 Z M 60,12.5 C 57.5,12.5 55.5,13.8 54.5,15.5 V 13 H 50 V 36.5 H 54.5 V 26.5 C 55.5,28.2 57.5,29.5 60,29.5 C 64.5,29.5 68,25 68,21 C 68,17 64.5,12.5 60,12.5 Z M 29.5,16.5 C 31,16.5 31.5,17.5 31.5,19 H 27.5 C 27.5,17.5 28,16.5 29.5,16.5 Z M 44.5,16.5 C 46,16.5 46.5,17.5 46.5,19 H 42.5 C 42.5,17.5 43,16.5 44.5,16.5 Z M 59,16.5 C 61,16.5 62,18 62,21.5 C 62,25 61,26.5 59,26.5 C 57,26.5 56,25 56,21.5 C 56,18 57,16.5 59,16.5 Z" />
-              </g>
-            </svg>
+            <img 
+              src={JEEP_LOGO_IMG} 
+              alt="Jeep"
+              referrerPolicy="no-referrer"
+              className={`w-full ${isLarge ? 'max-w-[400px] sm:max-w-[490px] h-30 sm:h-36' : 'max-w-[105px] sm:max-w-[125px] h-6.5 sm:h-7.5'} object-contain transition-all duration-300`} 
+            />
           </div>
         );
       case 'Ram':
         return (
           <div className="flex flex-col items-center justify-center w-full px-0.5" id="brand-logo-ram">
-            <svg 
-              viewBox="0 0 220 54" 
-              className={`w-full ${isLarge ? 'max-w-[160px] sm:max-w-[200px] h-10 sm:h-12' : 'max-w-[110px] sm:max-w-[130px] h-7 sm:h-8'} fill-current ${activeColor} transition-all duration-300`} 
-              xmlns="http://www.w3.org/2000/svg"
-            >
-              <g transform="translate(13, 0)">
-                <g transform="translate(1, 4)" className="fill-current">
-                  <path d="M29.8 1.5c-7.2 0-14.4 3.1-18.8 8.4-4.4 5.3-5.8 12.3-4 19.3 1.2 4.7 3.9 8.8 7.6 11.8 1.4-1.2 2-2.8 1.4-4.5-1.1-2.9-2.7-7-2.7-10.7 0-4.3 3.6-7.8 8.1-7.8s8.1 3.5 8.1 7.8c0 4.1-1.6 8.5-3.1 11.2-1.1 2-2.8 3.5-3.1 5.5-.3 2.1 1.2 3.9 3.2 3.9s3.5-1.8 3.5-3.9v-6.7c0-1.8 1-3.3 2.5-4.1l2.5-1.3c1.5-.8 2.5-2.3 2.5-4.1v-6.1c0-4.3 3.6-7.8 8.1-7.8s8.1 3.5 8.1 7.8c0 3.7-1.6 7.8-2.7 10.7-.6 1.7 0 3.3 1.4 4.5 3.7-3 6.4-7.1 7.6-11.8 1.8-7 .4-14-4-19.3-4.4-5.3-11.6-8.4-18.8-8.4z" />
-                  <path d="M29.8 16.5c-4-.8-8.2.8-10.3 4.1l6.2 12.4H34l6.2-12.4c-2.1-3.3-6.4-4.9-10.4-4.1z" />
-                  <path d="M23.6 37l6.2 11.2 6.2-11.2c-3.1.8-9.3.8-12.4 0z" />
-                </g>
-                <g fill="currentColor" transform="translate(72, 8)">
-                  <path d="M8 4h18a7 7 0 0 1 7 7v3a7 7 0 0 1-5 6.7l6 10.3h-8.5l-5.5-10.3H16v10.3H8V4zm8 7v6h9a3 3 0 0 0 0-6H16z" />
-                  <path d="M40 4h14l8 27h-8.5l-2-7h-8l-2 7H33L40 4zm6.5 5l-2.5 8h5.5l-3-8z" />
-                  <path d="M68 4h9l5.5 16l5.5-16h9v27h-8V12l-6.5 19H81l-6.5-19v19H68V4z" />
-                </g>
-              </g>
-            </svg>
+            <img 
+              src={RAM_LOGO_IMG} 
+              alt="Ram"
+              referrerPolicy="no-referrer"
+              className={`w-full ${isLarge ? 'max-w-[400px] sm:max-w-[490px] h-20 sm:h-24' : 'max-w-[105px] sm:max-w-[125px] h-6.5 sm:h-7.5'} object-contain transition-all duration-300`} 
+            />
           </div>
         );
       case 'Dodge':
         return (
           <div className="flex flex-col items-center justify-center w-full px-0.5" id="brand-logo-dodge">
-            <svg 
-              viewBox="0 0 200 40" 
-              className={`w-full ${isLarge ? 'max-w-[180px] sm:max-w-[210px] h-10 sm:h-12' : 'max-w-[100px] sm:max-w-[115px] h-6.5 sm:h-7.5'} ${activeColor} transition-all duration-300`} 
-              xmlns="http://www.w3.org/2000/svg"
-            >
-              <g transform="translate(10, 0)">
-                <g fill="currentColor">
-                  {/* D */}
-                  <path d="M 10,11 H 24 A 9,9 0 0 1 33,20 V 20 A 9,9 0 0 1 24,29 H 10 Z M 16,14.5 V 25.5 H 23 A 4,4 0 0 0 27,21.5 V 18.5 A 4,4 0 0 0 23,14.5 Z" />
-                  {/* O */}
-                  <path d="M 44,11 H 48 A 9,9 0 0 1 57,20 V 20 A 9,9 0 0 1 48,29 H 44 A 9,9 0 0 1 35,20 V 20 A 9,9 0 0 1 44,11 Z M 44,14.5 A 4,4 0 0 0 40,18.5 V 21.5 A 4,4 0 0 0 44,25.5 H 48 A 4,4 0 0 0 52,21.5 V 18.5 A 4,4 0 0 0 48,14.5 Z" />
-                  {/* D */}
-                  <path d="M 58,11 H 72 A 9,9 0 0 1 81,20 V 20 A 9,9 0 0 1 72,29 H 58 Z M 64,14.5 V 25.5 H 71 A 4,4 0 0 0 75,21.5 V 18.5 A 4,4 0 0 0 71,14.5 Z" />
-                  {/* G */}
-                  <path d="M 92,11 H 96 A 9,9 0 0 1 105,20 V 20 A 9,9 0 0 1 96,29 H 92 A 9,9 0 0 1 83,20 V 20 A 9,9 0 0 1 92,11 Z M 92,14.5 C 90,14.5 89,16 89,18.5 V 21.5 C 89,24 90,25.5 92,25.5 H 96 V 21.5 H 93 V 18.5 H 100 V 25.5 C 100,27 99,29 96,29 H 92 C 89,29 88,27 88,25.5 V 21.5 C 88,18.5 89,14.5 92,14.5 Z" />
-                  {/* E */}
-                  <path d="M 109,11 H 125 V 15 H 115 V 18 H 123 V 21 H 115 V 25 H 125 V 29 H 109 Z" />
-                </g>
-                <g transform="translate(142, 6) scale(1.15)" fill="none" stroke="#DA291C" strokeWidth="2" strokeLinejoin="round">
-                  <polygon points="12,1 23,20 1,20" strokeLinejoin="miter" strokeWidth="2.4" />
-                  <polygon points="12,4 20,18.5 4,18.5" opacity="0.6" strokeWidth="1" />
-                  <polygon points="12,7 17,16 7,16" className="text-red-500" fill="#DA291C" />
-                </g>
-              </g>
-            </svg>
+            <img 
+              src={DODGE_LOGO_IMG} 
+              alt="Dodge"
+              referrerPolicy="no-referrer"
+              className={`w-full ${isLarge ? 'max-w-[400px] sm:max-w-[490px] h-30 sm:h-36' : 'max-w-[105px] sm:max-w-[125px] h-6.5 sm:h-7.5'} object-contain transition-all duration-300`} 
+            />
           </div>
         );
       case 'Fiat':
         return (
           <div className="flex flex-col items-center justify-center w-full px-0.5" id="brand-logo-fiat">
-            <svg 
-              viewBox="0 0 120 40" 
-              className={`w-full ${isLarge ? 'max-w-[110px] sm:max-w-[130px] h-10 sm:h-12' : 'max-w-[55px] sm:max-w-[65px] h-6 sm:h-7'} fill-current ${activeColor} transition-all duration-300`} 
-              xmlns="http://www.w3.org/2000/svg"
-            >
-              <g fill="currentColor" transform="translate(23.5, 0)">
-                <path d="M 12,2 L 23,2 L 23,6 L 17.5,6 L 17.5,16 L 22.5,16 L 22.5,20 L 17.5,20 L 17.5,38 L 12,38 Z" />
-                <path d="M 27,2 L 32.5,2 L 32.5,38 L 27,38 Z" />
-                <path d="M 36.5,2 L 47.5,2 L 53.5,38 L 47.5,38 L 46.2,30 L 41,30 L 39.8,38 L 33.8,38 Z M 43.6,12 L 45.2,25.5 L 41.8,25.5 Z" />
-                <path d="M 57,2 L 73,2 L 73,6 L 67.8,6 L 67.8,38 L 62.2,38 L 62.2,6 L 57,6 Z" />
-              </g>
-            </svg>
+            <img 
+              src={FIAT_LOGO_IMG} 
+              alt="Fiat"
+              referrerPolicy="no-referrer"
+              className={`w-full ${isLarge ? 'max-w-[400px] sm:max-w-[490px] h-30 sm:h-36' : 'max-w-[105px] sm:max-w-[125px] h-6.5 sm:h-7.5'} object-contain transition-all duration-300`} 
+            />
           </div>
         );
       case 'Peugeot':
         return (
-          <div className="flex items-center justify-center w-full px-0.5" id="brand-logo-peugeot">
-            <svg 
-              viewBox="0 0 100 110" 
-              className={`w-full ${isLarge ? 'max-w-[70px] sm:max-w-[85px] h-14 sm:h-16' : 'max-w-[42px] sm:max-w-[50px] h-9 sm:h-10'} fill-current ${activeColor} transition-all duration-300`} 
-              xmlns="http://www.w3.org/2000/svg"
-            >
-              <path d="M 50,2 C 78,2 96,8 96,28 C 96,55 90,83 50,108 C 10,83 4,55 4,28 C 4,8 22,2 50,2 Z" fill="none" stroke="currentColor" strokeWidth="3" strokeLinejoin="round" />
-              <path d="M 50,6 C 74,6 91,11 91,29 C 91,53 85,79 50,102 C 15,79 9,53 9,29 C 9,11 26,6 50,6 Z" fill="none" stroke="currentColor" strokeWidth="1" opacity="0.6" />
-              <text x="50" y="21" textAnchor="middle" className="font-sans text-[7.5px]" style={{ fontWeight: 800, letterSpacing: '0.22em' }} fill="currentColor">PEUGEOT</text>
-              <line x1="20" y1="26" x2="80" y2="26" stroke="currentColor" strokeWidth="1.2" />
-              <g transform="translate(16, 26) scale(0.68)" fill="currentColor">
-                <path d="M 50,7 C 46,12 40,15 36,12 C 32,9 26,4 20,4 C 18,7 20,11 18,14 C 15,14 12,11 10,8 C 7,12 8,17 12,20 C 13,21 12,22 10,23 C 8,24 5,23 2,21 C 2,26 6,30 11,31 C 15,32 18,29 20,27 C 18,31 15,36 10,38 C 12,42 16,42 20,40 C 23,38 24,33 25,32 M 50,7 C 54,12 55,20 52,28 C 50,32 46,36 41,38 C 36,40 31,41 27,42 M 52,28 C 58,26 64,28 66,35 C 68,42 64,50 56,54 C 48,58 38,58 30,55 C 24,52 20,47 22,43 C 24,39 28,39 31,42 C 33,44 33,47 31,50 M 56,54 C 54,60 48,66 40,68 C 32,70 24,67 18,62 C 14,58 12,52 14,48 M 41,38 C 43,45 40,52 35,55" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" fill="none" />
-                <path d="M 45,21 Q 48,15 44,11 M 36,25 Q 40,25 41,20" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
-              </g>
-            </svg>
+          <div className="flex flex-col items-center justify-center w-full px-0.5" id="brand-logo-peugeot">
+            <img 
+              src={PEUGEOT_LOGO_IMG} 
+              alt="Peugeot"
+              referrerPolicy="no-referrer"
+              className={`w-full ${isLarge ? 'max-w-[400px] sm:max-w-[490px] h-20 sm:h-24' : 'max-w-[105px] sm:max-w-[125px] h-6.5 sm:h-7.5'} object-contain transition-all duration-300`} 
+            />
           </div>
         );
       default:
@@ -967,8 +918,8 @@ export default function LeadForm({ c10ImgUrl, t03ImgUrl, b10ImgUrl }: LeadFormPr
         )}
 
           {activeLanding === 'multimarca' && (
-            <div className="flex items-center justify-center py-2 h-14">
-              <StellantisLogo size="md" color="#ffffff" style={{ height: '51px' }} />
+            <div className="flex items-center justify-center py-4 h-28">
+              <StellantisLogo size="md" color="#ffffff" style={{ height: '102px' }} />
             </div>
           )}
         </div>
@@ -1146,7 +1097,7 @@ export default function LeadForm({ c10ImgUrl, t03ImgUrl, b10ImgUrl }: LeadFormPr
                       </div>
 
                       {/* Stacked Brand boxes (All identical size, stacked vertically, centering the brand logos) */}
-                      <div className="flex flex-col gap-2.5 pt-1">
+                      <div className="flex flex-col gap-1.5 pt-1">
                         {['Leapmotor', 'Jeep', 'Fiat', 'Dodge', 'Peugeot', 'Ram'].map((brand) => {
                           return (
                             <button
@@ -1155,10 +1106,10 @@ export default function LeadForm({ c10ImgUrl, t03ImgUrl, b10ImgUrl }: LeadFormPr
                                 handleBrandSelect(brand);
                                 setSelectedSubBrand(brand);
                               }}
-                              className="group relative overflow-hidden rounded-2xl border border-white/10 bg-slate-900/50 hover:bg-slate-900/85 hover:border-white/20 h-22 sm:h-24 w-full flex items-center justify-center select-none transition-all duration-300 transform active:scale-[0.99] shadow-lg shadow-black/20"
+                              className={`group relative overflow-hidden rounded-2xl border border-white/10 bg-black hover:bg-zinc-950 hover:border-white/20 ${brand === 'Leapmotor' ? 'h-44 sm:h-52' : (brand === 'Jeep' || brand === 'Fiat' || brand === 'Dodge' ? 'h-32 sm:h-38' : 'h-22 sm:h-26')} w-full flex items-center justify-center select-none transition-all duration-300 transform active:scale-[0.99] shadow-lg shadow-black/20`}
                             >
                               {/* Centralized Brand Logo */}
-                              <div className="z-10 flex items-center justify-center w-full px-8 pointer-events-none transition-transform duration-300 group-hover:scale-[1.03]">
+                              <div className="z-10 flex items-center justify-center w-full px-8 pointer-events-none transition-transform duration-300 group-hover:scale-[1.02]">
                                 {renderBrandLogo(brand, true, true)}
                               </div>
                               
