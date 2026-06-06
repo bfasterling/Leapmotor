@@ -84,14 +84,18 @@ service cloud.firestore {
         && (!('city' in existing()) || (incoming().city == existing().city))
         && (!('postalCode' in existing()) || (incoming().postalCode == existing().postalCode))
         && (!('state' in existing()) || (incoming().state == existing().state))
-        && (!('distributor' in existing()) || (incoming().distributor == existing().distributor || (existing().status == "waiting" && incoming().status == "attending" && incoming().distributor is string)))
+        && (!('distributor' in existing()) || (
+          incoming().distributor == existing().distributor 
+          || (existing().status == "waiting" && incoming().status == "attending" && incoming().distributor is string)
+          || (incoming().advisorId != existing().advisorId && incoming().distributor is string)
+        ))
         && (!('landing' in existing()) || (incoming().landing == existing().landing))
         && (!('selectedBrand' in existing()) || (incoming().selectedBrand == existing().selectedBrand))
         && (!('testDriveDate' in existing()) || (incoming().testDriveDate == existing().testDriveDate))
         // Enforce updater fields (action checks)
         && (
           // Action 1: Reassign Lead to an Advisor (by Coordinator)
-          (incoming().diff(existing()).affectedKeys().hasOnly(['advisorId', 'advisorName']))
+          (incoming().diff(existing()).affectedKeys().hasOnly(['advisorId', 'advisorName', 'distributor']))
           ||
           // Action 2: Save Coordinator Notes (by Coordinator)
           (incoming().diff(existing()).affectedKeys().hasOnly(['coordinatorNotes']))

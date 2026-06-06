@@ -112,6 +112,9 @@ export default function Dashboard() {
   const [reassigningLeadId, setReassigningLeadId] = useState<string | null>(null);
   const [selectedReassignAdvisorId, setSelectedReassignAdvisorId] = useState('');
 
+  // Estado para visualización conjunta de administración
+  const [adminTab, setAdminTab] = useState<'prospectos' | 'asesores'>('prospectos');
+
   // Subscribe to leads
   useEffect(() => {
     const q = query(collection(db, 'leads'), orderBy('createdAt', 'desc'));
@@ -401,14 +404,20 @@ export default function Dashboard() {
     if (!advisorObj) return;
 
     try {
-      await updateDoc(doc(db, 'leads', leadId), {
+      const payload: any = {
         advisorId: advisorObj.id,
-        advisorName: advisorObj.name
-      });
+        advisorName: advisorObj.name,
+        distributor: advisorObj.distributor || 'Leapmotor Santa Fe'
+      };
+      await updateDoc(doc(db, 'leads', leadId), payload);
+      setMgmtSuccess('Prospecto reasignado con éxito.');
+      setMgmtError('');
       setReassigningLeadId(null);
       setSelectedReassignAdvisorId('');
-    } catch (err) {
-      console.error("Error reassigning lead:", err);
+    } catch (err: any) {
+      console.error("Error reassigning lead in Firestore:", err);
+      setMgmtError(`Error al reasignar: ${err.message || 'Denegado por reglas de seguridad'}`);
+      setMgmtSuccess('');
     }
   };
 
@@ -442,6 +451,28 @@ export default function Dashboard() {
       console.error("Error manual closing lead in attention:", err);
     }
   };
+
+  // Helper to detect if a lead's createdAt is today
+  const getIsToday = (createdAt: any) => {
+    if (!createdAt) return false;
+    const d = createdAt.toDate ? createdAt.toDate() : new Date(createdAt);
+    const now = new Date();
+    return d.getDate() === now.getDate() && 
+           d.getMonth() === now.getMonth() && 
+           d.getFullYear() === now.getFullYear();
+  };
+
+  // Leads registered today
+  const leadsToday = leads.filter(l => getIsToday(l.createdAt));
+  const totalLeadsToday = leadsToday.length;
+  const leapmotorLeadsToday = leadsToday.filter(l => !l.landing || l.landing === 'leapmotor').length;
+  const jeepLeadsToday = leadsToday.filter(l => l.landing === 'jeep').length;
+  const multimarcaLeadsToday = leadsToday.filter(l => l.landing === 'multimarca').length;
+
+  // Real-time Leapmotor status counts (tiempo real)
+  const leapmotorWaitingCountRealTime = leads.filter(l => (!l.landing || l.landing === 'leapmotor') && l.status === LeadStatus.WAITING).length;
+  const leapmotorAttendingCountRealTime = leads.filter(l => (!l.landing || l.landing === 'leapmotor') && l.status === LeadStatus.ATTENDING).length;
+  const leapmotorAttendedCountRealTime = leads.filter(l => (!l.landing || l.landing === 'leapmotor') && l.status === LeadStatus.ATTENDED).length;
 
   // Compute stats based on the selected date filters
   const totalLeads = filteredLeads.length;
@@ -645,64 +676,103 @@ export default function Dashboard() {
       
       {/* Overview stats grid */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
-        {/* KPI 1: Total Leads */}
+        {/* Card 1: Total Leads Today */}
         <div className={`${cardBg} p-5 rounded-2xl relative overflow-hidden flex flex-col justify-between transition-all duration-300`}>
           <div className="flex justify-between items-start">
-            <span className={`text-[12px] font-mono tracking-wider uppercase font-extrabold ${isDark ? 'text-slate-400' : 'text-slate-550 text-slate-500'}`}>Total Prospectos</span>
-            <span className={`p-2 rounded-xl ${isDark ? 'bg-blue-500/20 text-white' : 'bg-blue-50 text-blue-700 border border-blue-200'}`}>
+            <span className={`text-[12px] font-mono tracking-wider uppercase font-extrabold ${isDark ? 'text-slate-400' : 'text-slate-500'}`}>Total Leads Hoy</span>
+            <span className={`p-2 rounded-xl ${isDark ? 'bg-indigo-500/20 text-white' : 'bg-indigo-50 text-indigo-700 border border-indigo-200'}`}>
               <Users className="w-4 h-4" />
             </span>
           </div>
           <div className="mt-4">
-            <div className={`text-3xl font-black ${titleColor}`}>{totalLeads}</div>
-            <p className={`text-[11px] font-extrabold font-mono mt-1 ${isDark ? 'text-blue-300' : 'text-blue-700'}`}>Registrados hoy</p>
+            <div className={`text-3xl font-black ${titleColor}`}>{totalLeadsToday}</div>
+            <p className={`text-[11px] font-extrabold font-mono mt-1 ${isDark ? 'text-indigo-300' : 'text-indigo-700'}`}>Leads totales de hoy</p>
           </div>
         </div>
 
-        {/* KPI 2: Response Time */}
+        {/* Card 2: Leapmotor Today */}
         <div className={`${cardBg} p-5 rounded-2xl relative overflow-hidden flex flex-col justify-between transition-all duration-300`}>
           <div className="flex justify-between items-start">
-            <span className={`text-[12px] font-mono tracking-wider uppercase font-extrabold ${isDark ? 'text-slate-400' : 'text-slate-550 text-slate-500'}`}>Respuesta Promedio</span>
+            <span className={`text-[12px] font-mono tracking-wider uppercase font-extrabold ${isDark ? 'text-slate-400' : 'text-slate-500'}`}>LeapMotor Hoy</span>
             <span className={`p-2 rounded-xl ${isDark ? 'bg-cyan-500/20 text-white' : 'bg-cyan-50 text-cyan-700 border border-cyan-200'}`}>
-              <Clock className="w-4 h-4" />
+              <Car className="w-4 h-4" />
             </span>
           </div>
           <div className="mt-4">
-            <div className={`text-3xl font-black flex items-baseline gap-1 ${titleColor}`}>
-              {averageResponseTimeSec === 0 ? 'N/D' : `${averageResponseTimeSec}`}
-              {averageResponseTimeSec > 0 && <span className="text-sm font-black text-slate-500">seg</span>}
-            </div>
-            <p className={`text-[11px] font-extrabold font-mono mt-1 flex items-center gap-1 ${isDark ? 'text-cyan-333 text-white' : 'text-cyan-700'}`}>
-              <Zap className="w-3.5 h-3.5 fill-cyan-400 text-cyan-400 animate-bounce" /> Meta Stellantis: &lt;15s
-            </p>
+            <div className={`text-3xl font-black ${titleColor}`}>{leapmotorLeadsToday}</div>
+            <p className={`text-[11px] font-extrabold font-mono mt-1 ${isDark ? 'text-cyan-300' : 'text-cyan-750 text-cyan-700'}`}>Landing LeapMotor</p>
           </div>
         </div>
 
-        {/* KPI 3: Conversion Rate */}
+        {/* Card 3: Jeep Cherokee Today */}
         <div className={`${cardBg} p-5 rounded-2xl relative overflow-hidden flex flex-col justify-between transition-all duration-300`}>
           <div className="flex justify-between items-start">
-            <span className={`text-[12px] font-mono tracking-wider uppercase font-extrabold ${isDark ? 'text-slate-400' : 'text-slate-550 text-slate-500'}`}>Tasa De Cierre</span>
+            <span className={`text-[12px] font-mono tracking-wider uppercase font-extrabold ${isDark ? 'text-slate-400' : 'text-slate-500'}`}>Jeep Cherokee Hoy</span>
+            <span className={`p-2 rounded-xl ${isDark ? 'bg-emerald-500/20 text-white' : 'bg-emerald-50 text-emerald-700 border border-emerald-200'}`}>
+              <Car className="w-4 h-4" />
+            </span>
+          </div>
+          <div className="mt-4">
+            <div className={`text-3xl font-black ${titleColor}`}>{jeepLeadsToday}</div>
+            <p className={`text-[11px] font-extrabold font-mono mt-1 ${isDark ? 'text-emerald-300' : 'text-emerald-750 text-emerald-700'}`}>Landing Jeep Cherokee</p>
+          </div>
+        </div>
+
+        {/* Card 4: Multimarca Today */}
+        <div className={`${cardBg} p-5 rounded-2xl relative overflow-hidden flex flex-col justify-between transition-all duration-300`}>
+          <div className="flex justify-between items-start">
+            <span className={`text-[12px] font-mono tracking-wider uppercase font-extrabold ${isDark ? 'text-slate-400' : 'text-slate-500'}`}>Multimarca Hoy</span>
             <span className={`p-2 rounded-xl ${isDark ? 'bg-amber-500/20 text-white' : 'bg-amber-50 text-amber-700 border border-amber-200'}`}>
-              <Percent className="w-4 h-4" />
+              <Car className="w-4 h-4" />
             </span>
           </div>
           <div className="mt-4">
-            <div className={`text-3xl font-black ${titleColor}`}>{conversionRate}%</div>
-            <p className={`text-[11px] font-extrabold font-mono mt-1 ${isDark ? 'text-amber-300' : 'text-amber-700'}`}>Éxito vs descartados</p>
+            <div className={`text-3xl font-black ${titleColor}`}>{multimarcaLeadsToday}</div>
+            <p className={`text-[11px] font-extrabold font-mono mt-1 ${isDark ? 'text-amber-300' : 'text-amber-700'}`}>Landing Multimarca</p>
           </div>
         </div>
+      </div>
 
-        {/* KPI 4: Active queue */}
-        <div className={`${cardBg} p-5 rounded-2xl relative overflow-hidden flex flex-col justify-between transition-all duration-300`}>
-          <div className="flex justify-between items-start">
-            <span className={`text-[12px] font-mono tracking-wider uppercase font-extrabold ${isDark ? 'text-slate-400' : 'text-slate-550 text-slate-500'}`}>Fila de espera</span>
-            <span className={`p-2 rounded-xl ${waitingCount > 0 ? 'bg-red-500/20 text-white animate-pulse' : (isDark ? 'bg-white/10 text-white border border-slate-700' : 'bg-slate-100 text-slate-700 border border-slate-200')}`}>
-              <Bell className="w-4 h-4" />
-            </span>
+      {/* Leapmotor Real-time Status Grid */}
+      <div className="mb-8">
+        <h3 className={`text-xs font-black tracking-widest uppercase font-mono mb-4 flex items-center gap-2 ${titleColor}`}>
+          <Sparkles className="w-4 h-4 text-cyan-400" /> OPERACIÓN LEAPMOTOR EN TIEMPO REAL
+        </h3>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          {/* Card 1: En espera */}
+          <div className={`${cardBg} p-5 rounded-2xl relative overflow-hidden flex items-center justify-between transition-all duration-300 border-l-4 border-l-amber-500`}>
+            <div>
+              <span className="text-[11px] font-mono text-amber-450 text-amber-500 tracking-wider uppercase font-extrabold">LeapMotor En Espera</span>
+              <div className={`text-3xl font-black mt-1.5 font-mono ${titleColor}`}>{leapmotorWaitingCountRealTime}</div>
+              <p className={`text-[11px] font-bold mt-1 ${mutedColor}`}>Cola de espera general</p>
+            </div>
+            <div className={`p-3.5 rounded-xl ${isDark ? 'bg-amber-500/20 text-amber-400' : 'bg-amber-50 text-amber-700 border border-amber-200'}`}>
+              <Clock className="w-5 h-5 animate-pulse" />
+            </div>
           </div>
-          <div className="mt-4">
-            <div className={`text-3xl font-black ${titleColor}`}>{waitingCount}</div>
-            <p className={`text-[11px] font-extrabold font-mono mt-1 ${isDark ? 'text-slate-100' : 'text-slate-500'}`}>Clientes sin asignar</p>
+
+          {/* Card 2: En atencion */}
+          <div className={`${cardBg} p-5 rounded-2xl relative overflow-hidden flex items-center justify-between transition-all duration-300 border-l-4 border-l-cyan-500`}>
+            <div>
+              <span className="text-[11px] font-mono text-cyan-500 tracking-wider uppercase font-extrabold">LeapMotor En Atención</span>
+              <div className={`text-3xl font-black mt-1.5 font-mono ${titleColor}`}>{leapmotorAttendingCountRealTime}</div>
+              <p className={`text-[11px] font-bold mt-1 ${mutedColor}`}>En llamada/WhatsApp</p>
+            </div>
+            <div className={`p-3.5 rounded-xl ${isDark ? 'bg-cyan-500/20 text-cyan-400' : 'bg-cyan-50 text-cyan-700 border border-cyan-200'}`}>
+              <Users className="w-5 h-5" />
+            </div>
+          </div>
+
+          {/* Card 3: Atendidos */}
+          <div className={`${cardBg} p-5 rounded-2xl relative overflow-hidden flex items-center justify-between transition-all duration-300 border-l-4 border-l-emerald-500`}>
+            <div>
+              <span className="text-[11px] font-mono text-emerald-500 tracking-wider uppercase font-extrabold">LeapMotor Atendidos</span>
+              <div className={`text-3xl font-black mt-1.5 font-mono ${titleColor}`}>{leapmotorAttendedCountRealTime}</div>
+              <p className={`text-[11px] font-bold mt-1 ${mutedColor}`}>Finalizados exitosamente</p>
+            </div>
+            <div className={`p-3.5 rounded-xl ${isDark ? 'bg-emerald-500/20 text-emerald-400' : 'bg-emerald-50 text-emerald-700 border border-emerald-200'}`}>
+              <CheckCircle className="w-5 h-5" />
+            </div>
           </div>
         </div>
       </div>
@@ -952,578 +1022,605 @@ export default function Dashboard() {
         </div>
       </div>
 
-      {/* 4. GESTIÓN DE ASESORES COMERCIALES (Crear, Listar, Activar/Inactivar, Eliminar) */}
-      <div className={`mt-8 border rounded-3xl p-6 transition-all duration-300 relative overflow-hidden ${cardBg}`}>
+      {/* SECCIÓN CONJUNTA DE ADMINISTRACIÓN TABULADA */}
+      <div className={`mt-8 border rounded-3xl p-6 transition-all duration-300 relative overflow-hidden ${cardBg}`} id="tabbed-administration-system">
         <div className="absolute top-0 right-0 w-64 h-64 bg-emerald-500/5 blur-[80px] rounded-full pointer-events-none" />
-        <h3 className={`text-sm font-black tracking-widest uppercase font-mono mb-4 flex items-center gap-2 ${titleColor}`}>
-          <Users className="w-4 h-4 text-emerald-400" /> ASESORES CONFIGURADOS
-        </h3>
-        <p className={`text-xs font-semibold mb-6 leading-relaxed ${subColor}`}>
-          Agrega nuevos asesores comerciales, modifique sus contraseñas para permitirles iniciar sesión en su consola, y desactívelos temporalmente para que dejen de recibir asignación automática de nuevos leads clientelares en tiempo real de acuerdo a la regla del menor volumen de carga.
-        </p>
+        
+        {/* Tab Headers */}
+        <div className="flex border-b border-slate-800/10 dark:border-white/10 mb-6 gap-2 sm:gap-4 overflow-x-auto whitespace-nowrap">
+          <button
+            type="button"
+            onClick={() => setAdminTab('prospectos')}
+            className={`pb-4 px-4 font-black text-xs sm:text-sm tracking-widest uppercase font-mono border-b-2 transition-all duration-300 flex items-center gap-2 cursor-pointer ${
+              adminTab === 'prospectos'
+                ? 'border-blue-500 text-blue-400 font-extrabold'
+                : 'border-transparent text-slate-400 hover:text-slate-200'
+            }`}
+          >
+            <Filter className="w-4 h-4" />
+            Control de Prospectos
+          </button>
+          <button
+            type="button"
+            onClick={() => setAdminTab('asesores')}
+            className={`pb-4 px-4 font-black text-xs sm:text-sm tracking-widest uppercase font-mono border-b-2 transition-all duration-300 flex items-center gap-2 cursor-pointer ${
+              adminTab === 'asesores'
+                ? 'border-emerald-500 text-emerald-400 font-extrabold'
+                : 'border-transparent text-slate-400 hover:text-slate-200'
+            }`}
+          >
+            <Users className="w-4 h-4" />
+            Control de Asesores
+          </button>
+        </div>
 
-        <div className="flex flex-col gap-8">
-          {/* Create / Edit Form */}
-          <div className={`p-5 rounded-2xl border transition-all ${isDark ? 'bg-slate-950/50 border-slate-850 border-slate-800/80' : 'bg-slate-50 border-slate-200 shadow-sm'}`}>
-            <h4 className={`text-xs font-bold uppercase tracking-wider font-mono mb-4 ${isDark ? 'text-slate-300' : 'text-slate-600'}`}>
-              {editingAdvisorId ? 'Editar Asesor' : 'Registrar Nuevo Asesor'}
-            </h4>
-            <form onSubmit={handleAddAdvisorSubmit} className="space-y-4">
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-                <div>
-                  <label className={`block text-[11px] font-extrabold font-mono uppercase mb-1.5 ${isDark ? 'text-white' : 'text-slate-700'}`}>Nombre Completo:</label>
+        {/* Tab 1: Administración de Prospectos */}
+        {adminTab === 'prospectos' && (
+          <div className="space-y-6">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+              <div>
+                <h3 className={`text-sm font-black tracking-widest uppercase font-mono mb-1.5 flex items-center gap-2 ${titleColor}`}>
+                  <Filter className="w-4 h-4 text-blue-400" /> ADMINISTRACIÓN GENERAL DE PROSPECTOS
+                </h3>
+                <p className={`text-xs font-semibold leading-relaxed ${subColor}`}>
+                  Filtre, busque, asigne o reasigne prospectos originarios de todas las campañas en tiempo real.
+                </p>
+              </div>
+              <div className="flex items-center gap-2 bg-blue-500/15 text-blue-400 text-[11px] font-mono font-bold uppercase tracking-wider px-3 py-1.5 rounded-xl border border-blue-500/25">
+                Leads Filtrados: {filteredCoordinatorLeads.length}
+              </div>
+            </div>
+
+            {/* Fila de Filtros Avanzados */}
+            <div className={`grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-4 p-4 rounded-2xl border ${isDark ? 'bg-slate-950/40 border-slate-850' : 'bg-slate-50 border-slate-200'}`}>
+              {/* 1. Búsqueda por Texto */}
+              <div>
+                <label className={`block text-[10px] font-mono tracking-wider uppercase font-extrabold mb-1.5 ${isDark ? 'text-white' : 'text-slate-600'}`}>Buscar Cliente:</label>
+                <div className="relative">
                   <input
                     type="text"
-                    placeholder="Ej: Daniel Sánchez"
-                    value={newAdvName}
-                    onChange={(e) => setNewAdvName(e.target.value)}
-                    className={`w-full border focus:border-emerald-500/55 rounded-xl px-3 py-2 text-xs outline-none transition font-semibold ${
-                      isDark ? 'bg-slate-900 border-slate-800 text-white' : 'bg-white border-slate-200 text-slate-800'
+                    placeholder="Nombre, Telefono, Correo..."
+                    value={leadSearch}
+                    onChange={(e) => setLeadSearch(e.target.value)}
+                    className={`w-full border rounded-xl pl-9 pr-3 py-2 text-xs outline-none transition font-semibold ${
+                      isDark ? 'bg-slate-900 border-slate-800 text-white placeholder-slate-500 focus:border-blue-500/50' : 'bg-white border-slate-200 text-slate-800 placeholder-slate-400 focus:border-indigo-500/50'
                     }`}
                   />
-                </div>
-
-                <div>
-                  <label className={`block text-[11px] font-extrabold font-mono uppercase mb-1.5 ${isDark ? 'text-white' : 'text-slate-700'}`}>Correo Electrónico (Login ID):</label>
-                  <input
-                    type="email"
-                    placeholder="Ej: daniel@leapmotor.com"
-                    value={newAdvEmail}
-                    onChange={(e) => setNewAdvEmail(e.target.value)}
-                    className={`w-full border focus:border-emerald-500/55 rounded-xl px-3 py-2 text-xs outline-none transition font-semibold ${
-                      isDark ? 'bg-slate-900 border-slate-800 text-white' : 'bg-white border-slate-200 text-slate-800'
-                    }`}
-                  />
-                </div>
-
-                <div>
-                  <label className={`block text-[11px] font-extrabold font-mono uppercase mb-1.5 ${isDark ? 'text-white' : 'text-slate-705'}`}>Contraseña de Acceso:</label>
-                  <input
-                    type="text"
-                    placeholder="Ej: clave123"
-                    value={newAdvPassword}
-                    onChange={(e) => setNewAdvPassword(e.target.value)}
-                    className={`w-full border focus:border-emerald-500/55 rounded-xl px-3 py-2 text-xs outline-none transition font-semibold ${
-                      isDark ? 'bg-slate-900 border-slate-800 text-white' : 'bg-white border-slate-200 text-slate-800'
-                    }`}
-                  />
-                </div>
-
-                <div>
-                  <label className={`block text-[11px] font-extrabold font-mono uppercase mb-1.5 ${isDark ? 'text-white' : 'text-slate-700'}`}>Distribuidor Leapmotor Asociado:</label>
-                  <select
-                    value={newAdvDistributor}
-                    onChange={(e) => setNewAdvDistributor(e.target.value)}
-                    className={`w-full border focus:border-emerald-500/55 rounded-xl px-3 py-2 text-xs outline-none transition font-semibold ${
-                      isDark ? 'bg-slate-900 border-slate-800 text-white' : 'bg-white border-slate-200 text-slate-800'
-                    }`}
-                  >
-                    {distributors.length === 0 ? (
-                      <option value="">Seeding/Cargando distribuidores...</option>
-                    ) : (
-                      distributors.map((dist) => (
-                        <option key={dist.id} value={dist.name}>
-                          {dist.name} ({dist.estado || 'N/A'} - ID: {dist.disId || dist.id})
-                        </option>
-                      ))
-                    )}
-                  </select>
+                  <Search className="w-4 h-4 text-slate-400 absolute left-3 top-2.5" />
                 </div>
               </div>
 
-              {mgmtError && <p className="text-[11px] text-red-500 font-bold">⚠️ {mgmtError}</p>}
-              {mgmtSuccess && <p className="text-[11px] text-emerald-600 font-bold">✓ {mgmtSuccess}</p>}
-
-              <div className="flex flex-col sm:flex-row gap-3 max-w-md pt-1">
-                <button
-                  type="submit"
-                  className="flex-1 bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-black py-2.5 rounded-xl text-xs transition uppercase tracking-widest cursor-pointer text-center"
+              {/* 2. Filtro de Estado */}
+              <div>
+                <label className={`block text-[10px] font-mono tracking-wider uppercase font-extrabold mb-1.5 ${isDark ? 'text-white' : 'text-slate-600'}`}>Filtrar por Estado:</label>
+                <select
+                  value={leadStatusFilter}
+                  onChange={(e) => setLeadStatusFilter(e.target.value)}
+                  className={`w-full border rounded-xl px-3 py-2 text-xs outline-none transition font-semibold cursor-pointer ${
+                    isDark ? 'bg-slate-900 border-slate-800 text-white focus:border-blue-500/50' : 'bg-white border-slate-200 text-slate-800 focus:border-indigo-500/50'
+                  }`}
                 >
-                  {editingAdvisorId ? '✓ Guardar Cambios' : '+ Registrar en Base de Datos'}
-                </button>
-                {editingAdvisorId && (
-                  <button
-                    type="button"
-                    onClick={handleCancelEdit}
-                    className="flex-1 bg-slate-500 hover:bg-slate-400 text-white font-black py-2.5 rounded-xl text-xs transition uppercase tracking-widest cursor-pointer text-center"
-                  >
-                    X Cancelar Edición
-                  </button>
-                )}
+                  <option value="all">TODOS LOS ESTADOS</option>
+                  <option value={LeadStatus.WAITING}>EN ESPERA DE ATENCIÓN</option>
+                  <option value={LeadStatus.ATTENDING}>EN ATENCIÓN ACTIVA</option>
+                  <option value={LeadStatus.ATTENDED}>ATENDIDOS CON ÉXITO / OK</option>
+                  <option value={LeadStatus.LOST}>DESCARTADOS / CANCELADOS</option>
+                </select>
               </div>
-            </form>
-          </div>
 
-          {/* Advisors List Table */}
-          <div className="w-full overflow-x-auto">
-            <h4 className={`text-xs font-bold uppercase tracking-wider font-mono mb-4 ${isDark ? 'text-slate-300' : 'text-slate-600'}`}>Asesores configurados ({advisors.length})</h4>
-            <div className={`border rounded-xl overflow-hidden transition-all ${isDark ? 'bg-slate-950/30 border-slate-800' : 'bg-white border-slate-200'}`}>
-              <table className="w-full text-[11px] text-left border-collapse">
-                <thead>
-                  <tr className={`border-b font-mono uppercase text-[9px] tracking-wider font-black ${isDark ? 'bg-slate-950/80 border-slate-700 text-white' : 'bg-slate-100 border-slate-200 text-slate-700'}`}>
-                    <th className="p-3">Asesor</th>
-                    <th className="p-3">Correo</th>
-                    <th className="p-3 shadow-none">Contraseña</th>
-                    <th className="p-3 text-center">Carga de Leads</th>
-                    <th className="p-3 text-center">Auto-Asignación</th>
-                    <th className="p-3 text-right">Acciones</th>
-                  </tr>
-                </thead>
-                <tbody className={`divide-y ${isDark ? 'divide-slate-805 divide-slate-800/50' : 'divide-slate-150 divide-slate-100'}`}>
-                  {advisors.length === 0 ? (
-                    <tr>
-                      <td colSpan={6} className={`p-6 text-center font-bold italic border border-dashed ${isDark ? 'border-slate-800' : 'border-slate-200'}`}>
-                        Cargando catálogo de asesores de ventas corporativos...
-                      </td>
+              {/* 3. Filtro por Agencia */}
+              <div>
+                <label className={`block text-[10px] font-mono tracking-wider uppercase font-extrabold mb-1.5 ${isDark ? 'text-white' : 'text-slate-600'}`}>Filtrar por Agencia:</label>
+                <select
+                  value={leadAgencyFilter}
+                  onChange={(e) => setLeadAgencyFilter(e.target.value)}
+                  className={`w-full border rounded-xl px-3 py-2 text-xs outline-none transition font-semibold cursor-pointer ${
+                    isDark ? 'bg-slate-900 border-slate-800 text-white focus:border-blue-500/50' : 'bg-white border-slate-200 text-slate-800 focus:border-indigo-500/50'
+                  }`}
+                >
+                  <option value="all">TODAS LAS AGENCIAS</option>
+                  {uniqueLeadDistributors.map(dist => (
+                    <option key={dist} value={dist}>{dist}</option>
+                  ))}
+                </select>
+              </div>
+
+              {/* 4. Filtro por Asesor */}
+              <div>
+                <label className={`block text-[10px] font-mono tracking-wider uppercase font-extrabold mb-1.5 ${isDark ? 'text-white' : 'text-slate-600'}`}>Filtrar por Asesor:</label>
+                <select
+                  value={leadAdvisorFilter}
+                  onChange={(e) => setLeadAdvisorFilter(e.target.value)}
+                  className={`w-full border rounded-xl px-3 py-2 text-xs outline-none transition font-semibold cursor-pointer ${
+                    isDark ? 'bg-slate-900 border-slate-800 text-white focus:border-blue-500/50' : 'bg-white border-slate-200 text-slate-800 focus:border-indigo-500/50'
+                  }`}
+                >
+                  <option value="all">TODOS LOS ASESORES</option>
+                  <option value="unassigned">SIN ASIGNAR (FILA DE ESPERA)</option>
+                  {advisors.map(adv => (
+                    <option key={adv.id} value={adv.id}>{adv.name} {adv.active === false ? '(Inactivo)' : ''}</option>
+                  ))}
+                </select>
+              </div>
+
+              {/* 5. Filtro de Tiempo */}
+              <div>
+                <label className={`block text-[10px] font-mono tracking-wider uppercase font-extrabold mb-1.5 ${isDark ? 'text-white' : 'text-slate-600'}`}>Filtro Temporal:</label>
+                <select
+                  value={leadDateFilter}
+                  onChange={(e) => setLeadDateFilter(e.target.value)}
+                  className={`w-full border rounded-xl px-3 py-2 text-xs outline-none transition font-semibold cursor-pointer ${
+                    isDark ? 'bg-slate-900 border-slate-800 text-white focus:border-blue-500/50' : 'bg-white border-slate-200 text-slate-800 focus:border-indigo-500/50'
+                  }`}
+                >
+                  <option value="all">HISTÓRICO COMPLETO</option>
+                  <option value="today">SÓLO HOY</option>
+                  <option value="range">RANGO PERSONALIZADO</option>
+                </select>
+              </div>
+            </div>
+
+            {/* Rango de fechas condicional */}
+            {leadDateFilter === 'range' && (
+              <div className={`grid grid-cols-1 sm:grid-cols-2 gap-4 p-4 rounded-xl border ${isDark ? 'bg-slate-950/20 border-slate-850' : 'bg-slate-50 border-slate-200'}`}>
+                <div>
+                  <label className={`block text-[10px] font-mono tracking-wider uppercase font-extrabold mb-1 ${isDark ? 'text-slate-400' : 'text-slate-600'}`}>Fecha Inicial:</label>
+                  <input
+                    type="date"
+                    value={leadSearchStartDate}
+                    onChange={(e) => setLeadSearchStartDate(e.target.value)}
+                    className={`w-full border rounded-xl px-3 py-2 text-xs outline-none transition font-semibold ${
+                      isDark ? 'bg-slate-900 border-slate-800 text-white' : 'bg-white border-slate-200 text-slate-800'
+                    }`}
+                  />
+                </div>
+                <div>
+                  <label className={`block text-[10px] font-mono tracking-wider uppercase font-extrabold mb-1 ${isDark ? 'text-slate-400' : 'text-slate-600'}`}>Fecha Final:</label>
+                  <input
+                    type="date"
+                    value={leadSearchEndDate}
+                    onChange={(e) => setLeadSearchEndDate(e.target.value)}
+                    className={`w-full border rounded-xl px-3 py-2 text-xs outline-none transition font-semibold ${
+                      isDark ? 'bg-slate-900 border-slate-800 text-white' : 'bg-white border-slate-200 text-slate-800'
+                    }`}
+                  />
+                </div>
+              </div>
+            )}
+
+            {/* Tabla de Resultados de Leads */}
+            <div className="w-full overflow-x-auto">
+              <div className={`border rounded-xl overflow-hidden transition-all ${isDark ? 'bg-slate-950/30 border-slate-800' : 'bg-white border-slate-200'}`}>
+                <table className="w-full text-[11px] text-left border-collapse">
+                  <thead>
+                    <tr className={`border-b font-mono uppercase text-[9px] tracking-wider font-black ${isDark ? 'bg-slate-950/80 border-slate-700 text-white' : 'bg-slate-100 border-slate-200 text-slate-700'}`}>
+                      <th className="p-3">Prospecto / Contacto</th>
+                      <th className="p-3">Interés / Campaña</th>
+                      <th className="p-3">Agencia</th>
+                      <th className="p-3">Asesor Asignado</th>
+                      <th className="p-3">Fecha Registro</th>
+                      <th className="p-3">Fila de Coordinador (Hover)</th>
+                      <th className="p-3">Estado</th>
+                      <th className="p-3 text-right">Acciones de Coordinación</th>
                     </tr>
-                  ) : (
-                    advisors.map((adv) => {
-                      const advWaitingCount = leads.filter(l => l.advisorId === adv.id && l.status === LeadStatus.WAITING).length;
-                      const advAttendingCount = leads.filter(l => l.advisorId === adv.id && l.status === LeadStatus.ATTENDING).length;
+                  </thead>
+                  <tbody className={`divide-y ${isDark ? 'divide-slate-800/50' : 'divide-slate-100'}`}>
+                    {filteredCoordinatorLeads.length === 0 ? (
+                      <tr>
+                        <td colSpan={8} className={`p-8 text-center font-bold italic text-xs ${mutedColor}`}>
+                          No se encontraron prospectos con los filtros actuales...
+                        </td>
+                      </tr>
+                    ) : (
+                      filteredCoordinatorLeads.map((lead) => {
+                        let dateStr = 'Hoy';
+                        if (lead.createdAt) {
+                          const dateObj = lead.createdAt.toDate ? lead.createdAt.toDate() : new Date(lead.createdAt);
+                          dateStr = dateObj.toLocaleDateString('es-MX', {
+                            day: '2-digit',
+                            month: 'short',
+                            year: 'numeric',
+                            hour: '2-digit',
+                            minute: '2-digit'
+                          });
+                        }
 
-                      return (
-                        <tr key={adv.id} className={`transition-colors font-medium ${isDark ? 'text-slate-100 hover:bg-slate-800/25' : 'text-slate-800 hover:bg-slate-50'}`}>
-                          <td className={`p-3 font-bold ${titleColor}`}>
-                            <div className="flex items-center gap-1.5">
-                              <span className={`w-2 h-2 rounded-full ${adv.active !== false ? 'bg-emerald-500' : 'bg-red-500'}`} />
-                              {adv.name}
-                            </div>
-                            {adv.distributor && (
-                              <div className="text-[10px] font-mono mt-1">
-                                <span className={`font-bold ${isDark ? 'text-cyan-400' : 'text-cyan-600'}`}>🏢 {adv.distributor}</span>
+                        return (
+                          <tr key={lead.id} className={`transition-colors font-medium ${isDark ? 'text-slate-100 hover:bg-slate-850/30' : 'text-slate-800 hover:bg-slate-50'}`}>
+                            <td className="p-3">
+                              <div className={`font-black text-xs ${titleColor}`}>{lead.name} {lead.lastName || ''}</div>
+                              <div className="font-mono text-[10px] text-sky-400 mt-0.5">{lead.phone}</div>
+                              <div className="text-[10px] text-slate-450">{lead.email}</div>
+                            </td>
+
+                            <td className="p-3">
+                              <div className="font-mono font-extrabold rounded bg-blue-500/10 border border-blue-500/20 text-blue-400 px-1.5 py-0.5 inline-block text-[9px] uppercase tracking-wide">
+                                {lead.selectedBrand || 'Leapmotor'} - {lead.modelOfInterest}
                               </div>
-                            )}
-                          </td>
-                          <td className={`p-3 font-mono font-semibold ${isDark ? 'text-white' : 'text-slate-700'}`}>{adv.email}</td>
-                          <td className="p-3 font-mono font-bold cursor-help relative">
-                            <div className="group/pwd relative inline-block whitespace-nowrap">
-                              <span className={`group-hover/pwd:hidden tracking-widest ${isDark ? 'text-slate-400' : 'text-slate-500'}`}>••••••••</span>
-                              <span className={`hidden group-hover/pwd:inline ${isDark ? 'text-white' : 'text-slate-900'}`}>{adv.password}</span>
-                            </div>
-                          </td>
-                          <td className="p-3 text-center">
-                            <span className={`inline-block px-2.5 py-1 rounded text-[9px] font-black uppercase font-mono transition border ${
-                              (advWaitingCount > 0 || advAttendingCount > 0)
-                                ? isDark 
-                                  ? 'bg-amber-500/20 text-amber-400 border-amber-500/35' 
-                                  : 'bg-amber-50 text-amber-805 border-amber-200 text-amber-700'
-                                : isDark 
-                                  ? 'bg-slate-900/50 text-slate-500 border-slate-800' 
-                                  : 'bg-slate-50 text-slate-405 border-slate-205 text-slate-400'
-                            }`}>
-                              {advWaitingCount} espera / {advAttendingCount} atención
-                            </span>
-                          </td>
-                          <td className="p-3 text-center">
-                            <button
-                              onClick={() => toggleAdvisorActive(adv.id, adv.active !== false)}
-                              className={`px-2.5 py-1 rounded-full text-[9px] font-black uppercase font-mono transition border cursor-pointer ${
-                                adv.active !== false 
-                                  ? isDark ? 'bg-emerald-500/20 text-emerald-400 border-emerald-500/30 hover:bg-emerald-500/30' : 'bg-emerald-50 text-emerald-700 border-emerald-250 hover:bg-emerald-100'
-                                  : isDark ? 'bg-red-500/20 text-red-400 border-red-500/30 hover:bg-red-500/30' : 'bg-red-50 text-red-700 border-red-250 hover:bg-red-100'
-                              }`}
-                            >
-                              {adv.active !== false ? 'Habilitado' : 'Suspendido'}
-                            </button>
-                          </td>
-                          <td className="p-3 text-right">
-                            <div className="flex gap-2 justify-end">
-                              <button
-                                onClick={() => handleEditAdvisorClick(adv)}
-                                className={`text-[9px] font-bold border rounded px-2.5 py-1 transition cursor-pointer flex items-center justify-center gap-1 ${
-                                  isDark ? 'text-blue-400 hover:text-blue-300 bg-blue-500/10 hover:bg-blue-500/20 border-blue-500/30' : 'text-blue-600 hover:bg-blue-50 border-blue-200'
-                                }`}
-                                title="Editar datos del asesor"
-                              >
-                                <Pencil className="w-2.5 h-2.5" />
-                                Editar
-                              </button>
-                              <button
-                                onClick={() => handleDeleteAdvisor(adv.id)}
-                                className={`text-[9px] font-bold border rounded px-2.5 py-1 transition cursor-pointer ${
-                                  isDark ? 'text-red-400 hover:text-red-300 bg-red-500/10 hover:bg-red-500/20 border-red-500/30' : 'text-red-650 text-red-600 hover:bg-red-50 border-red-200'
-                                }`}
-                              >
-                                Eliminar
-                              </button>
-                            </div>
-                          </td>
-                        </tr>
-                      );
-                    })
-                  )}
-                </tbody>
-              </table>
-            </div>
-            <p className={`text-[11px] mt-2.5 font-mono font-semibold ${subColor}`}>
-              * Nota: Al suspender un asesor, éste conservará acceso para atender sus leads vigentes, pero no recibirá prospectos adicionales desde el formulario de la Landing.
-            </p>
-          </div>
-        </div>
-      </div>
+                              {lead.landing && (
+                                <div className="text-[10px] text-slate-500 font-mono mt-1">
+                                  Campaña: <span className="font-bold underline">{lead.landing.toUpperCase()}</span>
+                                </div>
+                              )}
+                            </td>
 
-      {/* GESTIÓN Y ADMINISTRACIÓN GENERAL DE PROSPECTOS/LEADS POR COORDINADOR */}
-      <div className={`mt-8 border rounded-3xl p-6 transition-all duration-300 relative overflow-hidden ${cardBg}`} id="coordinator-leads-management-section">
-        <div className="absolute top-0 right-0 w-64 h-64 bg-blue-500/5 blur-[80px] rounded-full pointer-events-none" />
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
-          <div>
-            <h3 className={`text-sm font-black tracking-widest uppercase font-mono mb-1.5 flex items-center gap-2 ${titleColor}`}>
-              <Filter className="w-4 h-4 text-blue-400" /> ADMINISTRACIÓN GENERAL DE PROSPECTOS
-            </h3>
-            <p className={`text-xs font-semibold leading-relaxed ${subColor}`}>
-              Filtre, busque, asigne o reasigne prospectos originarios de todas las campañas en tiempo real.
-            </p>
-          </div>
-          <div className="flex items-center gap-2 bg-blue-500/15 text-blue-400 text-[11px] font-mono font-bold uppercase tracking-wider px-3 py-1.5 rounded-xl border border-blue-500/25">
-            Leads Filtrados: {filteredCoordinatorLeads.length}
-          </div>
-        </div>
+                            <td className="p-3">
+                              <div className={`font-bold ${isDark ? 'text-white' : 'text-slate-800'}`}>
+                                {lead.distributor || 'Distribuidor Digital'}
+                              </div>
+                              {lead.state && (
+                                <div className="text-[9px] font-mono mt-0.5 text-slate-500 uppercase">{lead.state}</div>
+                              )}
+                            </td>
 
-        {/* Fila de Filtros Avanzados */}
-        <div className={`grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-4 mb-6 p-4 rounded-2xl border ${isDark ? 'bg-slate-950/40 border-slate-850' : 'bg-slate-50 border-slate-205 border-slate-200'}`}>
-          {/* 1. Búsqueda por Texto */}
-          <div>
-            <label className={`block text-[10px] font-mono tracking-wider uppercase font-extrabold mb-1.5 ${isDark ? 'text-white' : 'text-slate-600'}`}>Buscar Cliente:</label>
-            <div className="relative">
-              <input
-                type="text"
-                placeholder="Nombre, Telefono, Correo..."
-                value={leadSearch}
-                onChange={(e) => setLeadSearch(e.target.value)}
-                className={`w-full border rounded-xl pl-9 pr-3 py-2 text-xs outline-none transition font-semibold ${
-                  isDark ? 'bg-slate-900 border-slate-800 text-white placeholder-slate-500 focus:border-blue-500/50' : 'bg-white border-slate-200 text-slate-800 placeholder-slate-400 focus:border-indigo-500/50'
-                }`}
-              />
-              <Search className="w-4 h-4 text-slate-400 absolute left-3 top-2.5" />
-            </div>
-          </div>
+                            <td className="p-3">
+                              {lead.advisorId ? (
+                                <div className="flex flex-col">
+                                  <span className={`font-bold ${titleColor}`}>👤 {lead.advisorName || 'Desconocido'}</span>
+                                  <span className="font-mono text-[9px] text-slate-400">ID: {lead.advisorId}</span>
+                                </div>
+                              ) : (
+                                <span className="font-bold font-mono text-[10px] text-amber-500 uppercase flex items-center gap-1 animate-pulse">
+                                  ⚠️ Sin Asesor
+                                </span>
+                              )}
+                            </td>
 
-          {/* 2. Filtro de Estado */}
-          <div>
-            <label className={`block text-[10px] font-mono tracking-wider uppercase font-extrabold mb-1.5 ${isDark ? 'text-white' : 'text-slate-600'}`}>Filtrar por Estado:</label>
-            <select
-              value={leadStatusFilter}
-              onChange={(e) => setLeadStatusFilter(e.target.value)}
-              className={`w-full border rounded-xl px-3 py-2 text-xs outline-none transition font-semibold cursor-pointer ${
-                isDark ? 'bg-slate-900 border-slate-800 text-white focus:border-blue-500/50' : 'bg-white border-slate-200 text-slate-800 focus:border-indigo-500/50'
-              }`}
-            >
-              <option value="all">TODOS LOS ESTADOS</option>
-              <option value={LeadStatus.WAITING}>EN ESPERA DE ATENCIÓN</option>
-              <option value={LeadStatus.ATTENDING}>EN ATENCIÓN ACTIVA</option>
-              <option value={LeadStatus.ATTENDED}>ATENDIDOS CON ÉXITO / OK</option>
-              <option value={LeadStatus.LOST}>DESCARTADOS / CANCELADOS</option>
-            </select>
-          </div>
+                            <td className="p-3 font-mono text-[10px] text-slate-400">
+                              {dateStr}
+                            </td>
 
-          {/* 3. Filtro por Agencia */}
-          <div>
-            <label className={`block text-[10px] font-mono tracking-wider uppercase font-extrabold mb-1.5 ${isDark ? 'text-white' : 'text-slate-600'}`}>Filtrar por Agencia:</label>
-            <select
-              value={leadAgencyFilter}
-              onChange={(e) => setLeadAgencyFilter(e.target.value)}
-              className={`w-full border rounded-xl px-3 py-2 text-xs outline-none transition font-semibold cursor-pointer ${
-                isDark ? 'bg-slate-900 border-slate-800 text-white focus:border-blue-500/50' : 'bg-white border-slate-200 text-slate-800 focus:border-indigo-500/50'
-              }`}
-            >
-              <option value="all">TODAS LAS AGENCIAS</option>
-              {uniqueLeadDistributors.map(dist => (
-                <option key={dist} value={dist}>{dist}</option>
-              ))}
-            </select>
-          </div>
+                            <td className="p-3 relative group">
+                              {editingNotesLeadId === lead.id ? (
+                                <div className="flex gap-1.5 items-center">
+                                  <input
+                                    type="text"
+                                    value={editingNotesText}
+                                    onChange={(e) => setEditingNotesText(e.target.value)}
+                                    className={`px-2 py-1 text-xs rounded-lg border ${inputStyle}`}
+                                    placeholder="Comentario..."
+                                    autoFocus
+                                    onKeyDown={(e) => {
+                                      if (e.key === 'Enter') {
+                                        handleSaveCoordinatorNotes(lead.id, editingNotesText);
+                                      }
+                                    }}
+                                  />
+                                  <button
+                                    onClick={() => handleSaveCoordinatorNotes(lead.id, editingNotesText)}
+                                    className="bg-emerald-500 hover:bg-emerald-400 text-slate-950 px-2 py-1 rounded-lg text-xs font-black cursor-pointer shadow"
+                                  >
+                                    ✓
+                                  </button>
+                                  <button
+                                    onClick={() => setEditingNotesLeadId(null)}
+                                    className="bg-slate-600 hover:bg-slate-400 text-white px-2 py-1 rounded-lg text-xs font-black cursor-pointer shadow"
+                                  >
+                                    X
+                                  </button>
+                                </div>
+                              ) : (
+                                <div className="flex items-center gap-1.5">
+                                  <div className="max-w-[125px] overflow-hidden truncate">
+                                    <span className={`italic text-[10px] font-semibold ${lead.coordinatorNotes ? 'text-cyan-400 font-bold border-b border-dashed border-cyan-400' : 'text-slate-500'}`}>
+                                      {lead.coordinatorNotes || '(Sin comentarios)'}
+                                    </span>
+                                  </div>
+                                  <button
+                                    onClick={() => {
+                                      setEditingNotesLeadId(lead.id);
+                                      setEditingNotesText(lead.coordinatorNotes || '');
+                                    }}
+                                    className="text-blue-400 hover:text-blue-300 transition cursor-pointer"
+                                    title="Editar comentario"
+                                  >
+                                    <Pencil className="w-3 h-3" />
+                                  </button>
 
-          {/* 4. Filtro por Asesor */}
-          <div>
-            <label className={`block text-[10px] font-mono tracking-wider uppercase font-extrabold mb-1.5 ${isDark ? 'text-white' : 'text-slate-600'}`}>Filtrar por Asesor:</label>
-            <select
-              value={leadAdvisorFilter}
-              onChange={(e) => setLeadAdvisorFilter(e.target.value)}
-              className={`w-full border rounded-xl px-3 py-2 text-xs outline-none transition font-semibold cursor-pointer ${
-                isDark ? 'bg-slate-900 border-slate-800 text-white focus:border-blue-500/50' : 'bg-white border-slate-200 text-slate-800 focus:border-indigo-500/50'
-              }`}
-            >
-              <option value="all">TODOS LOS ASESORES</option>
-              <option value="unassigned">SIN ASIGNAR (FILA DE ESPERA)</option>
-              {advisors.map(adv => (
-                <option key={adv.id} value={adv.id}>{adv.name} {adv.active === false ? '(Inactivo)' : ''}</option>
-              ))}
-            </select>
-          </div>
+                                  {lead.coordinatorNotes && (
+                                    <div className="absolute bottom-full left-0 mb-2 w-64 p-3 bg-slate-900 border border-slate-700 text-slate-100 text-xs rounded-xl shadow-2xl hidden group-hover:block z-50 pointer-events-none break-words">
+                                      <div className="text-blue-400 font-bold mb-1 border-b border-slate-700/60 pb-1 flex items-center gap-1 font-mono uppercase tracking-wider text-[10px]">
+                                        <CheckCircle className="w-3.5 h-3.5" /> Notas de Coordinador:
+                                      </div>
+                                      <span className="font-sans font-medium text-slate-200">{lead.coordinatorNotes}</span>
+                                    </div>
+                                  )}
+                                </div>
+                              )}
+                            </td>
 
-          {/* 5. Filtro de Tiempo */}
-          <div>
-            <label className={`block text-[10px] font-mono tracking-wider uppercase font-extrabold mb-1.5 ${isDark ? 'text-white' : 'text-slate-600'}`}>Filtro Temporal:</label>
-            <select
-              value={leadDateFilter}
-              onChange={(e) => setLeadDateFilter(e.target.value)}
-              className={`w-full border rounded-xl px-3 py-2 text-xs outline-none transition font-semibold cursor-pointer ${
-                isDark ? 'bg-slate-900 border-slate-800 text-white focus:border-blue-500/50' : 'bg-white border-slate-200 text-slate-800 focus:border-indigo-500/50'
-              }`}
-            >
-              <option value="all">HISTÓRICO COMPLETO</option>
-              <option value="today">SÓLO HOY</option>
-              <option value="range">RANGO PERSONALIZADO</option>
-            </select>
-          </div>
-        </div>
+                            <td className="p-3">
+                              <span className={`inline-block px-2.5 py-1 rounded-full text-[9px] font-black uppercase font-mono border ${
+                                lead.status === LeadStatus.WAITING ? 'bg-amber-500/15 text-amber-400 border-amber-500/30' :
+                                lead.status === LeadStatus.ATTENDING ? 'bg-cyan-500/15 text-cyan-400 border-cyan-500/30 font-extrabold' :
+                                lead.status === LeadStatus.ATTENDED ? 'bg-emerald-500/15 text-emerald-400 border-emerald-500/30 font-bold' :
+                                'bg-slate-500/15 text-slate-400 border-slate-500/30'
+                              }`}>
+                                {lead.status === LeadStatus.WAITING ? 'Espera' :
+                                 lead.status === LeadStatus.ATTENDING ? 'Atención' :
+                                 lead.status === LeadStatus.ATTENDED ? 'Atendido / OK' :
+                                 'Cancelado'}
+                              </span>
+                            </td>
 
-        {/* Rango de fechas condicional */}
-        {leadDateFilter === 'range' && (
-          <div className={`grid grid-cols-1 sm:grid-cols-2 gap-4 mb-6 p-4 rounded-xl border ${isDark ? 'bg-slate-950/20 border-slate-850' : 'bg-slate-50 border-slate-200'}`}>
-            <div>
-              <label className={`block text-[10px] font-mono tracking-wider uppercase font-extrabold mb-1 ${isDark ? 'text-slate-400' : 'text-slate-600'}`}>Fecha Inicial:</label>
-              <input
-                type="date"
-                value={leadSearchStartDate}
-                onChange={(e) => setLeadSearchStartDate(e.target.value)}
-                className={`w-full border rounded-xl px-3 py-2 text-xs outline-none transition font-semibold ${
-                  isDark ? 'bg-slate-900 border-slate-800 text-white' : 'bg-white border-slate-200 text-slate-800'
-                }`}
-              />
-            </div>
-            <div>
-              <label className={`block text-[10px] font-mono tracking-wider uppercase font-extrabold mb-1 ${isDark ? 'text-slate-400' : 'text-slate-600'}`}>Fecha Final:</label>
-              <input
-                type="date"
-                value={leadSearchEndDate}
-                onChange={(e) => setLeadSearchEndDate(e.target.value)}
-                className={`w-full border rounded-xl px-3 py-2 text-xs outline-none transition font-semibold ${
-                  isDark ? 'bg-slate-900 border-slate-800 text-white' : 'bg-white border-slate-200 text-slate-800'
-                }`}
-              />
+                            <td className="p-3 text-right">
+                              {lead.status === LeadStatus.WAITING && (
+                                <div className="flex gap-2 justify-end items-center">
+                                  <select
+                                    value={lead.advisorId || ""}
+                                    onChange={(e) => {
+                                      if (e.target.value) {
+                                        handleReassignLead(lead.id, e.target.value);
+                                      }
+                                    }}
+                                    className={`px-2 py-1 text-[10px] uppercase font-mono font-bold rounded-lg border cursor-pointer ${inputStyle}`}
+                                  >
+                                    <option value="">Asignar a...</option>
+                                    {advisors.map(adv => (
+                                      <option key={adv.id} value={adv.id}>{adv.name}</option>
+                                    ))}
+                                  </select>
+                                  <button
+                                    onClick={() => handleCancelLead(lead.id)}
+                                    className="text-[10px] uppercase font-black border border-red-500/35 hover:bg-red-500/10 text-red-400 px-2.5 py-1 rounded-lg transition duration-200 cursor-pointer"
+                                    title="Cancelar prospecto"
+                                  >
+                                    Cancelar
+                                  </button>
+                                </div>
+                              )}
+
+                              {lead.status === LeadStatus.ATTENDING && (
+                                <div className="flex gap-1.5 justify-end items-center">
+                                  <button
+                                    onClick={() => handleCloseLeadInAttending(lead.id, 'ok')}
+                                    className="bg-emerald-500/20 hover:bg-emerald-500/30 text-emerald-400 hover:text-emerald-300 text-[9px] uppercase border border-emerald-500/25 px-2.5 py-1 rounded-lg font-black transition cursor-pointer"
+                                    title="Cerrar prospecto como atendido con éxito / OK"
+                                  >
+                                    Cerrar OK
+                                  </button>
+                                  <button
+                                    onClick={() => handleCloseLeadInAttending(lead.id, 'no_asistio')}
+                                    className="bg-red-500/15 hover:bg-red-500/25 text-red-400 hover:text-red-350 text-[9px] uppercase border border-red-500/20 px-2.5 py-1 rounded-lg font-black transition cursor-pointer"
+                                    title="Cerrar prospecto indicando que no asistió"
+                                  >
+                                    No Asistió
+                                  </button>
+                                </div>
+                              )}
+
+                              {(lead.status === LeadStatus.ATTENDED || lead.status === LeadStatus.LOST) && (
+                                <span className="text-[10px] font-bold font-mono text-slate-500 uppercase italic">
+                                  Cerrado/Inalterable
+                                </span>
+                              )}
+                            </td>
+                          </tr>
+                        );
+                      })
+                    )}
+                  </tbody>
+                </table>
+              </div>
             </div>
           </div>
         )}
 
-        {/* Tabla de Resultados de Leads */}
-        <div className="w-full overflow-x-auto">
-          <div className={`border rounded-xl overflow-hidden transition-all ${isDark ? 'bg-slate-950/30 border-slate-800' : 'bg-white border-slate-200'}`}>
-            <table className="w-full text-[11px] text-left border-collapse">
-              <thead>
-                <tr className={`border-b font-mono uppercase text-[9px] tracking-wider font-black ${isDark ? 'bg-slate-950/80 border-slate-700 text-white' : 'bg-slate-100 border-slate-200 text-slate-700'}`}>
-                  <th className="p-3">Prospecto / Contacto</th>
-                  <th className="p-3">Interés / Campaña</th>
-                  <th className="p-3">Agencia</th>
-                  <th className="p-3">Asesor Asignado</th>
-                  <th className="p-3">Fecha Registro</th>
-                  <th className="p-3">Fila de Coordinador (Hover)</th>
-                  <th className="p-3">Estado</th>
-                  <th className="p-3 text-right">Acciones de Coordinación</th>
-                </tr>
-              </thead>
-              <tbody className={`divide-y ${isDark ? 'divide-slate-805 divide-slate-800/50' : 'divide-slate-150 divide-slate-100'}`}>
-                {filteredCoordinatorLeads.length === 0 ? (
-                  <tr>
-                    <td colSpan={8} className={`p-8 text-center font-bold italic text-xs ${mutedColor}`}>
-                      No se encontraron prospectos con los filtros actuales...
-                    </td>
-                  </tr>
-                ) : (
-                  filteredCoordinatorLeads.map((lead) => {
-                    // Formateo de fecha de creación
-                    let dateStr = 'Hoy';
-                    if (lead.createdAt) {
-                      const dateObj = lead.createdAt.toDate ? lead.createdAt.toDate() : new Date(lead.createdAt);
-                      dateStr = dateObj.toLocaleDateString('es-MX', {
-                        day: '2-digit',
-                        month: 'short',
-                        year: 'numeric',
-                        hour: '2-digit',
-                        minute: '2-digit'
-                      });
-                    }
+        {/* Tab 2: Administración de Asesores */}
+        {adminTab === 'asesores' && (
+          <div className="space-y-6">
+            <div>
+              <h3 className={`text-sm font-black tracking-widest uppercase font-mono mb-1.5 flex items-center gap-2 ${titleColor}`}>
+                <Users className="w-4 h-4 text-emerald-400" /> ASESORES CONFIGURADOS
+              </h3>
+              <p className={`text-xs font-semibold mb-6 leading-relaxed ${subColor}`}>
+                Agrega nuevos asesores comerciales, modifique sus contraseñas para permitirles iniciar sesión en su consola, y desactívelos temporalmente para que dejen de recibir asignación automática de nuevos leads clientelares en tiempo real de acuerdo a la regla del menor volumen de carga.
+              </p>
+            </div>
 
-                    return (
-                      <tr key={lead.id} className={`transition-colors font-medium ${isDark ? 'text-slate-100 hover:bg-slate-850/30' : 'text-slate-800 hover:bg-slate-50'}`}>
-                        {/* Prospecto / Contacto */}
-                        <td className="p-3">
-                          <div className={`font-black text-xs ${titleColor}`}>{lead.name} {lead.lastName || ''}</div>
-                          <div className="font-mono text-[10px] text-sky-400 mt-0.5">{lead.phone}</div>
-                          <div className="text-[10px] text-slate-450">{lead.email}</div>
-                        </td>
+            <div className="flex flex-col gap-8">
+              {/* Aresores Create / Edit Form */}
+              <div className={`p-5 rounded-2xl border transition-all ${isDark ? 'bg-slate-950/50 border-slate-800/80' : 'bg-slate-50 border-slate-200 shadow-sm'}`}>
+                <h4 className={`text-xs font-bold uppercase tracking-wider font-mono mb-4 ${isDark ? 'text-slate-300' : 'text-slate-600'}`}>
+                  {editingAdvisorId ? 'Editar Asesor' : 'Registrar Nuevo Asesor'}
+                </h4>
+                <form onSubmit={handleAddAdvisorSubmit} className="space-y-4">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                    <div>
+                      <label className={`block text-[11px] font-extrabold font-mono uppercase mb-1.5 ${isDark ? 'text-white' : 'text-slate-700'}`}>Nombre Completo:</label>
+                      <input
+                        type="text"
+                        placeholder="Ej: Daniel Sánchez"
+                        value={newAdvName}
+                        onChange={(e) => setNewAdvName(e.target.value)}
+                        className={`w-full border focus:border-emerald-500/55 rounded-xl px-3 py-2 text-xs outline-none transition font-semibold ${
+                          isDark ? 'bg-slate-900 border-slate-800 text-white' : 'bg-white border-slate-200 text-slate-800'
+                        }`}
+                      />
+                    </div>
 
-                        {/* Interés / Campaña */}
-                        <td className="p-3">
-                          <div className="font-mono font-extrabold rounded bg-blue-500/10 border border-blue-500/20 text-blue-400 px-1.5 py-0.5 inline-block text-[9px] uppercase tracking-wide">
-                            {lead.selectedBrand || 'Leapmotor'} - {lead.modelOfInterest}
-                          </div>
-                          {lead.landing && (
-                            <div className="text-[10px] text-slate-500 font-mono mt-1">
-                              Campaña: <span className="font-bold underline">{lead.landing.toUpperCase()}</span>
-                            </div>
-                          )}
-                        </td>
+                    <div>
+                      <label className={`block text-[11px] font-extrabold font-mono uppercase mb-1.5 ${isDark ? 'text-white' : 'text-slate-700'}`}>Correo Electrónico (Login ID):</label>
+                      <input
+                        type="email"
+                        placeholder="Ej: daniel@leapmotor.com"
+                        value={newAdvEmail}
+                        onChange={(e) => setNewAdvEmail(e.target.value)}
+                        className={`w-full border focus:border-emerald-500/55 rounded-xl px-3 py-2 text-xs outline-none transition font-semibold ${
+                          isDark ? 'bg-slate-900 border-slate-800 text-white' : 'bg-white border-slate-200 text-slate-800'
+                        }`}
+                      />
+                    </div>
 
-                        {/* Agencia */}
-                        <td className="p-3">
-                          <div className={`font-bold ${isDark ? 'text-white' : 'text-slate-800'}`}>
-                            {lead.distributor || 'Distribuidor Digital'}
-                          </div>
-                          {lead.state && (
-                            <div className="text-[9px] font-mono mt-0.5 text-slate-500 uppercase">{lead.state}</div>
-                          )}
-                        </td>
+                    <div>
+                      <label className={`block text-[11px] font-extrabold font-mono uppercase mb-1.5 ${isDark ? 'text-white' : 'text-slate-705'}`}>Contraseña de Acceso:</label>
+                      <input
+                        type="text"
+                        placeholder="Ej: clave123"
+                        value={newAdvPassword}
+                        onChange={(e) => setNewAdvPassword(e.target.value)}
+                        className={`w-full border focus:border-emerald-500/55 rounded-xl px-3 py-2 text-xs outline-none transition font-semibold ${
+                          isDark ? 'bg-slate-900 border-slate-800 text-white' : 'bg-white border-slate-200 text-slate-800'
+                        }`}
+                      />
+                    </div>
 
-                        {/* Asesor Asignado */}
-                        <td className="p-3">
-                          {lead.advisorId ? (
-                            <div className="flex flex-col">
-                              <span className={`font-bold ${titleColor}`}>👤 {lead.advisorName || 'Desconocido'}</span>
-                              <span className="font-mono text-[9px] text-slate-400">ID: {lead.advisorId}</span>
-                            </div>
-                          ) : (
-                            <span className="font-bold font-mono text-[10px] text-amber-500 uppercase flex items-center gap-1 animate-pulse">
-                              ⚠️ Sin Asesor
-                            </span>
-                          )}
-                        </td>
+                    <div>
+                      <label className={`block text-[11px] font-extrabold font-mono uppercase mb-1.5 ${isDark ? 'text-white' : 'text-slate-700'}`}>Distribuidor Leapmotor Asociado:</label>
+                      <select
+                        value={newAdvDistributor}
+                        onChange={(e) => setNewAdvDistributor(e.target.value)}
+                        className={`w-full border focus:border-emerald-500/55 rounded-xl px-3 py-2 text-xs outline-none transition font-semibold ${
+                          isDark ? 'bg-slate-900 border-slate-800 text-white' : 'bg-white border-slate-200 text-slate-800'
+                        }`}
+                      >
+                        {distributors.length === 0 ? (
+                          <option value="">Seeding/Cargando distribuidores...</option>
+                        ) : (
+                          distributors.map((dist) => (
+                            <option key={dist.id} value={dist.name}>
+                              {dist.name} ({dist.estado || 'N/A'} - ID: {dist.disId || dist.id})
+                            </option>
+                          ))
+                        )}
+                      </select>
+                    </div>
+                  </div>
 
-                        {/* Fecha Registro */}
-                        <td className="p-3 font-mono text-[10px] text-slate-400">
-                          {dateStr}
-                        </td>
+                  {mgmtError && <p className="text-[11px] text-red-500 font-bold">⚠️ {mgmtError}</p>}
+                  {mgmtSuccess && <p className="text-[11px] text-emerald-600 font-bold">✓ {mgmtSuccess}</p>}
 
-                        {/* Fila de Coordinador - Tooltip sobre mouse_over */}
-                        <td className="p-3 relative group">
-                          {editingNotesLeadId === lead.id ? (
-                            <div className="flex gap-1.5 items-center">
-                              <input
-                                type="text"
-                                value={editingNotesText}
-                                onChange={(e) => setEditingNotesText(e.target.value)}
-                                className={`px-2 py-1 text-xs rounded-lg border ${inputStyle}`}
-                                placeholder="Comentario..."
-                                autoFocus
-                                onKeyDown={(e) => {
-                                  if (e.key === 'Enter') {
-                                    handleSaveCoordinatorNotes(lead.id, editingNotesText);
-                                  }
-                                }}
-                              />
-                              <button
-                                onClick={() => handleSaveCoordinatorNotes(lead.id, editingNotesText)}
-                                className="bg-emerald-500 hover:bg-emerald-400 text-slate-950 px-2 py-1 rounded-lg text-xs font-black cursor-pointer shadow"
-                              >
-                                ✓
-                              </button>
-                              <button
-                                onClick={() => setEditingNotesLeadId(null)}
-                                className="bg-slate-550 hover:bg-slate-400 text-white px-2 py-1 rounded-lg text-xs font-black cursor-pointer shadow bg-slate-600"
-                              >
-                                X
-                              </button>
-                            </div>
-                          ) : (
-                            <div className="flex items-center gap-1.5">
-                              <div className="max-w-[125px] overflow-hidden truncate">
-                                <span className={`italic text-[10px] font-semibold ${lead.coordinatorNotes ? 'text-cyan-400 font-bold border-b border-dashed border-cyan-400' : 'text-slate-500'}`}>
-                                  {lead.coordinatorNotes || '(Sin comentarios)'}
-                                </span>
-                              </div>
-                              <button
-                                onClick={() => {
-                                  setEditingNotesLeadId(lead.id);
-                                  setEditingNotesText(lead.coordinatorNotes || '');
-                                }}
-                                className="text-blue-400 hover:text-blue-300 transition cursor-pointer"
-                                title="Editar comentario"
-                              >
-                                <Pencil className="w-3 h-3" />
-                              </button>
+                  <div className="flex flex-col sm:flex-row gap-3 max-w-md pt-1">
+                    <button
+                      type="submit"
+                      className="flex-1 bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-black py-2.5 rounded-xl text-xs transition uppercase tracking-widest cursor-pointer text-center"
+                    >
+                      {editingAdvisorId ? '✓ Guardar Cambios' : '+ Registrar en Base de Datos'}
+                    </button>
+                    {editingAdvisorId && (
+                      <button
+                        type="button"
+                        onClick={handleCancelEdit}
+                        className="flex-1 bg-slate-550 hover:bg-slate-400 text-white font-black py-2.5 rounded-xl text-xs transition uppercase tracking-widest cursor-pointer text-center bg-slate-600"
+                      >
+                        X Cancelar Edición
+                      </button>
+                    )}
+                  </div>
+                </form>
+              </div>
 
-                              {/* Tooltip con hover nativo */}
-                              {lead.coordinatorNotes && (
-                                <div className="absolute bottom-full left-0 mb-2 w-64 p-3 bg-slate-900 border border-slate-700 text-slate-100 text-xs rounded-xl shadow-2xl hidden group-hover:block z-50 pointer-events-none break-words">
-                                  <div className="text-blue-400 font-bold mb-1 border-b border-slate-700/60 pb-1 flex items-center gap-1 font-mono uppercase tracking-wider text-[10px]">
-                                    <CheckCircle className="w-3.5 h-3.5" /> Notas de Coordinador:
-                                  </div>
-                                  <span className="font-sans font-medium text-slate-200">{lead.coordinatorNotes}</span>
-                                </div>
-                              )}
-                            </div>
-                          )}
-                        </td>
-
-                        {/* Estado del Lead */}
-                        <td className="p-3">
-                          <span className={`inline-block px-2.5 py-1 rounded-full text-[9px] font-black uppercase font-mono border ${
-                            lead.status === LeadStatus.WAITING ? 'bg-amber-500/15 text-amber-400 border-amber-500/30' :
-                            lead.status === LeadStatus.ATTENDING ? 'bg-cyan-500/15 text-cyan-400 border-cyan-500/30 font-extrabold' :
-                            lead.status === LeadStatus.ATTENDED ? 'bg-emerald-500/15 text-emerald-400 border-emerald-500/30 font-bold' :
-                            'bg-slate-500/15 text-slate-400 border-slate-500/30'
-                          }`}>
-                            {lead.status === LeadStatus.WAITING ? 'Espera' :
-                             lead.status === LeadStatus.ATTENDING ? 'Atención' :
-                             lead.status === LeadStatus.ATTENDED ? 'Atendido / OK' :
-                             'Cancelado'}
-                          </span>
-                        </td>
-
-                        {/* Acciones de Coordinación */}
-                        <td className="p-3 text-right">
-                          {/* 1) Para leads en espera, reasignación designada o cancelar */}
-                          {lead.status === LeadStatus.WAITING && (
-                            <div className="flex gap-2 justify-end items-center">
-                              <select
-                                value=""
-                                onChange={(e) => {
-                                  if (e.target.value) {
-                                    handleReassignLead(lead.id, e.target.value);
-                                  }
-                                }}
-                                className={`px-2 py-1 text-[10px] uppercase font-mono font-bold rounded-lg border cursor-pointer ${inputStyle}`}
-                              >
-                                <option value="">Asignar a...</option>
-                                {advisors.map(adv => (
-                                  <option key={adv.id} value={adv.id}>{adv.name}</option>
-                                ))}
-                              </select>
-                              <button
-                                onClick={() => handleCancelLead(lead.id)}
-                                className="text-[10px] uppercase font-black border border-red-500/35 hover:bg-red-500/10 text-red-400 px-2.5 py-1 rounded-lg transition duration-200 cursor-pointer"
-                                title="Cancelar prospecto"
-                              >
-                                Cancelar
-                              </button>
-                            </div>
-                          )}
-
-                          {/* 3) Para leads en atención estancados */}
-                          {lead.status === LeadStatus.ATTENDING && (
-                            <div className="flex gap-1.5 justify-end items-center">
-                              <button
-                                onClick={() => handleCloseLeadInAttending(lead.id, 'ok')}
-                                className="bg-emerald-500/20 hover:bg-emerald-500/30 text-emerald-400 hover:text-emerald-300 text-[9px] uppercase border border-emerald-500/25 px-2.5 py-1 rounded-lg font-black transition cursor-pointer"
-                                title="Cerrar prospecto como atendido con éxito / OK"
-                              >
-                                Cerrar OK
-                              </button>
-                              <button
-                                onClick={() => handleCloseLeadInAttending(lead.id, 'no_asistio')}
-                                className="bg-red-500/15 hover:bg-red-500/25 text-red-400 hover:text-red-350 text-[9px] uppercase border border-red-500/20 px-2.5 py-1 rounded-lg font-black transition cursor-pointer"
-                                title="Cerrar prospecto indicando que no asistió"
-                              >
-                                No Asistió
-                              </button>
-                            </div>
-                          )}
-
-                          {/* Si el lead ya está finalizado */}
-                          {(lead.status === LeadStatus.ATTENDED || lead.status === LeadStatus.LOST) && (
-                            <span className="text-[10px] font-bold font-mono text-slate-500 uppercase italic">
-                              Cerrado/Inalterable
-                            </span>
-                          )}
-                        </td>
+              {/* Advisors List Table */}
+              <div className="w-full overflow-x-auto">
+                <h4 className={`text-xs font-bold uppercase tracking-wider font-mono mb-4 ${isDark ? 'text-slate-300' : 'text-slate-600'}`}>Asesores configurados ({advisors.length})</h4>
+                <div className={`border rounded-xl overflow-hidden transition-all ${isDark ? 'bg-slate-950/30 border-slate-800' : 'bg-white border-slate-200'}`}>
+                  <table className="w-full text-[11px] text-left border-collapse">
+                    <thead>
+                      <tr className={`border-b font-mono uppercase text-[9px] tracking-wider font-black ${isDark ? 'bg-slate-950/80 border-slate-700 text-white' : 'bg-slate-100 border-slate-200 text-slate-700'}`}>
+                        <th className="p-3">Asesor</th>
+                        <th className="p-3">Correo</th>
+                        <th className="p-3 shadow-none">Contraseña</th>
+                        <th className="p-3 text-center">Carga de Leads</th>
+                        <th className="p-3 text-center">Auto-Asignación</th>
+                        <th className="p-3 text-right">Acciones</th>
                       </tr>
-                    );
-                  })
-                )}
-              </tbody>
-            </table>
+                    </thead>
+                    <tbody className={`divide-y ${isDark ? 'divide-slate-800/50' : 'divide-slate-100'}`}>
+                      {advisors.length === 0 ? (
+                        <tr>
+                          <td colSpan={6} className={`p-6 text-center font-bold italic border border-dashed ${isDark ? 'border-slate-800' : 'border-slate-200'}`}>
+                            Cargando catálogo de asesores de ventas corporativos...
+                          </td>
+                        </tr>
+                      ) : (
+                        advisors.map((adv) => {
+                          const advWaitingCount = leads.filter(l => l.advisorId === adv.id && l.status === LeadStatus.WAITING).length;
+                          const advAttendingCount = leads.filter(l => l.advisorId === adv.id && l.status === LeadStatus.ATTENDING).length;
+
+                          return (
+                            <tr key={adv.id} className={`transition-colors font-medium ${isDark ? 'text-slate-100 hover:bg-slate-800/25' : 'text-slate-800 hover:bg-slate-50'}`}>
+                              <td className={`p-3 font-bold ${titleColor}`}>
+                                <div className="flex items-center gap-1.5">
+                                  <span className={`w-2 h-2 rounded-full ${adv.active !== false ? 'bg-emerald-500' : 'bg-red-500'}`} />
+                                  {adv.name}
+                                </div>
+                                {adv.distributor && (
+                                  <div className="text-[10px] font-mono mt-1">
+                                    <span className={`font-bold ${isDark ? 'text-cyan-400' : 'text-cyan-600'}`}>🏢 {adv.distributor}</span>
+                                  </div>
+                                )}
+                              </td>
+                              <td className={`p-3 font-mono font-semibold ${isDark ? 'text-white' : 'text-slate-700'}`}>{adv.email}</td>
+                              <td className="p-3 font-mono font-bold cursor-help relative">
+                                <div className="group/pwd relative inline-block whitespace-nowrap">
+                                  <span className={`group-hover/pwd:hidden tracking-widest ${isDark ? 'text-slate-400' : 'text-slate-500'}`}>••••••••</span>
+                                  <span className={`hidden group-hover/pwd:inline ${isDark ? 'text-white' : 'text-slate-900'}`}>{adv.password}</span>
+                                </div>
+                              </td>
+                              <td className="p-3 text-center">
+                                <span className={`inline-block px-2.5 py-1 rounded text-[9px] font-black uppercase font-mono transition border ${
+                                  (advWaitingCount > 0 || advAttendingCount > 0)
+                                    ? isDark 
+                                      ? 'bg-amber-500/20 text-amber-400 border-amber-500/35' 
+                                      : 'bg-amber-50 text-amber-700 border-amber-200'
+                                    : isDark 
+                                      ? 'bg-slate-900/50 text-slate-500 border-slate-800' 
+                                      : 'bg-slate-50 border-slate-200 text-slate-400'
+                                }`}>
+                                  {advWaitingCount} espera / {advAttendingCount} atención
+                                </span>
+                              </td>
+                              <td className="p-3 text-center">
+                                <button
+                                  type="button"
+                                  onClick={() => toggleAdvisorActive(adv.id, adv.active !== false)}
+                                  className={`px-2.5 py-1 rounded-full text-[9px] font-black uppercase font-mono transition border cursor-pointer ${
+                                    adv.active !== false 
+                                      ? isDark ? 'bg-emerald-500/20 text-emerald-400 border-emerald-500/30 hover:bg-emerald-500/30' : 'bg-emerald-50 text-emerald-700 border-emerald-200 hover:bg-emerald-100'
+                                      : isDark ? 'bg-red-500/20 text-red-400 border-red-500/30 hover:bg-red-500/30' : 'bg-red-50 text-red-700 border-red-200 hover:bg-red-100'
+                                  }`}
+                                >
+                                  {adv.active !== false ? 'Habilitado' : 'Suspendido'}
+                                </button>
+                              </td>
+                              <td className="p-3 text-right">
+                                <div className="flex gap-2 justify-end">
+                                  <button
+                                    type="button"
+                                    onClick={() => handleEditAdvisorClick(adv)}
+                                    className={`text-[9px] font-bold border rounded px-2.5 py-1 transition cursor-pointer flex items-center justify-center gap-1 ${
+                                      isDark ? 'text-blue-400 hover:text-blue-300 bg-blue-500/10 hover:bg-blue-500/20 border-blue-500/30' : 'text-blue-600 hover:bg-blue-50 border-blue-200'
+                                    }`}
+                                    title="Editar datos del asesor"
+                                  >
+                                    <Pencil className="w-2.5 h-2.5" />
+                                    Editar
+                                  </button>
+                                  <button
+                                    type="button"
+                                    onClick={() => handleDeleteAdvisor(adv.id)}
+                                    className={`text-[9px] font-bold border rounded px-2.5 py-1 transition cursor-pointer ${
+                                      isDark ? 'text-red-400 hover:text-red-300 bg-red-500/10 hover:bg-red-500/20 border-red-500/30' : 'text-red-600 hover:bg-red-50 border-red-200'
+                                    }`}
+                                  >
+                                    Eliminar
+                                  </button>
+                                </div>
+                              </td>
+                            </tr>
+                          );
+                        })
+                      )}
+                    </tbody>
+                  </table>
+                </div>
+                <p className={`text-[11px] mt-2.5 font-mono font-semibold ${subColor}`}>
+                  * Nota: Al suspender un asesor, éste conservará acceso para atender sus leads vigentes, pero no recibirá prospectos adicionales desde el formulario de la Landing.
+                </p>
+              </div>
+            </div>
           </div>
-        </div>
+        )}
       </div>
     </div>
     </div>

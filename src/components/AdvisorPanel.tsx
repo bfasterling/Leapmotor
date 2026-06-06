@@ -65,9 +65,9 @@ const getLeadSourceBadgeClass = (lead: Lead) => {
 
 // Default safety fallbacks for offline states or seeding initial data
 const DEFAULT_ADVISORS = [
-  { id: 'ADV-01', name: 'Arturo Stellantis', email: 'arturo@leapmotor.com', password: '123', active: true },
-  { id: 'ADV-02', name: 'Belinda Leap', email: 'belinda@leapmotor.com', password: '123', active: true },
-  { id: 'ADV-03', name: 'Carlos Galería', email: 'carlos@leapmotor.com', password: '123', active: true }
+  { id: 'ADV-01', name: 'Arturo Stellantis', email: 'arturo@leapmotor.com', password: '123', distributor: 'Leapmotor Santa Fe', active: true },
+  { id: 'ADV-02', name: 'Belinda Leap', email: 'belinda@leapmotor.com', password: '123', distributor: 'Leapmotor Mexicali', active: true },
+  { id: 'ADV-03', name: 'Carlos Galería', email: 'carlos@leapmotor.com', password: '123', distributor: 'Leapmotor Acueducto', active: true }
 ];
 
 export default function AdvisorPanel() {
@@ -148,6 +148,7 @@ export default function AdvisorPanel() {
               name: s.name,
               email: s.email,
               password: s.password,
+              distributor: s.distributor,
               active: s.active,
               createdAt: new Date()
             });
@@ -230,8 +231,11 @@ export default function AdvisorPanel() {
           testDriveDate: data.testDriveDate || null
         };
 
-        // Filter: Keep only leads assigned to this specific advisor
-        if (parsedLead.advisorId === loggedInAdvisor.id) {
+        // Filter: Keep leads assigned to this specific advisor OR unassigned Leapmotor waiting leads
+        const isAssignedToMe = parsedLead.advisorId === loggedInAdvisor.id;
+        const isUnassignedLeapmotorPool = parsedLead.landing === 'leapmotor' && (!parsedLead.advisorId || parsedLead.advisorId === "") && parsedLead.status === LeadStatus.WAITING;
+
+        if (isAssignedToMe || isUnassignedLeapmotorPool) {
           parsedLeads.push(parsedLead);
 
           // Check if there's any active waiting lead that we haven't checked or alerted yet
