@@ -685,7 +685,7 @@ export default function LeadForm({ c10ImgUrl, t03ImgUrl, b10ImgUrl }: LeadFormPr
         phone: formData.phone.trim(),
         postalCode: formData.postalCode.trim() || null,
         state: formData.state,
-        distributor: activeLanding === 'leapmotor' && formData.requestType !== 'cotizacion'
+        distributor: activeLanding === 'leapmotor' && formData.requestType !== 'cotizacion' && formData.requestType !== 'prueba'
           ? 'Sin Asignar (Sincronizando con Asesor)' 
           : formData.distributor,
         modelOfInterest: formData.modelOfInterest,
@@ -695,10 +695,10 @@ export default function LeadForm({ c10ImgUrl, t03ImgUrl, b10ImgUrl }: LeadFormPr
         status: LeadStatus.WAITING,
         advisorId: activeLanding === 'leapmotor' 
           ? "" 
-          : (formData.requestType === 'cotizacion' ? "" : minWaitingAdvisor.id),
+          : (formData.requestType === 'cotizacion' || formData.requestType === 'prueba' ? "" : minWaitingAdvisor.id),
         advisorName: activeLanding === 'leapmotor' 
-          ? (formData.requestType === 'cotizacion' ? "Sin Asignar (Solo Cotización)" : "Sin Asignar (Pool Leapmotor)") 
-          : (formData.requestType === 'cotizacion' ? "Sin Asignar (Solo Cotización)" : minWaitingAdvisor.name),
+          ? (formData.requestType === 'cotizacion' ? "Sin Asignar (Solo Cotización)" : (formData.requestType === 'prueba' ? "Sin Asignar (Solo Prueba)" : "Sin Asignar (Pool Leapmotor)")) 
+          : (formData.requestType === 'cotizacion' ? "Sin Asignar (Solo Cotización)" : (formData.requestType === 'prueba' ? "Sin Asignar (Solo Prueba de Manejo)" : minWaitingAdvisor.name)),
         createdAt: serverTimestamp(),
         // New features parameters
         landing: activeLanding,

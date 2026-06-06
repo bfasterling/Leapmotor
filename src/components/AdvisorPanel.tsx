@@ -237,7 +237,8 @@ export default function AdvisorPanel() {
         const isUnassignedLeapmotorPool = parsedLead.landing === 'leapmotor' && 
                                           (!parsedLead.advisorId || parsedLead.advisorId === "") && 
                                           parsedLead.status === LeadStatus.WAITING &&
-                                          parsedLead.requestType !== 'cotizacion';
+                                          parsedLead.requestType !== 'cotizacion' &&
+                                          parsedLead.requestType !== 'prueba';
 
         if (isAssignedToMe || isUnassignedLeapmotorPool) {
           parsedLeads.push(parsedLead);

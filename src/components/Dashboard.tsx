@@ -77,12 +77,21 @@ export default function Dashboard() {
     } catch (_) {}
   };
 
+  // Helper to get local date string YYYY-MM-DD
+  const getTodayString = () => {
+    const today = new Date();
+    const yyyy = today.getFullYear();
+    const mm = String(today.getMonth() + 1).padStart(2, '0');
+    const dd = String(today.getDate()).padStart(2, '0');
+    return `${yyyy}-${mm}-${dd}`;
+  };
+
   const [leads, setLeads] = useState<Lead[]>([]);
   const [loading, setLoading] = useState(true);
 
-  // Date range filters state
-  const [startDate, setStartDate] = useState('');
-  const [endDate, setEndDate] = useState('');
+  // Date range filters state: Default to local 'Hoy'
+  const [startDate, setStartDate] = useState(getTodayString());
+  const [endDate, setEndDate] = useState(getTodayString());
 
   // Advisors and advisor creation states
   const [advisors, setAdvisors] = useState<any[]>([]);
@@ -98,6 +107,7 @@ export default function Dashboard() {
   // Estados para panel de administración de leads del coordinador
   const [leadSearch, setLeadSearch] = useState('');
   const [leadStatusFilter, setLeadStatusFilter] = useState<string>('all');
+  const [leadLandingFilter, setLeadLandingFilter] = useState<string>('all');
   const [leadAgencyFilter, setLeadAgencyFilter] = useState('all');
   const [leadAdvisorFilter, setLeadAdvisorFilter] = useState('all');
   const [leadDateFilter, setLeadDateFilter] = useState<string>('all');
@@ -469,17 +479,17 @@ export default function Dashboard() {
   const jeepLeadsToday = leadsToday.filter(l => l.landing === 'jeep').length;
   const multimarcaLeadsToday = leadsToday.filter(l => l.landing === 'multimarca').length;
 
-  // Real-time Leapmotor status counts (tiempo real) (Excluyendo cotización del flujo de asesores)
-  const leapmotorWaitingCountRealTime = leads.filter(l => (!l.landing || l.landing === 'leapmotor') && l.status === LeadStatus.WAITING && l.requestType !== 'cotizacion').length;
-  const leapmotorAttendingCountRealTime = leads.filter(l => (!l.landing || l.landing === 'leapmotor') && l.status === LeadStatus.ATTENDING && l.requestType !== 'cotizacion').length;
-  const leapmotorAttendedCountRealTime = leads.filter(l => (!l.landing || l.landing === 'leapmotor') && l.status === LeadStatus.ATTENDED && l.requestType !== 'cotizacion').length;
+  // Real-time Leapmotor status counts (tiempo real) (Excluyendo cotización y prueba del flujo de asesores)
+  const leapmotorWaitingCountRealTime = leads.filter(l => (!l.landing || l.landing === 'leapmotor') && l.status === LeadStatus.WAITING && l.requestType !== 'cotizacion' && l.requestType !== 'prueba').length;
+  const leapmotorAttendingCountRealTime = leads.filter(l => (!l.landing || l.landing === 'leapmotor') && l.status === LeadStatus.ATTENDING && l.requestType !== 'cotizacion' && l.requestType !== 'prueba').length;
+  const leapmotorAttendedCountRealTime = leads.filter(l => (!l.landing || l.landing === 'leapmotor') && l.status === LeadStatus.ATTENDED && l.requestType !== 'cotizacion' && l.requestType !== 'prueba').length;
 
   // Compute stats based on the selected date filters
   const totalLeads = filteredLeads.length;
   
   const statusCounts = filteredLeads.reduce((acc, lead) => {
-    // Excluir cotizaciones de las estadísticas del embudo de asesores
-    if (lead.requestType !== 'cotizacion') {
+    // Excluir cotizaciones y pruebas de las estadísticas del embudo de asesores
+    if (lead.requestType !== 'cotizacion' && lead.requestType !== 'prueba') {
       acc[lead.status] = (acc[lead.status] || 0) + 1;
     }
     return acc;
@@ -523,7 +533,23 @@ export default function Dashboard() {
     { name: 'Multimarca', Leads: multimarcaLandingCount }
   ];
 
-  // 1. Data for conversion status pie
+  // Leads por Marca / Multimarca data calculation
+  const brandCounts = filteredLeads.reduce((acc, lead) => {
+    const rawBrand = lead.selectedBrand || (lead.landing === 'jeep' ? 'Jeep' : (lead.landing === 'leapmotor' ? 'Leapmotor' : 'Multimarca'));
+    const isLeapRaw = !lead.landing || lead.landing === 'leapmotor';
+    const finalBrandName = isLeapRaw ? 'Leapmotor' : (rawBrand.charAt(0).toUpperCase() + rawBrand.slice(1).toLowerCase());
+    acc[finalBrandName] = (acc[finalBrandName] || 0) + 1;
+    return acc;
+  }, {} as { [key: string]: number });
+
+  // List of active brands
+  const BRAND_LIST_EXPECTED = ['Leapmotor', 'Jeep', 'Fiat', 'Dodge', 'Ram', 'Peugeot'];
+  const brandChartData = BRAND_LIST_EXPECTED.map(brName => ({
+    name: brName,
+    Leads: brandCounts[brName] || 0
+  })).sort((a, b) => b.Leads - a.Leads);
+
+  // 1. Data for conversion status pie (deprecated/removed, but kept as helper structure if needed)
   const pieChartData = [
     { name: 'Éxito (Atendidos)', value: attendedCount },
     { name: 'En Proceso', value: attendingCount },
@@ -607,6 +633,27 @@ export default function Dashboard() {
       }
     }
 
+    // 6. Nuevo Filtro por Landing de Ingreso / Campaña / Marca
+    if (leadLandingFilter !== 'all') {
+      const parts = leadLandingFilter.split('_');
+      const land = parts[0]; // 'leapmotor', 'jeep', 'multimarca'
+      const filterVal = parts[1]; // 'all', 'cotizacion', 'prueba', 'asesor' (attention), brand name
+      
+      const leadLanding = lead.landing || 'leapmotor';
+      if (leadLanding !== land) return false;
+      
+      if (filterVal && filterVal !== 'all') {
+        const reqType = lead.requestType || 'asesor';
+        const brand = (lead.selectedBrand || '').toLowerCase();
+        
+        if (filterVal === 'cotizacion' || filterVal === 'prueba' || filterVal === 'asesor') {
+          if (reqType !== filterVal) return false;
+        } else {
+          if (brand !== filterVal) return false;
+        }
+      }
+    }
+
     return true;
   });
 
@@ -668,74 +715,26 @@ export default function Dashboard() {
               <button
                 onClick={() => { setStartDate(''); setEndDate(''); }}
                 className={`text-xs border px-4 py-2.5 rounded-xl font-bold transition flex items-center gap-1 ${
-                  isDark ? 'bg-red-500/10 hover:bg-red-500/20 text-red-405 text-red-400 border-red-500/20' : 'bg-red-50 hover:bg-red-100 text-red-600 border-red-200'
+                  isDark ? 'bg-red-500/10 hover:bg-red-500/20 text-red-400 border-red-500/20' : 'bg-red-50 hover:bg-red-100 text-red-600 border-red-200'
                 }`}
               >
-                Limpiar
+                Ver Todo
+              </button>
+            )}
+            {(startDate !== getTodayString() || endDate !== getTodayString()) && (
+              <button
+                type="button"
+                onClick={() => { setStartDate(getTodayString()); setEndDate(getTodayString()); }}
+                className={`text-xs border px-4 py-2.5 rounded-xl font-bold transition flex items-center gap-1 ${
+                  isDark ? 'bg-emerald-500/15 hover:bg-emerald-500/25 text-emerald-400 border-emerald-500/20' : 'bg-emerald-50 hover:bg-emerald-100 text-emerald-750 border-emerald-300'
+                }`}
+              >
+                Filtro: Hoy
               </button>
             )}
           </div>
         </div>
       
-      {/* Overview stats grid */}
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
-        {/* Card 1: Total Leads Today */}
-        <div className={`${cardBg} p-5 rounded-2xl relative overflow-hidden flex flex-col justify-between transition-all duration-300`}>
-          <div className="flex justify-between items-start">
-            <span className={`text-[12px] font-mono tracking-wider uppercase font-extrabold ${isDark ? 'text-slate-400' : 'text-slate-500'}`}>Total Leads Hoy</span>
-            <span className={`p-2 rounded-xl ${isDark ? 'bg-indigo-500/20 text-white' : 'bg-indigo-50 text-indigo-700 border border-indigo-200'}`}>
-              <Users className="w-4 h-4" />
-            </span>
-          </div>
-          <div className="mt-4">
-            <div className={`text-3xl font-black ${titleColor}`}>{totalLeadsToday}</div>
-            <p className={`text-[11px] font-extrabold font-mono mt-1 ${isDark ? 'text-indigo-300' : 'text-indigo-700'}`}>Leads totales de hoy</p>
-          </div>
-        </div>
-
-        {/* Card 2: Leapmotor Today */}
-        <div className={`${cardBg} p-5 rounded-2xl relative overflow-hidden flex flex-col justify-between transition-all duration-300`}>
-          <div className="flex justify-between items-start">
-            <span className={`text-[12px] font-mono tracking-wider uppercase font-extrabold ${isDark ? 'text-slate-400' : 'text-slate-500'}`}>LeapMotor Hoy</span>
-            <span className={`p-2 rounded-xl ${isDark ? 'bg-cyan-500/20 text-white' : 'bg-cyan-50 text-cyan-700 border border-cyan-200'}`}>
-              <Car className="w-4 h-4" />
-            </span>
-          </div>
-          <div className="mt-4">
-            <div className={`text-3xl font-black ${titleColor}`}>{leapmotorLeadsToday}</div>
-            <p className={`text-[11px] font-extrabold font-mono mt-1 ${isDark ? 'text-cyan-300' : 'text-cyan-750 text-cyan-700'}`}>Landing LeapMotor</p>
-          </div>
-        </div>
-
-        {/* Card 3: Jeep Cherokee Today */}
-        <div className={`${cardBg} p-5 rounded-2xl relative overflow-hidden flex flex-col justify-between transition-all duration-300`}>
-          <div className="flex justify-between items-start">
-            <span className={`text-[12px] font-mono tracking-wider uppercase font-extrabold ${isDark ? 'text-slate-400' : 'text-slate-500'}`}>Jeep Cherokee Hoy</span>
-            <span className={`p-2 rounded-xl ${isDark ? 'bg-emerald-500/20 text-white' : 'bg-emerald-50 text-emerald-700 border border-emerald-200'}`}>
-              <Car className="w-4 h-4" />
-            </span>
-          </div>
-          <div className="mt-4">
-            <div className={`text-3xl font-black ${titleColor}`}>{jeepLeadsToday}</div>
-            <p className={`text-[11px] font-extrabold font-mono mt-1 ${isDark ? 'text-emerald-300' : 'text-emerald-750 text-emerald-700'}`}>Landing Jeep Cherokee</p>
-          </div>
-        </div>
-
-        {/* Card 4: Multimarca Today */}
-        <div className={`${cardBg} p-5 rounded-2xl relative overflow-hidden flex flex-col justify-between transition-all duration-300`}>
-          <div className="flex justify-between items-start">
-            <span className={`text-[12px] font-mono tracking-wider uppercase font-extrabold ${isDark ? 'text-slate-400' : 'text-slate-500'}`}>Multimarca Hoy</span>
-            <span className={`p-2 rounded-xl ${isDark ? 'bg-amber-500/20 text-white' : 'bg-amber-50 text-amber-700 border border-amber-200'}`}>
-              <Car className="w-4 h-4" />
-            </span>
-          </div>
-          <div className="mt-4">
-            <div className={`text-3xl font-black ${titleColor}`}>{multimarcaLeadsToday}</div>
-            <p className={`text-[11px] font-extrabold font-mono mt-1 ${isDark ? 'text-amber-300' : 'text-amber-700'}`}>Landing Multimarca</p>
-          </div>
-        </div>
-      </div>
-
       {/* Leapmotor Real-time Status Grid */}
       <div className="mb-8">
         <h3 className={`text-xs font-black tracking-widest uppercase font-mono mb-4 flex items-center gap-2 ${titleColor}`}>
@@ -745,7 +744,7 @@ export default function Dashboard() {
           {/* Card 1: En espera */}
           <div className={`${cardBg} p-5 rounded-2xl relative overflow-hidden flex items-center justify-between transition-all duration-300 border-l-4 border-l-amber-500`}>
             <div>
-              <span className="text-[11px] font-mono text-amber-450 text-amber-500 tracking-wider uppercase font-extrabold">LeapMotor En Espera</span>
+              <span className="text-[11px] font-mono text-amber-550 text-amber-500 tracking-wider uppercase font-extrabold">LeapMotor En Espera</span>
               <div className={`text-3xl font-black mt-1.5 font-mono ${titleColor}`}>{leapmotorWaitingCountRealTime}</div>
               <p className={`text-[11px] font-bold mt-1 ${mutedColor}`}>Cola de espera general</p>
             </div>
@@ -775,6 +774,70 @@ export default function Dashboard() {
             </div>
             <div className={`p-3.5 rounded-xl ${isDark ? 'bg-emerald-500/20 text-emerald-400' : 'bg-emerald-50 text-emerald-700 border border-emerald-200'}`}>
               <CheckCircle className="w-5 h-5" />
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Operación Leads Hoy (General summary) */}
+      <div className="mb-8">
+        <h3 className={`text-xs font-black tracking-widest uppercase font-mono mb-4 flex items-center gap-2 ${titleColor}`}>
+          <BarChart2 className="w-4 h-4 text-indigo-400" /> OPERACIÓN LEADS HOY
+        </h3>
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+          {/* Card 1: Total Leads Today */}
+          <div className={`${cardBg} p-5 rounded-2xl relative overflow-hidden flex flex-col justify-between transition-all duration-300`}>
+            <div className="flex justify-between items-start">
+              <span className={`text-[12px] font-mono tracking-wider uppercase font-extrabold ${isDark ? 'text-slate-400' : 'text-slate-500'}`}>Total Leads Hoy</span>
+              <span className={`p-2 rounded-xl ${isDark ? 'bg-indigo-500/20 text-white' : 'bg-indigo-50 text-indigo-700 border border-indigo-200'}`}>
+                <Users className="w-4 h-4" />
+              </span>
+            </div>
+            <div className="mt-4">
+              <div className={`text-3xl font-black ${titleColor}`}>{totalLeadsToday}</div>
+              <p className={`text-[11px] font-extrabold font-mono mt-1 ${isDark ? 'text-indigo-300' : 'text-indigo-700'}`}>Leads totales de hoy</p>
+            </div>
+          </div>
+
+          {/* Card 2: Leapmotor Today */}
+          <div className={`${cardBg} p-5 rounded-2xl relative overflow-hidden flex flex-col justify-between transition-all duration-300`}>
+            <div className="flex justify-between items-start">
+              <span className={`text-[12px] font-mono tracking-wider uppercase font-extrabold ${isDark ? 'text-slate-400' : 'text-slate-500'}`}>LeapMotor Hoy</span>
+              <span className={`p-2 rounded-xl ${isDark ? 'bg-cyan-500/20 text-white' : 'bg-cyan-50 text-cyan-700 border border-cyan-200'}`}>
+                <Car className="w-4 h-4" />
+              </span>
+            </div>
+            <div className="mt-4">
+              <div className={`text-3xl font-black ${titleColor}`}>{leapmotorLeadsToday}</div>
+              <p className={`text-[11px] font-extrabold font-mono mt-1 ${isDark ? 'text-cyan-300' : 'text-cyan-700'}`}>Landing LeapMotor</p>
+            </div>
+          </div>
+
+          {/* Card 3: Jeep Cherokee Today */}
+          <div className={`${cardBg} p-5 rounded-2xl relative overflow-hidden flex flex-col justify-between transition-all duration-300`}>
+            <div className="flex justify-between items-start">
+              <span className={`text-[12px] font-mono tracking-wider uppercase font-extrabold ${isDark ? 'text-slate-400' : 'text-slate-500'}`}>Jeep Cherokee Hoy</span>
+              <span className={`p-2 rounded-xl ${isDark ? 'bg-emerald-500/20 text-white' : 'bg-emerald-50 text-emerald-700 border border-emerald-200'}`}>
+                <Car className="w-4 h-4" />
+              </span>
+            </div>
+            <div className="mt-4">
+              <div className={`text-3xl font-black ${titleColor}`}>{jeepLeadsToday}</div>
+              <p className={`text-[11px] font-extrabold font-mono mt-1 ${isDark ? 'text-emerald-300' : 'text-emerald-700'}`}>Landing Jeep Cherokee</p>
+            </div>
+          </div>
+
+          {/* Card 4: Multimarca Today */}
+          <div className={`${cardBg} p-5 rounded-2xl relative overflow-hidden flex flex-col justify-between transition-all duration-300`}>
+            <div className="flex justify-between items-start">
+              <span className={`text-[12px] font-mono tracking-wider uppercase font-extrabold ${isDark ? 'text-slate-400' : 'text-slate-500'}`}>Multimarca Hoy</span>
+              <span className={`p-2 rounded-xl ${isDark ? 'bg-amber-500/20 text-white' : 'bg-amber-50 text-amber-700 border border-amber-200'}`}>
+                <Car className="w-4 h-4" />
+              </span>
+            </div>
+            <div className="mt-4">
+              <div className={`text-3xl font-black ${titleColor}`}>{multimarcaLeadsToday}</div>
+              <p className={`text-[11px] font-extrabold font-mono mt-1 ${isDark ? 'text-amber-300' : 'text-amber-700'}`}>Landing Multimarca</p>
             </div>
           </div>
         </div>
@@ -829,62 +892,7 @@ export default function Dashboard() {
 
       {/* Analytics charts panels */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
-        {/* CHART 2: Funnel Status ratio */}
-        <div className={`${cardBg} rounded-2xl p-6 transition-all duration-300`}>
-          <h3 className={`text-sm font-black tracking-wide uppercase font-mono mb-6 flex items-center gap-2 ${titleColor}`}>
-            <TrendingUp className="w-4 h-4 text-blue-400" /> Tasa de Conversión General
-          </h3>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 items-center">
-            {pieChartData.length === 0 ? (
-              <div className={`text-center text-xs font-bold py-12 md:col-span-2 ${subColor}`}>
-                Sin datos suficientes para graficar
-              </div>
-            ) : (
-              <>
-                <div className="h-48 w-full relative">
-                  <ResponsiveContainer width="100%" height="100%" minHeight={192}>
-                    <PieChart>
-                      <Pie
-                        data={pieChartData}
-                        cx="50%"
-                        cy="50%"
-                        innerRadius={50}
-                        outerRadius={70}
-                        paddingAngle={4}
-                        dataKey="value"
-                      >
-                        {pieChartData.map((entry, index) => (
-                          <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
-                        ))}
-                      </Pie>
-                      <Tooltip contentStyle={{ backgroundColor: isDark ? '#090d16' : '#ffffff', borderColor: isDark ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.1)', color: isDark ? '#ffffff' : '#333333' }} />
-                    </PieChart>
-                  </ResponsiveContainer>
-                </div>
-                
-                <div className={`space-y-2 p-3 rounded-xl border text-[11px] font-mono ${isDark ? 'bg-slate-950/40 border-white/5' : 'bg-slate-50 border-slate-150'}`}>
-                  <div className={`flex justify-between pb-1 border-b font-semibold ${isDark ? 'border-white/5' : 'border-slate-100'}`}>
-                    <span className="text-blue-500 font-extrabold">● Éxito (Atendidos)</span>
-                    <strong className={`font-black ${titleColor}`}>{attendedCount}</strong>
-                  </div>
-                  <div className={`flex justify-between pb-1 border-b font-semibold ${isDark ? 'border-white/5' : 'border-slate-100'}`}>
-                    <span className="text-cyan-500 font-extrabold">● En Proceso</span>
-                    <strong className={`font-black ${titleColor}`}>{attendingCount}</strong>
-                  </div>
-                  <div className={`flex justify-between pb-1 border-b font-semibold ${isDark ? 'border-white/5' : 'border-slate-100'}`}>
-                    <span className="text-amber-500 font-extrabold">● En Espera</span>
-                    <strong className={`font-black ${titleColor}`}>{waitingCount}</strong>
-                  </div>
-                  <div className="flex justify-between font-semibold">
-                    <span className="text-red-500 font-extrabold">● Sin Interés</span>
-                    <strong className={`font-black ${titleColor}`}>{lostCount}</strong>
-                  </div>
-                </div>
-              </>
-            )}
-          </div>
-        </div>
-               {/* CHART 3: Landing Page Leads Origin Ratio */}
+        {/* CHART 1: Landing Page Leads Origin Ratio */}
         <div className={`${cardBg} rounded-2xl p-6 transition-all duration-300`}>
           <h3 className={`text-sm font-black tracking-wide uppercase font-mono mb-6 flex items-center gap-2 ${titleColor}`}>
             <BarChart2 className="w-4 h-4 text-indigo-400" /> Leads por Landing de Origen
@@ -929,6 +937,50 @@ export default function Dashboard() {
                     <span className={`font-bold ${titleColor}`}>Total Leads</span>
                     <strong className={`font-black ${titleColor}`}>{totalLeads}</strong>
                   </div>
+                </div>
+              </>
+            )}
+          </div>
+        </div>
+
+        {/* CHART 2: Leads por Marca o Submarca de Interés (Fiat, Dodge, Ram, Peugeot, Jeep, Leapmotor) */}
+        <div className={`${cardBg} rounded-2xl p-6 transition-all duration-300`}>
+          <h3 className={`text-sm font-black tracking-wide uppercase font-mono mb-6 flex items-center gap-2 ${titleColor}`}>
+            <Award className="w-4 h-4 text-emerald-400" /> Leads por Marca / Multimarca
+          </h3>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 items-center">
+            {totalLeads === 0 ? (
+              <div className={`text-center text-xs font-bold py-12 md:col-span-2 ${subColor}`}>
+                Registrando marcas consultadas...
+              </div>
+            ) : (
+              <>
+                <div className="h-48 w-full relative">
+                  <ResponsiveContainer width="100%" height="100%" minHeight={192}>
+                    <BarChart data={brandChartData} layout="vertical" margin={{ left: -10, right: 10, top: 10, bottom: 10 }}>
+                      <XAxis type="number" stroke="#64748b" fontSize={9} fontClassName="font-mono" hide />
+                      <YAxis dataKey="name" type="category" stroke="#cbd5e1" fontSize={9} width={80} tickLine={false} />
+                      <Tooltip contentStyle={{ backgroundColor: isDark ? '#090d16' : '#ffffff', borderColor: isDark ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.1)', color: isDark ? '#ffffff' : '#333333' }} />
+                      <Bar dataKey="Leads" fill="#10b981" radius={[0, 4, 4, 0]} barSize={12}>
+                        {brandChartData.map((entry, index) => {
+                          const colorsBrands = ['#3b82f6', '#10b981', '#f59e0b', '#8b5cf6', '#ec4899', '#6366f1'];
+                          return <Cell key={`cell-${index}`} fill={colorsBrands[index % colorsBrands.length]} />;
+                        })}
+                      </Bar>
+                    </BarChart>
+                  </ResponsiveContainer>
+                </div>
+                
+                <div className={`space-y-1.5 p-3 rounded-xl border text-[10px] font-mono ${isDark ? 'bg-slate-950/40 border-white/5' : 'bg-slate-50 border-slate-150'}`}>
+                  {brandChartData.map((bInfo, idx) => {
+                    const dotColors = ['#3b82f6', '#10b981', '#f59e0b', '#8b5cf6', '#ec4899', '#6366f1'];
+                    return (
+                      <div key={bInfo.name} className={`flex justify-between pb-1 border-b last:border-0 font-semibold ${isDark ? 'border-white/5' : 'border-slate-100'}`}>
+                        <span style={{ color: dotColors[idx % dotColors.length] }}>● {bInfo.name}</span>
+                        <strong className={`font-black ${titleColor}`}>{bInfo.Leads}</strong>
+                      </div>
+                    );
+                  })}
                 </div>
               </>
             )}
@@ -1075,7 +1127,7 @@ export default function Dashboard() {
             </div>
 
             {/* Fila de Filtros Avanzados */}
-            <div className={`grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-4 p-4 rounded-2xl border ${isDark ? 'bg-slate-950/40 border-slate-850' : 'bg-slate-50 border-slate-200'}`}>
+            <div className={`grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-4 p-4 rounded-2xl border ${isDark ? 'bg-slate-950/40 border-slate-850' : 'bg-slate-50 border-slate-200'}`}>
               {/* 1. Búsqueda por Texto */}
               <div>
                 <label className={`block text-[10px] font-mono tracking-wider uppercase font-extrabold mb-1.5 ${isDark ? 'text-white' : 'text-slate-600'}`}>Buscar Cliente:</label>
@@ -1108,6 +1160,39 @@ export default function Dashboard() {
                   <option value={LeadStatus.ATTENDING}>EN ATENCIÓN ACTIVA</option>
                   <option value={LeadStatus.ATTENDED}>ATENDIDOS CON ÉXITO / OK</option>
                   <option value={LeadStatus.LOST}>DESCARTADOS / CANCELADOS</option>
+                </select>
+              </div>
+
+              {/* 6. Nuevo Filtro de Landing/Origen de Campaña */}
+              <div>
+                <label className={`block text-[10px] font-mono tracking-wider uppercase font-extrabold mb-1.5 ${isDark ? 'text-white' : 'text-slate-600'}`}>Landing / Campaña / Marca:</label>
+                <select
+                  value={leadLandingFilter}
+                  onChange={(e) => setLeadLandingFilter(e.target.value)}
+                  className={`w-full border rounded-xl px-3 py-2 text-xs outline-none transition font-semibold cursor-pointer ${
+                    isDark ? 'bg-slate-900 border-slate-800 text-white focus:border-blue-500/50' : 'bg-white border-slate-200 text-slate-800 focus:border-indigo-500/50'
+                  }`}
+                >
+                  <option value="all">TODOS LOS EXPOSITORES</option>
+                  <optgroup label="Leapmotor">
+                    <option value="leapmotor_all">LeapMotor - Todos</option>
+                    <option value="leapmotor_cotizacion">LeapMotor - Cotización</option>
+                    <option value="leapmotor_asesor">LeapMotor - Atención Asesor</option>
+                  </optgroup>
+                  <optgroup label="Jeep Experience">
+                    <option value="jeep_all">Jeep Cherokee - Todos</option>
+                    <option value="jeep_cotizacion">Jeep Cherokee - Cotización</option>
+                    <option value="jeep_prueba">Jeep Cherokee - Prueba de Manejo</option>
+                  </optgroup>
+                  <optgroup label="Multimarca">
+                    <option value="multimarca_all">Multimarca - Todos</option>
+                    <option value="multimarca_fiat">Multimarca - Fiat</option>
+                    <option value="multimarca_dodge">Multimarca - Dodge</option>
+                    <option value="multimarca_ram">Multimarca - Ram</option>
+                    <option value="multimarca_peugeot">Multimarca - Peugeot</option>
+                    <option value="multimarca_cotizacion">Multimarca - Cotización</option>
+                    <option value="multimarca_prueba">Multimarca - Prueba de Manejo</option>
+                  </optgroup>
                 </select>
               </div>
 
@@ -1237,14 +1322,45 @@ export default function Dashboard() {
                             </td>
 
                             <td className="p-3">
-                              <div className="font-mono font-extrabold rounded bg-blue-500/10 border border-blue-500/20 text-blue-400 px-1.5 py-0.5 inline-block text-[9px] uppercase tracking-wide">
-                                {lead.selectedBrand || 'Leapmotor'} - {lead.modelOfInterest}
+                              <div className="flex flex-col gap-1.5">
+                                {/* Badge de Landing Origen */}
+                                {(() => {
+                                  let landingLabel = 'Multimarca';
+                                  let brandLabel = lead.selectedBrand || 'Varios';
+                                  let formTypeLabel = lead.requestType === 'cotizacion' ? 'Cotización' : lead.requestType === 'prueba' ? 'Prueba de Manejo' : 'Atención VIP';
+                                  
+                                  const landLower = (lead.landing || 'multimarca').toLowerCase();
+                                  let badgeStyle = 'bg-indigo-500/10 text-indigo-450 border-indigo-500/20';
+                                  
+                                  if (landLower.includes('leap') || landLower.includes('motor')) {
+                                    landingLabel = 'LeapMotor';
+                                    brandLabel = 'Leapmotor';
+                                    badgeStyle = 'bg-[#deff01]/10 text-lime-400 border-lime-500/35';
+                                  } else if (landLower.includes('jeep') || landLower.includes('cherokee')) {
+                                    landingLabel = 'Jeep Cherokee';
+                                    brandLabel = 'Jeep';
+                                    badgeStyle = 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20';
+                                  }
+
+                                  return (
+                                    <div className="space-y-1">
+                                      <div className={`font-mono font-black border text-[9px] uppercase tracking-wider px-2 py-0.5 rounded-full inline-flex items-center gap-1.5 ${badgeStyle}`}>
+                                        <span className="w-1 h-1 rounded-full bg-current" />
+                                        {landingLabel}: {formTypeLabel}
+                                      </div>
+                                      <div className={`text-[10px] font-semibold flex items-center gap-1 ${isDark ? 'text-slate-300' : 'text-slate-600'}`}>
+                                        <span>Marca: <strong className="font-black font-mono text-[9px] uppercase text-cyan-400">{brandLabel}</strong></span>
+                                        {lead.modelOfInterest && (
+                                          <>
+                                            <span className="text-slate-500">•</span>
+                                            <span>Modelo: <strong className="font-bold">{lead.modelOfInterest}</strong></span>
+                                          </>
+                                        )}
+                                      </div>
+                                    </div>
+                                  );
+                                })()}
                               </div>
-                              {lead.landing && (
-                                <div className="text-[10px] text-slate-500 font-mono mt-1">
-                                  Campaña: <span className="font-bold underline">{lead.landing.toUpperCase()}</span>
-                                </div>
-                              )}
                             </td>
 
                             <td className="p-3">
@@ -1655,6 +1771,6 @@ export default function Dashboard() {
         )}
       </div>
     </div>
-    </div>
+  </div>
   );
 }
