@@ -26,21 +26,8 @@ service cloud.firestore {
         && data.lastName is string && data.lastName.size() > 0 && data.lastName.size() <= 100
         && data.email is string && data.email.size() > 0 && data.email.size() <= 100
         && data.phone is string && data.phone.size() > 0 && data.phone.size() <= 30
-        && (!('city' in data) || data.city == null || data.city is string)
-        && (!('postalCode' in data) || data.postalCode == null || data.postalCode is string)
-        && (!('state' in data) || data.state == null || data.state is string)
-        && (!('distributor' in data) || data.distributor == null || data.distributor is string)
         && data.modelOfInterest is string && data.modelOfInterest.size() > 0 && data.modelOfInterest.size() <= 100
-        && data.status is string && (data.status == "waiting" || data.status == "attending" || data.status == "attended" || data.status == "lost")
-        && (!('requestType' in data) || data.requestType is string)
-        && (!('contactMethod' in data) || data.contactMethod is string)
-        && (!('advisorId' in data) || data.advisorId == null || data.advisorId is string)
-        && (!('advisorName' in data) || data.advisorName == null || data.advisorName is string)
-        && (!('landing' in data) || data.landing is string)
-        && (!('selectedBrand' in data) || data.selectedBrand is string)
-        && (!('modelClaveGen' in data) || data.modelClaveGen == null || data.modelClaveGen is string)
-        && (!('testDriveDate' in data) || data.testDriveDate == null || data.testDriveDate is string)
-        && (!('coordinatorNotes' in data) || data.coordinatorNotes == null || data.coordinatorNotes is string);
+        && data.status is string && (data.status == "waiting" || data.status == "attending" || data.status == "attended" || data.status == "lost");
     }
 
     function isValidAdvisor(data) {
