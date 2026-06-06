@@ -51,6 +51,7 @@ import LeapmotorLogo from './LeapmotorLogo';
 import StellantisLogo from './StellantisLogo';
 import { PRIVACY_TEXT_ES } from '../privacyText';
 import { ALL_DEALERS } from '../data/dealers';
+import { BRAND_MODELS_DB } from '../data/brandModelsDb';
 
 // Import newly generated design assets
 import LEAPMOTOR_TUNNEL_BG from '../assets/images/leapmotor_b10_tunnel_bg_1780692970544.png';
@@ -69,6 +70,13 @@ import JEEP_JT_IMG from '../assets/images/jeep_jt_1780440462196.png';
 import JEEP_RENEGADE_IMG from '../assets/images/jeep_renegade_1780440473660.png';
 import STELLANTIS_IMG from '../assets/images/stellantis_multibrand_1780407983016.png';
 import CARPA_MAP_IMG from '../assets/images/stellantis_carpa_map_1780431196502.png';
+
+// Import newly generated high-fidelity brand landing background/hero images
+import RAM_LANDING_BG_26 from '../assets/images/ram_landing_2026_1780767734197.png';
+import PEUGEOT_LANDING_BG_26 from '../assets/images/peugeot_landing_2026_1780767747561.png';
+import JEEP_LANDING_BG_26 from '../assets/images/jeep_landing_2026_1780767759797.png';
+import FIAT_LANDING_BG_26 from '../assets/images/fiat_landing_2026_1780767772093.png';
+import DODGE_LANDING_BG_26 from '../assets/images/dodge_landing_2026_1780767783850.png';
 
 const MEX_STATES = [
   'Aguascalientes',
@@ -159,125 +167,30 @@ const CDMX_DISTRIBUTORS = [
   'Leapmotor Viaducto'
 ];
 
-// Group vehicle options by brand
-const BRAND_MODELS: Record<string, string[]> = {
-  'Leapmotor': ['B10'],
-  'Jeep': ['Commander', 'Compass', 'Grand Cherokee', 'Grand Wagoneer', 'Jeep JT', 'Renegade'],
-  'Ram': ['1500', '2500', 'Rampage'],
-  'Dodge': ['Charger', 'Durango', 'Attitude'],
-  'Fiat': ['Pulse', 'Fastback', '500e'],
-  'Peugeot': ['2008', '3008', 'Landtrek']
-};
-
-const MODEL_DETAILS: Record<string, Record<string, { name: string; desc: string; img: string }>> = {
-  'Leapmotor': {
-    'B10': {
-      name: 'Leapmotor B10',
-      desc: 'Smart SUV 100% eléctrica inteligente',
-      img: 'https://images.unsplash.com/photo-1563720223185-11003d516935?w=350&q=80'
-    }
-  },
-  'Jeep': {
-    'Commander': {
-      name: 'Jeep Commander',
-      desc: 'El SUV premium de 3 filas con diseño sofisticado y espacio inteligente',
-      img: JEEP_COMMANDER_IMG
-    },
-    'Compass': {
-      name: 'Jeep Compass',
-      desc: 'Diseño audaz y tecnología avanzada híbrida para tu día a día',
-      img: JEEP_COMPASS_IMG
-    },
-    'Grand Cherokee': {
-      name: 'Grand Cherokee L',
-      desc: 'Lujo legendario, refinamiento y tres filas de asientos con tracción 4x4',
-      img: JEEP_GRAND_CHEROKEE_IMG
-    },
-    'Grand Wagoneer': {
-      name: 'Grand Wagoneer',
-      desc: 'La cumbre del lujo todoterreno de Jeep con diseño imponente',
-      img: JEEP_GRAND_WAGONEER_IMG
-    },
-    'Jeep JT': {
-      name: 'Jeep JT Gladiator',
-      desc: 'La pickup todoterreno definitiva con ADN Trail Rated y techo desmontable',
-      img: JEEP_JT_IMG
-    },
-    'Renegade': {
-      name: 'Jeep Renegade',
-      desc: 'Estilo aventurero urbano, dinámico y potente para almas jóvenes',
-      img: JEEP_RENEGADE_IMG
-    }
-  },
-  'Ram': {
-    '1500': {
-      name: 'Ram 1500 Limited',
-      desc: 'Poder, lujo y refinamiento sin límites',
-      img: 'https://images.unsplash.com/photo-1603386329225-868f9b1ee6c9?w=350&q=80'
-    },
-    '2500': {
-      name: 'Ram 2500 Heavy Duty',
-      desc: 'Fuerza extrema impulsada por Cummins',
-      img: 'https://images.unsplash.com/photo-1590333742459-7151121df0c1?w=350&q=80'
-    },
-    'Rampage': {
-      name: 'Ram Rampage Laramie',
-      desc: 'Crossover pick-up ágil e innovadora',
-      img: 'https://images.unsplash.com/photo-1542282088-fe8426682b8f?w=350&q=80'
-    }
-  },
-  'Dodge': {
-    'Charger': {
-      name: 'Charger Daytona SRT',
-      desc: 'Concepto de poder eléctrico americano',
-      img: 'https://images.unsplash.com/photo-1612462225418-4a946df41c19?w=350&q=80'
-    },
-    'Durango': {
-      name: 'Durango SRT Hellcat',
-      desc: 'Estilo agresivo con desempeño de pista',
-      img: 'https://images.unsplash.com/photo-1542282088-fe8426682b8f?w=350&q=80'
-    },
-    'Attitude': {
-      name: 'Dodge Attitude SXT',
-      desc: 'Máxima economía y amplio confort urbano',
-      img: 'https://images.unsplash.com/photo-1506015391300-4802dc74de2e?w=350&q=80'
-    }
-  },
-  'Fiat': {
-    'Pulse': {
-      name: 'Fiat Pulse Abarth',
-      desc: 'Diseño deportivo italiano con temperamento de pista',
-      img: 'https://images.unsplash.com/photo-1506015391300-4802dc74de2e?w=350&q=80'
-    },
-    'Fastback': {
-      name: 'Fiat Fastback Audace',
-      desc: 'Silhouette SUV coupé con herencia dinámica',
-      img: 'https://images.unsplash.com/photo-1511919884226-fd3cad34687c?w=350&q=80'
-    },
-    '500e': {
-      name: 'Fiat 500e Icon',
-      desc: 'El ícono italiano renace 100% eléctrico',
-      img: 'https://images.unsplash.com/photo-1555215695-3004980ad54e?w=350&q=80'
-    }
-  },
-  'Peugeot': {
-    '2008': {
-      name: 'Peugeot 2008',
-      desc: 'SUV compacto con estilo felino e i-Cockpit® de vanguardia.',
-      img: 'https://images.unsplash.com/photo-1511919884226-fd3cad34687c?w=350&q=80'
-    },
-    '3008': {
-      name: 'Peugeot 3008',
-      desc: 'La máxima expresión del SUV tecnológico premium híbrido.',
-      img: 'https://images.unsplash.com/photo-1533473359331-0135ef1b58bf?w=350&q=80'
-    },
-    'Landtrek': {
-      name: 'Peugeot Landtrek',
-      desc: 'Pickup robusta con imponente capacidad de carga y tracción.',
-      img: 'https://images.unsplash.com/photo-1542282088-fe8426682b8f?w=350&q=80'
-    }
+// Group vehicle options dynamically from the corporate BRAND_MODELS_DB
+const BRAND_MODELS: Record<string, string[]> = BRAND_MODELS_DB.reduce((acc, curr) => {
+  const brandName = curr.brand;
+  if (!acc[brandName]) {
+    acc[brandName] = [];
   }
-};
+  if (!acc[brandName].includes(curr.model)) {
+    acc[brandName].push(curr.model);
+  }
+  return acc;
+}, {} as Record<string, string[]>);
+
+// Expand details dynamically from our model database registry reflecting real-time ClaveGen images
+const MODEL_DETAILS: Record<string, Record<string, { name: string; desc: string; img: string }>> = BRAND_MODELS_DB.reduce((acc, curr) => {
+  if (!acc[curr.brand]) {
+    acc[curr.brand] = {};
+  }
+  acc[curr.brand][curr.model] = {
+    name: `${curr.brand} ${curr.model}`,
+    desc: curr.desc,
+    img: curr.img
+  };
+  return acc;
+}, {} as Record<string, Record<string, { name: string; desc: string; img: string }>>);
 
 const SUB_BRAND_DETAILS: Record<string, {
   name: string;
@@ -309,7 +222,7 @@ const SUB_BRAND_DETAILS: Record<string, {
     name: 'Jeep',
     modelName: 'JEEP GRAND CHEROKEE',
     tagline: 'LEYENDA TODOTERRENO, AVENTURA EN CADA CAMINO.',
-    bgImage: 'https://images.unsplash.com/photo-1542282088-fe8426682b8f?w=600&q=80',
+    bgImage: JEEP_LANDING_BG_26,
     pantoneHex: '#1E2A22',
     accentBg: 'from-[#1E2A22]/90 via-[#1E2A22]/35 to-[#050706]/10',
     btnBg: 'bg-[#1E2A22] hover:bg-[#324538]',
@@ -324,7 +237,7 @@ const SUB_BRAND_DETAILS: Record<string, {
     name: 'Fiat',
     modelName: 'FIAT FASTBACK',
     tagline: 'ESTILO DEPORTIVO, DISEÑO ITALIANO EN CADA DETALLE.',
-    bgImage: 'https://images.unsplash.com/photo-1506015391300-4802dc74de2e?auto=format&fit=crop&w=600&q=80',
+    bgImage: FIAT_LANDING_BG_26,
     pantoneHex: '#C8102E',
     accentBg: 'from-[#C8102E]/85 via-[#C8102E]/25 to-[#0b0102]/10',
     btnBg: 'bg-[#C8102E] hover:bg-[#eb2c4b]',
@@ -339,7 +252,7 @@ const SUB_BRAND_DETAILS: Record<string, {
     name: 'Dodge',
     modelName: 'DODGE CHARGER',
     tagline: 'MÚSCULO AMERICANO, ADRENALINA EN CADA ARRANQUE.',
-    bgImage: 'https://images.unsplash.com/photo-1612462225418-4a946df41c19?auto=format&fit=crop&w=600&q=80',
+    bgImage: DODGE_LANDING_BG_26,
     pantoneHex: '#DA291C',
     accentBg: 'from-[#DA291C]/85 via-[#DA291C]/25 to-[#0c0202]/10',
     btnBg: 'bg-[#DA291C] hover:bg-[#f63d2f]',
@@ -354,7 +267,7 @@ const SUB_BRAND_DETAILS: Record<string, {
     name: 'Peugeot',
     modelName: 'PEUGEOT 3008',
     tagline: 'DISEÑO FELINO, VANGUARDIA EN CADA KILÓMETRO.',
-    bgImage: 'https://images.unsplash.com/photo-1511919884226-fd3cad34687c?auto=format&fit=crop&w=600&q=80',
+    bgImage: PEUGEOT_LANDING_BG_26,
     pantoneHex: '#041E42',
     accentBg: 'from-[#041E42]/90 via-[#041E42]/25 to-[#01060e]/10',
     btnBg: 'bg-[#041E42] hover:bg-[#072f66]',
@@ -369,7 +282,7 @@ const SUB_BRAND_DETAILS: Record<string, {
     name: 'RAM',
     modelName: 'RAM 1500',
     tagline: 'FUERZA, LUJO Y CAPACIDAD EN CADA CAMINO.',
-    bgImage: 'https://images.unsplash.com/photo-1603386329225-868f9b1ee6c9?auto=format&fit=crop&w=600&q=80',
+    bgImage: RAM_LANDING_BG_26,
     pantoneHex: '#2D2926',
     accentBg: 'from-[#1A1A1A]/95 via-[#1A1A1A]/35 to-[#1c1c1c]/10',
     btnBg: 'bg-[#2D2926] hover:bg-[#3f3a35]',
@@ -442,7 +355,7 @@ export default function LeadForm({ c10ImgUrl, t03ImgUrl, b10ImgUrl }: LeadFormPr
               src={LEAPMOTOR_LOGO_IMG} 
               alt="Leapmotor"
               referrerPolicy="no-referrer"
-              className={`w-full ${isLarge ? 'max-w-[400px] sm:max-w-[490px] h-40 sm:h-48' : 'max-w-[105px] sm:max-w-[125px] h-6.5 sm:h-7.5'} object-contain transition-all duration-300`} 
+              className={`w-full ${isLarge ? 'max-w-[400px] sm:max-w-[490px] h-13 sm:h-16' : 'max-w-[105px] sm:max-w-[125px] h-6.5 sm:h-7.5'} object-contain transition-all duration-300`} 
             />
           </div>
         );
@@ -544,17 +457,15 @@ export default function LeadForm({ c10ImgUrl, t03ImgUrl, b10ImgUrl }: LeadFormPr
 
   // Update selected state and distributor automatically based on landing selection or brand selection
   useEffect(() => {
-    if (activeLanding === 'leapmotor') {
+    if (activeLanding === 'leapmotor' && formData.requestType !== 'cotizacion') {
       setFormData(prev => ({
         ...prev,
-        state: 'Ciudad de México (CDMX)',
+        state: 'CIUDAD DE MÉXICO',
         distributor: 'Leapmotor Santa Fe'
       }));
     } else {
       const activeBrandKey = activeLanding === 'jeep' ? 'JEEP' : selectedBrand.toUpperCase();
-      const brandDealers = ALL_DEALERS.filter(d => d.brand === activeBrandKey).length > 0
-        ? ALL_DEALERS.filter(d => d.brand === activeBrandKey)
-        : ALL_DEALERS;
+      const brandDealers = ALL_DEALERS.filter(d => d.brand === activeBrandKey);
       
       const availableStates = Array.from(new Set(brandDealers.map(d => d.state))).sort();
       
@@ -605,11 +516,9 @@ export default function LeadForm({ c10ImgUrl, t03ImgUrl, b10ImgUrl }: LeadFormPr
     let defaultState = 'Ciudad de México (CDMX)';
     let defaultDistributor = 'Leapmotor Santa Fe';
 
-    if (landing !== 'leapmotor') {
+    if (landing !== 'leapmotor' || reqType === 'cotizacion') {
       const activeBrandKey = landing === 'jeep' ? 'JEEP' : brand.toUpperCase();
-      const brandDealers = ALL_DEALERS.filter(d => d.brand === activeBrandKey).length > 0
-        ? ALL_DEALERS.filter(d => d.brand === activeBrandKey)
-        : ALL_DEALERS;
+      const brandDealers = ALL_DEALERS.filter(d => d.brand === activeBrandKey);
       
       const availableStates = Array.from(new Set(brandDealers.map(d => d.state))).sort();
       defaultState = availableStates.includes('CIUDAD DE MÉXICO') 
@@ -618,6 +527,9 @@ export default function LeadForm({ c10ImgUrl, t03ImgUrl, b10ImgUrl }: LeadFormPr
       
       const dealersInState = brandDealers.filter(d => d.state === defaultState);
       defaultDistributor = dealersInState[0]?.name || '';
+    } else {
+      defaultState = 'CIUDAD DE MÉXICO';
+      defaultDistributor = 'Leapmotor Santa Fe';
     }
 
     return {
@@ -655,7 +567,7 @@ export default function LeadForm({ c10ImgUrl, t03ImgUrl, b10ImgUrl }: LeadFormPr
     }
 
     const isLeapmotorLanding = activeLanding === 'leapmotor';
-    const isDistributorRequired = !isLeapmotorLanding;
+    const isDistributorRequired = !isLeapmotorLanding || formData.requestType === 'cotizacion';
 
     if (!formData.name.trim() || !formData.lastName.trim() || !formData.email.trim() || !formData.phone.trim() || !formData.postalCode.trim() || !formData.state.trim() || (isDistributorRequired && !formData.distributor.trim())) {
       setErrorText('Por favor ingresa todos los campos obligatorios (*).');
@@ -758,6 +670,13 @@ export default function LeadForm({ c10ImgUrl, t03ImgUrl, b10ImgUrl }: LeadFormPr
 
       const cleanEmail = formData.email.trim().toLowerCase();
 
+      const activeBrand = activeLanding === 'multimarca' ? selectedBrand : (activeLanding === 'jeep' ? 'Jeep' : 'Leapmotor');
+      const matchedModel = BRAND_MODELS_DB.find(
+        m => m.brand.toLowerCase() === activeBrand.toLowerCase() && 
+             m.model.toLowerCase() === formData.modelOfInterest.toLowerCase()
+      );
+      const modelClaveGen = matchedModel ? matchedModel.claveGen : '';
+
       const payload = {
         name: formData.name.trim(),
         lastName: formData.lastName.trim(),
@@ -765,8 +684,9 @@ export default function LeadForm({ c10ImgUrl, t03ImgUrl, b10ImgUrl }: LeadFormPr
         phone: formData.phone.trim(),
         postalCode: formData.postalCode.trim() || null,
         state: formData.state,
-        distributor: activeLanding === 'leapmotor' ? 'Sin Asignar (Sincronizando con Asesor)' : formData.distributor,
+        distributor: (activeLanding === 'leapmotor' && formData.requestType !== 'cotizacion') ? 'Sin Asignar (Sincronizando con Asesor)' : formData.distributor,
         modelOfInterest: formData.modelOfInterest,
+        modelClaveGen: modelClaveGen,
         contactMethod: formData.contactMethod,
         requestType: formData.requestType,
         status: LeadStatus.WAITING,
@@ -775,7 +695,7 @@ export default function LeadForm({ c10ImgUrl, t03ImgUrl, b10ImgUrl }: LeadFormPr
         createdAt: serverTimestamp(),
         // New features parameters
         landing: activeLanding,
-        selectedBrand: activeLanding === 'multimarca' ? selectedBrand : (activeLanding === 'jeep' ? 'Jeep' : 'Leapmotor'),
+        selectedBrand: activeBrand,
         testDriveDate: formData.requestType === 'prueba' ? formData.testDriveDate : null
       };
 
@@ -796,10 +716,10 @@ export default function LeadForm({ c10ImgUrl, t03ImgUrl, b10ImgUrl }: LeadFormPr
   // Get active brand based on landing or selection
   const activeBrandKey = activeLanding === 'jeep' ? 'JEEP' : selectedBrand.toUpperCase();
   
-  // Filter dealers. Fallback to all dealers if activeBrandKey is empty or not found in CSV (e.g. Leapmotor or Peugeot)
+  // Filter dealers. Fallback to JEEP if activeBrandKey is empty or not found
   const activeDealers = ALL_DEALERS.filter(d => d.brand === activeBrandKey).length > 0
     ? ALL_DEALERS.filter(d => d.brand === activeBrandKey)
-    : ALL_DEALERS;
+    : ALL_DEALERS.filter(d => d.brand === 'JEEP');
 
   // Get list of states from activeDealers
   const availableStates = Array.from(new Set(activeDealers.map(d => d.state))).sort();
@@ -1099,6 +1019,25 @@ export default function LeadForm({ c10ImgUrl, t03ImgUrl, b10ImgUrl }: LeadFormPr
                       {/* Stacked Brand boxes (All identical size, stacked vertically, centering the brand logos) */}
                       <div className="flex flex-col gap-1.5 pt-1">
                         {['Leapmotor', 'Jeep', 'Fiat', 'Dodge', 'Peugeot', 'Ram'].map((brand) => {
+                          if (brand === 'Leapmotor') {
+                            return (
+                              <button
+                                key={brand}
+                                onClick={() => {
+                                  handleBrandSelect(brand);
+                                  setSelectedSubBrand(brand);
+                                }}
+                                className="group relative overflow-hidden rounded-2xl border border-white/10 bg-black hover:border-white/20 h-20 sm:h-24 w-full flex items-center justify-center select-none transition-all duration-300 transform active:scale-[0.99] shadow-lg shadow-black/20"
+                              >
+                                <img 
+                                  src={LEAPMOTOR_LOGO_IMG} 
+                                  alt="Leapmotor"
+                                  referrerPolicy="no-referrer"
+                                  className="w-full h-full object-contain pointer-events-none transition-transform duration-300 scale-[1.7] group-hover:scale-[1.78] p-1"
+                                />
+                              </button>
+                            );
+                          }
                           if (brand === 'Jeep') {
                             return (
                               <button
@@ -1107,13 +1046,13 @@ export default function LeadForm({ c10ImgUrl, t03ImgUrl, b10ImgUrl }: LeadFormPr
                                   handleBrandSelect(brand);
                                   setSelectedSubBrand(brand);
                                 }}
-                                className="group relative overflow-hidden rounded-2xl border border-white/10 bg-black hover:border-white/20 h-32 sm:h-38 w-full flex items-center justify-center select-none transition-all duration-300 transform active:scale-[0.99] shadow-lg shadow-black/20"
+                                className="group relative overflow-hidden rounded-2xl border border-white/10 bg-black hover:border-white/20 h-20 sm:h-24 w-full flex items-center justify-center select-none transition-all duration-300 transform active:scale-[0.99] shadow-lg shadow-black/20"
                               >
                                 <img 
                                   src={JEEP_LOGO_IMG} 
                                   alt="Jeep"
                                   referrerPolicy="no-referrer"
-                                  className="w-full h-full object-contain pointer-events-none transition-transform duration-300 scale-[1.55] group-hover:scale-[1.62] p-2"
+                                  className="w-full h-full object-contain pointer-events-none transition-transform duration-300 scale-[1.5] group-hover:scale-[1.58] p-1"
                                 />
                               </button>
                             );
@@ -1126,13 +1065,13 @@ export default function LeadForm({ c10ImgUrl, t03ImgUrl, b10ImgUrl }: LeadFormPr
                                   handleBrandSelect(brand);
                                   setSelectedSubBrand(brand);
                                 }}
-                                className="group relative overflow-hidden rounded-2xl border border-white/10 bg-black hover:border-white/20 h-32 sm:h-38 w-full flex items-center justify-center select-none transition-all duration-300 transform active:scale-[0.99] shadow-lg shadow-black/20"
+                                className="group relative overflow-hidden rounded-2xl border border-white/10 bg-black hover:border-white/20 h-20 sm:h-24 w-full flex items-center justify-center select-none transition-all duration-300 transform active:scale-[0.99] shadow-lg shadow-black/20"
                               >
                                 <img 
                                   src={FIAT_LOGO_IMG} 
                                   alt="Fiat"
                                   referrerPolicy="no-referrer"
-                                  className="w-full h-full object-contain pointer-events-none transition-transform duration-300 group-hover:scale-[1.02] p-8"
+                                  className="w-full h-full object-contain pointer-events-none transition-transform duration-300 group-hover:scale-[1.05] p-3 sm:p-3.5"
                                 />
                               </button>
                             );
@@ -1145,13 +1084,13 @@ export default function LeadForm({ c10ImgUrl, t03ImgUrl, b10ImgUrl }: LeadFormPr
                                   handleBrandSelect(brand);
                                   setSelectedSubBrand(brand);
                                 }}
-                                className="group relative overflow-hidden rounded-2xl border border-white/10 bg-black hover:border-white/20 h-32 sm:h-38 w-full flex items-center justify-center select-none transition-all duration-300 transform active:scale-[0.99] shadow-lg shadow-black/20"
+                                className="group relative overflow-hidden rounded-2xl border border-white/10 bg-black hover:border-white/20 h-20 sm:h-24 w-full flex items-center justify-center select-none transition-all duration-300 transform active:scale-[0.99] shadow-lg shadow-black/20"
                               >
                                 <img 
                                   src={DODGE_LOGO_IMG} 
                                   alt="Dodge"
                                   referrerPolicy="no-referrer"
-                                  className="w-full h-full object-contain pointer-events-none transition-transform duration-300 scale-[1.75] group-hover:scale-[1.82] p-2"
+                                  className="w-full h-full object-contain pointer-events-none transition-transform duration-300 scale-[2.4] group-hover:scale-[2.5] p-0.5"
                                 />
                               </button>
                             );
@@ -1164,13 +1103,13 @@ export default function LeadForm({ c10ImgUrl, t03ImgUrl, b10ImgUrl }: LeadFormPr
                                   handleBrandSelect(brand);
                                   setSelectedSubBrand(brand);
                                 }}
-                                className="group relative overflow-hidden rounded-2xl border border-white/10 bg-black hover:border-white/20 h-32 sm:h-38 w-full flex items-center justify-center select-none transition-all duration-300 transform active:scale-[0.99] shadow-lg shadow-black/20"
+                                className="group relative overflow-hidden rounded-2xl border border-white/10 bg-black hover:border-white/20 h-20 sm:h-24 w-full flex items-center justify-center select-none transition-all duration-300 transform active:scale-[0.99] shadow-lg shadow-black/20"
                               >
                                 <img 
                                   src={PEUGEOT_LOGO_IMG} 
                                   alt="Peugeot"
                                   referrerPolicy="no-referrer"
-                                  className="w-full h-full object-contain pointer-events-none transition-transform duration-300 scale-[1.48] group-hover:scale-[1.55] p-2"
+                                  className="w-full h-full object-contain pointer-events-none transition-transform duration-300 scale-[1.48] group-hover:scale-[1.55] p-1"
                                 />
                               </button>
                             );
@@ -1183,13 +1122,13 @@ export default function LeadForm({ c10ImgUrl, t03ImgUrl, b10ImgUrl }: LeadFormPr
                                   handleBrandSelect(brand);
                                   setSelectedSubBrand(brand);
                                 }}
-                                className="group relative overflow-hidden rounded-2xl border border-white/10 bg-black hover:border-white/20 h-32 sm:h-38 w-full flex items-center justify-center select-none transition-all duration-300 transform active:scale-[0.99] shadow-lg shadow-black/20"
+                                className="group relative overflow-hidden rounded-2xl border border-white/10 bg-black hover:border-white/20 h-20 sm:h-24 w-full flex items-center justify-center select-none transition-all duration-300 transform active:scale-[0.99] shadow-lg shadow-black/20"
                               >
                                 <img 
                                   src={RAM_LOGO_IMG} 
                                   alt="Ram"
                                   referrerPolicy="no-referrer"
-                                  className="w-full h-full object-contain pointer-events-none transition-transform duration-300 group-hover:scale-[1.4] p-4 scale-[1.35]"
+                                  className="w-full h-full object-contain pointer-events-none transition-transform duration-300 group-hover:scale-[1.25] p-1.5 sm:p-2 scale-[1.2]"
                                 />
                               </button>
                             );
@@ -1201,7 +1140,7 @@ export default function LeadForm({ c10ImgUrl, t03ImgUrl, b10ImgUrl }: LeadFormPr
                                 handleBrandSelect(brand);
                                 setSelectedSubBrand(brand);
                               }}
-                              className={`group relative overflow-hidden rounded-2xl border border-white/10 bg-black hover:bg-zinc-950 hover:border-white/20 ${brand === 'Leapmotor' ? 'h-44 sm:h-52' : (brand === 'Jeep' || brand === 'Fiat' || brand === 'Dodge' ? 'h-32 sm:h-38' : 'h-22 sm:h-26')} w-full flex items-center justify-center select-none transition-all duration-300 transform active:scale-[0.99] shadow-lg shadow-black/20`}
+                              className={`group relative overflow-hidden rounded-2xl border border-white/10 bg-black hover:bg-zinc-950 hover:border-white/20 h-20 sm:h-24 w-full flex items-center justify-center select-none transition-all duration-300 transform active:scale-[0.99] shadow-lg shadow-black/20`}
                             >
                               {/* Centralized Brand Logo */}
                               <div className="z-10 flex items-center justify-center w-full px-8 pointer-events-none transition-transform duration-300 group-hover:scale-[1.02]">
@@ -1223,11 +1162,9 @@ export default function LeadForm({ c10ImgUrl, t03ImgUrl, b10ImgUrl }: LeadFormPr
                       const brandDetailSource = SUB_BRAND_DETAILS[selectedSubBrand] || SUB_BRAND_DETAILS['Leapmotor'];
                       const brandDetail = {
                         ...brandDetailSource,
-                        bgImage: selectedSubBrand === 'Leapmotor'
-                          ? (b10ImgUrl || brandDetailSource.bgImage)
-                          : (selectedSubBrand === 'Jeep'
-                            ? (JEEP_GRAND_CHEROKEE_IMG || brandDetailSource.bgImage)
-                            : brandDetailSource.bgImage)
+                        bgImage: selectedSubBrand === 'Leapmotor' && b10ImgUrl
+                          ? b10ImgUrl
+                          : brandDetailSource.bgImage
                       };
                       return (
                         <div className="relative flex flex-col w-full text-center pb-2 select-none overflow-hidden">
@@ -1551,11 +1488,11 @@ export default function LeadForm({ c10ImgUrl, t03ImgUrl, b10ImgUrl }: LeadFormPr
                   </div>
 
                   {/* Estado y Distribuidor / State and Distributor cascading selectors */}
-                  {activeLanding !== 'leapmotor' && (
-                    <div className="space-y-3.5">
+                  {(activeLanding !== 'leapmotor' || formData.requestType === 'cotizacion') && (
+                    <div className="space-y-3.5 animate-fade-in">
                       {/* Estado selector */}
-                      <div className="space-y-1 bg-slate-900/60 p-2 rounded-xl border border-white/15">
-                        <label id="frm-state-label" htmlFor="state" className="text-[11px] uppercase font-mono tracking-wider text-white font-extrabold block mb-0.5">
+                      <div className={rowClass}>
+                        <label id="frm-state-label" htmlFor="state" className={`text-[11px] uppercase ${activeLanding === 'leapmotor' ? 'font-sans' : 'font-mono'} tracking-wider block mb-0.5 ${activeLanding === 'leapmotor' ? 'font-semibold text-white' : 'text-white font-extrabold'}`}>
                           Estado *
                         </label>
                         <div className="relative">
@@ -1575,7 +1512,11 @@ export default function LeadForm({ c10ImgUrl, t03ImgUrl, b10ImgUrl }: LeadFormPr
                                 distributor: firstDealer
                               }));
                             }}
-                            className="w-full bg-[#0a0f18] text-white border border-white/25 focus:border-indigo-400 rounded-xl pl-11 pr-7 py-2.5 text-xs outline-none appearance-none transition font-semibold"
+                            className={`w-full text-white rounded-xl pl-11 pr-7 py-2.5 text-xs outline-none appearance-none transition uppercase ${activeLanding === 'leapmotor' ? 'font-sans' : 'font-mono'} ${
+                              activeLanding === 'leapmotor'
+                                ? 'bg-[#2D2926] border border-[#deff01] focus:border-[#deff01] font-semibold'
+                                : 'bg-[#0a0f18] border border-white/25 focus:border-indigo-400 font-bold'
+                            }`}
                           >
                             {availableStates.map(st => (
                               <option key={st} value={st} className="bg-slate-900 text-white">
@@ -1588,8 +1529,8 @@ export default function LeadForm({ c10ImgUrl, t03ImgUrl, b10ImgUrl }: LeadFormPr
                       </div>
 
                       {/* Distribuidor de Preferencia selector */}
-                      <div className="space-y-1 bg-slate-900/60 p-2 rounded-xl border border-white/15">
-                        <label id="frm-distributor-label" htmlFor="distributor" className="text-[11px] uppercase font-mono tracking-wider text-white font-extrabold block mb-0.5">
+                      <div className={rowClass}>
+                        <label id="frm-distributor-label" htmlFor="distributor" className={`text-[11px] uppercase ${activeLanding === 'leapmotor' ? 'font-sans' : 'font-mono'} tracking-wider block mb-0.5 ${activeLanding === 'leapmotor' ? 'font-semibold text-white' : 'text-white font-extrabold'}`}>
                           Distribuidor de Preferencia *
                         </label>
                         <div className="relative">
@@ -1603,7 +1544,11 @@ export default function LeadForm({ c10ImgUrl, t03ImgUrl, b10ImgUrl }: LeadFormPr
                               const dealerValue = e.target.value;
                               setFormData(prev => ({ ...prev, distributor: dealerValue }));
                             }}
-                            className="w-full bg-[#0a0f18] text-white border border-white/25 focus:border-indigo-400 rounded-xl pl-11 pr-7 py-2.5 text-xs outline-none appearance-none transition font-semibold"
+                            className={`w-full text-white rounded-xl pl-11 pr-7 py-2.5 text-xs outline-none appearance-none transition uppercase ${activeLanding === 'leapmotor' ? 'font-sans' : 'font-mono'} ${
+                              activeLanding === 'leapmotor'
+                                ? 'bg-[#2D2926] border border-[#deff01] focus:border-[#deff01] font-semibold'
+                                : 'bg-[#0a0f18] border border-white/25 focus:border-indigo-400 font-bold'
+                            }`}
                           >
                             {filteredDealers.map(d => (
                               <option key={d.id + '-' + d.name} value={d.name} className="bg-slate-900 text-white">
@@ -1982,9 +1927,6 @@ export default function LeadForm({ c10ImgUrl, t03ImgUrl, b10ImgUrl }: LeadFormPr
                         <strong className="text-xs text-white block uppercase tracking-wide truncate">
                           {details.name}
                         </strong>
-                        <span className="text-[10px] text-slate-400 block leading-relaxed line-clamp-2 mt-0.5">
-                          {details.desc}
-                        </span>
                       </div>
 
                       {/* Tick selected status */}

@@ -49,7 +49,8 @@ import LeapmotorLogo from './LeapmotorLogo';
 // Custom Advisor identification details (can be toggled in UI)
 const getLeadSourceText = (lead: Lead) => {
   const brand = lead.selectedBrand || (lead.landing === 'jeep' ? 'Jeep' : 'Leapmotor');
-  return `${brand} ${lead.modelOfInterest}`;
+  const claveSuffix = lead.modelClaveGen ? ` [${lead.modelClaveGen}]` : '';
+  return `${brand} ${lead.modelOfInterest}${claveSuffix}`;
 };
 
 const getLeadSourceBadgeClass = (lead: Lead) => {
