@@ -205,8 +205,8 @@ const SUB_BRAND_DETAILS: Record<string, {
 }> = {
   'Leapmotor': {
     name: 'Leapmotor',
-    modelName: 'LEAPMOTOR B10',
-    tagline: 'MOVILIDAD INTELIGENTE, TECNOLOGÍA EN CADA CARGA.',
+    modelName: 'B10',
+    tagline: 'Algo increíble te está esperando.',
     bgImage: 'https://images.unsplash.com/photo-1617788138017-80ad40651399?w=600&q=80',
     pantoneHex: '#035F1D',
     accentBg: 'from-[#035F1D]/90 via-[#035F1D]/35 to-[#2D2926]/40',
@@ -220,8 +220,8 @@ const SUB_BRAND_DETAILS: Record<string, {
   },
   'Jeep': {
     name: 'Jeep',
-    modelName: 'JEEP GRAND CHEROKEE',
-    tagline: 'LEYENDA TODOTERRENO, AVENTURA EN CADA CAMINO.',
+    modelName: 'Wrangler',
+    tagline: 'El original 4x4 más capaz de la historia.',
     bgImage: JEEP_LANDING_BG_26,
     pantoneHex: '#1E2A22',
     accentBg: 'from-[#1E2A22]/90 via-[#1E2A22]/35 to-[#050706]/10',
@@ -235,8 +235,8 @@ const SUB_BRAND_DETAILS: Record<string, {
   },
   'Fiat': {
     name: 'Fiat',
-    modelName: 'FIAT FASTBACK',
-    tagline: 'ESTILO DEPORTIVO, DISEÑO ITALIANO EN CADA DETALLE.',
+    modelName: 'Pulse Abarth',
+    tagline: 'El SUV que despierta tu modo poison.',
     bgImage: FIAT_LANDING_BG_26,
     pantoneHex: '#C8102E',
     accentBg: 'from-[#C8102E]/85 via-[#C8102E]/25 to-[#0b0102]/10',
@@ -250,8 +250,8 @@ const SUB_BRAND_DETAILS: Record<string, {
   },
   'Dodge': {
     name: 'Dodge',
-    modelName: 'DODGE CHARGER',
-    tagline: 'MÚSCULO AMERICANO, ADRENALINA EN CADA ARRANQUE.',
+    modelName: 'Attitude',
+    tagline: 'Unleash your Attitude.',
     bgImage: DODGE_LANDING_BG_26,
     pantoneHex: '#DA291C',
     accentBg: 'from-[#DA291C]/85 via-[#DA291C]/25 to-[#0c0202]/10',
@@ -265,8 +265,8 @@ const SUB_BRAND_DETAILS: Record<string, {
   },
   'Peugeot': {
     name: 'Peugeot',
-    modelName: 'PEUGEOT 3008',
-    tagline: 'DISEÑO FELINO, VANGUARDIA EN CADA KILÓMETRO.',
+    modelName: '3008',
+    tagline: 'Súbete y entenderás lo extraordinario.',
     bgImage: PEUGEOT_LANDING_BG_26,
     pantoneHex: '#041E42',
     accentBg: 'from-[#041E42]/90 via-[#041E42]/25 to-[#01060e]/10',
@@ -281,7 +281,7 @@ const SUB_BRAND_DETAILS: Record<string, {
   'Ram': {
     name: 'RAM',
     modelName: 'RAM 1500',
-    tagline: 'FUERZA, LUJO Y CAPACIDAD EN CADA CAMINO.',
+    tagline: 'Grandeza Amplificada.',
     bgImage: RAM_LANDING_BG_26,
     pantoneHex: '#2D2926',
     accentBg: 'from-[#1A1A1A]/95 via-[#1A1A1A]/35 to-[#1c1c1c]/10',
