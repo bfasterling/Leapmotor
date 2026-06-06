@@ -55,11 +55,11 @@ import { ALL_DEALERS } from '../data/dealers';
 // Import newly generated design assets
 import LEAPMOTOR_TUNNEL_BG from '../assets/images/leapmotor_b10_tunnel_bg_1780692970544.png';
 import LEAPMOTOR_LOGO_IMG from '../assets/images/leapmotor_logo_black_bg_1780690813034.png';
-import JEEP_LOGO_IMG from '../assets/images/jeep_logo_black_bg_1780707738578.png';
-import FIAT_LOGO_IMG from '../assets/images/fiat_logo_black_bg_1780708832455.png';
-import DODGE_LOGO_IMG from '../assets/images/dodge_logo_black_bg_1780709061838.png';
-import PEUGEOT_LOGO_IMG from '../assets/images/peugeot_logo_black_bg_1780709459994.png';
-import RAM_LOGO_IMG from '../assets/images/ram_logo_black_bg_1780709628383.png';
+import JEEP_LOGO_IMG from '../assets/images/regenerated_image_1780715177952.jpg';
+import FIAT_LOGO_IMG from '../assets/images/regenerated_image_1780715561130.jpg';
+import DODGE_LOGO_IMG from '../assets/images/regenerated_image_1780716360947.png';
+import PEUGEOT_LOGO_IMG from '../assets/images/peugeot_logo_new_1780716886504.png';
+import RAM_LOGO_IMG from '../assets/images/ram_logo_new_1780717149923.png';
 import JEEP_IMG from '../assets/images/jeep_cherokee_green_1780407967325.png';
 import JEEP_COMMANDER_IMG from '../assets/images/jeep_commander_1780440413653.png';
 import JEEP_COMPASS_IMG from '../assets/images/jeep_compass_1780440426004.png';
@@ -1099,6 +1099,101 @@ export default function LeadForm({ c10ImgUrl, t03ImgUrl, b10ImgUrl }: LeadFormPr
                       {/* Stacked Brand boxes (All identical size, stacked vertically, centering the brand logos) */}
                       <div className="flex flex-col gap-1.5 pt-1">
                         {['Leapmotor', 'Jeep', 'Fiat', 'Dodge', 'Peugeot', 'Ram'].map((brand) => {
+                          if (brand === 'Jeep') {
+                            return (
+                              <button
+                                key={brand}
+                                onClick={() => {
+                                  handleBrandSelect(brand);
+                                  setSelectedSubBrand(brand);
+                                }}
+                                className="group relative overflow-hidden rounded-2xl border border-white/10 bg-black hover:border-white/20 h-32 sm:h-38 w-full flex items-center justify-center select-none transition-all duration-300 transform active:scale-[0.99] shadow-lg shadow-black/20"
+                              >
+                                <img 
+                                  src={JEEP_LOGO_IMG} 
+                                  alt="Jeep"
+                                  referrerPolicy="no-referrer"
+                                  className="w-full h-full object-contain pointer-events-none transition-transform duration-300 scale-[1.55] group-hover:scale-[1.62] p-2"
+                                />
+                              </button>
+                            );
+                          }
+                          if (brand === 'Fiat') {
+                            return (
+                              <button
+                                key={brand}
+                                onClick={() => {
+                                  handleBrandSelect(brand);
+                                  setSelectedSubBrand(brand);
+                                }}
+                                className="group relative overflow-hidden rounded-2xl border border-white/10 bg-black hover:border-white/20 h-32 sm:h-38 w-full flex items-center justify-center select-none transition-all duration-300 transform active:scale-[0.99] shadow-lg shadow-black/20"
+                              >
+                                <img 
+                                  src={FIAT_LOGO_IMG} 
+                                  alt="Fiat"
+                                  referrerPolicy="no-referrer"
+                                  className="w-full h-full object-contain pointer-events-none transition-transform duration-300 group-hover:scale-[1.02] p-8"
+                                />
+                              </button>
+                            );
+                          }
+                          if (brand === 'Dodge') {
+                            return (
+                              <button
+                                key={brand}
+                                onClick={() => {
+                                  handleBrandSelect(brand);
+                                  setSelectedSubBrand(brand);
+                                }}
+                                className="group relative overflow-hidden rounded-2xl border border-white/10 bg-black hover:border-white/20 h-32 sm:h-38 w-full flex items-center justify-center select-none transition-all duration-300 transform active:scale-[0.99] shadow-lg shadow-black/20"
+                              >
+                                <img 
+                                  src={DODGE_LOGO_IMG} 
+                                  alt="Dodge"
+                                  referrerPolicy="no-referrer"
+                                  className="w-full h-full object-contain pointer-events-none transition-transform duration-300 scale-[1.75] group-hover:scale-[1.82] p-2"
+                                />
+                              </button>
+                            );
+                          }
+                          if (brand === 'Peugeot') {
+                            return (
+                              <button
+                                key={brand}
+                                onClick={() => {
+                                  handleBrandSelect(brand);
+                                  setSelectedSubBrand(brand);
+                                }}
+                                className="group relative overflow-hidden rounded-2xl border border-white/10 bg-black hover:border-white/20 h-32 sm:h-38 w-full flex items-center justify-center select-none transition-all duration-300 transform active:scale-[0.99] shadow-lg shadow-black/20"
+                              >
+                                <img 
+                                  src={PEUGEOT_LOGO_IMG} 
+                                  alt="Peugeot"
+                                  referrerPolicy="no-referrer"
+                                  className="w-full h-full object-contain pointer-events-none transition-transform duration-300 scale-[1.48] group-hover:scale-[1.55] p-2"
+                                />
+                              </button>
+                            );
+                          }
+                          if (brand === 'Ram') {
+                            return (
+                              <button
+                                key={brand}
+                                onClick={() => {
+                                  handleBrandSelect(brand);
+                                  setSelectedSubBrand(brand);
+                                }}
+                                className="group relative overflow-hidden rounded-2xl border border-white/10 bg-black hover:border-white/20 h-32 sm:h-38 w-full flex items-center justify-center select-none transition-all duration-300 transform active:scale-[0.99] shadow-lg shadow-black/20"
+                              >
+                                <img 
+                                  src={RAM_LOGO_IMG} 
+                                  alt="Ram"
+                                  referrerPolicy="no-referrer"
+                                  className="w-full h-full object-contain pointer-events-none transition-transform duration-300 group-hover:scale-[1.4] p-4 scale-[1.35]"
+                                />
+                              </button>
+                            );
+                          }
                           return (
                             <button
                               key={brand}
