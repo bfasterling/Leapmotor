@@ -226,6 +226,7 @@ export default function AdvisorPanel() {
           attendedAt: data.attendedAt,
           completedAt: data.completedAt,
           contactMethod: data.contactMethod || 'whatsapp',
+          requestType: data.requestType,
           landing: data.landing || 'leapmotor',
           selectedBrand: data.selectedBrand || 'Leapmotor',
           testDriveDate: data.testDriveDate || null
@@ -233,7 +234,10 @@ export default function AdvisorPanel() {
 
         // Filter: Keep leads assigned to this specific advisor OR unassigned Leapmotor waiting leads
         const isAssignedToMe = parsedLead.advisorId === loggedInAdvisor.id;
-        const isUnassignedLeapmotorPool = parsedLead.landing === 'leapmotor' && (!parsedLead.advisorId || parsedLead.advisorId === "") && parsedLead.status === LeadStatus.WAITING;
+        const isUnassignedLeapmotorPool = parsedLead.landing === 'leapmotor' && 
+                                          (!parsedLead.advisorId || parsedLead.advisorId === "") && 
+                                          parsedLead.status === LeadStatus.WAITING &&
+                                          parsedLead.requestType !== 'cotizacion';
 
         if (isAssignedToMe || isUnassignedLeapmotorPool) {
           parsedLeads.push(parsedLead);

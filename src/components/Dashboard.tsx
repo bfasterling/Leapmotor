@@ -1371,21 +1371,40 @@ export default function Dashboard() {
                               )}
 
                               {lead.status === LeadStatus.ATTENDING && (
-                                <div className="flex gap-1.5 justify-end items-center">
-                                  <button
-                                    onClick={() => handleCloseLeadInAttending(lead.id, 'ok')}
-                                    className="bg-emerald-500/20 hover:bg-emerald-500/30 text-emerald-400 hover:text-emerald-300 text-[9px] uppercase border border-emerald-500/25 px-2.5 py-1 rounded-lg font-black transition cursor-pointer"
-                                    title="Cerrar prospecto como atendido con éxito / OK"
-                                  >
-                                    Cerrar OK
-                                  </button>
-                                  <button
-                                    onClick={() => handleCloseLeadInAttending(lead.id, 'no_asistio')}
-                                    className="bg-red-500/15 hover:bg-red-500/25 text-red-400 hover:text-red-350 text-[9px] uppercase border border-red-500/20 px-2.5 py-1 rounded-lg font-black transition cursor-pointer"
-                                    title="Cerrar prospecto indicando que no asistió"
-                                  >
-                                    No Asistió
-                                  </button>
+                                <div className="flex flex-col sm:flex-row gap-2 justify-end items-center">
+                                  <div className="flex gap-1 items-center">
+                                    <span className="text-[9px] uppercase font-bold text-slate-400">Reasignar:</span>
+                                    <select
+                                      value={lead.advisorId || ""}
+                                      onChange={(e) => {
+                                        if (e.target.value) {
+                                          handleReassignLead(lead.id, e.target.value);
+                                        }
+                                      }}
+                                      className={`px-2 py-1 text-[10px] uppercase font-mono font-bold rounded-lg border cursor-pointer ${inputStyle}`}
+                                    >
+                                      <option value="">Cambiar asesor...</option>
+                                      {advisors.map(adv => (
+                                        <option key={adv.id} value={adv.id}>{adv.name}</option>
+                                      ))}
+                                    </select>
+                                  </div>
+                                  <div className="flex gap-1.5 items-center">
+                                    <button
+                                      onClick={() => handleCloseLeadInAttending(lead.id, 'ok')}
+                                      className="bg-emerald-500/20 hover:bg-emerald-500/30 text-emerald-400 hover:text-emerald-300 text-[9px] uppercase border border-emerald-500/25 px-2.5 py-1 rounded-lg font-black transition cursor-pointer"
+                                      title="Cerrar prospecto como atendido con éxito / OK"
+                                    >
+                                      Cerrar OK
+                                    </button>
+                                    <button
+                                      onClick={() => handleCloseLeadInAttending(lead.id, 'no_asistio')}
+                                      className="bg-red-500/15 hover:bg-red-500/25 text-red-400 hover:text-red-350 text-[9px] uppercase border border-red-500/20 px-2.5 py-1 rounded-lg font-black transition cursor-pointer"
+                                      title="Cerrar prospecto indicando que no asistió"
+                                    >
+                                      No Asistió
+                                    </button>
+                                  </div>
                                 </div>
                               )}
 

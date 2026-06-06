@@ -21,6 +21,7 @@ import {
   Mail, 
   User, 
   CheckCircle, 
+  Check, 
   ArrowRight, 
   Info, 
   Zap, 
@@ -684,14 +685,20 @@ export default function LeadForm({ c10ImgUrl, t03ImgUrl, b10ImgUrl }: LeadFormPr
         phone: formData.phone.trim(),
         postalCode: formData.postalCode.trim() || null,
         state: formData.state,
-        distributor: activeLanding === 'leapmotor' ? 'Sin Asignar (Sincronizando con Asesor)' : formData.distributor,
+        distributor: activeLanding === 'leapmotor' && formData.requestType !== 'cotizacion'
+          ? 'Sin Asignar (Sincronizando con Asesor)' 
+          : formData.distributor,
         modelOfInterest: formData.modelOfInterest,
         modelClaveGen: modelClaveGen,
         contactMethod: formData.contactMethod,
         requestType: formData.requestType,
         status: LeadStatus.WAITING,
-        advisorId: activeLanding === 'leapmotor' ? "" : (formData.requestType === 'cotizacion' ? "" : minWaitingAdvisor.id),
-        advisorName: activeLanding === 'leapmotor' ? "Sin Asignar (Pool Leapmotor)" : (formData.requestType === 'cotizacion' ? "Sin Asignar (Solo Cotización)" : minWaitingAdvisor.name),
+        advisorId: activeLanding === 'leapmotor' 
+          ? "" 
+          : (formData.requestType === 'cotizacion' ? "" : minWaitingAdvisor.id),
+        advisorName: activeLanding === 'leapmotor' 
+          ? (formData.requestType === 'cotizacion' ? "Sin Asignar (Solo Cotización)" : "Sin Asignar (Pool Leapmotor)") 
+          : (formData.requestType === 'cotizacion' ? "Sin Asignar (Solo Cotización)" : minWaitingAdvisor.name),
         createdAt: serverTimestamp(),
         // New features parameters
         landing: activeLanding,
@@ -1692,10 +1699,23 @@ export default function LeadForm({ c10ImgUrl, t03ImgUrl, b10ImgUrl }: LeadFormPr
                 
                 {/* Circle Alert */}
                 <div className="relative inline-flex items-center justify-center my-1">
-                  <div className={`absolute inset-0 w-14 h-14 ${formData.requestType === 'prueba' ? 'bg-indigo-500/10' : 'bg-emerald-500/10'} rounded-full blur-md animate-ping`} />
-                  <div className="w-14 h-14 rounded-full bg-slate-900 border border-white/10 flex items-center justify-center">
-                    <CheckCircle className={`w-8 h-8 ${formData.requestType === 'prueba' ? 'text-indigo-400' : 'text-emerald-400'}`} />
-                  </div>
+                  <div className={`absolute inset-0 w-14 h-14 ${
+                    activeLanding === 'leapmotor'
+                      ? 'bg-[#deff01]/10'
+                      : (formData.requestType === 'prueba' ? 'bg-indigo-500/10' : 'bg-emerald-500/10')
+                  } rounded-full blur-md animate-ping`} />
+                  {activeLanding === 'leapmotor' ? (
+                    <div 
+                      style={{ backgroundColor: '#deff01' }}
+                      className="w-14 h-14 rounded-full flex items-center justify-center shadow-[0_0_15px_rgba(222,255,1,0.35)]"
+                    >
+                      <Check className="w-7 h-7 text-black stroke-[3.5]" />
+                    </div>
+                  ) : (
+                    <div className="w-14 h-14 rounded-full bg-slate-900 border border-white/10 flex items-center justify-center">
+                      <CheckCircle className={`w-8 h-8 ${formData.requestType === 'prueba' ? 'text-indigo-400' : 'text-emerald-400'}`} />
+                    </div>
+                  )}
                 </div>
 
                 <div className="space-y-1">
@@ -1723,7 +1743,10 @@ export default function LeadForm({ c10ImgUrl, t03ImgUrl, b10ImgUrl }: LeadFormPr
                     <span>Tu cita preferida es para el <strong>{formData.testDriveDate}</strong>. Un asesor te contactará para formalizar la pista.</span>
                   </div>
                 ) : (
-                  <p className="text-xs font-bold text-emerald-400 font-mono tracking-wide">
+                  <p 
+                    style={activeLanding === 'leapmotor' ? { color: '#deff01' } : undefined}
+                    className={`text-xs font-bold font-mono tracking-wide ${activeLanding === 'leapmotor' ? '' : 'text-emerald-400'}`}
+                  >
                     {activeLanding === 'leapmotor' 
                       ? "Un asesor especializado ha recibido tu alerta, te contactará a la brevedad en el Hospitality de LeapMotor."
                       : "Un asesor especializado ha recibido tu alerta. Contacto en menos de 2 Minutos."
