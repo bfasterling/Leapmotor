@@ -633,23 +633,34 @@ export default function Dashboard() {
       }
     }
 
-    // 6. Nuevo Filtro por Landing de Ingreso / Campaña / Marca
+    // 6. Nuevo Filtro por Landing de Ingreso / Campaña / Marca (Permite filtrar marca y cotizacion/prueba simultaneamente)
     if (leadLandingFilter !== 'all') {
       const parts = leadLandingFilter.split('_');
       const land = parts[0]; // 'leapmotor', 'jeep', 'multimarca'
-      const filterVal = parts[1]; // 'all', 'cotizacion', 'prueba', 'asesor' (attention), brand name
-      
       const leadLanding = lead.landing || 'leapmotor';
+      
       if (leadLanding !== land) return false;
       
-      if (filterVal && filterVal !== 'all') {
+      if (parts.length > 1 && parts[1] !== 'all') {
         const reqType = lead.requestType || 'asesor';
         const brand = (lead.selectedBrand || '').toLowerCase();
         
-        if (filterVal === 'cotizacion' || filterVal === 'prueba' || filterVal === 'asesor') {
-          if (reqType !== filterVal) return false;
+        if (parts[1] === 'cotizacion' || parts[1] === 'prueba' || parts[1] === 'asesor') {
+          if (reqType !== parts[1]) return false;
         } else {
-          if (brand !== filterVal) return false;
+          let brandFilter = parts[1];
+          let typeFilter = parts[2];
+          
+          if (parts[1] === 'leapmotor' && parts[2] === 'brand') {
+            brandFilter = 'leapmotor';
+            typeFilter = parts[3];
+          }
+          
+          if (brand !== brandFilter) return false;
+          
+          if (typeFilter && typeFilter !== 'all' && typeFilter !== 'brand') {
+            if (reqType !== typeFilter) return false;
+          }
         }
       }
     }
@@ -1185,13 +1196,27 @@ export default function Dashboard() {
                     <option value="jeep_prueba">Jeep Cherokee - Prueba de Manejo</option>
                   </optgroup>
                   <optgroup label="Multimarca">
-                    <option value="multimarca_all">Multimarca - Todos</option>
-                    <option value="multimarca_fiat">Multimarca - Fiat</option>
-                    <option value="multimarca_dodge">Multimarca - Dodge</option>
-                    <option value="multimarca_ram">Multimarca - Ram</option>
-                    <option value="multimarca_peugeot">Multimarca - Peugeot</option>
-                    <option value="multimarca_cotizacion">Multimarca - Cotización</option>
-                    <option value="multimarca_prueba">Multimarca - Prueba de Manejo</option>
+                    <option value="multimarca_all">Multimarca - Todos los Prospectos</option>
+                    <option value="multimarca_cotizacion">Multimarca - Sólo Cotización (Cualquier Marca)</option>
+                    <option value="multimarca_prueba">Multimarca - Sólo Prueba de Manejo (Cualquier Marca)</option>
+                    <option value="multimarca_fiat">Multimarca - Fiat (Todos)</option>
+                    <option value="multimarca_fiat_cotizacion">Multimarca - Fiat (Cotización)</option>
+                    <option value="multimarca_fiat_prueba">Multimarca - Fiat (Prueba de Manejo)</option>
+                    <option value="multimarca_dodge">Multimarca - Dodge (Todos)</option>
+                    <option value="multimarca_dodge_cotizacion">Multimarca - Dodge (Cotización)</option>
+                    <option value="multimarca_dodge_prueba">Multimarca - Dodge (Prueba de Manejo)</option>
+                    <option value="multimarca_ram">Multimarca - RAM (Todos)</option>
+                    <option value="multimarca_ram_cotizacion">Multimarca - RAM (Cotización)</option>
+                    <option value="multimarca_ram_prueba">Multimarca - RAM (Prueba de Manejo)</option>
+                    <option value="multimarca_peugeot">Multimarca - PEUGEOT (Todos)</option>
+                    <option value="multimarca_peugeot_cotizacion">Multimarca - PEUGEOT (Cotización)</option>
+                    <option value="multimarca_peugeot_prueba">Multimarca - PEUGEOT (Prueba de Manejo)</option>
+                    <option value="multimarca_jeep">Multimarca - Jeep (Todos)</option>
+                    <option value="multimarca_jeep_cotizacion">Multimarca - Jeep (Cotización)</option>
+                    <option value="multimarca_jeep_prueba">Multimarca - Jeep (Prueba de Manejo)</option>
+                    <option value="multimarca_leapmotor_brand">Multimarca - Leapmotor (Todos)</option>
+                    <option value="multimarca_leapmotor_brand_cotizacion">Multimarca - Leapmotor (Cotización)</option>
+                    <option value="multimarca_leapmotor_brand_prueba">Multimarca - Leapmotor (Prueba de Manejo)</option>
                   </optgroup>
                 </select>
               </div>

@@ -710,8 +710,10 @@ export default function LeadForm({ c10ImgUrl, t03ImgUrl, b10ImgUrl }: LeadFormPr
       setRegisteredLeadId(leadId);
       setSuccess(true);
     } catch (err: any) {
-      console.error(err);
-      setErrorText('Error al registrar sus datos. Conexión de red inestable.');
+      console.error("Firestore submit error details:", err);
+      const errorMessage = err?.message || (typeof err === 'string' ? err : '');
+      const detail = errorMessage ? ` [Detalle: ${errorMessage}]` : '';
+      setErrorText(`Error al registrar sus datos. Conexión de red inestable.${detail}`);
       try {
         handleFirestoreError(err, OperationType.CREATE, 'leads');
       } catch (formattedErr) {}

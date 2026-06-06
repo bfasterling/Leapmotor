@@ -29,7 +29,7 @@ service cloud.firestore {
         && (!('city' in data) || data.city == null || (data.city is string && data.city.size() <= 100))
         && (!('postalCode' in data) || data.postalCode == null || (data.postalCode is string && data.postalCode.size() <= 15))
         && data.state is string && data.state.size() > 0 && data.state.size() <= 100
-        && data.distributor is string && data.distributor.size() > 0 && data.distributor.size() <= 100
+        && data.distributor is string && data.distributor.size() > 0 && data.distributor.size() <= 200
         && data.modelOfInterest is string && data.modelOfInterest.size() > 0 && data.modelOfInterest.size() <= 100
         && data.status is string && (data.status == "waiting" || data.status == "attending" || data.status == "attended" || data.status == "lost")
         && (!('requestType' in data) || (data.requestType is string && (data.requestType == "cotizacion" || data.requestType == "prueba" || data.requestType == "asesor")))
@@ -38,6 +38,7 @@ service cloud.firestore {
         && (!('advisorName' in data) || data.advisorName == null || (data.advisorName is string && data.advisorName.size() <= 100))
         && (!('landing' in data) || data.landing is string && data.landing.size() <= 100)
         && (!('selectedBrand' in data) || data.selectedBrand is string && data.selectedBrand.size() <= 100)
+        && (!('modelClaveGen' in data) || data.modelClaveGen == null || (data.modelClaveGen is string && data.modelClaveGen.size() <= 100))
         && (!('testDriveDate' in data) || data.testDriveDate == null || (data.testDriveDate is string && data.testDriveDate.size() <= 100))
         && (!('coordinatorNotes' in data) || data.coordinatorNotes == null || (data.coordinatorNotes is string && data.coordinatorNotes.size() <= 2000));
     }
