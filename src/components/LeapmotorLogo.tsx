@@ -1,5 +1,5 @@
 import React from 'react';
-import logoPng from '../assets/images/leapmotor_logo_black_bg_1780690813034.png';
+import logoPng from '../assets/images/leapmotor_logo_1780268613531.png';
 
 interface LeapmotorLogoProps {
   className?: string; // Standard text color class (preserved for compatibility)
@@ -36,7 +36,7 @@ export default function LeapmotorLogo({
         src={logoPng}
         alt="Leapmotor Logo"
         referrerPolicy="no-referrer"
-        className={`h-full select-none mix-blend-screen ${
+        className={`h-full select-none ${
           showText ? 'w-auto object-contain mx-auto' : 'aspect-square object-cover object-center'
         }`}
         style={imgStyle}
