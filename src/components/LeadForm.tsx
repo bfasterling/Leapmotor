@@ -1793,7 +1793,16 @@ export default function LeadForm({ c10ImgUrl, t03ImgUrl, b10ImgUrl }: LeadFormPr
                     setFormActive(false);
                     setFormData(getInitialFormData(activeLanding, selectedBrand));
                   }}
-                  className="w-full bg-white/5 hover:bg-white/10 text-slate-300 border border-white/10 px-6 py-3 rounded-xl text-[10px] font-bold tracking-wider uppercase transition font-mono"
+                  style={activeLanding === 'leapmotor' ? {
+                    backgroundColor: '#deff01',
+                    color: '#000000',
+                    borderColor: '#deff01'
+                  } : undefined}
+                  className={`w-full ${
+                    activeLanding === 'leapmotor'
+                      ? 'text-black font-extrabold hover:opacity-90'
+                      : 'bg-white/5 hover:bg-white/10 text-slate-300 border border-white/10'
+                  } px-6 py-3 rounded-xl text-[10px] font-bold tracking-wider uppercase transition font-mono`}
                 >
                   Nuevo Registro de Prueba
                 </button>

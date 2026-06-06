@@ -469,16 +469,19 @@ export default function Dashboard() {
   const jeepLeadsToday = leadsToday.filter(l => l.landing === 'jeep').length;
   const multimarcaLeadsToday = leadsToday.filter(l => l.landing === 'multimarca').length;
 
-  // Real-time Leapmotor status counts (tiempo real)
-  const leapmotorWaitingCountRealTime = leads.filter(l => (!l.landing || l.landing === 'leapmotor') && l.status === LeadStatus.WAITING).length;
-  const leapmotorAttendingCountRealTime = leads.filter(l => (!l.landing || l.landing === 'leapmotor') && l.status === LeadStatus.ATTENDING).length;
-  const leapmotorAttendedCountRealTime = leads.filter(l => (!l.landing || l.landing === 'leapmotor') && l.status === LeadStatus.ATTENDED).length;
+  // Real-time Leapmotor status counts (tiempo real) (Excluyendo cotización del flujo de asesores)
+  const leapmotorWaitingCountRealTime = leads.filter(l => (!l.landing || l.landing === 'leapmotor') && l.status === LeadStatus.WAITING && l.requestType !== 'cotizacion').length;
+  const leapmotorAttendingCountRealTime = leads.filter(l => (!l.landing || l.landing === 'leapmotor') && l.status === LeadStatus.ATTENDING && l.requestType !== 'cotizacion').length;
+  const leapmotorAttendedCountRealTime = leads.filter(l => (!l.landing || l.landing === 'leapmotor') && l.status === LeadStatus.ATTENDED && l.requestType !== 'cotizacion').length;
 
   // Compute stats based on the selected date filters
   const totalLeads = filteredLeads.length;
   
   const statusCounts = filteredLeads.reduce((acc, lead) => {
-    acc[lead.status] = (acc[lead.status] || 0) + 1;
+    // Excluir cotizaciones de las estadísticas del embudo de asesores
+    if (lead.requestType !== 'cotizacion') {
+      acc[lead.status] = (acc[lead.status] || 0) + 1;
+    }
     return acc;
   }, {} as { [key: string]: number });
 
@@ -1254,7 +1257,11 @@ export default function Dashboard() {
                             </td>
 
                             <td className="p-3">
-                              {lead.advisorId ? (
+                              {lead.requestType === 'cotizacion' ? (
+                                <span className="font-bold font-mono text-[10px] text-emerald-400 uppercase flex items-center gap-1">
+                                  🧾 Solo Cotización (CRM)
+                                </span>
+                              ) : lead.advisorId ? (
                                 <div className="flex flex-col">
                                   <span className={`font-bold ${titleColor}`}>👤 {lead.advisorName || 'Desconocido'}</span>
                                   <span className="font-mono text-[9px] text-slate-400">ID: {lead.advisorId}</span>
@@ -1331,12 +1338,14 @@ export default function Dashboard() {
 
                             <td className="p-3">
                               <span className={`inline-block px-2.5 py-1 rounded-full text-[9px] font-black uppercase font-mono border ${
+                                lead.requestType === 'cotizacion' ? 'bg-emerald-500/15 text-emerald-400 border-emerald-500/30' :
                                 lead.status === LeadStatus.WAITING ? 'bg-amber-500/15 text-amber-400 border-amber-500/30' :
                                 lead.status === LeadStatus.ATTENDING ? 'bg-cyan-500/15 text-cyan-400 border-cyan-500/30 font-extrabold' :
                                 lead.status === LeadStatus.ATTENDED ? 'bg-emerald-500/15 text-emerald-400 border-emerald-500/30 font-bold' :
                                 'bg-slate-500/15 text-slate-400 border-slate-500/30'
                               }`}>
-                                {lead.status === LeadStatus.WAITING ? 'Espera' :
+                                {lead.requestType === 'cotizacion' ? 'Cotización' :
+                                 lead.status === LeadStatus.WAITING ? 'Espera' :
                                  lead.status === LeadStatus.ATTENDING ? 'Atención' :
                                  lead.status === LeadStatus.ATTENDED ? 'Atendido / OK' :
                                  'Cancelado'}
@@ -1344,7 +1353,11 @@ export default function Dashboard() {
                             </td>
 
                             <td className="p-3 text-right">
-                              {lead.status === LeadStatus.WAITING && (
+                              {lead.requestType === 'cotizacion' ? (
+                                <span className="px-3 py-1 bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-[9px] font-mono font-bold uppercase rounded-xl inline-block">
+                                  ✓ Almacenado para CRM
+                                </span>
+                              ) : lead.status === LeadStatus.WAITING && (
                                 <div className="flex gap-2 justify-end items-center">
                                   <select
                                     value={lead.advisorId || ""}
