@@ -28,8 +28,8 @@ service cloud.firestore {
         && data.phone is string && data.phone.size() > 0 && data.phone.size() <= 30
         && (!('city' in data) || data.city == null || data.city is string)
         && (!('postalCode' in data) || data.postalCode == null || data.postalCode is string)
-        && data.state is string && data.state.size() > 0 && data.state.size() <= 100
-        && data.distributor is string && data.distributor.size() > 0 && data.distributor.size() <= 200
+        && (!('state' in data) || data.state == null || data.state is string)
+        && (!('distributor' in data) || data.distributor == null || data.distributor is string)
         && data.modelOfInterest is string && data.modelOfInterest.size() > 0 && data.modelOfInterest.size() <= 100
         && data.status is string && (data.status == "waiting" || data.status == "attending" || data.status == "attended" || data.status == "lost")
         && (!('requestType' in data) || data.requestType is string)
