@@ -4,9 +4,10 @@
  */
 
 import React, { useEffect, useState } from 'react';
-import { collection, onSnapshot, query, orderBy, doc, setDoc, deleteDoc, updateDoc, getDocs } from 'firebase/firestore';
+import { collection, onSnapshot, query, orderBy, doc, setDoc, deleteDoc, updateDoc, getDocs, writeBatch } from 'firebase/firestore';
 import { db } from '../firebase';
 import { Lead, LeadStatus } from '../types';
+import { ALL_DEALERS } from '../data/dealers';
 import { 
   BarChart, 
   Bar, 
@@ -127,8 +128,17 @@ export default function Dashboard() {
   const [newAdvName, setNewAdvName] = useState('');
   const [newAdvEmail, setNewAdvEmail] = useState('');
   const [newAdvPassword, setNewAdvPassword] = useState('');
-  const [distributors, setDistributors] = useState<any[]>(OFFICIAL_DISTRIBUTORS_STATIC);
-  const [newAdvDistributor, setNewAdvDistributor] = useState(OFFICIAL_DISTRIBUTORS_STATIC[0]?.name || '');
+  const [distributors, setDistributors] = useState<any[]>(() => 
+    ALL_DEALERS.map(d => ({
+      marca: d.brand,
+      claveCorporativo: d.corpKey,
+      disId: d.id,
+      estado: d.state,
+      name: d.name,
+      url: d.url
+    }))
+  );
+  const [newAdvDistributor, setNewAdvDistributor] = useState(() => ALL_DEALERS[0]?.name || '');
   const [mgmtError, setMgmtError] = useState('');
   const [mgmtSuccess, setMgmtSuccess] = useState('');
   const [editingAdvisorId, setEditingAdvisorId] = useState<string | null>(null);
@@ -217,59 +227,94 @@ export default function Dashboard() {
       try {
         const ref = collection(db, 'distributors');
         const snap = await getDocs(ref);
-        
-        // 1. Seed or update official ones to ensure they contain all fields (marca, claveCorporativo, disId, estado, name, url)
-        for (const dist of OFFICIAL_DISTRIBUTORS_STATIC) {
-          await setDoc(doc(db, 'distributors', dist.disId), {
-            marca: dist.marca,
-            claveCorporativo: dist.claveCorporativo,
-            disId: dist.disId,
-            estado: dist.estado,
-            name: dist.name,
-            url: dist.url,
-            createdAt: new Date()
-          });
-        }
+        const existingCount = snap.size;
 
-        // 2. Clean up any stale or non-official legacy distributors
-        const officialIds = new Set(OFFICIAL_DISTRIBUTORS_STATIC.map(d => d.disId));
-        snap.forEach(async (docSnap) => {
-          if (!officialIds.has(docSnap.id)) {
-            try {
-              await deleteDoc(doc(db, 'distributors', docSnap.id));
-            } catch (err) {
-              console.error("Error deleting stale distributor:", docSnap.id, err);
-            }
+        // Only seed if NOT already fully loaded (e.g., less than 700 documents in Firestore)
+        if (existingCount < 700) {
+          console.log(`[Seeding] Existing distributors count is ${existingCount}. Seeding official list of ${ALL_DEALERS.length}...`);
+          
+          // Seeding in chunks/batches of 400 to be extremely fast and robust
+          const chunkSize = 400;
+          for (let i = 0; i < ALL_DEALERS.length; i += chunkSize) {
+            const batch = writeBatch(db);
+            const chunk = ALL_DEALERS.slice(i, i + chunkSize);
+            
+            chunk.forEach((dist) => {
+              const docRef = doc(db, 'distributors', dist.id);
+              batch.set(docRef, {
+                marca: dist.brand,
+                claveCorporativo: dist.corpKey,
+                disId: dist.id,
+                estado: dist.state,
+                name: dist.name,
+                url: dist.url,
+                createdAt: new Date()
+              }, { merge: true });
+            });
+            
+            await batch.commit();
+            console.log(`[Seeding] Successfully committed batch starting at index ${i}`);
           }
-        });
-
+        } else {
+          console.log(`[Seeding] Distributors already loaded (${existingCount} items). Skipping seed to avoid redundant writes.`);
+        }
       } catch (err) {
         console.error("Error seeding official distributors:", err);
       }
 
       if (!active) return;
 
-      // Subscribe to real-time updates
+      // Subscribe to real-time updates from Firestore
       const unsubscribeDistributors = onSnapshot(collection(db, 'distributors'), (snapshot) => {
         const list: any[] = [];
         snapshot.forEach((docSnap) => {
           list.push({ id: docSnap.id, ...docSnap.data() });
         });
-        list.sort((a, b) => a.name.localeCompare(b.name));
+        
+        // Sort first by brand (marca) and then by name
+        list.sort((a, b) => {
+          const brandComp = (a.marca || '').localeCompare(b.marca || '');
+          if (brandComp !== 0) return brandComp;
+          return (a.name || '').localeCompare(b.name || '');
+        });
         
         if (list.length > 0) {
           setDistributors(list);
-          // Set initial option if not already selected
           setNewAdvDistributor(prev => prev || list[0].name);
         } else {
-          setDistributors(OFFICIAL_DISTRIBUTORS_STATIC);
-          setNewAdvDistributor(prev => prev || OFFICIAL_DISTRIBUTORS_STATIC[0].name);
+          // Parse from static list
+          const mappedStatic = ALL_DEALERS.map(d => ({
+            marca: d.brand,
+            claveCorporativo: d.corpKey,
+            disId: d.id,
+            estado: d.state,
+            name: d.name,
+            url: d.url
+          })).sort((a, b) => {
+            const brandComp = a.marca.localeCompare(b.marca);
+            if (brandComp !== 0) return brandComp;
+            return a.name.localeCompare(b.name);
+          });
+          setDistributors(mappedStatic);
+          setNewAdvDistributor(prev => prev || mappedStatic[0].name);
         }
       }, (error) => {
         console.error("Dashboard distributors subscription error:", error);
         // Fallback on error to keep UI functional
-        setDistributors(OFFICIAL_DISTRIBUTORS_STATIC);
-        setNewAdvDistributor(prev => prev || OFFICIAL_DISTRIBUTORS_STATIC[0].name);
+        const mappedStatic = ALL_DEALERS.map(d => ({
+          marca: d.brand,
+          claveCorporativo: d.corpKey,
+          disId: d.id,
+          estado: d.state,
+          name: d.name,
+          url: d.url
+        })).sort((a, b) => {
+          const brandComp = a.marca.localeCompare(b.marca);
+          if (brandComp !== 0) return brandComp;
+          return a.name.localeCompare(b.name);
+        });
+        setDistributors(mappedStatic);
+        setNewAdvDistributor(prev => prev || mappedStatic[0].name);
       });
 
       return unsubscribeDistributors;
@@ -1647,7 +1692,7 @@ export default function Dashboard() {
                     </div>
 
                     <div>
-                      <label className={`block text-[11px] font-extrabold font-mono uppercase mb-1.5 ${isDark ? 'text-white' : 'text-slate-700'}`}>Distribuidor Leapmotor Asociado:</label>
+                      <label className={`block text-[11px] font-extrabold font-mono uppercase mb-1.5 ${isDark ? 'text-white' : 'text-slate-700'}`}>Distribuidor Asociado (Todas las Marcas):</label>
                       <select
                         value={newAdvDistributor}
                         onChange={(e) => setNewAdvDistributor(e.target.value)}
@@ -1660,7 +1705,7 @@ export default function Dashboard() {
                         ) : (
                           distributors.map((dist) => (
                             <option key={dist.id} value={dist.name}>
-                              {dist.name} ({dist.estado || 'N/A'} - ID: {dist.disId || dist.id})
+                              [{dist.marca || 'LEAPMOTOR'}] {dist.name} ({dist.estado || 'N/A'})
                             </option>
                           ))
                         )}

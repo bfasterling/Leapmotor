@@ -14,7 +14,32 @@ import firebaseConfig from '../firebase-applet-config.json';
 
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);
-export const db = getFirestore(app, firebaseConfig.firestoreDatabaseId); /* CRITICAL: The app will break without this line */
+
+// Detect the environment at runtime and choose the database ID
+// For local/dev/preview environments in AI studio, we use "aistudio"
+// For production environment, we use "main"
+// We also allow overriding this via VITE_FIRESTORE_DB_ID
+let dbId = import.meta.env.VITE_FIRESTORE_DB_ID;
+
+if (!dbId) {
+  const hostname = typeof window !== 'undefined' ? window.location.hostname : '';
+  const isDevEnvironment =
+    import.meta.env.DEV ||
+    hostname.includes('localhost') ||
+    hostname.includes('ais-dev') ||
+    hostname.includes('ais-pre') ||
+    hostname.includes('127.0.0.1');
+
+  if (isDevEnvironment) {
+    dbId = 'aistudio';
+  } else {
+    dbId = 'main';
+  }
+}
+
+console.log(`[Firebase] Initializing database instance: "${dbId}"`);
+
+export const db = getFirestore(app, dbId); /* CRITICAL: The app will break without this line */
 export const auth = getAuth();
 
 // Error Handling Infrastructure as mandated by Firebase Integration Skill
@@ -76,7 +101,7 @@ async function testConnection() {
     console.log("Firebase Connection Verified.");
   } catch (error) {
     if (error instanceof Error && error.message.includes('the client is offline')) {
-      console.error("Please check your Firebase configuration or network status.");
+      console.warn("Please check your Firebase configuration or network status (client offline).");
     } else {
       console.log("Firebase Connection Active (document check handled).");
     }
