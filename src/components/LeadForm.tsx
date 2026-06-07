@@ -1742,7 +1742,7 @@ export default function LeadForm({ c10ImgUrl, t03ImgUrl, b10ImgUrl }: LeadFormPr
                     <div className="text-indigo-400 font-bold block uppercase mb-1 flex items-center gap-1">
                       <Key className="w-3.5 h-3.5" /> TEST DRIVE RESERVADO OK
                     </div>
-                    <span>Tu cita preferida es para el <strong>{formData.testDriveDate}</strong>. Un asesor te contactará para formalizar la pista.</span>
+                    <span>Tu cita preferida es para el <strong>{formData.testDriveDate}</strong>. Gracias por agendar tu prueba de manejo, a la brevedad un asesor te contactará para confirmar tu cita.</span>
                   </div>
                 ) : (
                   <p 
