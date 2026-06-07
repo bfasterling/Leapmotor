@@ -15,32 +15,12 @@ import firebaseConfig from '../firebase-applet-config.json';
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);
 
-// Detect the environment at runtime and choose the database ID
-// For local/dev/preview environments in AI studio, we use "aistudio"
-// For production environment, we use "main"
-// We also allow overriding this via VITE_FIRESTORE_DB_ID
-let dbId = import.meta.env.VITE_FIRESTORE_DB_ID;
+// Resolve Firestore Database ID dynamically prioritizing the config from firebase-applet-config.json, then the environment variable
+// Resolve Firestore Database ID dynamically prioritizing (default) as requested by the user
+export const activeDbId = '(default)';
+console.log(`[Firebase] Database Forced: activeDbId="${activeDbId}"`);
 
-if (!dbId) {
-  const hostname = typeof window !== 'undefined' ? window.location.hostname : '';
-  const isDevEnvironment =
-    import.meta.env.DEV ||
-    hostname.includes('localhost') ||
-    hostname.includes('ais-dev') ||
-    hostname.includes('ais-pre') ||
-    hostname.includes('127.0.0.1');
-
-  if (isDevEnvironment) {
-    dbId = 'aistudio';
-  } else {
-    dbId = 'main';
-  }
-}
-
-console.log(`[Firebase] Initializing database instance: "${dbId}"`);
-
-export const activeDbId = dbId;
-export const db = getFirestore(app, dbId); /* CRITICAL: The app will break without this line */
+export const db = getFirestore(app);
 export const auth = getAuth();
 
 // Error Handling Infrastructure as mandated by Firebase Integration Skill
@@ -99,12 +79,13 @@ export function handleFirestoreError(
 async function testConnection() {
   try {
     await getDocFromServer(doc(db, 'test', 'connection'));
-    console.log("Firebase Connection Verified.");
-  } catch (error) {
-    if (error instanceof Error && error.message.includes('the client is offline')) {
+    console.log(`[Firebase OK] Connection Verified for database ID: "${activeDbId}"`);
+  } catch (error: any) {
+    const errMsg = error?.message || String(error);
+    if (errMsg.includes('the client is offline')) {
       console.warn("Please check your Firebase configuration or network status (client offline).");
     } else {
-      console.log("Firebase Connection Active (document check handled).");
+      console.error(`[Firebase Error] testConnection failed:`, errMsg);
     }
   }
 }

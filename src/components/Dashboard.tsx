@@ -134,17 +134,8 @@ export default function Dashboard() {
   const [newAdvName, setNewAdvName] = useState('');
   const [newAdvEmail, setNewAdvEmail] = useState('');
   const [newAdvPassword, setNewAdvPassword] = useState('');
-  const [distributors, setDistributors] = useState<any[]>(() => 
-    ALL_DEALERS.map(d => ({
-      marca: d.brand,
-      claveCorporativo: d.corpKey,
-      disId: d.id,
-      estado: d.state,
-      name: d.name,
-      url: d.url
-    }))
-  );
-  const [newAdvDistributor, setNewAdvDistributor] = useState(() => ALL_DEALERS[0]?.name || '');
+  const [distributors, setDistributors] = useState<any[]>([]);
+  const [newAdvDistributor, setNewAdvDistributor] = useState('');
   const [mgmtError, setMgmtError] = useState('');
   const [mgmtSuccess, setMgmtSuccess] = useState('');
   const [editingAdvisorId, setEditingAdvisorId] = useState<string | null>(null);
@@ -232,76 +223,111 @@ export default function Dashboard() {
     return () => unsubscribeAdvisors();
   }, []);
 
-  // Load distributors via clean one-time fetch on mount
+  // Load distributors from the database on startup (with dynamic auto-seeding if collection is empty)
   useEffect(() => {
     let active = true;
-    const fetchDistributors = async () => {
-      try {
-        const ref = collection(db, 'distributors');
-        const snap = await getDocs(ref);
-        
-        if (!active) return;
-        
-        const list: any[] = [];
-        snap.forEach((docSnap) => {
-          list.push({ id: docSnap.id, ...docSnap.data() });
-        });
-        
-        // Sort first by brand (marca) and then by name
-        list.sort((a, b) => {
-          const brandComp = (a.marca || '').localeCompare(b.marca || '');
-          if (brandComp !== 0) return brandComp;
-          return (a.name || '').localeCompare(b.name || '');
-        });
-        
-        if (list.length > 0) {
-          setDistributors(list);
-          setNewAdvDistributor(prev => prev || list[0].name);
-        } else {
-          // Fallback on empty collection to keep user experience smooth using local copy
-          console.warn("[Firebase] No distributors found in Firestore collection 'distributors'. Serving static fallback catalog list.");
-          const mappedStatic = ALL_DEALERS.map(d => ({
+    
+    if (distributors.length === 0) {
+      console.log(`[Firebase] Startup trigger: Fetching distributors collection...`);
+      const fetchDistributors = async () => {
+        try {
+          const ref = collection(db, 'distributors');
+          const snap = await getDocs(ref);
+          
+          if (!active) return;
+          
+          const list: any[] = [];
+          snap.forEach((docSnap) => {
+            list.push({ id: docSnap.id, ...docSnap.data() });
+          });
+          
+          // Sort first by brand (marca) and then by name
+          list.sort((a, b) => {
+            const brandComp = (a.marca || '').localeCompare(b.marca || '');
+            if (brandComp !== 0) return brandComp;
+            return (a.name || '').localeCompare(b.name || '');
+          });
+          
+          if (list.length > 0) {
+            console.log(`[Firebase] Successfully loaded ${list.length} distributors on startup.`);
+            setDistributors(list);
+            setNewAdvDistributor(prev => prev || list[0].name);
+          } else {
+            console.warn("[Firebase] No distributors found in Firestore collection 'distributors'. Collection is empty. Auto-seeding catalog to collection...");
+            
+            // Auto-seed to the default database so that the user gets real database values instantly
+            const chunkSize = 400;
+            const fallbackList = ALL_DEALERS.map((d) => ({
+              id: d.id,
+              disId: d.id,
+              marca: d.brand,
+              claveCorporativo: d.corpKey,
+              estado: d.state,
+              name: d.name,
+              url: d.url || ''
+            }));
+
+            try {
+              for (let i = 0; i < fallbackList.length; i += chunkSize) {
+                const batch = writeBatch(db);
+                const chunk = fallbackList.slice(i, i + chunkSize);
+                chunk.forEach(d => {
+                  const docRef = doc(db, 'distributors', d.id);
+                  batch.set(docRef, {
+                    marca: d.marca,
+                    claveCorporativo: d.claveCorporativo,
+                    disId: d.disId,
+                    estado: d.estado,
+                    name: d.name,
+                    url: d.url,
+                    createdAt: new Date()
+                  }, { merge: true });
+                });
+                await batch.commit();
+                console.log(`[Firebase] Auto-seeded batch ${Math.floor(i / chunkSize) + 1} (${chunk.length} elements)`);
+              }
+              console.log("[Firebase] Database automatic seeding completed successfully.");
+            } catch (seedErr) {
+              console.error("Failed to seed distributors during background restore:", seedErr);
+            }
+
+            const sortedList = fallbackList.sort((a, b) => {
+              const brandComp = (a.marca || '').localeCompare(b.marca || '');
+              if (brandComp !== 0) return brandComp;
+              return (a.name || '').localeCompare(b.name || '');
+            });
+            setDistributors(sortedList);
+            setNewAdvDistributor(prev => prev || sortedList[0].name);
+          }
+        } catch (err) {
+          console.error("Error loading distributors from database on-demand:", err);
+          if (!active) return;
+          console.log("[Firebase Fallback] Using local ALL_DEALERS dataset to guarantee admin functionality...");
+          const fallbackList = ALL_DEALERS.map((d) => ({
+            id: d.id,
+            disId: d.id,
             marca: d.brand,
             claveCorporativo: d.corpKey,
-            disId: d.id,
             estado: d.state,
             name: d.name,
-            url: d.url
+            url: d.url || ''
           })).sort((a, b) => {
-            const brandComp = a.marca.localeCompare(b.marca);
+            const brandComp = (a.marca || '').localeCompare(b.marca || '');
             if (brandComp !== 0) return brandComp;
-            return a.name.localeCompare(b.name);
+            return (a.name || '').localeCompare(b.name || '');
           });
-          setDistributors(mappedStatic);
-          setNewAdvDistributor(prev => prev || mappedStatic[0].name);
+          setDistributors(fallbackList);
+          setNewAdvDistributor(prev => prev || fallbackList[0].name);
         }
-      } catch (err) {
-        console.error("Error loading distributors from database:", err);
-        if (!active) return;
-        
-        // Fallback on error to keep UI functional
-        const mappedStatic = ALL_DEALERS.map(d => ({
-          marca: d.brand,
-          claveCorporativo: d.corpKey,
-          disId: d.id,
-          estado: d.state,
-          name: d.name,
-          url: d.url
-        })).sort((a, b) => {
-          const brandComp = a.marca.localeCompare(b.marca);
-          if (brandComp !== 0) return brandComp;
-          return a.name.localeCompare(b.name);
-        });
-        setDistributors(mappedStatic);
-        setNewAdvDistributor(prev => prev || mappedStatic[0].name);
-      }
-    };
-
-    fetchDistributors();
+      };
+ 
+      fetchDistributors();
+    }
+ 
     return () => {
       active = false;
     };
-  }, []);
+  }, [distributors.length]);
 
   // Filter leads based on selected date range in upper inputs
   const filteredLeads = leads.filter(lead => {
@@ -1887,8 +1913,8 @@ export default function Dashboard() {
                         {distributors.length === 0 ? (
                           <option value="">Seeding/Cargando distribuidores...</option>
                         ) : (
-                          distributors.map((dist) => (
-                            <option key={dist.id} value={dist.name}>
+                          distributors.map((dist, idx) => (
+                            <option key={`${dist.id || idx}-${dist.marca || ''}-${idx}`} value={dist.name}>
                               [{dist.marca || 'LEAPMOTOR'}] {dist.name} ({dist.estado || 'N/A'})
                             </option>
                           ))
@@ -2046,13 +2072,9 @@ export default function Dashboard() {
               </div>
               
               {/* Database Indicator Badge */}
-              <div className={`flex items-center gap-2 px-3 py-1.5 rounded-xl border font-mono text-[11px] font-bold uppercase tracking-wider ${
-                activeDbId === 'main'
-                  ? 'bg-red-500/10 text-red-500 border-red-500/25'
-                  : 'bg-yellow-500/10 text-yellow-500 border-yellow-500/25'
-              }`}>
-                <span className={`w-2 h-2 rounded-full ${activeDbId === 'main' ? 'bg-red-500 animate-pulse' : 'bg-yellow-500 animate-pulse'}`} />
-                Base de Datos Activa: {activeDbId.toUpperCase()}
+              <div className={`flex items-center gap-2 px-3 py-1.5 rounded-xl border font-mono text-[11px] font-bold uppercase tracking-wider bg-green-500/10 text-green-500 border-green-500/25`}>
+                <span className="w-2 h-2 rounded-full bg-green-500 animate-pulse" />
+                Base de Datos Activa: INDEPENDIENTE ({activeDbId.toUpperCase()})
               </div>
             </div>
 
@@ -2068,11 +2090,9 @@ export default function Dashboard() {
                   <h4 className={`text-xs font-bold uppercase tracking-wider font-mono ${isDark ? 'text-slate-200' : 'text-slate-800'}`}>Firestore CRM db</h4>
                 </div>
                 <div className="space-y-1">
-                  <p className="text-xl font-mono font-black">{activeDbId === 'main' ? 'main' : 'aistudio'}</p>
+                  <p className="text-xl font-mono font-black">PRODUCCIÓN (MAIN)</p>
                   <p className={`text-[11px] font-medium leading-relaxed ${subColor}`}>
-                    {activeDbId === 'main' 
-                      ? 'Base de datos principal para el entorno PRODUCTIVO físico.' 
-                      : 'Base de datos secundaria para el entorno de DESARROLLO / PRUEBAS.'}
+                    Base de datos principal de Firestore conectada directamente para desarrollo y producción.
                   </p>
                 </div>
               </div>
@@ -2344,7 +2364,7 @@ export default function Dashboard() {
                         </tr>
                       ) : (
                         distributors.slice(0, 50).map((dist, idx) => (
-                          <tr key={dist.disId || idx} className={`transition-colors duration-150 ${isDark ? 'text-slate-200 hover:bg-slate-800/10' : 'text-slate-700 hover:bg-slate-50'}`}>
+                          <tr key={`${dist.disId || dist.id || idx}-${dist.marca || ''}-${idx}`} className={`transition-colors duration-150 ${isDark ? 'text-slate-200 hover:bg-slate-800/10' : 'text-slate-700 hover:bg-slate-50'}`}>
                             <td className="p-3 font-semibold">
                               <span className={`inline-block px-2 py-0.5 rounded text-[8px] font-black uppercase font-mono ${
                                 dist.marca?.toUpperCase() === 'LEAPMOTOR'

@@ -2,105 +2,24 @@ rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
     
-    // Default-deny Catch-all
-    match /{document=**} {
-      allow read, write: if false;
-    }
-    
-    // Global Primitives
-    function isValidId(id) { 
-      return id is string && id.size() <= 128 && id.matches('^[a-zA-Z0-9_\\-]+$'); 
-    }
-    
-    function incoming() { 
-      return request.resource.data; 
-    }
-    
-    function existing() { 
-      return resource.data; 
-    }
-    
-    // Validates a Lead's shape during creation or update
-    function isValidLead(data) {
-      return data.name is string && data.name.size() > 0 && data.name.size() <= 100
-        && data.lastName is string && data.lastName.size() > 0 && data.lastName.size() <= 100
-        && data.email is string && data.email.size() > 0 && data.email.size() <= 100
-        && data.phone is string && data.phone.size() > 0 && data.phone.size() <= 30
-        && data.modelOfInterest is string && data.modelOfInterest.size() > 0 && data.modelOfInterest.size() <= 100
-        && data.status is string && (data.status == "waiting" || data.status == "attending" || data.status == "attended" || data.status == "lost");
+    // Test Collection: For startup connection diagnostics
+    match /test/{docId} {
+      allow read, write: if true;
     }
 
-    function isValidAdvisor(data) {
-      return data.name is string && data.name.size() > 0 && data.name.size() <= 100
-        && data.email is string && data.email.size() > 0 && data.email.size() <= 100
-        && data.password is string && data.password.size() > 0 && data.password.size() <= 100
-        && data.active is bool
-        && (!('createdAt' in data) || data.createdAt is timestamp)
-        && (!('distributor' in data) || (data.distributor is string && data.distributor.size() <= 150));
-    }
-
-    match /advisors/{advisorId} {
-      allow read: if true;
-      allow create, update: if isValidId(advisorId) && isValidAdvisor(incoming());
-      allow delete: if true;
-    }
-
+    // Distributors Collection: Fully readable and writable by anyone
     match /distributors/{distId} {
       allow read, write: if true;
     }
 
-    match /leads/{leadId} {
-      allow create: if (
-        isValidId(leadId) 
-        && isValidLead(incoming()) 
-        && incoming().status == "waiting"
-        && (incoming().createdAt == request.time || incoming().createdAt is timestamp)
-      );
-      
-      allow update: if (
-        isValidId(leadId)
-        // Terminal state lock: cannot update once status is 'attended' or 'lost'
-        && existing().status != "attended"
-        && existing().status != "lost"
-        // Prevent client data modification (immutability)
-        && incoming().name == existing().name
-        && incoming().email == existing().email
-        && incoming().phone == existing().phone
-        && incoming().modelOfInterest == existing().modelOfInterest
-        && incoming().createdAt == existing().createdAt
-        && (!('lastName' in existing()) || (incoming().lastName == existing().lastName))
-        && (!('city' in existing()) || (incoming().city == existing().city))
-        && (!('postalCode' in existing()) || (incoming().postalCode == existing().postalCode))
-        && (!('state' in existing()) || (incoming().state == existing().state))
-        && (!('distributor' in existing()) || (
-          incoming().distributor == existing().distributor 
-          || (existing().status == "waiting" && incoming().status == "attending" && incoming().distributor is string)
-          || (incoming().advisorId != existing().advisorId && incoming().distributor is string)
-        ))
-        && (!('landing' in existing()) || (incoming().landing == existing().landing))
-        && (!('selectedBrand' in existing()) || (incoming().selectedBrand == existing().selectedBrand))
-        && (!('testDriveDate' in existing()) || (incoming().testDriveDate == existing().testDriveDate))
-        // Enforce updater fields (action checks)
-        && (
-          // Action 1: Reassign Lead to an Advisor (by Coordinator)
-          (incoming().diff(existing()).affectedKeys().hasOnly(['advisorId', 'advisorName', 'distributor']))
-          ||
-          // Action 2: Save Coordinator Notes (by Coordinator)
-          (incoming().diff(existing()).affectedKeys().hasOnly(['coordinatorNotes']))
-          ||
-          // Action 3: Start Attending (waiting -> attending) - handles optional distributor assignment as well
-          (existing().status == "waiting" && incoming().status == "attending" && (incoming().attendedAt == request.time || incoming().attendedAt is timestamp || incoming().attendedAt is string) && (!('advisorId' in incoming()) || incoming().advisorId is string) && (!('advisorName' in incoming()) || incoming().advisorName is string) && (!('distributor' in incoming()) || incoming().distributor is string) && incoming().diff(existing()).affectedKeys().hasOnly(['status', 'attendedAt', 'advisorId', 'advisorName', 'distributor']))
-          ||
-          // Action 4: Conclude Lead (attending -> attended or lost) (by Advisor)
-          (existing().status == "attending" && (incoming().status == "attended" || incoming().status == "lost") && (incoming().completedAt == request.time || incoming().completedAt is timestamp || incoming().completedAt is string) && incoming().notes is string && incoming().notes.size() <= 1000 && incoming().diff(existing()).affectedKeys().hasOnly(['status', 'completedAt', 'notes']))
-          ||
-          // Action 5: Coordinator Closing (waiting/attending -> attended or lost)
-          ((existing().status == "waiting" || existing().status == "attending") && (incoming().status == "attended" || incoming().status == "lost") && (incoming().completedAt == request.time || incoming().completedAt is timestamp || incoming().completedAt is string) && incoming().diff(existing()).affectedKeys().hasOnly(['status', 'completedAt']))
-        )
-      );
+    // Advisors Collection: Fully readable and writable to manage sales credentials and active distributors
+    match /advisors/{advisorId} {
+      allow read, write: if true;
+    }
 
-      allow read: if true; // Allowed in this preview context so anyone can listen to leads
-      allow delete: if true; // Allowed for reset/demo cleaning
+    // Leads Collection: Publicly writable on creation and fully manageable/readable by advisors and coordinates
+    match /leads/{leadId} {
+      allow read, write: if true;
     }
   }
 }

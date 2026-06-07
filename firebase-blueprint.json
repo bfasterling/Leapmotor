@@ -125,6 +125,43 @@
         }
       },
       "required": ["name", "email", "password", "active"]
+    },
+    "Distributor": {
+      "title": "Distributor",
+      "description": "Un registro de distribuidor / dealer oficial de las marcas",
+      "type": "object",
+      "properties": {
+        "marca": {
+          "type": "string",
+          "description": "Marca del distribuidor"
+        },
+        "claveCorporativo": {
+          "type": "string",
+          "description": "Clave única corporativa"
+        },
+        "disId": {
+          "type": "string",
+          "description": "ID único de distribuidor"
+        },
+        "estado": {
+          "type": "string",
+          "description": "Estado de la república mexicana"
+        },
+        "name": {
+          "type": "string",
+          "description": "Nombre comercial del distribuidor"
+        },
+        "url": {
+          "type": "string",
+          "description": "URL de la ficha o sitio del distribuidor (opcional)"
+        },
+        "createdAt": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Fecha y hora de carga"
+        }
+      },
+      "required": ["marca", "claveCorporativo", "disId", "estado", "name"]
     }
   },
   "firestore": {
@@ -135,6 +172,10 @@
     "advisors": {
       "schema": "Advisor",
       "description": "Coleccion de asesores comerciales registrados habilitados para login y atencion de leads"
+    },
+    "distributors": {
+      "schema": "Distributor",
+      "description": "Coleccion de distribuidores de las marcas oficiales para asignar leads"
     }
   }
 }

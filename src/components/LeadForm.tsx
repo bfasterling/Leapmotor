@@ -9,7 +9,10 @@ import {
   doc, 
   setDoc, 
   getDocs,
-  serverTimestamp 
+  query,
+  where,
+  serverTimestamp,
+  writeBatch
 } from 'firebase/firestore';
 import { db, handleFirestoreError, OperationType } from '../firebase';
 import { LeadStatus } from '../types';
@@ -342,6 +345,10 @@ export default function LeadForm({ c10ImgUrl, t03ImgUrl, b10ImgUrl }: LeadFormPr
   const [privacyAccepted, setPrivacyAccepted] = useState(false);
   const [showPrivacyText, setShowPrivacyText] = useState(false);
 
+  // Dynamic, fast database lookups for selected brand + state
+  const [dbDistributors, setDbDistributors] = useState<any[]>([]);
+  const [loadingDbDistributors, setLoadingDbDistributors] = useState(false);
+
   // Renders premium, responsive vector brand logos for the Multimarca experience
   const renderBrandLogo = (brandName: string, isSelected: boolean, isLarge?: boolean) => {
     const activeColor = isLarge
@@ -456,7 +463,7 @@ export default function LeadForm({ c10ImgUrl, t03ImgUrl, b10ImgUrl }: LeadFormPr
     }
   }, []);
 
-  // Update selected state and distributor automatically based on landing selection or brand selection
+  // Update selected state automatically based on landing selection or brand selection
   useEffect(() => {
     if (activeLanding === 'leapmotor' && formData.requestType !== 'cotizacion') {
       setFormData(prev => ({
@@ -475,16 +482,139 @@ export default function LeadForm({ c10ImgUrl, t03ImgUrl, b10ImgUrl }: LeadFormPr
         ? formData.state 
         : (availableStates.includes('CIUDAD DE MÉXICO') ? 'CIUDAD DE MÉXICO' : (availableStates[0] || ''));
       
-      const dealersInState = brandDealers.filter(d => d.state === defaultState);
-      const defaultDealer = dealersInState[0]?.name || '';
-
       setFormData(prev => ({
         ...prev,
-        state: defaultState,
-        distributor: defaultDealer
+        state: defaultState
       }));
     }
   }, [activeLanding, selectedBrand]);
+
+  // Query database dynamically for distributors matching the selected brand + selected state
+  useEffect(() => {
+    const activeBrandKey = activeLanding === 'jeep' ? 'JEEP' : selectedBrand.toUpperCase();
+    const currentState = formData.state?.trim().toUpperCase();
+
+    if (!currentState) {
+      setDbDistributors([]);
+      return;
+    }
+
+    let active = true;
+    const fetchDealers = async () => {
+      setLoadingDbDistributors(true);
+      try {
+        console.log(`[Firebase] Querying all distributors from collection and filtering client-side for Brand: "${activeBrandKey}", State: "${currentState}"`);
+        let snap = await getDocs(collection(db, 'distributors'));
+        if (!active) return;
+
+        // Auto-seed if the database is completely empty so that the user gets real database values instantly
+        if (snap.size === 0) {
+          console.warn(`[Firebase] distributors collection in database was found empty. Auto-seeding catalog to collection...`);
+          const chunkSize = 400;
+          for (let i = 0; i < ALL_DEALERS.length; i += chunkSize) {
+            const batch = writeBatch(db);
+            const chunk = ALL_DEALERS.slice(i, i + chunkSize);
+            chunk.forEach(d => {
+              const docRef = doc(db, 'distributors', d.id);
+              batch.set(docRef, {
+                marca: d.brand.toUpperCase(),
+                claveCorporativo: d.corpKey,
+                disId: d.id,
+                estado: d.state.trim().toUpperCase(),
+                name: d.name,
+                url: d.url || '',
+                createdAt: new Date()
+              }, { merge: true });
+            });
+            await batch.commit();
+            console.log(`[Firebase] Seeded batch ${Math.floor(i / chunkSize) + 1} (${chunk.length} entries)`);
+          }
+          console.log(`[Firebase] Database seeding completed successfully.`);
+          // Query again after seeding
+          snap = await getDocs(collection(db, 'distributors'));
+        }
+
+        const allDocs: any[] = [];
+        snap.forEach((docSnap) => {
+          allDocs.push({ id: docSnap.id, ...docSnap.data() });
+        });
+
+        // Filter client-side to bypass composite index constraints and query-permission quirks
+        const list = allDocs.filter(d => 
+          String(d.marca || '').toUpperCase() === activeBrandKey.toUpperCase() &&
+          String(d.estado || '').toUpperCase() === currentState.toUpperCase()
+        );
+
+        // Alphabetically sort by name
+        list.sort((a, b) => (a.name || '').localeCompare(b.name || ''));
+
+        console.log(`[Firebase] Found ${list.length} database dealers (filtered from ${allDocs.length} total) for brand "${activeBrandKey}" in state "${currentState}"`);
+
+        setDbDistributors(list);
+
+        // Auto-select the first helper
+        if (list.length > 0) {
+          const matched = list.find(d => d.name === formData.distributor);
+          if (!matched) {
+            setFormData(prev => ({ ...prev, distributor: list[0].name }));
+          }
+        } else {
+          setFormData(prev => ({ ...prev, distributor: '' }));
+        }
+      } catch (err: any) {
+        console.warn("[Firebase] Error querying distributors from Firestore. Automatically falling back to local dataset to prevent offline issues:", err);
+        
+        if (!active) return;
+        
+        // Filter local ALL_DEALERS catalogue in-memory
+        const list = ALL_DEALERS.filter(d => 
+          String(d.brand || '').toUpperCase() === activeBrandKey.toUpperCase() &&
+          String(d.state || '').toUpperCase() === currentState.toUpperCase()
+        ).map(d => ({
+          marca: d.brand,
+          claveCorporativo: d.corpKey,
+          disId: d.id,
+          estado: d.state,
+          name: d.name,
+          url: d.url || ''
+        }));
+        
+        list.sort((a, b) => (a.name || '').localeCompare(b.name || ''));
+        
+        console.log(`[Firebase Fallback] Successfully filtered ${list.length} local dealers for Brand: "${activeBrandKey}", State: "${currentState}"`);
+        setDbDistributors(list);
+        
+        if (list.length > 0) {
+          const matched = list.find(d => d.name === formData.distributor);
+          if (!matched) {
+            setFormData(prev => ({ ...prev, distributor: list[0].name }));
+          }
+        } else {
+          setFormData(prev => ({ ...prev, distributor: '' }));
+        }
+
+        // Satisfy Firestore Integration Skill requirement: Handle and format permission error in background
+        const isPermission = err?.code === 'permission-denied' || String(err).includes('permission') || String(err).includes('Permission');
+        if (isPermission) {
+          try {
+            handleFirestoreError(err, OperationType.LIST, 'distributors');
+          } catch (richErr) {
+            console.warn("[Firestore Diagnostic Info] Handled permission error during lazy-load:", richErr);
+          }
+        }
+      } finally {
+        if (active) {
+          setLoadingDbDistributors(false);
+        }
+      }
+    };
+
+    fetchDealers();
+
+    return () => {
+      active = false;
+    };
+  }, [activeLanding, selectedBrand, formData.state]);
 
   const handleBrandSelect = (brand: string) => {
     setSelectedBrand(brand);
@@ -1518,12 +1648,9 @@ export default function LeadForm({ c10ImgUrl, t03ImgUrl, b10ImgUrl }: LeadFormPr
                             value={formData.state}
                             onChange={(e) => {
                               const stateValue = e.target.value;
-                              const stateDealers = activeDealers.filter(d => d.state === stateValue);
-                              const firstDealer = stateDealers[0]?.name || '';
                               setFormData(prev => ({
                                 ...prev,
-                                state: stateValue,
-                                distributor: firstDealer
+                                state: stateValue
                               }));
                             }}
                             className={`w-full text-white rounded-xl pl-11 pr-7 py-2.5 text-xs outline-none appearance-none transition uppercase ${activeLanding === 'leapmotor' ? 'font-sans' : 'font-mono'} ${
@@ -1545,7 +1672,7 @@ export default function LeadForm({ c10ImgUrl, t03ImgUrl, b10ImgUrl }: LeadFormPr
                       {/* Distribuidor de Preferencia selector */}
                       <div className={rowClass}>
                         <label id="frm-distributor-label" htmlFor="distributor" className={`text-[11px] uppercase ${activeLanding === 'leapmotor' ? 'font-sans' : 'font-mono'} tracking-wider block mb-0.5 ${activeLanding === 'leapmotor' ? 'font-semibold text-white' : 'text-white font-extrabold'}`}>
-                          Distribuidor de Preferencia *
+                          Distribuidor de Preferencia * {loadingDbDistributors && <span className="text-emerald-400 font-bold animate-pulse text-[9px] lowercase">(consultando BD...)</span>}
                         </label>
                         <div className="relative">
                           <Settings className="absolute left-3.5 top-3.5 w-4 h-4 text-slate-300 pointer-events-none z-10" />
@@ -1564,11 +1691,17 @@ export default function LeadForm({ c10ImgUrl, t03ImgUrl, b10ImgUrl }: LeadFormPr
                                 : 'bg-[#0a0f18] border border-white/25 focus:border-indigo-400 font-bold'
                             }`}
                           >
-                            {filteredDealers.map(d => (
-                              <option key={d.id + '-' + d.name} value={d.name} className="bg-slate-900 text-white">
-                                {d.name}
-                              </option>
-                            ))}
+                            {loadingDbDistributors ? (
+                              <option className="bg-slate-900 text-slate-400">Cargando distribuidores de la BD...</option>
+                            ) : dbDistributors.length === 0 ? (
+                              <option className="bg-slate-900 text-slate-400">Sin distribuidores registrados</option>
+                            ) : (
+                              dbDistributors.map((d, idx) => (
+                                <option key={(d.disId || d.id || idx) + '-' + d.name} value={d.name} className="bg-slate-900 text-white">
+                                  {d.name}
+                                </option>
+                              ))
+                            )}
                           </select>
                           <ChevronDown className="absolute right-3 top-3.5 w-4 h-4 text-slate-300 pointer-events-none" />
                         </div>

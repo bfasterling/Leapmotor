@@ -736,7 +736,7 @@ const compactDealers: string[][] = [
 export const ALL_DEALERS: Dealer[] = compactDealers.map((d) => ({
   brand: d[0],
   corpKey: d[1],
-  id: d[2],
+  id: `${d[0].toLowerCase()}_${d[2]}`,
   state: d[3] === "ESTADO DE MEXICCO" ? "ESTADO DE MÉXICO" : d[3], // fix potential typo
   name: d[4],
   url: d[5],
