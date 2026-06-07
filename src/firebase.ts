@@ -39,6 +39,7 @@ if (!dbId) {
 
 console.log(`[Firebase] Initializing database instance: "${dbId}"`);
 
+export const activeDbId = dbId;
 export const db = getFirestore(app, dbId); /* CRITICAL: The app will break without this line */
 export const auth = getAuth();
 

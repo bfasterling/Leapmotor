@@ -5,7 +5,7 @@
 
 import React, { useEffect, useState } from 'react';
 import { collection, onSnapshot, query, orderBy, doc, setDoc, deleteDoc, updateDoc, getDocs, writeBatch } from 'firebase/firestore';
-import { db } from '../firebase';
+import { db, activeDbId } from '../firebase';
 import { Lead, LeadStatus } from '../types';
 import { ALL_DEALERS } from '../data/dealers';
 import { 
@@ -43,7 +43,13 @@ import {
   Pencil,
   Search,
   Filter,
-  CheckCircle
+  CheckCircle,
+  Database,
+  UploadCloud,
+  RefreshCw,
+  Trash2,
+  AlertTriangle,
+  FileSpreadsheet
 } from 'lucide-react';
 import { motion } from 'motion/react';
 
@@ -162,7 +168,13 @@ export default function Dashboard() {
   const [selectedReassignAdvisorId, setSelectedReassignAdvisorId] = useState('');
 
   // Estado para visualización conjunta de administración
-  const [adminTab, setAdminTab] = useState<'prospectos' | 'asesores'>('prospectos');
+  const [adminTab, setAdminTab] = useState<'prospectos' | 'asesores' | 'distribuidores'>('prospectos');
+
+  // Estados para sincronización y carga de distribuidores (CSV o Catálogo)
+  const [csvFile, setCsvFile] = useState<File | null>(null);
+  const [csvUploading, setCsvUploading] = useState(false);
+  const [csvMessage, setCsvMessage] = useState<{ text: string, type: 'info' | 'success' | 'error' } | null>(null);
+  const [csvDetails, setCsvDetails] = useState<string[]>([]);
 
   // Subscribe to leads
   useEffect(() => {
@@ -220,54 +232,18 @@ export default function Dashboard() {
     return () => unsubscribeAdvisors();
   }, []);
 
-  // Seed & Subscribe to distributors
+  // Load distributors via clean one-time fetch on mount
   useEffect(() => {
     let active = true;
-    const seedAndSubscribeDistributors = async () => {
+    const fetchDistributors = async () => {
       try {
         const ref = collection(db, 'distributors');
         const snap = await getDocs(ref);
-        const existingCount = snap.size;
-
-        // Only seed if NOT already fully loaded (e.g., less than 700 documents in Firestore)
-        if (existingCount < 700) {
-          console.log(`[Seeding] Existing distributors count is ${existingCount}. Seeding official list of ${ALL_DEALERS.length}...`);
-          
-          // Seeding in chunks/batches of 400 to be extremely fast and robust
-          const chunkSize = 400;
-          for (let i = 0; i < ALL_DEALERS.length; i += chunkSize) {
-            const batch = writeBatch(db);
-            const chunk = ALL_DEALERS.slice(i, i + chunkSize);
-            
-            chunk.forEach((dist) => {
-              const docRef = doc(db, 'distributors', dist.id);
-              batch.set(docRef, {
-                marca: dist.brand,
-                claveCorporativo: dist.corpKey,
-                disId: dist.id,
-                estado: dist.state,
-                name: dist.name,
-                url: dist.url,
-                createdAt: new Date()
-              }, { merge: true });
-            });
-            
-            await batch.commit();
-            console.log(`[Seeding] Successfully committed batch starting at index ${i}`);
-          }
-        } else {
-          console.log(`[Seeding] Distributors already loaded (${existingCount} items). Skipping seed to avoid redundant writes.`);
-        }
-      } catch (err) {
-        console.error("Error seeding official distributors:", err);
-      }
-
-      if (!active) return;
-
-      // Subscribe to real-time updates from Firestore
-      const unsubscribeDistributors = onSnapshot(collection(db, 'distributors'), (snapshot) => {
+        
+        if (!active) return;
+        
         const list: any[] = [];
-        snapshot.forEach((docSnap) => {
+        snap.forEach((docSnap) => {
           list.push({ id: docSnap.id, ...docSnap.data() });
         });
         
@@ -282,7 +258,8 @@ export default function Dashboard() {
           setDistributors(list);
           setNewAdvDistributor(prev => prev || list[0].name);
         } else {
-          // Parse from static list
+          // Fallback on empty collection to keep user experience smooth using local copy
+          console.warn("[Firebase] No distributors found in Firestore collection 'distributors'. Serving static fallback catalog list.");
           const mappedStatic = ALL_DEALERS.map(d => ({
             marca: d.brand,
             claveCorporativo: d.corpKey,
@@ -298,8 +275,10 @@ export default function Dashboard() {
           setDistributors(mappedStatic);
           setNewAdvDistributor(prev => prev || mappedStatic[0].name);
         }
-      }, (error) => {
-        console.error("Dashboard distributors subscription error:", error);
+      } catch (err) {
+        console.error("Error loading distributors from database:", err);
+        if (!active) return;
+        
         // Fallback on error to keep UI functional
         const mappedStatic = ALL_DEALERS.map(d => ({
           marca: d.brand,
@@ -315,19 +294,12 @@ export default function Dashboard() {
         });
         setDistributors(mappedStatic);
         setNewAdvDistributor(prev => prev || mappedStatic[0].name);
-      });
-
-      return unsubscribeDistributors;
+      }
     };
 
-    let unsub: any;
-    seedAndSubscribeDistributors().then(u => {
-      unsub = u;
-    });
-
+    fetchDistributors();
     return () => {
       active = false;
-      if (unsub) unsub();
     };
   }, []);
 
@@ -514,6 +486,206 @@ export default function Dashboard() {
       console.error("Error manual closing lead in attention:", err);
     }
   };
+
+  // --- MÓDULO DE SINCRONIZACIÓN Y CARGA DE DISTRIBUIDORES ---
+
+  // Parser simple y robusto de filas de CSV compatible con comillas internas y formato RFC-4180
+  const parseCSVRow = (text: string): string[] => {
+    const result: string[] = [];
+    let currentWord = '';
+    let insideQuotes = false;
+    
+    for (let i = 0; i < text.length; i++) {
+      const char = text[i];
+      if (char === '"') {
+        insideQuotes = !insideQuotes;
+      } else if (char === ',' && !insideQuotes) {
+        result.push(currentWord.trim());
+        currentWord = '';
+      } else {
+        currentWord += char;
+      }
+    }
+    result.push(currentWord.trim());
+    return result;
+  };
+
+  // Función núcleo para limpiar la BD y cargar el catálogo especificado en lotes seguro (límite 400 por batch)
+  const reloadDistributorsInFirestore = async (dealersList: any[]) => {
+    try {
+      setCsvMessage({ text: 'Iniciando sincronización con base de datos...', type: 'info' });
+      setCsvDetails(prev => [...prev, `Conectando y consultando colección "distributors" en base de datos activa: "${activeDbId}"...`]);
+      
+      const ref = collection(db, 'distributors');
+      const currentSnap = await getDocs(ref);
+      const currentDocs = currentSnap.docs;
+      
+      setCsvDetails(prev => [...prev, `Encontrados ${currentDocs.length} registros anteriores que se eliminarán para evitar duplicados.`]);
+      
+      // Batch Deletes (chunks of 400)
+      const chunkSize = 400;
+      for (let i = 0; i < currentDocs.length; i += chunkSize) {
+        const batch = writeBatch(db);
+        const chunk = currentDocs.slice(i, i + chunkSize);
+        chunk.forEach(docSnap => {
+          batch.delete(docSnap.ref);
+        });
+        await batch.commit();
+        setCsvDetails(prev => [...prev, `🧹 Lote de eliminación de transacciones (${chunk.length} elementos) completado.`]);
+      }
+      
+      setCsvDetails(prev => [...prev, `Procediendo a subir ${dealersList.length} distribuidores nuevos en base de datos "${activeDbId}"...`]);
+      
+      // Batch Writes (chunks of 400)
+      for (let i = 0; i < dealersList.length; i += chunkSize) {
+        const batch = writeBatch(db);
+        const chunk = dealersList.slice(i, i + chunkSize);
+        chunk.forEach(dist => {
+          const docRef = doc(db, 'distributors', dist.disId);
+          batch.set(docRef, {
+            marca: dist.marca,
+            claveCorporativo: dist.claveCorporativo,
+            disId: dist.disId,
+            estado: dist.estado,
+            name: dist.name,
+            url: dist.url,
+            createdAt: new Date()
+          }, { merge: true });
+        });
+        await batch.commit();
+        setCsvDetails(prev => [...prev, `💾 Lote de escritura (${chunk.length} elementos) guardado con éxito (${Math.min(i + chunkSize, dealersList.length)} / ${dealersList.length}).`]);
+      }
+      
+      // Update local state in Dashboard so the advisor registry form refreshes itself immediately
+      setDistributors(dealersList.sort((a,b) => {
+        const brandComp = (a.marca || '').localeCompare(b.marca || '');
+        if (brandComp !== 0) return brandComp;
+        return (a.name || '').localeCompare(b.name || '');
+      }));
+      if (dealersList.length > 0) {
+        setNewAdvDistributor(dealersList[0].name);
+      }
+      
+      setCsvMessage({ text: '¡Sincronización completada con éxito!', type: 'success' });
+      setCsvDetails(prev => [...prev, `✅ Sincronización completada: ${dealersList.length} registros cargados y guardados de forma segura en la base de datos "${activeDbId}". Las interfaces han sido actualizadas.`]);
+      setCsvFile(null);
+    } catch (dbErr: any) {
+      console.error(dbErr);
+      setCsvMessage({ text: `Error de Firestore: ${dbErr.message || 'Privilegios insuficientes o error de conexión'}`, type: 'error' });
+      setCsvDetails(prev => [...prev, `❌ ERROR FIRESTORE: ${dbErr.message || 'Denegado por reglas de seguridad'}`]);
+      throw dbErr;
+    }
+  };
+
+  // Acción para parsear archivo CSV seleccionado manualmente y enviarlo al recargo
+  const handleUploadCSV = async (file: File | null) => {
+    if (!file) {
+      setCsvMessage({ text: 'Por favor, selecciona un archivo CSV primero.', type: 'error' });
+      return;
+    }
+    
+    setCsvUploading(true);
+    setCsvMessage({ text: 'Procesando archivo CSV cargado...', type: 'info' });
+    setCsvDetails(['Leyendo flujo binario a texto...']);
+    
+    try {
+      const reader = new FileReader();
+      
+      const fileData = await new Promise<string>((resolve, reject) => {
+        reader.onload = (e) => resolve(e.target?.result as string || '');
+        reader.onerror = (e) => reject(new Error('No se pudo leer el archivo físico.'));
+        reader.readAsText(file);
+      });
+      
+      const lines = fileData.split(/\r?\n/).map(line => line.trim()).filter(line => line.length > 0);
+      if (lines.length < 2) {
+        throw new Error('El archivo CSV está vacío o no contiene suficientes filas (se requiere fila de títulos de columna y datos).');
+      }
+      
+      const headers = parseCSVRow(lines[0]).map(h => h.toLowerCase().trim().normalize("NFD").replace(/[\u0300-\u036f]/g, ""));
+      setCsvDetails(prev => [...prev, `Columnas detectadas en cabecera: [ ${headers.join(' | ')} ]`]);
+      
+      // Auto-identify indices based on headers
+      const colMarca = headers.findIndex(h => h.includes('brand') || h.includes('marca') || h.includes('fabricante'));
+      const colClave = headers.findIndex(h => h.includes('corpkey') || h.includes('clave') || h.includes('corporativ') || h.includes('corp'));
+      const colId = headers.findIndex(h => h.includes('id') || h.includes('disid') || h.includes('dealerid') || h.includes('distribuidorid') || h.includes('clavecorporativ'));
+      const colState = headers.findIndex(h => h.includes('state') || h.includes('estado') || h.includes('provincia') || h.includes('region'));
+      const colName = headers.findIndex(h => h.includes('name') || h.includes('nombre') || h.includes('distribuidor') || h.includes('agencia'));
+      const colUrl = headers.findIndex(h => h.includes('url') || h.includes('web') || h.includes('sitio') || h.includes('link'));
+      
+      if (colName === -1) {
+        throw new Error('No se pudo identificar una columna para el NOMBRE de la agencia/distribuidor (ej. "name", "nombre", "distribuidor"). Verifique encabezados.');
+      }
+      
+      const parsedDealers: any[] = [];
+      for (let i = 1; i < lines.length; i++) {
+        const row = parseCSVRow(lines[i]);
+        if (row.length === 0 || (row.length === 1 && row[0] === '')) continue;
+        
+        const brandRaw = colMarca !== -1 ? row[colMarca] : 'LEAPMOTOR';
+        const brand = brandRaw ? brandRaw.toUpperCase().trim() : 'LEAPMOTOR';
+        
+        const corpKey = colClave !== -1 ? (row[colClave] || '').trim() : '';
+        const id = colId !== -1 && row[colId] ? row[colId].trim() : `D-${Date.now().toString().slice(-4)}-${i}`;
+        const state = colState !== -1 ? (row[colState] || 'N/A').trim().toUpperCase() : 'N/A';
+        const name = (row[colName] || '').trim();
+        const url = colUrl !== -1 ? (row[colUrl] || '').trim() : '';
+        
+        if (!name) continue;
+        
+        parsedDealers.push({
+          marca: brand,
+          claveCorporativo: corpKey,
+          disId: id,
+          estado: state,
+          name: name,
+          url: url
+        });
+      }
+      
+      setCsvDetails(prev => [...prev, `CSV parseado con éxito: ${parsedDealers.length} registros extraídos.`]);
+      await reloadDistributorsInFirestore(parsedDealers);
+    } catch (err: any) {
+      console.error(err);
+      setCsvMessage({ text: `Error de procesamiento: ${err.message || 'Formato de CSV desconocido'}`, type: 'error' });
+      setCsvDetails(prev => [...prev, `❌ ERROR CSV: ${err.message || 'Verifique codificación UTF-8'}`]);
+    } finally {
+      setCsvUploading(false);
+    }
+  };
+
+  // Restaurar el catálogo completo del sistema de forma automática con un click para salvar desarrollo vs producción
+  const handleRestoreSystemCatalog = async () => {
+    const confirmation = window.confirm(
+      `¿Desea restablecer el catálogo oficial del sistema (${ALL_DEALERS.length} distribuidores oficiales multi-marca) en la base de datos "${activeDbId}"?\n\nEsto borrará todas las agencias personalizadas registradas antes.`
+    );
+    if (!confirmation) return;
+    
+    setCsvUploading(true);
+    setCsvMessage({ text: 'Iniciando restauración de catálogo de sistema...', type: 'info' });
+    setCsvDetails(['Leyendo catálogo interno "ALL_DEALERS" del código fuente...']);
+    
+    try {
+      const systemDealers = ALL_DEALERS.map(d => ({
+        marca: d.brand,
+        claveCorporativo: d.corpKey,
+        disId: d.id,
+        estado: d.state,
+        name: d.name,
+        url: d.url
+      }));
+      
+      await reloadDistributorsInFirestore(systemDealers);
+    } catch (err: any) {
+      console.error(err);
+      setCsvMessage({ text: `Error de restauración: ${err.message || 'Fallo de escritura Firestore'}`, type: 'error' });
+      setCsvDetails(prev => [...prev, `❌ ERROR RESTAURAR: ${err.message || 'Error imprevisto'}`]);
+    } finally {
+      setCsvUploading(false);
+    }
+  };
+
+  // --- FIN MÓDULO DE DISTRIBUIDORES ---
 
   // Helper to detect if a lead's createdAt is today
   const getIsToday = (createdAt: any) => {
@@ -1170,6 +1342,18 @@ export default function Dashboard() {
           >
             <Users className="w-4 h-4" />
             Control de Asesores
+          </button>
+          <button
+            type="button"
+            onClick={() => setAdminTab('distribuidores')}
+            className={`pb-4 px-4 font-black text-xs sm:text-sm tracking-widest uppercase font-mono border-b-2 transition-all duration-300 flex items-center gap-2 cursor-pointer ${
+              adminTab === 'distribuidores'
+                ? 'border-purple-500 text-purple-400 font-extrabold'
+                : 'border-transparent text-slate-400 hover:text-slate-200'
+            }`}
+          >
+            <Database className="w-4 h-4" />
+            Distribuidores ({distributors.length})
           </button>
         </div>
 
@@ -1843,6 +2027,361 @@ export default function Dashboard() {
                 <p className={`text-[11px] mt-2.5 font-mono font-semibold ${subColor}`}>
                   * Nota: Al suspender un asesor, éste conservará acceso para atender sus leads vigentes, pero no recibirá prospectos adicionales desde el formulario de la Landing.
                 </p>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* Tab 3: Sincronización de Distribuidores */}
+        {adminTab === 'distribuidores' && (
+          <div className="space-y-6">
+            <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+              <div>
+                <h3 className={`text-sm font-black tracking-widest uppercase font-mono mb-1.5 flex items-center gap-2 ${titleColor}`}>
+                  <Database className="w-4 h-4 text-purple-400" /> PANEL DE CONFIGURACIÓN Y SINCRONIZACIÓN DE DISTRIBUIDORES
+                </h3>
+                <p className={`text-xs font-semibold leading-relaxed ${subColor}`}>
+                  Administre el catálogo completo de distribuidores y agencias de ventas de las marcas del grupo Stellantis de manera ágil.
+                </p>
+              </div>
+              
+              {/* Database Indicator Badge */}
+              <div className={`flex items-center gap-2 px-3 py-1.5 rounded-xl border font-mono text-[11px] font-bold uppercase tracking-wider ${
+                activeDbId === 'main'
+                  ? 'bg-red-500/10 text-red-500 border-red-500/25'
+                  : 'bg-yellow-500/10 text-yellow-500 border-yellow-500/25'
+              }`}>
+                <span className={`w-2 h-2 rounded-full ${activeDbId === 'main' ? 'bg-red-500 animate-pulse' : 'bg-yellow-500 animate-pulse'}`} />
+                Base de Datos Activa: {activeDbId.toUpperCase()}
+              </div>
+            </div>
+
+            {/* Diagnostic Metrics */}
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              
+              {/* Card 1: Database Status */}
+              <div className={`p-5 rounded-2xl border ${isDark ? 'bg-slate-950/40 border-slate-800' : 'bg-slate-50 border-slate-200'}`}>
+                <div className="flex items-center gap-3 mb-3">
+                  <div className={`p-2 rounded-lg ${isDark ? 'bg-slate-900 text-blue-400' : 'bg-blue-50 text-blue-600'}`}>
+                    <Database className="w-5 h-5" />
+                  </div>
+                  <h4 className={`text-xs font-bold uppercase tracking-wider font-mono ${isDark ? 'text-slate-200' : 'text-slate-800'}`}>Firestore CRM db</h4>
+                </div>
+                <div className="space-y-1">
+                  <p className="text-xl font-mono font-black">{activeDbId === 'main' ? 'main' : 'aistudio'}</p>
+                  <p className={`text-[11px] font-medium leading-relaxed ${subColor}`}>
+                    {activeDbId === 'main' 
+                      ? 'Base de datos principal para el entorno PRODUCTIVO físico.' 
+                      : 'Base de datos secundaria para el entorno de DESARROLLO / PRUEBAS.'}
+                  </p>
+                </div>
+              </div>
+
+              {/* Card 2: Catalog Status */}
+              <div className={`p-5 rounded-2xl border ${isDark ? 'bg-slate-950/40 border-slate-800' : 'bg-slate-50 border-slate-200'}`}>
+                <div className="flex items-center gap-3 mb-3">
+                  <div className={`p-2 rounded-lg ${isDark ? 'bg-slate-900 text-purple-400' : 'bg-purple-50 text-purple-600'}`}>
+                    <FileSpreadsheet className="w-5 h-5" />
+                  </div>
+                  <h4 className={`text-xs font-bold uppercase tracking-wider font-mono ${isDark ? 'text-slate-200' : 'text-slate-800'}`}>Estado del Catálogo</h4>
+                </div>
+                <div className="space-y-1">
+                  <p className="text-xl font-mono font-black">{distributors.length} Agencias</p>
+                  <p className={`text-[11px] font-medium leading-relaxed ${subColor}`}>
+                    {distributors.length > 500 
+                      ? 'Catálogo Stellantis oficial completo cargado en memoria de consola.' 
+                      : 'Catálogo de agencias cargado de forma parcial o modificado.'}
+                  </p>
+                </div>
+              </div>
+
+              {/* Card 3: Form Safety Warning */}
+              <div className={`p-5 rounded-2xl border ${isDark ? 'bg-slate-950/40 border-slate-800' : 'bg-slate-50 border-slate-200'}`}>
+                <div className="flex items-center gap-3 mb-3">
+                  <div className={`p-2 rounded-lg ${isDark ? 'bg-yellow-500/10 text-yellow-400' : 'bg-yellow-50 text-yellow-600'}`}>
+                    <AlertTriangle className="w-5 h-5" />
+                  </div>
+                  <h4 className={`text-xs font-bold uppercase tracking-wider font-mono ${isDark ? 'text-slate-200' : 'text-slate-800'}`}>Requisitos de Estructura</h4>
+                </div>
+                <div className="space-y-1">
+                  <p className="text-xl font-mono font-black">Estructuras Idénticas</p>
+                  <p className={`text-[11px] font-medium leading-relaxed ${subColor}`}>
+                    Ambas bases de datos (main y aistudio) mantienen idéntica estructura de colecciones de leads, asesores y distribuidores.
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            {/* Sync Tools Area */}
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+              
+              {/* Option A: Manual CSV Upload */}
+              <div className={`p-6 rounded-2xl border ${isDark ? 'bg-slate-950/20 border-slate-800/60' : 'bg-white border-slate-200 shadow-sm'}`}>
+                <h4 className={`text-xs font-bold uppercase tracking-wider font-mono mb-2 flex items-center gap-2 ${titleColor}`}>
+                  <UploadCloud className="w-4 h-4 text-purple-400" /> Método A: Cargar archivo CSV
+                </h4>
+                <p className={`text-xs font-semibold leading-relaxed mb-4 ${subColor}`}>
+                  Cargue un archivo CSV delimitado por comas para reescribir por completo el catálogo de distribuidores en "{activeDbId}".
+                </p>
+                
+                <div className="space-y-4">
+                  {/* CSV Template Guidelines */}
+                  <div className={`p-3.5 rounded-xl border text-[10px] space-y-1.5 ${isDark ? 'bg-slate-900/60 border-slate-850 text-slate-350' : 'bg-slate-50 border-slate-200 text-slate-700'}`}>
+                    <p className="font-bold underline uppercase tracking-wider text-purple-400">Columnas requeridas para el CSV:</p>
+                    <p className="font-mono bg-black/30 p-1.5 rounded text-center text-emerald-450 tracking-wider">marca, corpKey, id, state, name, url</p>
+                    <p className="font-sans leading-relaxed">
+                      * El sistema identificará automáticamente las columnas relevantes para Marca (brand/marca), Clave corporativa, Clave de Distribuidor (disId/id), Estado (state/estado), Nombre de Distribuidor (name/nombre) y Sitio Web (url/web). Se recomienda usar formato UTF-8.
+                    </p>
+                  </div>
+
+                  {/* Drag and Drop Zone */}
+                  <div className={`border-2 border-dashed rounded-xl p-6 text-center transition flex flex-col items-center justify-center gap-2 ${
+                    csvFile 
+                      ? 'border-purple-500 bg-purple-500/5' 
+                      : isDark ? 'border-slate-800 hover:border-slate-700 bg-slate-950/40' : 'border-slate-300 hover:border-slate-400 bg-slate-50'
+                  }`}>
+                    <FileSpreadsheet className={`w-8 h-8 ${csvFile ? 'text-purple-500 animate-bounce' : 'text-slate-405'}`} />
+                    
+                    {csvFile ? (
+                      <div className="space-y-1 max-w-full">
+                        <p className={`text-xs font-black truncate max-w-[280px] ${titleColor}`}>{csvFile.name}</p>
+                        <p className="text-[10px] font-mono font-extrabold text-slate-500">{(csvFile.size / 1024).toFixed(1)} KB</p>
+                      </div>
+                    ) : (
+                      <div className="space-y-1">
+                        <p className={`text-xs font-bold ${titleColor}`}>Arrastre o seleccione su archivo CSV</p>
+                        <p className="text-[10px] text-slate-500 font-semibold">Formato delimitado por comas (.csv)</p>
+                      </div>
+                    )}
+
+                    <input 
+                      type="file" 
+                      accept=".csv"
+                      onChange={(e) => {
+                        const file = e.target.files?.[0] || null;
+                        setCsvFile(file);
+                        setCsvMessage(null);
+                      }}
+                      className="hidden" 
+                      id="csv-file-selector"
+                      disabled={csvUploading}
+                    />
+                    
+                    <label 
+                      htmlFor="csv-file-selector"
+                      className={`mt-2 inline-block px-4 py-1.5 rounded-lg text-[11px] font-black uppercase font-mono tracking-wider transition cursor-pointer ${
+                        csvUploading
+                          ? 'bg-slate-800 text-slate-600 cursor-not-allowed'
+                          : 'bg-purple-500 hover:bg-purple-400 text-slate-950'
+                      }`}
+                    >
+                      {csvFile ? 'Cambiar Archivo' : 'Seleccionar Archivo'}
+                    </label>
+                  </div>
+
+                  {/* Submit Button */}
+                  <div className="flex gap-2">
+                    <button
+                      type="button"
+                      onClick={() => handleUploadCSV(csvFile)}
+                      disabled={!csvFile || csvUploading}
+                      className={`w-full py-2.5 rounded-xl text-xs font-black uppercase font-mono tracking-widest transition flex items-center justify-center gap-2 cursor-pointer ${
+                        !csvFile || csvUploading
+                          ? 'bg-slate-805 text-slate-500 border border-slate-800'
+                          : 'bg-purple-500 hover:bg-purple-400 text-slate-950 font-black shadow-lg shadow-purple-500/10'
+                      }`}
+                    >
+                      {csvUploading ? (
+                        <>
+                          <RefreshCw className="w-4 h-4 animate-spin" />
+                          Sincronizando...
+                        </>
+                      ) : (
+                        '+ Limpiar BD e Importar CSV'
+                      )}
+                    </button>
+                    {csvFile && !csvUploading && (
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setCsvFile(null);
+                          setCsvMessage(null);
+                        }}
+                        className={`px-3 py-2.5 rounded-xl border text-xs font-extrabold font-mono uppercase transition cursor-pointer ${
+                          isDark ? 'border-slate-800 text-red-400 hover:bg-red-500/10' : 'border-slate-200 text-red-600 hover:bg-red-50'
+                        }`}
+                        title="Remover archivo seleccionado"
+                      >
+                        Limpiar
+                      </button>
+                    )}
+                  </div>
+                </div>
+              </div>
+
+              {/* Option B: Official Backup Catalog Reset */}
+              <div className={`p-6 rounded-2xl border ${isDark ? 'bg-slate-950/20 border-slate-800/60' : 'bg-white border-slate-200 shadow-sm'}`}>
+                <h4 className={`text-xs font-bold uppercase tracking-wider font-mono mb-2 flex items-center gap-2 ${titleColor}`}>
+                  <RefreshCw className="w-4 h-4 text-purple-400" /> Método B: Restablecer Catálogo Oficial del Sistema
+                </h4>
+                <p className={`text-xs font-semibold leading-relaxed mb-4 ${subColor}`}>
+                  ¿No dispone de un catálogo personalizado? Cargue de inmediato la base de datos Stellantis oficial completa del sistema. No requiere preparar archivos.
+                </p>
+                
+                <div className="space-y-4">
+                  <div className={`p-4 rounded-xl border text-[11px] leading-relaxed ${isDark ? 'bg-slate-900/60 border-slate-850 text-slate-350' : 'bg-slate-50 border-slate-200 text-slate-700'}`}>
+                    <p className="font-bold uppercase tracking-wider mb-1 text-purple-400">Catálogo Oficial Ofrecido:</p>
+                    <p className="mb-2">
+                      Inicializa de forma automática <strong>{ALL_DEALERS.length} agencias de venta oficiales</strong> del consorcio: JEEP, RAM, DODGE, FIAT, PEUGEOT, LEAPMOTOR y ALFA ROMEO.
+                    </p>
+                    <p className="text-amber-500 font-bold font-mono text-[10px]">
+                      ⚠️ Atención: Al restablecer, se destruirá cualquier registro de agencias personalizadas registradas previamente en la colección de la base "{activeDbId}".
+                    </p>
+                  </div>
+
+                  <button
+                    type="button"
+                    onClick={handleRestoreSystemCatalog}
+                    disabled={csvUploading}
+                    className={`w-full py-3 rounded-xl text-xs font-black uppercase font-mono tracking-widest transition flex items-center justify-center gap-2 cursor-pointer ${
+                      csvUploading
+                        ? 'bg-slate-800/50 text-slate-500 border border-slate-800'
+                        : 'bg-slate-900 hover:bg-slate-850 text-purple-450 hover:text-purple-300 border border-purple-500/30'
+                    }`}
+                  >
+                    {csvUploading ? (
+                      <>
+                        <RefreshCw className="w-4 h-4 animate-spin" />
+                        Sincronizando...
+                      </>
+                    ) : (
+                      '⚡ Sincronizar Catálogo Stellantis Oficial (' + ALL_DEALERS.length + ' Registros)'
+                    )}
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            {/* Active Operations Log Console (Monospace box) */}
+            {(csvMessage || csvDetails.length > 0) && (
+              <div className={`p-5 rounded-2xl border ${isDark ? 'bg-slate-950 border-slate-850' : 'bg-slate-900 border-slate-950 shadow-inner'}`}>
+                <div className="flex items-center justify-between border-b border-slate-800 pb-3 mb-4">
+                  <div className="flex items-center gap-2">
+                    <div className="w-2.5 h-2.5 rounded-full bg-red-500" />
+                    <div className="w-2.5 h-2.5 rounded-full bg-yellow-500" />
+                    <div className="w-2.5 h-2.5 rounded-full bg-emerald-500" />
+                    <span className="text-[10px] font-mono text-slate-500 uppercase font-black tracking-wider ml-1">Terminal de Sincronización en Tiempo Real</span>
+                  </div>
+                  
+                  {csvUploading && <span className="text-[10px] font-mono text-emerald-450 font-bold animate-pulse">● PROCESANDO TRANSACCIONES</span>}
+                </div>
+
+                {/* Main Alert Message */}
+                {csvMessage && (
+                  <div className={`p-3 rounded-xl mb-4 font-bold text-xs flex items-center gap-2 border ${
+                    csvMessage.type === 'error'
+                      ? 'bg-red-500/10 text-red-400 border-red-500/20'
+                      : csvMessage.type === 'success'
+                        ? 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20'
+                        : 'bg-blue-500/10 text-blue-450 border-blue-500/20'
+                  }`}>
+                    {csvMessage.type === 'error' && '⚠️ '}
+                    {csvMessage.type === 'success' && '✓ '}
+                    {csvMessage.type === 'info' && '🛈 '}
+                    {csvMessage.text}
+                  </div>
+                )}
+
+                {/* Step-by-Step Console Logs */}
+                {csvDetails.length > 0 && (
+                  <div className="bg-slate-950/90 rounded-xl p-4 max-h-[180px] overflow-y-auto border border-slate-850/80 font-mono text-[9px] text-slate-300 space-y-1.5 scrollbar-thin">
+                    {csvDetails.map((detail, idx) => (
+                      <p key={idx} className="leading-relaxed">
+                        <span className="text-slate-600 select-none mr-2">[{idx + 1}]</span>
+                        {detail.startsWith('✅') ? (
+                          <span className="text-emerald-400 font-extrabold">{detail}</span>
+                        ) : detail.startsWith('❌') ? (
+                          <span className="text-red-400 font-extrabold">{detail}</span>
+                        ) : detail.startsWith('🧹') ? (
+                          <span className="text-yellow-500">{detail}</span>
+                        ) : (
+                          <span>{detail}</span>
+                        )}
+                      </p>
+                    ))}
+                  </div>
+                )}
+              </div>
+            )}
+
+            {/* Current Distributors Preview */}
+            <div className="space-y-4">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                <h4 className={`text-xs font-black uppercase font-mono tracking-wider ${isDark ? 'text-slate-350' : 'text-slate-650'}`}>
+                  VISTA PREVIA Y VALIDACIÓN EN BASE "{activeDbId}" (Top 50 del Catálogo)
+                </h4>
+              </div>
+
+              <div className="w-full overflow-x-auto">
+                <div className={`border rounded-xl overflow-hidden transition-all max-h-[350px] overflow-y-auto ${isDark ? 'bg-slate-950/30 border-slate-850' : 'bg-white border-slate-200 shadow-sm'}`}>
+                  <table className="w-full text-left border-collapse text-[10px]">
+                    <thead>
+                      <tr className={`border-b font-mono uppercase text-[9px] tracking-wider font-extrabold sticky top-0 z-10 ${isDark ? 'bg-slate-955 border-slate-800 text-slate-300' : 'bg-slate-100 border-slate-200 text-slate-700'}`}>
+                        <th className="p-3">Marca</th>
+                        <th className="p-3">Clave Corporativo</th>
+                        <th className="p-3">ID Agencia</th>
+                        <th className="p-3">Nombre del Distribuidor</th>
+                        <th className="p-3">Estado</th>
+                        <th className="p-3">Sitio Web Asociado</th>
+                      </tr>
+                    </thead>
+                    <tbody className={`divide-y ${isDark ? 'divide-slate-800/50' : 'divide-slate-100'}`}>
+                      {distributors.length === 0 ? (
+                        <tr>
+                          <td colSpan={6} className="p-6 text-center font-bold italic text-slate-400">
+                            No hay distribuidores cargados en la base de datos "{activeDbId}". Use uno de los métodos anteriores para poblarlos.
+                          </td>
+                        </tr>
+                      ) : (
+                        distributors.slice(0, 50).map((dist, idx) => (
+                          <tr key={dist.disId || idx} className={`transition-colors duration-150 ${isDark ? 'text-slate-200 hover:bg-slate-800/10' : 'text-slate-700 hover:bg-slate-50'}`}>
+                            <td className="p-3 font-semibold">
+                              <span className={`inline-block px-2 py-0.5 rounded text-[8px] font-black uppercase font-mono ${
+                                dist.marca?.toUpperCase() === 'LEAPMOTOR'
+                                  ? 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/20'
+                                  : dist.marca?.toUpperCase() === 'JEEP'
+                                    ? 'bg-blue-500/10 text-blue-400 border border-blue-500/20'
+                                    : 'bg-slate-500/10 text-slate-400 border border-slate-500/10'
+                              }`}>
+                                {dist.marca || 'N/A'}
+                              </span>
+                            </td>
+                            <td className="p-3 font-mono text-slate-400">{dist.claveCorporativo || 'N/A'}</td>
+                            <td className="p-3 font-mono font-bold text-slate-400">{dist.disId || dist.id || 'N/A'}</td>
+                            <td className={`p-3 font-black ${titleColor}`}>{dist.name}</td>
+                            <td className="p-3 font-extrabold uppercase text-slate-400">{dist.estado || 'N/A'}</td>
+                            <td className="p-3 truncate max-w-[200px] font-mono text-slate-400" title={dist.url}>
+                              {dist.url ? (
+                                <a href={dist.url} target="_blank" rel="noopener noreferrer" className="text-blue-400 hover:underline">
+                                  {dist.url}
+                                </a>
+                              ) : 'N/A'}
+                            </td>
+                          </tr>
+                        ))
+                      )}
+                      {distributors.length > 50 && (
+                        <tr>
+                          <td colSpan={6} className={`p-3.5 text-center font-mono text-[9px] font-bold tracking-wider uppercase border-t ${
+                            isDark ? 'bg-slate-900/50 text-slate-400 border-slate-800' : 'bg-slate-50 text-slate-500 border-slate-200'
+                          }`}>
+                            ... y {distributors.length - 50} agencias de distribución de Stellantis adicionales activas cargadas ...
+                          </td>
+                        </tr>
+                      )}
+                    </tbody>
+                  </table>
+                </div>
               </div>
             </div>
           </div>
