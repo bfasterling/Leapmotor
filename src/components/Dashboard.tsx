@@ -49,6 +49,35 @@ import { motion } from 'motion/react';
 // Pie chart colors matching Leapmotor theme
 const COLORS = ['#2563EB', '#06B6D4', '#F59E0B', '#EF4444'];
 
+const OFFICIAL_DISTRIBUTORS_STATIC = [
+  { marca: "LEAPMOTOR", claveCorporativo: "01L5060", disId: "65012", estado: "AGUASCALIENTES", name: "Leapmotor Aguascalientes", url: "leapmotoraguascalientes.com" },
+  { marca: "LEAPMOTOR", claveCorporativo: "01L5330", disId: "65003", estado: "BAJA CALIFORNIA", name: "Leapmotor Tijuana", url: "leapmotortijuana.com" },
+  { marca: "LEAPMOTOR", claveCorporativo: "01L5340", disId: "65004", estado: "BAJA CALIFORNIA", name: "Leapmotor Mexicali", url: "leapmotormexicali.mx" },
+  { marca: "LEAPMOTOR", claveCorporativo: "01L5400", disId: "65026", estado: "COAHUILA", name: "Leapmotor Saltillo", url: "leapmotorsaltillo.mx" },
+  { marca: "LEAPMOTOR", claveCorporativo: "01L5280", disId: "65032", estado: "COLIMA", name: "Leapmotor Colima", url: "leapmotorcolima.mx" },
+  { marca: "LEAPMOTOR", claveCorporativo: "01L5281", disId: "65033", estado: "COLIMA", name: "Leapmotor Manzanillo", url: "leapmotormanzanillo.mx" },
+  { marca: "LEAPMOTOR", claveCorporativo: "01L5160", disId: "65002", estado: "CHIHUAHUA", name: "Leapmotor Chihuahua", url: "leapmotorchihuahua.mx" },
+  { marca: "LEAPMOTOR", claveCorporativo: "01L5020", disId: "65006", estado: "CIUDAD DE MÉXICO", name: "Leapmotor Santa Fe", url: "leapmotorsantafe.mx" },
+  { marca: "LEAPMOTOR", claveCorporativo: "01L5350", disId: "65042", estado: "CIUDAD DE MÉXICO", name: "Leapmotor Viaducto", url: "leapmotorviaducto.mx" },
+  { marca: "LEAPMOTOR", claveCorporativo: "01L5390", disId: "65020", estado: "GUANAJUATO", name: "Leapmotor Celaya", url: "leapmotorcelaya.com" },
+  { marca: "LEAPMOTOR", claveCorporativo: "01L5380", disId: "65023", estado: "HIDALGO", name: "Leapmotor Pachuca", url: "leapmotorpachuca.mx" },
+  { marca: "LEAPMOTOR", claveCorporativo: "01L5310", disId: "65031", estado: "JALISCO", name: "Leapmotor Acueducto", url: "leapmotoracueducto.com" },
+  { marca: "LEAPMOTOR", claveCorporativo: "01L5130", disId: "65009", estado: "ESTADO DE MÉXICO", name: "Leapmotor Cuautitlán", url: "leapmotorcuautitlan.mx" },
+  { marca: "LEAPMOTOR", claveCorporativo: "01L5370", disId: "65025", estado: "ESTADO DE MÉXICO", name: "Leapmotor Coacalco", url: "leapmotorcoacalco.mx" },
+  { marca: "LEAPMOTOR", claveCorporativo: "01L5120", disId: "65027", estado: "ESTADO DE MÉXICO", name: "Leapmotor Zaragoza", url: "leapmotorzaragoza.mx" },
+  { marca: "LEAPMOTOR", claveCorporativo: "01M7570", disId: "65030", estado: "ESTADO DE MÉXICO", name: "Leapmotor Lázaro Cárdenas", url: "leapmotorlazarocardenas.com" },
+  { marca: "LEAPMOTOR", claveCorporativo: "01L5360", disId: "65041", estado: "ESTADO DE MÉXICO", name: "Leapmotor Naucalpan", url: "leapmotornaucalpan.mx" },
+  { marca: "LEAPMOTOR", claveCorporativo: "01L5300", disId: "65043", estado: "ESTADO DE MÉXICO", name: "Leapmotor Camino Real", url: "leapmotorcaminoreal.com" },
+  { marca: "LEAPMOTOR", claveCorporativo: "01L5040", disId: "65017", estado: "MICHOACÁN", name: "Leapmotor Morelia", url: "leapmotormorelia.mx" },
+  { marca: "LEAPMOTOR", claveCorporativo: "01L5030", disId: "65037", estado: "MORELOS", name: "Leapmotor Cuernavaca", url: "leapmotorcuernavaca.mx" },
+  { marca: "LEAPMOTOR", claveCorporativo: "01L5200", disId: "65010", estado: "NUEVO LEÓN", name: "Leapmotor Lindavista", url: "leapmotorlindavista.mx" },
+  { marca: "LEAPMOTOR", claveCorporativo: "01L5191", disId: "65028", estado: "NUEVO LEÓN", name: "Leapmotor Valle Oriente", url: "leapmotorvalleoriente.mx" },
+  { marca: "LEAPMOTOR", claveCorporativo: "01L5190", disId: "65029", estado: "NUEVO LEÓN", name: "Leapmotor San Pedro", url: "leapmotorsanpedro.mx" },
+  { marca: "LEAPMOTOR", claveCorporativo: "01L5210", disId: "65039", estado: "PUEBLA", name: "Leapmotor Puebla Angelópolis", url: "leapmotorangelopolis.mx" },
+  { marca: "LEAPMOTOR", claveCorporativo: "01L5220", disId: "65040", estado: "PUEBLA", name: "Leapmotor Puebla Serdán", url: "leapmotorserdan.mx" },
+  { marca: "LEAPMOTOR", claveCorporativo: "01L5010", disId: "65036", estado: "QUERÉTARO", name: "Leapmotor Querétaro", url: "leapmotorqueretaro.mx" }
+];
+
 export default function Dashboard() {
   const [theme, setTheme] = useState<'dark' | 'light'>(() => {
     try {
@@ -98,8 +127,8 @@ export default function Dashboard() {
   const [newAdvName, setNewAdvName] = useState('');
   const [newAdvEmail, setNewAdvEmail] = useState('');
   const [newAdvPassword, setNewAdvPassword] = useState('');
-  const [distributors, setDistributors] = useState<any[]>([]);
-  const [newAdvDistributor, setNewAdvDistributor] = useState('');
+  const [distributors, setDistributors] = useState<any[]>(OFFICIAL_DISTRIBUTORS_STATIC);
+  const [newAdvDistributor, setNewAdvDistributor] = useState(OFFICIAL_DISTRIBUTORS_STATIC[0]?.name || '');
   const [mgmtError, setMgmtError] = useState('');
   const [mgmtSuccess, setMgmtSuccess] = useState('');
   const [editingAdvisorId, setEditingAdvisorId] = useState<string | null>(null);
@@ -185,41 +214,12 @@ export default function Dashboard() {
   useEffect(() => {
     let active = true;
     const seedAndSubscribeDistributors = async () => {
-      const OFFICIAL_DISTRIBUTORS = [
-        { marca: "LEAPMOTOR", claveCorporativo: "01L5060", disId: "65012", estado: "AGUASCALIENTES", name: "Leapmotor Aguascalientes", url: "leapmotoraguascalientes.com" },
-        { marca: "LEAPMOTOR", claveCorporativo: "01L5330", disId: "65003", estado: "BAJA CALIFORNIA", name: "Leapmotor Tijuana", url: "leapmotortijuana.com" },
-        { marca: "LEAPMOTOR", claveCorporativo: "01L5340", disId: "65004", estado: "BAJA CALIFORNIA", name: "Leapmotor Mexicali", url: "leapmotormexicali.mx" },
-        { marca: "LEAPMOTOR", claveCorporativo: "01L5400", disId: "65026", estado: "COAHUILA", name: "Leapmotor Saltillo", url: "leapmotorsaltillo.mx" },
-        { marca: "LEAPMOTOR", claveCorporativo: "01L5280", disId: "65032", estado: "COLIMA", name: "Leapmotor Colima", url: "leapmotorcolima.mx" },
-        { marca: "LEAPMOTOR", claveCorporativo: "01L5281", disId: "65033", estado: "COLIMA", name: "Leapmotor Manzanillo", url: "leapmotormanzanillo.mx" },
-        { marca: "LEAPMOTOR", claveCorporativo: "01L5160", disId: "65002", estado: "CHIHUAHUA", name: "Leapmotor Chihuahua", url: "leapmotorchihuahua.mx" },
-        { marca: "LEAPMOTOR", claveCorporativo: "01L5020", disId: "65006", estado: "CIUDAD DE MÉXICO", name: "Leapmotor Santa Fe", url: "leapmotorsantafe.mx" },
-        { marca: "LEAPMOTOR", claveCorporativo: "01L5350", disId: "65042", estado: "CIUDAD DE MÉXICO", name: "Leapmotor Viaducto", url: "leapmotorviaducto.mx" },
-        { marca: "LEAPMOTOR", claveCorporativo: "01L5390", disId: "65020", estado: "GUANAJUATO", name: "Leapmotor Celaya", url: "leapmotorcelaya.com" },
-        { marca: "LEAPMOTOR", claveCorporativo: "01L5380", disId: "65023", estado: "HIDALGO", name: "Leapmotor Pachuca", url: "leapmotorpachuca.mx" },
-        { marca: "LEAPMOTOR", claveCorporativo: "01L5310", disId: "65031", estado: "JALISCO", name: "Leapmotor Acueducto", url: "leapmotoracueducto.com" },
-        { marca: "LEAPMOTOR", claveCorporativo: "01L5130", disId: "65009", estado: "ESTADO DE MÉXICO", name: "Leapmotor Cuautitlán", url: "leapmotorcuautitlan.mx" },
-        { marca: "LEAPMOTOR", claveCorporativo: "01L5370", disId: "65025", estado: "ESTADO DE MÉXICO", name: "Leapmotor Coacalco", url: "leapmotorcoacalco.mx" },
-        { marca: "LEAPMOTOR", claveCorporativo: "01L5120", disId: "65027", estado: "ESTADO DE MÉXICO", name: "Leapmotor Zaragoza", url: "leapmotorzaragoza.mx" },
-        { marca: "LEAPMOTOR", claveCorporativo: "01M7570", disId: "65030", estado: "ESTADO DE MÉXICO", name: "Leapmotor Lázaro Cárdenas", url: "leapmotorlazarocardenas.com" },
-        { marca: "LEAPMOTOR", claveCorporativo: "01L5360", disId: "65041", estado: "ESTADO DE MÉXICO", name: "Leapmotor Naucalpan", url: "leapmotornaucalpan.mx" },
-        { marca: "LEAPMOTOR", claveCorporativo: "01L5300", disId: "65043", estado: "ESTADO DE MÉXICO", name: "Leapmotor Camino Real", url: "leapmotorcaminoreal.com" },
-        { marca: "LEAPMOTOR", claveCorporativo: "01L5040", disId: "65017", estado: "MICHOACÁN", name: "Leapmotor Morelia", url: "leapmotormorelia.mx" },
-        { marca: "LEAPMOTOR", claveCorporativo: "01L5030", disId: "65037", estado: "MORELOS", name: "Leapmotor Cuernavaca", url: "leapmotorcuernavaca.mx" },
-        { marca: "LEAPMOTOR", claveCorporativo: "01L5200", disId: "65010", estado: "NUEVO LEÓN", name: "Leapmotor Lindavista", url: "leapmotorlindavista.mx" },
-        { marca: "LEAPMOTOR", claveCorporativo: "01L5191", disId: "65028", estado: "NUEVO LEÓN", name: "Leapmotor Valle Oriente", url: "leapmotorvalleoriente.mx" },
-        { marca: "LEAPMOTOR", claveCorporativo: "01L5190", disId: "65029", estado: "NUEVO LEÓN", name: "Leapmotor San Pedro", url: "leapmotorsanpedro.mx" },
-        { marca: "LEAPMOTOR", claveCorporativo: "01L5210", disId: "65039", estado: "PUEBLA", name: "Leapmotor Puebla Angelópolis", url: "leapmotorangelopolis.mx" },
-        { marca: "LEAPMOTOR", claveCorporativo: "01L5220", disId: "65040", estado: "PUEBLA", name: "Leapmotor Puebla Serdán", url: "leapmotorserdan.mx" },
-        { marca: "LEAPMOTOR", claveCorporativo: "01L5010", disId: "65036", estado: "QUERÉTARO", name: "Leapmotor Querétaro", url: "leapmotorqueretaro.mx" }
-      ];
-
       try {
         const ref = collection(db, 'distributors');
         const snap = await getDocs(ref);
         
         // 1. Seed or update official ones to ensure they contain all fields (marca, claveCorporativo, disId, estado, name, url)
-        for (const dist of OFFICIAL_DISTRIBUTORS) {
+        for (const dist of OFFICIAL_DISTRIBUTORS_STATIC) {
           await setDoc(doc(db, 'distributors', dist.disId), {
             marca: dist.marca,
             claveCorporativo: dist.claveCorporativo,
@@ -232,7 +232,7 @@ export default function Dashboard() {
         }
 
         // 2. Clean up any stale or non-official legacy distributors
-        const officialIds = new Set(OFFICIAL_DISTRIBUTORS.map(d => d.disId));
+        const officialIds = new Set(OFFICIAL_DISTRIBUTORS_STATIC.map(d => d.disId));
         snap.forEach(async (docSnap) => {
           if (!officialIds.has(docSnap.id)) {
             try {
@@ -256,12 +256,20 @@ export default function Dashboard() {
           list.push({ id: docSnap.id, ...docSnap.data() });
         });
         list.sort((a, b) => a.name.localeCompare(b.name));
-        setDistributors(list);
+        
         if (list.length > 0) {
-          setNewAdvDistributor(list[0].name);
+          setDistributors(list);
+          // Set initial option if not already selected
+          setNewAdvDistributor(prev => prev || list[0].name);
+        } else {
+          setDistributors(OFFICIAL_DISTRIBUTORS_STATIC);
+          setNewAdvDistributor(prev => prev || OFFICIAL_DISTRIBUTORS_STATIC[0].name);
         }
       }, (error) => {
         console.error("Dashboard distributors subscription error:", error);
+        // Fallback on error to keep UI functional
+        setDistributors(OFFICIAL_DISTRIBUTORS_STATIC);
+        setNewAdvDistributor(prev => prev || OFFICIAL_DISTRIBUTORS_STATIC[0].name);
       });
 
       return unsubscribeDistributors;
@@ -879,7 +887,7 @@ export default function Dashboard() {
             <div>
               <span className="text-[11px] font-mono text-indigo-500 tracking-wider uppercase font-extrabold">Pruebas de Manejo</span>
               <div className={`text-3xl font-black mt-1.5 font-mono ${titleColor}`}>{pruebaLeads}</div>
-              <p className={`text-[11px] font-bold mt-1 ${subColor}`}>Test drive en pista</p>
+              <p className={`text-[11px] font-bold mt-1 ${subColor}`}>Pruebas de manejo</p>
             </div>
             <div className={`p-3.5 rounded-xl ${isDark ? 'bg-indigo-500/20 text-indigo-400' : 'bg-indigo-50 text-indigo-600 border border-indigo-200'}`}>
               <Key className="w-5 h-5 text-white" />

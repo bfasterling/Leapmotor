@@ -596,73 +596,78 @@ export default function LeadForm({ c10ImgUrl, t03ImgUrl, b10ImgUrl }: LeadFormPr
     }
 
     try {
-      // 1. Fetch sales advisors from Firestore 'advisors' collection
-      let activeAdvisors: any[] = [];
-      try {
-        const advSnap = await getDocs(collection(db, 'advisors'));
-        advSnap.forEach((docSnap) => {
-          const advData = docSnap.data();
-          if (advData.active !== false) {
-            activeAdvisors.push({ id: docSnap.id, ...advData });
-          }
-        });
-      } catch (advErr) {
-        console.error("Error reading advisors, using fallbacks:", advErr);
-      }
+      let minWaitingAdvisor: any = null;
+      const needsAdvisorAssignment = activeLanding !== 'leapmotor' && formData.requestType !== 'cotizacion' && formData.requestType !== 'prueba';
 
-      // If no advisors configured in database yet, seed default active advisors instantly
-      if (activeAdvisors.length === 0) {
-        const defaultAdvisors = [
-          { id: 'ADV-01', name: 'Arturo Stellantis', email: 'arturo@leapmotor.com', password: '123', distributor: 'Leapmotor Santa Fe', active: true },
-          { id: 'ADV-02', name: 'Belinda Leap', email: 'belinda@leapmotor.com', password: '123', distributor: 'Leapmotor Santa Fe', active: true },
-          { id: 'ADV-03', name: 'Carlos Galería', email: 'carlos@leapmotor.com', password: '123', distributor: 'Leapmotor Viaducto', active: true }
-        ];
+      if (needsAdvisorAssignment) {
+        // 1. Fetch sales advisors from Firestore 'advisors' collection
+        let activeAdvisors: any[] = [];
         try {
-          for (const s of defaultAdvisors) {
-            await setDoc(doc(db, 'advisors', s.id), {
-              name: s.name,
-              email: s.email,
-              password: s.password,
-              distributor: s.distributor,
-              active: s.active,
-              createdAt: new Date()
-            });
-          }
-          activeAdvisors = defaultAdvisors;
-        } catch (seedErr) {
-          console.error("Failed to seed fallback advisors:", seedErr);
-          activeAdvisors = defaultAdvisors; // static fallback
+          const advSnap = await getDocs(collection(db, 'advisors'));
+          advSnap.forEach((docSnap) => {
+            const advData = docSnap.data();
+            if (advData.active !== false) {
+              activeAdvisors.push({ id: docSnap.id, ...advData });
+            }
+          });
+        } catch (advErr) {
+          console.error("Error reading advisors, using fallbacks:", advErr);
         }
-      }
 
-      // 2. Query all existing leads to count each advisor's waiting leads
-      let minWaitingAdvisor = activeAdvisors[0];
-      try {
-        const leadsSnap = await getDocs(collection(db, 'leads'));
-        const advisorWaitingMap: Record<string, number> = {};
-        
-        activeAdvisors.forEach(a => {
-          advisorWaitingMap[a.id] = 0;
-        });
-
-        leadsSnap.forEach(lSnap => {
-          const lData = lSnap.data();
-          if (lData.status === LeadStatus.WAITING && lData.advisorId && advisorWaitingMap[lData.advisorId] !== undefined) {
-            advisorWaitingMap[lData.advisorId]++;
+        // If no advisors configured in database yet, seed default active advisors instantly
+        if (activeAdvisors.length === 0) {
+          const defaultAdvisors = [
+            { id: 'ADV-01', name: 'Arturo Stellantis', email: 'arturo@leapmotor.com', password: '123', distributor: 'Leapmotor Santa Fe', active: true },
+            { id: 'ADV-02', name: 'Belinda Leap', email: 'belinda@leapmotor.com', password: '123', distributor: 'Leapmotor Santa Fe', active: true },
+            { id: 'ADV-03', name: 'Carlos Galería', email: 'carlos@leapmotor.com', password: '123', distributor: 'Leapmotor Viaducto', active: true }
+          ];
+          try {
+            for (const s of defaultAdvisors) {
+              await setDoc(doc(db, 'advisors', s.id), {
+                name: s.name,
+                email: s.email,
+                password: s.password,
+                distributor: s.distributor,
+                active: s.active,
+                createdAt: new Date()
+              });
+            }
+            activeAdvisors = defaultAdvisors;
+          } catch (seedErr) {
+            console.error("Failed to seed fallback advisors:", seedErr);
+            activeAdvisors = defaultAdvisors; // static fallback
           }
-        });
+        }
 
-        // Select the advisor with the least waiting leads (minimum count)
-        let minCount = Infinity;
-        activeAdvisors.forEach(a => {
-          const count = advisorWaitingMap[a.id];
-          if (count < minCount) {
-            minCount = count;
-            minWaitingAdvisor = a;
-          }
-        });
-      } catch (leadsErr) {
-        console.error("Error counting waiting workloads, defaulting to random or first:", leadsErr);
+        // 2. Query all existing leads to count each advisor's waiting leads
+        minWaitingAdvisor = activeAdvisors[0];
+        try {
+          const leadsSnap = await getDocs(collection(db, 'leads'));
+          const advisorWaitingMap: Record<string, number> = {};
+          
+          activeAdvisors.forEach(a => {
+            advisorWaitingMap[a.id] = 0;
+          });
+
+          leadsSnap.forEach(lSnap => {
+            const lData = lSnap.data();
+            if (lData.status === LeadStatus.WAITING && lData.advisorId && advisorWaitingMap[lData.advisorId] !== undefined) {
+              advisorWaitingMap[lData.advisorId]++;
+            }
+          });
+
+          // Select the advisor with the least waiting leads (minimum count)
+          let minCount = Infinity;
+          activeAdvisors.forEach(a => {
+            const count = advisorWaitingMap[a.id];
+            if (count < minCount) {
+              minCount = count;
+              minWaitingAdvisor = a;
+            }
+          });
+        } catch (leadsErr) {
+          console.error("Error counting waiting workloads, defaulting to random or first:", leadsErr);
+        }
       }
 
       const leadsCol = collection(db, 'leads');
@@ -695,10 +700,10 @@ export default function LeadForm({ c10ImgUrl, t03ImgUrl, b10ImgUrl }: LeadFormPr
         status: LeadStatus.WAITING,
         advisorId: activeLanding === 'leapmotor' 
           ? "" 
-          : (formData.requestType === 'cotizacion' || formData.requestType === 'prueba' ? "" : minWaitingAdvisor.id),
+          : (formData.requestType === 'cotizacion' || formData.requestType === 'prueba' ? "" : (minWaitingAdvisor?.id || "")),
         advisorName: activeLanding === 'leapmotor' 
           ? (formData.requestType === 'cotizacion' ? "Sin Asignar (Solo Cotización)" : (formData.requestType === 'prueba' ? "Sin Asignar (Solo Prueba)" : "Sin Asignar (Pool Leapmotor)")) 
-          : (formData.requestType === 'cotizacion' ? "Sin Asignar (Solo Cotización)" : (formData.requestType === 'prueba' ? "Sin Asignar (Solo Prueba de Manejo)" : minWaitingAdvisor.name)),
+          : (formData.requestType === 'cotizacion' ? "Sin Asignar (Solo Cotización)" : (formData.requestType === 'prueba' ? "Sin Asignar (Solo Prueba de Manejo)" : (minWaitingAdvisor?.name || "Sin Asignar"))),
         createdAt: serverTimestamp(),
         // New features parameters
         landing: activeLanding,
@@ -1742,7 +1747,7 @@ export default function LeadForm({ c10ImgUrl, t03ImgUrl, b10ImgUrl }: LeadFormPr
                     <div className="text-indigo-400 font-bold block uppercase mb-1 flex items-center gap-1">
                       <Key className="w-3.5 h-3.5" /> TEST DRIVE RESERVADO OK
                     </div>
-                    <span>Tu cita preferida es para el <strong>{formData.testDriveDate}</strong>. Gracias por agendar tu prueba de manejo, a la brevedad un asesor te contactará para confirmar tu cita.</span>
+                    <span>Gracias por agendar tu prueba de manejo, a la brevedad un asesor te contactará para confirmar tu cita.</span>
                   </div>
                 ) : (
                   <p 
