@@ -1531,9 +1531,7 @@ export default function LeadForm({ c10ImgUrl, t03ImgUrl, b10ImgUrl }: LeadFormPr
                 </button>
 
                 <h2 className={`text-xl tracking-wide text-white mb-1 uppercase font-sans ${activeLanding === 'leapmotor' ? 'font-semibold' : 'font-black'}`}>
-                  {activeLanding === 'leapmotor' 
-                    ? 'Déjanos tus datos' 
-                    : `Registro de ${formData.requestType === 'cotizacion' ? 'Cotización' : (formData.requestType === 'prueba' ? 'Prueba de Manejo' : 'Atención personalizada')}`}
+                  DÉJANOS TUS DATOS
                 </h2>
                 {activeLanding !== 'leapmotor' && (
                   <span className="text-[11px] text-white font-bold font-mono block mb-4 uppercase">
@@ -1970,12 +1968,23 @@ export default function LeadForm({ c10ImgUrl, t03ImgUrl, b10ImgUrl }: LeadFormPr
                   </div>
                 ) : (
                   <p 
-                    style={activeLanding === 'leapmotor' ? { color: '#deff01' } : undefined}
-                    className={`text-xs font-bold font-mono tracking-wide ${activeLanding === 'leapmotor' ? '' : 'text-emerald-400'}`}
+                    style={
+                      (formData.requestType === 'cotizacion' && (selectedBrand === 'Leapmotor' || activeLanding === 'leapmotor'))
+                        ? { color: '#deff01' }
+                        : (activeLanding === 'leapmotor' ? { color: '#deff01' } : undefined)
+                    }
+                    className={`text-xs font-bold font-mono tracking-wide ${
+                      (formData.requestType === 'cotizacion' && (selectedBrand === 'Leapmotor' || activeLanding === 'leapmotor'))
+                        ? ''
+                        : (activeLanding === 'leapmotor' ? '' : 'text-emerald-400')
+                    }`}
                   >
-                    {activeLanding === 'leapmotor' 
-                      ? "Un asesor especializado ha recibido tu alerta, te contactará a la brevedad en el Hospitality de LeapMotor."
-                      : "Un asesor especializado ha recibido tu alerta. Contacto en menos de 2 Minutos."
+                    {formData.requestType === 'cotizacion' && (selectedBrand === 'Leapmotor' || activeLanding === 'leapmotor')
+                      ? "Gracias por solicitar una cotización, en breve un asesor se pondrá en contacto."
+                      : (activeLanding === 'leapmotor' 
+                          ? "Un asesor especializado ha recibido tu alerta, te contactará a la brevedad en el Hospitality de LeapMotor."
+                          : "Un asesor especializado ha recibido tu alerta. Contacto en menos de 2 Minutos."
+                        )
                     }
                   </p>
                 )}

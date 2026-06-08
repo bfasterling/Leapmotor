@@ -150,6 +150,10 @@ export default function Dashboard() {
   const [leadSearchStartDate, setLeadSearchStartDate] = useState('');
   const [leadSearchEndDate, setLeadSearchEndDate] = useState('');
 
+  // Estados para paginación de prospectos
+  const [currentPage, setCurrentPage] = useState(1);
+  const [pageSize, setPageSize] = useState(20);
+
   // Estados para edición de notas de coordinador
   const [editingNotesLeadId, setEditingNotesLeadId] = useState<string | null>(null);
   const [editingNotesText, setEditingNotesText] = useState('');
@@ -170,6 +174,11 @@ export default function Dashboard() {
   useEffect(() => {
     document.title = "Stellantis Campo Marte - Tablero digital";
   }, []);
+
+  // Reset page to 1 when filters or page size change
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [leadSearch, leadStatusFilter, leadLandingFilter, leadAgencyFilter, leadAdvisorFilter, leadDateFilter, pageSize]);
 
   // Subscribe to leads
   useEffect(() => {
@@ -944,6 +953,15 @@ export default function Dashboard() {
     return true;
   });
 
+  // Parámetros de paginación para el administrador de prospectos
+  const totalLeadsCount = filteredCoordinatorLeads.length;
+  const totalPages = Math.ceil(totalLeadsCount / pageSize) || 1;
+  const activePage = currentPage > totalPages ? totalPages : currentPage;
+  
+  const startIndex = (activePage - 1) * pageSize;
+  const endIndex = Math.min(startIndex + pageSize, totalLeadsCount);
+  const paginatedCoordinatorLeads = filteredCoordinatorLeads.slice(startIndex, endIndex);
+
   if (loading) {
     return (
       <div className={`w-full min-h-screen flex justify-center items-center ${isDark ? 'bg-slate-950 text-emerald-400' : 'bg-slate-50 text-emerald-600'}`}>
@@ -1551,7 +1569,7 @@ export default function Dashboard() {
                         </td>
                       </tr>
                     ) : (
-                      filteredCoordinatorLeads.map((lead) => {
+                      paginatedCoordinatorLeads.map((lead) => {
                         let dateStr = 'Hoy';
                         if (lead.createdAt) {
                           const dateObj = lead.createdAt.toDate ? lead.createdAt.toDate() : new Date(lead.createdAt);
@@ -1812,6 +1830,112 @@ export default function Dashboard() {
                 </table>
               </div>
             </div>
+
+            {/* Controles de Paginación */}
+            {totalLeadsCount > 0 && (
+              <div className={`flex flex-col md:flex-row items-center justify-between gap-4 mt-6 p-4 rounded-2xl border transition-all ${
+                isDark ? 'bg-slate-950/40 border-slate-850 text-slate-400' : 'bg-slate-50 border-slate-200 ' + mutedColor
+              }`}>
+                {/* Detalle de registros mostrados */}
+                <span className="text-[11px] font-semibold leading-none">
+                  Mostrando <strong className={isDark ? 'text-white' : 'text-slate-900'}>{totalLeadsCount === 0 ? 0 : startIndex + 1}</strong>{" "}
+                  a <strong className={isDark ? 'text-white' : 'text-slate-900'}>{endIndex}</strong>{" "}
+                  de <strong className={isDark ? 'text-white' : 'text-slate-900'}>{totalLeadsCount}</strong> prospectos.
+                </span>
+
+                {/* Selectores de tamaño de página y cambio de página */}
+                <div className="flex flex-wrap items-center gap-4">
+                  {/* Selector de tamaño de página */}
+                  <div className="flex items-center gap-2">
+                    <span className="text-[10px] font-mono tracking-wider uppercase font-extrabold">Mostrar:</span>
+                    <select
+                      value={pageSize}
+                      onChange={(e) => {
+                        setPageSize(Number(e.target.value));
+                        setCurrentPage(1);
+                      }}
+                      className={`text-[10px] py-1 px-2.5 rounded-lg border font-mono font-bold cursor-pointer transition ${
+                        isDark 
+                          ? 'bg-slate-900 border-slate-700 text-white focus:ring-1 focus:ring-emerald-500/50' 
+                          : 'bg-white border-slate-200 text-slate-800 focus:ring-1 focus:ring-emerald-600/50'
+                      }`}
+                    >
+                      <option value={20}>20 registros</option>
+                      <option value={50}>50 registros</option>
+                      <option value={100}>100 registros</option>
+                    </select>
+                  </div>
+
+                  {/* Botones de navegación */}
+                  <div className="flex items-center gap-1.5">
+                    <button
+                      onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
+                      disabled={activePage === 1}
+                      className={`px-3 py-1.5 text-[10px] uppercase font-mono font-black rounded-lg border transition ${
+                        activePage === 1
+                          ? 'opacity-40 cursor-not-allowed border-transparent bg-transparent'
+                          : isDark
+                            ? 'bg-slate-900 border-slate-700 hover:bg-slate-800 hover:border-slate-600 text-white cursor-pointer'
+                            : 'bg-white border-slate-200 hover:bg-slate-100 hover:border-slate-300 text-slate-800 cursor-pointer'
+                      }`}
+                    >
+                      ← Anterior
+                    </button>
+
+                    <div className="flex items-center gap-1">
+                      {Array.from({ length: totalPages }, (_, i) => i + 1)
+                        .filter(p => {
+                          // Show first page, last page, current page, and pages immediately adjacent to current page
+                          return p === 1 || p === totalPages || Math.abs(p - activePage) <= 1;
+                        })
+                        .map((page, index, array) => {
+                          const elements = [];
+                          // If there's a gap between the current page and the previous shown page, render ellipsis
+                          if (index > 0 && page - array[index - 1] > 1) {
+                            elements.push(
+                              <span key={`dots-${page}`} className="px-1.5 text-xs select-none opacity-50 font-mono">
+                                ...
+                              </span>
+                            );
+                          }
+                          elements.push(
+                            <button
+                              key={page}
+                              onClick={() => setCurrentPage(page)}
+                              className={`w-7 h-7 flex items-center justify-center text-[10px] font-mono font-bold rounded-lg border transition cursor-pointer ${
+                                activePage === page
+                                  ? (isDark 
+                                      ? 'bg-emerald-500/20 border-emerald-500/50 text-emerald-400' 
+                                      : 'bg-emerald-500/10 border-emerald-500/30 text-emerald-700 font-extrabold')
+                                  : (isDark
+                                      ? 'bg-slate-900 border-slate-700 hover:bg-slate-800 text-white'
+                                      : 'bg-white border-slate-200 hover:bg-slate-100 text-slate-800')
+                              }`}
+                            >
+                              {page}
+                            </button>
+                          );
+                          return elements;
+                        })}
+                    </div>
+
+                    <button
+                      onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))}
+                      disabled={activePage === totalPages}
+                      className={`px-3 py-1.5 text-[10px] uppercase font-mono font-black rounded-lg border transition ${
+                        activePage === totalPages
+                          ? 'opacity-40 cursor-not-allowed border-transparent bg-transparent'
+                          : isDark
+                            ? 'bg-slate-900 border-slate-700 hover:bg-slate-800 hover:border-slate-600 text-white cursor-pointer'
+                            : 'bg-white border-slate-200 hover:bg-slate-100 hover:border-slate-300 text-slate-800 cursor-pointer'
+                      }`}
+                    >
+                      Siguiente →
+                    </button>
+                  </div>
+                </div>
+              </div>
+            )}
           </div>
         )}
 
