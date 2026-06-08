@@ -307,10 +307,36 @@ interface LeadFormProps {
 
 export default function LeadForm({ c10ImgUrl, t03ImgUrl, b10ImgUrl }: LeadFormProps) {
   // Experience selector: 'leapmotor' | 'jeep' | 'multimarca'
-  const [activeLanding, setActiveLanding] = useState<'leapmotor' | 'jeep' | 'multimarca'>('leapmotor');
+  const [activeLanding, setActiveLanding] = useState<'leapmotor' | 'jeep' | 'multimarca'>(() => {
+    if (typeof window !== 'undefined') {
+      const host = window.location.hostname.toLowerCase();
+      const searchParams = new URLSearchParams(window.location.search);
+      const landingParam = searchParams.get('landing') || searchParams.get('campaign') || searchParams.get('site');
+      
+      if (landingParam === 'jeep' || host.startsWith('jeep')) {
+        return 'jeep';
+      } else if (landingParam === 'multimarca' || host.startsWith('multimarca') || host.startsWith('stellantis')) {
+        return 'multimarca';
+      } else if (landingParam === 'leapmotor' || host.startsWith('leapmotor')) {
+        return 'leapmotor';
+      }
+    }
+    return 'leapmotor';
+  });
   
   // Multimarca active brand
-  const [selectedBrand, setSelectedBrand] = useState<string>('Leapmotor');
+  const [selectedBrand, setSelectedBrand] = useState<string>(() => {
+    if (typeof window !== 'undefined') {
+      const host = window.location.hostname.toLowerCase();
+      const searchParams = new URLSearchParams(window.location.search);
+      const landingParam = searchParams.get('landing') || searchParams.get('campaign') || searchParams.get('site');
+      
+      if (landingParam === 'jeep' || host.startsWith('jeep')) {
+        return 'Jeep';
+      }
+    }
+    return 'Leapmotor';
+  });
   const [selectedSubBrand, setSelectedSubBrand] = useState<string | null>(null);
 
   // Modal displays states
@@ -318,18 +344,36 @@ export default function LeadForm({ c10ImgUrl, t03ImgUrl, b10ImgUrl }: LeadFormPr
   const [showModelModal, setShowModelModal] = useState(false);
 
   // Form registration parameters
-  const [formData, setFormData] = useState({
-    name: '',
-    lastName: '',
-    email: '',
-    phone: '',
-    postalCode: '',
-    state: 'Ciudad de México (CDMX)',
-    distributor: 'Leapmotor Santa Fe',
-    modelOfInterest: 'B10',
-    contactMethod: 'whatsapp',
-    testDriveDate: '',
-    requestType: 'asesor' as 'cotizacion' | 'prueba' | 'asesor'
+  const [formData, setFormData] = useState(() => {
+    let initialLanding: 'leapmotor' | 'jeep' | 'multimarca' = 'leapmotor';
+    if (typeof window !== 'undefined') {
+      const host = window.location.hostname.toLowerCase();
+      const searchParams = new URLSearchParams(window.location.search);
+      const landingParam = searchParams.get('landing') || searchParams.get('campaign') || searchParams.get('site');
+      
+      if (landingParam === 'jeep' || host.startsWith('jeep')) {
+        initialLanding = 'jeep';
+      } else if (landingParam === 'multimarca' || host.startsWith('multimarca') || host.startsWith('stellantis')) {
+        initialLanding = 'multimarca';
+      }
+    }
+
+    const defaultModel = initialLanding === 'jeep' ? 'Jeep Cherokee' : 'B10';
+    const defaultDistributor = initialLanding === 'jeep' ? 'Autokasa Viaducto' : 'Leapmotor Santa Fe';
+
+    return {
+      name: '',
+      lastName: '',
+      email: '',
+      phone: '',
+      postalCode: '',
+      state: 'Ciudad de México (CDMX)',
+      distributor: defaultDistributor,
+      modelOfInterest: defaultModel,
+      contactMethod: 'whatsapp',
+      testDriveDate: '',
+      requestType: 'asesor' as 'cotizacion' | 'prueba' | 'asesor'
+    };
   });
 
   const [loading, setLoading] = useState(false);
@@ -1570,8 +1614,8 @@ export default function LeadForm({ c10ImgUrl, t03ImgUrl, b10ImgUrl }: LeadFormPr
 
                     {/* Postal Code field */}
                     <div className={rowClass}>
-                      <label id="frm-postalcode-label" htmlFor="postalCode" className={`text-[11px] uppercase ${activeLanding === 'leapmotor' ? 'font-sans' : 'font-mono'} tracking-wider block mb-0.5 truncate ${activeLanding === 'leapmotor' ? 'font-semibold text-white' : 'text-white font-extrabold'}`} title="Código Postal *">
-                        Código Postal *
+                      <label id="frm-postalcode-label" htmlFor="postalCode" className={`text-[11px] uppercase ${activeLanding === 'leapmotor' ? 'font-sans' : 'font-mono'} tracking-wider block mb-0.5 truncate ${activeLanding === 'leapmotor' ? 'font-semibold text-white' : 'text-white font-extrabold'}`} title="Tu Código Postal *">
+                        Tu Código Postal *
                       </label>
                       <div className="relative">
                         <MapPin className="absolute left-3 top-3 w-4 h-4 text-slate-300" />
