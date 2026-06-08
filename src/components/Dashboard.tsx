@@ -167,6 +167,10 @@ export default function Dashboard() {
   const [csvMessage, setCsvMessage] = useState<{ text: string, type: 'info' | 'success' | 'error' } | null>(null);
   const [csvDetails, setCsvDetails] = useState<string[]>([]);
 
+  useEffect(() => {
+    document.title = "Stellantis Campo Marte - Tablero digital";
+  }, []);
+
   // Subscribe to leads
   useEffect(() => {
     const q = query(collection(db, 'leads'), orderBy('createdAt', 'desc'));
@@ -465,10 +469,14 @@ export default function Dashboard() {
     if (!advisorObj) return;
 
     try {
+      const foundDealer = ALL_DEALERS.find(d => d.name === advisorObj.distributor);
+      const disIdVal = foundDealer ? foundDealer.id : '';
+
       const payload: any = {
         advisorId: advisorObj.id,
         advisorName: advisorObj.name,
-        distributor: advisorObj.distributor || 'Leapmotor Santa Fe'
+        distributor: advisorObj.distributor || 'Leapmotor Santa Fe',
+        disId: disIdVal
       };
       await updateDoc(doc(db, 'leads', leadId), payload);
       setMgmtSuccess('Prospecto reasignado con éxito.');
@@ -1020,7 +1028,7 @@ export default function Dashboard() {
             <div>
               <span className="text-[11px] font-mono text-cyan-500 tracking-wider uppercase font-extrabold">LeapMotor En Atención</span>
               <div className={`text-3xl font-black mt-1.5 font-mono ${titleColor}`}>{leapmotorAttendingCountRealTime}</div>
-              <p className={`text-[11px] font-bold mt-1 ${mutedColor}`}>En llamada/WhatsApp</p>
+              <p className={`text-[11px] font-bold mt-1 ${mutedColor}`}>Siendo atendidos</p>
             </div>
             <div className={`p-3.5 rounded-xl ${isDark ? 'bg-cyan-500/20 text-cyan-400' : 'bg-cyan-50 text-cyan-700 border border-cyan-200'}`}>
               <Users className="w-5 h-5" />
@@ -1117,7 +1125,6 @@ export default function Dashboard() {
             <div>
               <span className="text-[11px] font-mono text-emerald-500 tracking-wider uppercase font-extrabold">Cotizaciones</span>
               <div className={`text-3xl font-black mt-1.5 font-mono ${titleColor}`}>{cotizacionLeads}</div>
-              <p className={`text-[11px] font-bold mt-1 ${subColor}`}>Planes de financiamiento</p>
             </div>
             <div className={`p-3.5 rounded-xl ${isDark ? 'bg-emerald-500/20 text-emerald-400' : 'bg-emerald-50 text-emerald-600 border border-emerald-200'}`}>
               <FileText className="w-5 h-5 text-white" />
@@ -1130,7 +1137,6 @@ export default function Dashboard() {
             <div>
               <span className="text-[11px] font-mono text-indigo-500 tracking-wider uppercase font-extrabold">Pruebas de Manejo</span>
               <div className={`text-3xl font-black mt-1.5 font-mono ${titleColor}`}>{pruebaLeads}</div>
-              <p className={`text-[11px] font-bold mt-1 ${subColor}`}>Pruebas de manejo</p>
             </div>
             <div className={`p-3.5 rounded-xl ${isDark ? 'bg-indigo-500/20 text-indigo-400' : 'bg-indigo-50 text-indigo-600 border border-indigo-200'}`}>
               <Key className="w-5 h-5 text-white" />
@@ -1143,7 +1149,6 @@ export default function Dashboard() {
             <div>
               <span className="text-[11px] font-mono text-blue-500 tracking-wider uppercase font-extrabold">Llamar Asesor / Atención</span>
               <div className={`text-3xl font-black mt-1.5 font-mono ${titleColor}`}>{asesorLeads}</div>
-              <p className={`text-[11px] font-bold mt-1 ${subColor}`}>Atención VIP en stand</p>
             </div>
             <div className={`p-3.5 rounded-xl ${isDark ? 'bg-blue-500/20 text-blue-450 text-blue-400' : 'bg-blue-50 text-blue-600 border border-blue-200'}`}>
               <MessageSquare className="w-5 h-5 text-white" />
@@ -1250,91 +1255,32 @@ export default function Dashboard() {
         </div>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 gap-6">
         {/* Top 5 Distributors interest */}
         <div className={`${cardBg} rounded-2xl p-6 transition-all duration-300`}>
           <h3 className={`text-sm font-black tracking-wide uppercase font-mono mb-4 flex items-center gap-2 ${titleColor}`}>
             <MapPin className="w-4 h-4 text-emerald-400" /> Distribuidores de Interés
           </h3>
-          <div className="space-y-4 pt-2">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 pt-2">
             {distributorChartData.length === 0 ? (
-              <div className={`text-center text-xs font-bold py-8 ${subColor}`}>Registrando distribuidores...</div>
+              <div className={`col-span-full text-center text-xs font-bold py-8 ${subColor}`}>Registrando distribuidores...</div>
             ) : (
               distributorChartData.map((d, i) => {
                 const qty = d.Cantidad as number;
                 const percentage = totalLeads > 0 ? Math.round((qty / totalLeads) * 100) : 0;
                 return (
-                  <div key={d.name} className="space-y-1.5">
+                  <div key={d.name} className={`space-y-1.5 p-4 rounded-xl border ${isDark ? 'bg-slate-950/40 border-slate-800' : 'bg-slate-50/50 border-slate-200'}`}>
                      <div className="flex justify-between text-xs">
                       <span className={`font-extrabold truncate max-w-[200px] ${titleColor}`}>{i + 1}. {d.name}</span>
                       <span className="text-emerald-500 font-mono font-black">{qty} ({percentage}%)</span>
                     </div>
-                    <div className={`w-full h-2.5 rounded-full overflow-hidden border ${isDark ? 'bg-slate-900 border-slate-800' : 'bg-slate-100 border-slate-205 border-slate-200'}`}>
+                    <div className={`w-full h-2.5 rounded-full overflow-hidden border ${isDark ? 'bg-slate-900 border-slate-800' : 'bg-slate-105 bg-slate-100 border-slate-205 border-slate-200'}`}>
                       <div className="bg-gradient-to-r from-emerald-500 to-teal-500 h-full rounded-full" style={{ width: `${percentage}%` }} />
                     </div>
                   </div>
                 );
               })
             )}
-          </div>
-        </div>
-
-        {/* Advisor Performance table */}
-        <div className={`${cardBg} rounded-2xl p-6 lg:col-span-2 transition-all duration-300`}>
-          <h3 className={`text-sm font-black tracking-wide uppercase font-mono mb-4 flex items-center gap-2 ${titleColor}`}>
-            <Award className="w-4 h-4 text-blue-400" /> Velocidad de Respuesta por Asesor
-          </h3>
-          <div className="overflow-x-auto">
-            <table className="w-full text-xs text-left border-collapse">
-              <thead>
-                <tr className={`border-b font-bold font-mono ${isDark ? 'border-white/20 text-white' : 'border-slate-200 text-slate-800'}`}>
-                  <th className="py-2.5">ASESOR</th>
-                  <th className="py-2.5">LEADS FINALIZADOS</th>
-                  <th className="py-2.5">EN PROCESO</th>
-                  <th className="py-2.5">EFECTIVIDAD CIERRE</th>
-                </tr>
-              </thead>
-              <tbody className={`divide-y ${isDark ? 'divide-white/10' : 'divide-slate-150 divide-slate-100'}`}>
-                {advisors.length === 0 ? (
-                  <tr>
-                    <td colSpan={4} className={`py-6 text-center font-semibold italic ${subColor}`}>
-                      No hay asesores configurados para computar métricas...
-                    </td>
-                  </tr>
-                ) : (
-                  advisors.map(advisor => {
-                    const finishedLeads = filteredLeads.filter(l => l.advisorId === advisor.id && (l.status === LeadStatus.ATTENDED || l.status === LeadStatus.LOST));
-                    const processedLeads = finishedLeads.length;
-                    const activeLeads = filteredLeads.filter(l => l.advisorId === advisor.id && l.status === LeadStatus.ATTENDING).length;
-                    const successLeads = finishedLeads.filter(l => l.status === LeadStatus.ATTENDED).length;
-                    
-                    const performance = processedLeads > 0 ? Math.round((successLeads / processedLeads) * 100) : 0;
- 
-                    return (
-                      <tr key={advisor.id} className={`font-medium transition-colors duration-200 ${isDark ? 'text-slate-100 hover:bg-white/10' : 'text-slate-800 hover:bg-slate-100'}`}>
-                        <td className={`py-3 font-semibold ${titleColor}`}>
-                          <div className="flex items-center gap-1.5">
-                            <span className={`w-1.5 h-1.5 rounded-full ${advisor.active !== false ? 'bg-emerald-500 animate-pulse' : 'bg-red-500'}`} />
-                            {advisor.name}
-                          </div>
-                        </td>
-                        <td className={`py-3 font-mono font-bold ${titleColor}`}>{processedLeads}</td>
-                        <td className={`py-3 font-mono font-bold ${isDark ? 'text-cyan-400' : 'text-cyan-600'}`}>{activeLeads}</td>
-                        <td className="py-3 font-mono">
-                          <span className={`px-2 py-0.5 rounded font-black border ${
-                            performance >= 75 ? 'bg-blue-500/20 text-white border-blue-500/35' :
-                            performance >= 50 ? 'bg-amber-500/20 text-white border-amber-500/35' :
-                            processedLeads === 0 ? 'bg-white/15 text-white border-white/20' : 'bg-red-500/20 text-white border-red-500/35'
-                          }`}>
-                            {processedLeads === 0 ? 'Sin finalizar' : `${performance}% cierre`}
-                          </span>
-                        </td>
-                      </tr>
-                    );
-                  })
-                )}
-              </tbody>
-            </table>
           </div>
         </div>
       </div>
@@ -1661,9 +1607,9 @@ export default function Dashboard() {
                             </td>
 
                             <td className="p-3">
-                              {lead.requestType === 'cotizacion' ? (
+                              {(lead.requestType === 'cotizacion' || (lead.requestType === 'prueba' && lead.landing !== 'leapmotor')) ? (
                                 <span className="font-bold font-mono text-[10px] text-emerald-400 uppercase flex items-center gap-1">
-                                  🧾 Solo Cotización (CRM)
+                                  🧾 {lead.requestType === 'cotizacion' ? 'Solo Cotización (CRM)' : 'Prueba de Manejo (CRM)'}
                                 </span>
                               ) : lead.advisorId ? (
                                 <div className="flex flex-col">
@@ -1742,13 +1688,13 @@ export default function Dashboard() {
 
                             <td className="p-3">
                               <span className={`inline-block px-2.5 py-1 rounded-full text-[9px] font-black uppercase font-mono border ${
-                                lead.requestType === 'cotizacion' ? 'bg-emerald-500/15 text-emerald-400 border-emerald-500/30' :
+                                (lead.requestType === 'cotizacion' || (lead.requestType === 'prueba' && lead.landing !== 'leapmotor')) ? 'bg-emerald-500/15 text-emerald-400 border-emerald-500/30' :
                                 lead.status === LeadStatus.WAITING ? 'bg-amber-500/15 text-amber-400 border-amber-500/30' :
                                 lead.status === LeadStatus.ATTENDING ? 'bg-cyan-500/15 text-cyan-400 border-cyan-500/30 font-extrabold' :
                                 lead.status === LeadStatus.ATTENDED ? 'bg-emerald-500/15 text-emerald-400 border-emerald-500/30 font-bold' :
                                 'bg-slate-500/15 text-slate-400 border-slate-500/30'
                               }`}>
-                                {lead.requestType === 'cotizacion' ? 'Cotización' :
+                                {(lead.requestType === 'cotizacion' || (lead.requestType === 'prueba' && lead.landing !== 'leapmotor')) ? (lead.requestType === 'cotizacion' ? 'Cotización' : 'Prueba de Manejo') :
                                  lead.status === LeadStatus.WAITING ? 'Espera' :
                                  lead.status === LeadStatus.ATTENDING ? 'Atención' :
                                  lead.status === LeadStatus.ATTENDED ? 'Atendido / OK' :
@@ -1757,7 +1703,7 @@ export default function Dashboard() {
                             </td>
 
                             <td className="p-3 text-right">
-                              {lead.requestType === 'cotizacion' ? (
+                              {(lead.requestType === 'cotizacion' || (lead.requestType === 'prueba' && lead.landing !== 'leapmotor')) ? (
                                 <span className="px-3 py-1 bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-[9px] font-mono font-bold uppercase rounded-xl inline-block">
                                   ✓ Almacenado para CRM
                                 </span>
@@ -1777,13 +1723,6 @@ export default function Dashboard() {
                                       <option key={adv.id} value={adv.id}>{adv.name}</option>
                                     ))}
                                   </select>
-                                  <button
-                                    onClick={() => handleCancelLead(lead.id)}
-                                    className="text-[10px] uppercase font-black border border-red-500/35 hover:bg-red-500/10 text-red-400 px-2.5 py-1 rounded-lg transition duration-200 cursor-pointer"
-                                    title="Cancelar prospecto"
-                                  >
-                                    Cancelar
-                                  </button>
                                 </div>
                               )}
 

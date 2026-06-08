@@ -128,6 +128,10 @@ export default function AdvisorPanel() {
 
   // Request browser Notification permission on mount or login
   useEffect(() => {
+    document.title = "Stellantis Campo Marte - Asesor";
+  }, []);
+
+  useEffect(() => {
     if (loggedInAdvisor && typeof window !== 'undefined' && 'Notification' in window) {
       if (Notification.permission === 'default') {
         Notification.requestPermission().catch((err) => {
@@ -609,6 +613,11 @@ export default function AdvisorPanel() {
             <p className={`text-sm font-bold ${isDark ? 'text-white' : 'text-slate-650 text-slate-600'}`}>
               Bienvenido, <strong className={isDark ? 'text-emerald-400' : 'text-emerald-600 font-extrabold'}>{loggedInAdvisor.name}</strong> ({loggedInAdvisor.email}).
             </p>
+            {loggedInAdvisor.distributor && (
+              <p className={`text-xs ${isDark ? 'text-slate-400' : 'text-slate-500'} font-mono uppercase font-extrabold`}>
+                Distribuidor Asociado: {loggedInAdvisor.distributor}
+              </p>
+            )}
           </div>
 
           <div className="flex flex-wrap items-center gap-2 w-full md:w-auto justify-end">

@@ -442,7 +442,7 @@ export default function LeadForm({ c10ImgUrl, t03ImgUrl, b10ImgUrl }: LeadFormPr
       setFormData(prev => ({ ...prev, modelOfInterest: 'B10' }));
     } else if (target === 'jeep') {
       setSelectedBrand('Jeep');
-      setFormData(prev => ({ ...prev, modelOfInterest: 'Grand Cherokee' }));
+      setFormData(prev => ({ ...prev, modelOfInterest: 'Jeep Cherokee' }));
     } else if (target === 'multimarca') {
       setSelectedBrand('Leapmotor');
       setFormData(prev => ({ ...prev, modelOfInterest: 'B10' }));
@@ -462,6 +462,11 @@ export default function LeadForm({ c10ImgUrl, t03ImgUrl, b10ImgUrl }: LeadFormPr
       handleLandingSwitch('leapmotor');
     }
   }, []);
+
+  useEffect(() => {
+    const brandName = activeLanding === 'jeep' ? 'Jeep' : (activeLanding === 'leapmotor' ? 'Leapmotor' : selectedBrand);
+    document.title = `Landing page campo marte - ${brandName}`;
+  }, [activeLanding, selectedBrand]);
 
   // Update selected state automatically based on landing selection or brand selection
   useEffect(() => {
@@ -671,7 +676,7 @@ export default function LeadForm({ c10ImgUrl, t03ImgUrl, b10ImgUrl }: LeadFormPr
       postalCode: '',
       state: defaultState,
       distributor: defaultDistributor,
-      modelOfInterest: presetModel || (landing === 'leapmotor' ? 'B10' : (brand === 'Jeep' ? 'Grand Cherokee' : BRAND_MODELS[brand]?.[0] || 'Grand Cherokee')),
+      modelOfInterest: presetModel || (landing === 'leapmotor' ? 'B10' : (brand === 'Jeep' ? 'Jeep Cherokee' : BRAND_MODELS[brand]?.[0] || 'Jeep Cherokee')),
       contactMethod: 'whatsapp',
       testDriveDate: '',
       requestType: reqType
@@ -813,6 +818,23 @@ export default function LeadForm({ c10ImgUrl, t03ImgUrl, b10ImgUrl }: LeadFormPr
       );
       const modelClaveGen = matchedModel ? matchedModel.claveGen : '';
 
+      const chosenDistName = activeLanding === 'leapmotor' && formData.requestType !== 'cotizacion' && formData.requestType !== 'prueba'
+        ? 'Sin Asignar (Sincronizando con Asesor)' 
+        : formData.distributor;
+
+      let disId = '';
+      if (chosenDistName && chosenDistName !== 'Sin Asignar (Sincronizando con Asesor)') {
+        const matchedDb = dbDistributors?.find(d => d.name === chosenDistName);
+        if (matchedDb && (matchedDb.disId || matchedDb.id)) {
+          disId = matchedDb.disId || matchedDb.id;
+        } else {
+          const matchedLocal = ALL_DEALERS.find(d => d.name === chosenDistName);
+          if (matchedLocal) {
+            disId = matchedLocal.id;
+          }
+        }
+      }
+
       const payload = {
         name: formData.name.trim(),
         lastName: formData.lastName.trim(),
@@ -820,9 +842,8 @@ export default function LeadForm({ c10ImgUrl, t03ImgUrl, b10ImgUrl }: LeadFormPr
         phone: formData.phone.trim(),
         postalCode: formData.postalCode.trim() || null,
         state: formData.state,
-        distributor: activeLanding === 'leapmotor' && formData.requestType !== 'cotizacion' && formData.requestType !== 'prueba'
-          ? 'Sin Asignar (Sincronizando con Asesor)' 
-          : formData.distributor,
+        distributor: chosenDistName,
+        disId: disId,
         modelOfInterest: formData.modelOfInterest,
         modelClaveGen: modelClaveGen,
         contactMethod: formData.contactMethod,
@@ -1586,19 +1607,21 @@ export default function LeadForm({ c10ImgUrl, t03ImgUrl, b10ImgUrl }: LeadFormPr
                         <button
                           type="button"
                           id="model-modal-trigger-btn"
+                          disabled={activeLanding === 'jeep'}
                           onClick={() => {
+                            if (activeLanding === 'jeep') return;
                             // Ensure formData of interest is initialized correctly of the active brand if empty
                             if (!formData.modelOfInterest || !activeModelsList.includes(formData.modelOfInterest)) {
                               setFormData(prev => ({ ...prev, modelOfInterest: activeModelsList[0] }));
                             }
                             setShowModelModal(true);
                           }}
-                          className={`w-full text-left bg-[#0a0f18] text-white border border-white/25 hover:border-indigo-400 focus:border-indigo-400 rounded-xl pl-11 pr-7 py-2.5 text-xs outline-none transition uppercase ${activeLanding === 'leapmotor' ? 'font-sans' : 'font-mono'} font-bold flex items-center justify-between`}
+                          className={`w-full text-left bg-[#0a0f18] text-white border border-white/25 rounded-xl pl-11 pr-7 py-2.5 text-xs outline-none transition uppercase ${activeLanding === 'leapmotor' ? 'font-sans' : 'font-mono'} font-bold flex items-center justify-between disabled:opacity-75 disabled:cursor-not-allowed`}
                         >
                           <span className="truncate text-slate-200">
                             {selectedBrand} {formData.modelOfInterest || activeModelsList[0]}
                           </span>
-                          <ChevronDown className="w-3.5 h-3.5 text-slate-300 shrink-0" />
+                          {activeLanding !== 'jeep' && <ChevronDown className="w-3.5 h-3.5 text-slate-300 shrink-0" />}
                         </button>
                       </div>
                     ) : (
@@ -1910,17 +1933,6 @@ export default function LeadForm({ c10ImgUrl, t03ImgUrl, b10ImgUrl }: LeadFormPr
                   />
                   <div className="absolute inset-x-0 bottom-2 text-[10px] font-bold tracking-[0.2em] uppercase text-white/90">
                     {selectedBrand} {formData.modelOfInterest}
-                  </div>
-                </div>
-
-                {/* Distributor verification card */}
-                <div className="bg-slate-900/60 border border-white/5 p-3 rounded-2xl flex items-center gap-3 text-left max-w-xs mx-auto">
-                  <span className={`p-2 rounded-xl flex items-center justify-center ${theme.thankYouBadge}`}>
-                    <MapPin className="w-4 h-4 animate-bounce" />
-                  </span>
-                  <div>
-                    <span className="text-[11px] font-black text-white block uppercase">Paddock de Asignación</span>
-                    <span className="text-[11px] text-white font-bold block mt-0.5 whitespace-nowrap overflow-hidden text-ellipsis">{formData.distributor.replace('Leapmotor ', `${selectedBrand} `)}</span>
                   </div>
                 </div>
               </div>
