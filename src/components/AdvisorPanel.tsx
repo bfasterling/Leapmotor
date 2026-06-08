@@ -744,18 +744,23 @@ export default function AdvisorPanel() {
         <div className={`border rounded-2xl p-4 md:p-6 mb-8 flex flex-col md:flex-row justify-between items-start md:items-center gap-6 transition-colors duration-300 ${
           isDark ? 'bg-slate-900 border-slate-800' : 'bg-white border-slate-205 border-slate-200 text-slate-800 shadow-md'
         }`}>
-          <div className="space-y-1">
-            <h2 className={`text-2xl font-black flex items-center gap-2 font-sans tracking-tight ${isDark ? 'text-white' : 'text-slate-900'}`}>
-              <UserCheck className={`w-6 h-6 ${isDark ? 'text-emerald-400' : 'text-emerald-600'}`} /> Consola del Asesor Comercial
-            </h2>
-            <p className={`text-sm font-bold ${isDark ? 'text-white' : 'text-slate-650 text-slate-600'}`}>
-              Bienvenido, <strong className={isDark ? 'text-emerald-400' : 'text-emerald-600 font-extrabold'}>{loggedInAdvisor.name}</strong> ({loggedInAdvisor.email}).
-            </p>
-            {loggedInAdvisor.distributor && (
-              <p className={`text-xs ${isDark ? 'text-slate-400' : 'text-slate-500'} font-mono uppercase font-extrabold`}>
-                Distribuidor Asociado: {loggedInAdvisor.distributor}
+          <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4">
+            <div className={`p-2 rounded-xl scale-90 sm:scale-100 ${isDark ? 'bg-slate-950/80 border border-slate-800/80' : 'bg-slate-100 border border-slate-200'} shrink-0 flex items-center justify-center`}>
+              <LeapmotorLogo size="sm" showText={true} className="h-10 w-auto" style={{ height: '40px' }} />
+            </div>
+            <div className="space-y-1">
+              <h2 className={`text-xl font-black flex items-center gap-2 font-sans tracking-tight ${isDark ? 'text-white' : 'text-slate-900'}`}>
+                <UserCheck className={`w-5 h-5 ${isDark ? 'text-emerald-400' : 'text-emerald-600'}`} /> Consola del Asesor Comercial
+              </h2>
+              <p className={`text-xs font-bold ${isDark ? 'text-white' : 'text-slate-650 text-slate-600'}`}>
+                Bienvenido, <strong className={isDark ? 'text-emerald-400' : 'text-emerald-600 font-extrabold'}>{loggedInAdvisor.name}</strong> ({loggedInAdvisor.email}).
               </p>
-            )}
+              {loggedInAdvisor.distributor && (
+                <p className={`text-[10px] ${isDark ? 'text-slate-400' : 'text-slate-500'} font-mono uppercase font-extrabold`}>
+                  Distribuidor Asociado: {loggedInAdvisor.distributor}
+                </p>
+              )}
+            </div>
           </div>
 
           <div className="flex flex-wrap items-center gap-2 w-full md:w-auto justify-end">
