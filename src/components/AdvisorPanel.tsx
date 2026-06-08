@@ -46,6 +46,7 @@ import {
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import LeapmotorLogo from './LeapmotorLogo';
+import leapmotorLogoImg from '../assets/images/leapmotor_logo_1780268613531.png';
 
 // Custom Advisor identification details (can be toggled in UI)
 const getLeadSourceText = (lead: Lead) => {
@@ -745,8 +746,14 @@ export default function AdvisorPanel() {
           isDark ? 'bg-slate-900 border-slate-800' : 'bg-white border-slate-205 border-slate-200 text-slate-800 shadow-md'
         }`}>
           <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4">
-            <div className={`p-2 rounded-xl scale-90 sm:scale-100 ${isDark ? 'bg-slate-950/80 border border-slate-800/80' : 'bg-slate-100 border border-slate-200'} shrink-0 flex items-center justify-center`}>
-              <LeapmotorLogo size="sm" showText={true} className="h-10 w-auto" style={{ height: '40px' }} />
+            <div className="p-2.5 bg-white rounded-2xl shadow-sm border border-slate-200 shrink-0 flex items-center justify-center select-none scale-90 sm:scale-100">
+              <img 
+                src={leapmotorLogoImg} 
+                alt="Leapmotor Logo" 
+                referrerPolicy="no-referrer"
+                className="h-10 w-auto object-contain"
+                style={{ height: '40px', minWidth: '40px' }}
+              />
             </div>
             <div className="space-y-1">
               <h2 className={`text-xl font-black flex items-center gap-2 font-sans tracking-tight ${isDark ? 'text-white' : 'text-slate-900'}`}>
