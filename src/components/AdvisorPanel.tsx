@@ -81,9 +81,9 @@ const sendLeadToCRM = async (lead: Lead, disIdVal: string): Promise<{
   error?: string;
 }> => {
   try {
-    // For current testing purposes: set the URL field to "L5000" and use the actual model name ("B10") instead of corporate modelClaveGen for Leapmotor VIP leads
+    // For current testing purposes: set the URL field to "01L5000" and use the actual model name ("B10") instead of corporate modelClaveGen for Leapmotor VIP leads
     const payload = {
-      url: "L5000",
+      url: "01L5000",
       cliente: {
         nombre: lead.name ? lead.name.trim() : "",
         apellidoPaterno: lead.lastName ? lead.lastName.trim() : "",
