@@ -189,6 +189,14 @@ export default function Dashboard() {
           distributor: d.distributor || '',
           city: d.city || '',
           modelOfInterest: d.modelOfInterest || 'C10',
+          modelClaveGen: d.modelClaveGen || '',
+          disId: d.disId || '',
+          crmSuccess: d.crmSuccess !== undefined ? d.crmSuccess : undefined,
+          crmResponseCode: d.crmResponseCode !== undefined ? d.crmResponseCode : undefined,
+          crmSolicitudId: d.crmSolicitudId !== undefined ? d.crmSolicitudId : undefined,
+          crmShiftDigitalId: d.crmShiftDigitalId || '',
+          crmSentAt: d.crmSentAt || null,
+          crmError: d.crmError || '',
           status: d.status || LeadStatus.WAITING,
           notes: d.notes || '',
           advisorId: d.advisorId || '',
@@ -1709,6 +1717,23 @@ export default function Dashboard() {
                                  lead.status === LeadStatus.ATTENDED ? 'Atendido / OK' :
                                  'Cancelado'}
                               </span>
+
+                              {lead.crmSuccess !== undefined && (
+                                <div className="mt-2 text-[9px] font-mono leading-relaxed space-y-1">
+                                  {lead.crmSuccess ? (
+                                    <div className="p-1 px-2 rounded-lg bg-emerald-500/10 border border-emerald-500/20 text-emerald-400">
+                                      <div className="font-extrabold flex items-center gap-1">🚀 CRM ENVIADO ({lead.crmResponseCode})</div>
+                                      {lead.crmSolicitudId && <div className="text-[8px] opacity-90 text-slate-400">ID: {lead.crmSolicitudId}</div>}
+                                      {lead.crmShiftDigitalId && <div className="text-[8px] opacity-95 text-slate-400 overflow-hidden text-ellipsis whitespace-nowrap block" title={lead.crmShiftDigitalId}>ShiftD: {lead.crmShiftDigitalId}</div>}
+                                    </div>
+                                  ) : (
+                                    <div className="p-1 px-2 rounded-lg bg-rose-500/10 border border-rose-500/20 text-rose-400" title={lead.crmError || 'Error de conexión'}>
+                                      <div className="font-extrabold flex items-center gap-1">❌ CRM ERROR ({lead.crmResponseCode || 'NET_ERR'})</div>
+                                      {lead.crmError && <div className="text-[8px] opacity-90 text-slate-450 line-clamp-2 leading-tight mt-0.5">{lead.crmError}</div>}
+                                    </div>
+                                  )}
+                                </div>
+                              )}
                             </td>
 
                             <td className="p-3 text-right">

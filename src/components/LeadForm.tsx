@@ -1162,14 +1162,14 @@ export default function LeadForm({ c10ImgUrl, t03ImgUrl, b10ImgUrl }: LeadFormPr
                   {/* Three CTA buttons including personalized maps */}
                   <div className="grid grid-cols-2 gap-2 pt-1">
                     <button
-                      onClick={() => launchFormWithRequest('cotizacion', 'Grand Cherokee')}
+                      onClick={() => launchFormWithRequest('cotizacion', 'Jeep Cherokee')}
                       className="bg-emerald-600 hover:bg-emerald-500 text-white font-extrabold py-3.5 px-4 rounded-xl text-[10px] uppercase tracking-wider flex items-center justify-center gap-1.5 transition-all duration-300 active:scale-95 shadow-md shadow-emerald-500/10 col-span-1"
                     >
                       <FileText className="w-3.5 h-3.5" />
                       <span>Cotización</span>
                     </button>
                     <button
-                      onClick={() => launchFormWithRequest('prueba', 'Grand Cherokee')}
+                      onClick={() => launchFormWithRequest('prueba', 'Jeep Cherokee')}
                       className="bg-[#0f1012] hover:bg-slate-900 text-slate-200 border border-emerald-500/30 hover:border-emerald-500/60 font-extrabold py-3.5 px-4 rounded-xl text-[10px] uppercase tracking-wider flex items-center justify-center gap-1.5 transition-all duration-300 active:scale-95 col-span-1"
                     >
                       <Key className="w-3.5 h-3.5 text-emerald-400" />

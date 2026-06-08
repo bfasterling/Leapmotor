@@ -71,6 +71,85 @@ const DEFAULT_ADVISORS = [
   { id: 'ADV-03', name: 'Carlos Galería', email: 'carlos@leapmotor.com', password: '123', distributor: 'Leapmotor Acueducto', active: true }
 ];
 
+// Helper to push VIP leads of Leapmotor to Stellantis Netcar CRM API
+const sendLeadToCRM = async (lead: Lead, disIdVal: string): Promise<{
+  success: boolean;
+  status: number;
+  solicitudId?: any;
+  shiftDigitalId?: string;
+  error?: string;
+}> => {
+  try {
+    // Determine corporate disId, default to "01L5000" for tests if not available
+    const urlDisId = disIdVal || lead.disId || "01L5000";
+    
+    // Default B10 modelClaveGen is 'LB1025' if none was explicitly configured
+    const userModelClaveGen = lead.modelClaveGen || "LB1025";
+
+    const payload = {
+      url: urlDisId,
+      cliente: {
+        nombre: lead.name ? lead.name.trim() : "",
+        apellidoPaterno: lead.lastName ? lead.lastName.trim() : "",
+        apellidoMaterno: "",
+        correo: lead.email ? lead.email.trim() : "",
+        telefono: lead.phone ? lead.phone.trim() : ""
+      },
+      vehiculo: {
+        modelo: userModelClaveGen
+      },
+      comentarios: lead.postalCode ? `C.P. ${lead.postalCode.trim()}` : "C.P. No Asignado",
+      origen: "LANDING",
+      conversacion: "Contacto de atención VIP asignado al asesor comercial"
+    };
+
+    console.log("[CRM Connection] Posting to Netcar API:", payload);
+
+    const response = await fetch("https://api.stellantis.netcar.com.mx/api/v1/Cotizaciones/Rapida", {
+      method: "POST",
+      headers: {
+        "Usuario": "landings-st",
+        "Token": "e05100fa837ecf4e30d5318f6b9a6a0a",
+        "BusinessId": "77",
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify(payload)
+    });
+
+    const statusCode = response.status;
+    let data: any = null;
+    
+    try {
+      data = await response.json();
+    } catch (_) {}
+
+    console.log(`[CRM Connection] Response: Status Code ${statusCode}`, data);
+
+    // netcar api returns 201 when created successfully
+    if (statusCode === 201 && data && data.success) {
+      return {
+        success: true,
+        status: 201,
+        solicitudId: data.data?.solicitudId || null,
+        shiftDigitalId: data.data?.shiftDigitalId || ""
+      };
+    } else {
+      return {
+        success: false,
+        status: statusCode || 400,
+        error: data?.message || data?.error || `Error de respuesta del CRM (${statusCode})`
+      };
+    }
+  } catch (error: any) {
+    console.error("[CRM Connection] Client fetch network error (likely CORS or Offline):", error);
+    return {
+      success: false,
+      status: 0,
+      error: error.message || "Error de red / CORS bloqueado"
+    };
+  }
+};
+
 export default function AdvisorPanel() {
   const [theme, setTheme] = useState<'dark' | 'light'>(() => {
     try {
@@ -238,6 +317,14 @@ export default function AdvisorPanel() {
           distributor: data.distributor || '',
           city: data.city || '',
           modelOfInterest: data.modelOfInterest || 'C10',
+          modelClaveGen: data.modelClaveGen || '',
+          disId: data.disId || '',
+          crmSuccess: data.crmSuccess !== undefined ? data.crmSuccess : undefined,
+          crmResponseCode: data.crmResponseCode !== undefined ? data.crmResponseCode : undefined,
+          crmSolicitudId: data.crmSolicitudId !== undefined ? data.crmSolicitudId : undefined,
+          crmShiftDigitalId: data.crmShiftDigitalId || '',
+          crmSentAt: data.crmSentAt || null,
+          crmError: data.crmError || '',
           status: data.status || LeadStatus.WAITING,
           notes: data.notes || '',
           advisorId: data.advisorId || '',
@@ -368,22 +455,42 @@ export default function AdvisorPanel() {
       };
 
       // Assign distributor associated to the advisor
+      let disIdVal = '';
       if (loggedInAdvisor.distributor) {
         payload.distributor = loggedInAdvisor.distributor;
 
         // Lookup disId based on distributor name
-        let disId = '';
         const matchedDb = dbDistributors?.find(d => d.name === loggedInAdvisor.distributor);
         if (matchedDb && (matchedDb.disId || matchedDb.id)) {
-          disId = matchedDb.disId || matchedDb.id;
+          disIdVal = matchedDb.disId || matchedDb.id;
         } else {
           const matchedLocal = ALL_DEALERS.find(d => d.name === loggedInAdvisor.distributor);
           if (matchedLocal) {
-            disId = matchedLocal.id;
+            disIdVal = matchedLocal.id;
           }
         }
-        if (disId) {
-          payload.disId = disId;
+        if (disIdVal) {
+          payload.disId = disIdVal;
+        }
+      }
+
+      // Check if lead corresponds to a Leapmotor VIP Attention lead
+      const lead = leads.find(l => l.id === leadId);
+      const isLeapmotorVip = lead && lead.landing === 'leapmotor' && lead.requestType !== 'cotizacion' && lead.requestType !== 'prueba';
+
+      if (isLeapmotorVip && lead) {
+        console.log(`[CRM Integration] Sending Leapmotor VIP lead ${leadId} to Stellantis CRM...`);
+        // Call the rapid quotation API
+        const crmResult = await sendLeadToCRM(lead, disIdVal);
+        
+        // Save the results to payload to store in lead document
+        payload.crmSuccess = crmResult.success;
+        payload.crmResponseCode = crmResult.status;
+        payload.crmSolicitudId = crmResult.solicitudId || null;
+        payload.crmShiftDigitalId = crmResult.shiftDigitalId || "";
+        payload.crmSentAt = new Date().toISOString();
+        if (crmResult.error) {
+          payload.crmError = crmResult.error;
         }
       }
 

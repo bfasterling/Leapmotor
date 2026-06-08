@@ -22,6 +22,13 @@ export interface Lead {
   distributor: string;
   modelOfInterest: string; // Dynamic brands can lead to different model strings
   modelClaveGen?: string; // Corporate model lookup identifier
+  disId?: string;
+  crmSuccess?: boolean;
+  crmResponseCode?: number;
+  crmSolicitudId?: any;
+  crmShiftDigitalId?: string;
+  crmSentAt?: any;
+  crmError?: string;
   status: LeadStatus;
   notes?: string;
   advisorId?: string;
