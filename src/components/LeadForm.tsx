@@ -1043,12 +1043,13 @@ export default function LeadForm({ c10ImgUrl, t03ImgUrl, b10ImgUrl }: LeadFormPr
           className={`px-6 ${activeLanding === 'leapmotor' ? 'py-1 border-b border-white/5 relative z-10' : 'py-4 bg-[#05070a]/90 border-b border-white/5 relative z-10'} flex ${activeLanding === 'multimarca' || activeLanding === 'leapmotor' ? 'justify-center' : 'justify-between'} items-center backdrop-blur-md sticky top-0 z-25`}
         >
           {activeLanding === 'leapmotor' && (
-            <div className="flex items-center justify-center w-full max-w-full">
+            <div className="flex items-center justify-center w-full max-w-full py-3 sm:py-5">
               <LeapmotorLogo 
-                size="sm" 
-                className="text-white mx-auto" 
-                style={{ height: 'clamp(65px, 16vw, 136px)', aspectRatio: 'auto', maxWidth: '100%', width: 'auto' }} 
-                imgStyle={{ height: 'clamp(65px, 16vw, 136px)', width: 'auto', objectFit: 'contain' }} 
+                size="lg" 
+                variant="white"
+                className="text-white mx-auto transition-transform duration-300 hover:scale-[1.02]" 
+                style={{ height: 'clamp(115px, 26vw, 210px)', aspectRatio: 'auto', maxWidth: '100%', width: 'auto' }} 
+                imgStyle={{ height: 'clamp(115px, 26vw, 210px)', width: 'auto', objectFit: 'contain' }} 
               />
             </div>
           )}

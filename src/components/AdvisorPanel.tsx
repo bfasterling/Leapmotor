@@ -81,14 +81,9 @@ const sendLeadToCRM = async (lead: Lead, disIdVal: string): Promise<{
   error?: string;
 }> => {
   try {
-    // Determine corporate disId, default to "01L5000" for tests if not available
-    const urlDisId = disIdVal || lead.disId || "01L5000";
-    
-    // Default B10 modelClaveGen is 'LB1025' if none was explicitly configured
-    const userModelClaveGen = lead.modelClaveGen || "LB1025";
-
+    // For current testing purposes: set the URL field to "L5000" and use the actual model name ("B10") instead of corporate modelClaveGen for Leapmotor VIP leads
     const payload = {
-      url: urlDisId,
+      url: "L5000",
       cliente: {
         nombre: lead.name ? lead.name.trim() : "",
         apellidoPaterno: lead.lastName ? lead.lastName.trim() : "",
@@ -97,7 +92,7 @@ const sendLeadToCRM = async (lead: Lead, disIdVal: string): Promise<{
         telefono: lead.phone ? lead.phone.trim() : ""
       },
       vehiculo: {
-        modelo: userModelClaveGen
+        modelo: "B10"
       },
       comentarios: lead.postalCode ? `C.P. ${lead.postalCode.trim()}` : "C.P. No Asignado",
       origen: "LANDING",
@@ -625,7 +620,7 @@ export default function AdvisorPanel() {
           <div className="absolute top-0 right-0 w-44 h-44 bg-blue-600/10 blur-[60px] rounded-full pointer-events-none" />
           
           <div className="flex flex-col items-center text-center gap-3 mb-8">
-            <LeapmotorLogo size="md" className={isDark ? "text-white" : "text-slate-900"} />
+            <LeapmotorLogo size="md" variant="green" />
             <div className="mt-2">
               <h2 className={`text-xl font-bold tracking-tight uppercase font-sans ${isDark ? "text-white" : "text-slate-900"}`}>Portal del Asesor</h2>
               <p className={`text-xs font-semibold mt-1 ${isDark ? "text-white" : "text-slate-500"}`}>Inicie sesión para atender sus prospectos asignados en tiempo real</p>
@@ -746,13 +741,12 @@ export default function AdvisorPanel() {
           isDark ? 'bg-slate-900 border-slate-800' : 'bg-white border-slate-205 border-slate-200 text-slate-800 shadow-md'
         }`}>
           <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4">
-            <div className="p-2.5 bg-white rounded-2xl shadow-sm border border-slate-200 shrink-0 flex items-center justify-center select-none scale-90 sm:scale-100">
-              <img 
-                src={leapmotorLogoImg} 
-                alt="Leapmotor Logo" 
-                referrerPolicy="no-referrer"
-                className="h-10 w-auto object-contain"
-                style={{ height: '40px', minWidth: '40px' }}
+            <div className="p-1 px-3 bg-white rounded-2xl shadow-sm border border-slate-200 shrink-0 flex items-center justify-center select-none scale-90 sm:scale-100">
+              <LeapmotorLogo 
+                size="sm" 
+                variant="green" 
+                style={{ height: '36px', width: 'auto' }} 
+                imgStyle={{ height: '36px', width: 'auto' }}
               />
             </div>
             <div className="space-y-1">

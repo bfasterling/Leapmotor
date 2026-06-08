@@ -1,10 +1,12 @@
 import React from 'react';
-import logoPng from '../assets/images/leapmotor_logo_1780268613531.png';
+import logoGreen from '../assets/images/leapmotor_logo_1780268613531.png';
+import logoWhite from '../assets/images/leapmotor_logo_black_bg_1780690813034.png';
 
 interface LeapmotorLogoProps {
   className?: string; // Standard text color class (preserved for compatibility)
   size?: 'sm' | 'md' | 'lg' | 'auto'; // Horizontal logo size
   showText?: boolean; // If false, renders emblem only
+  variant?: 'white' | 'green'; // Logo color variant
   style?: React.CSSProperties;
   imgStyle?: React.CSSProperties;
 }
@@ -13,6 +15,7 @@ export default function LeapmotorLogo({
   className = '', 
   size = 'md', 
   showText = true,
+  variant = 'white',
   style,
   imgStyle
 }: LeapmotorLogoProps) {
@@ -25,6 +28,7 @@ export default function LeapmotorLogo({
   };
 
   const selectedSizeClass = sizeClasses[size];
+  const logoPng = variant === 'green' ? logoGreen : logoWhite;
 
   return (
     <div 

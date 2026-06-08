@@ -85,7 +85,10 @@ export default function App() {
             <div className="flex justify-between items-center py-2 sm:py-3 gap-6">
               {/* Brand Logo & Slogan */}
               <div className="flex items-center gap-4">
-                <LeapmotorLogo size="md" className="text-white" />
+                <LeapmotorLogo 
+                  size="md" 
+                  variant={(currentRole === MainRole.ADVISOR || currentRole === MainRole.BOARD) ? 'green' : 'white'} 
+                />
                 <div className="border-l border-white/10 pl-4 py-2">
                   <span className="text-[11px] uppercase font-mono tracking-widest text-slate-400 block font-bold">Leapmotor México</span>
                   <span className="text-[10px] uppercase font-mono tracking-wider text-blue-400 block font-medium mt-0.5">Stellantis Venture</span>

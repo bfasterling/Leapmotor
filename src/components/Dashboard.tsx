@@ -981,13 +981,12 @@ export default function Dashboard() {
           isDark ? 'bg-slate-900 border-slate-800' : 'bg-white border-slate-205 border-slate-200 text-slate-800 shadow-md'
         }`}>
           <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4">
-            <div className="p-2.5 bg-white rounded-2xl shadow-sm border border-slate-200 shrink-0 flex items-center justify-center select-none scale-90 sm:scale-100">
-              <img 
-                src={leapmotorLogoImg} 
-                alt="Leapmotor Logo" 
-                referrerPolicy="no-referrer"
-                className="h-10 w-auto object-contain"
-                style={{ height: '40px', minWidth: '40px' }}
+            <div className="p-1 px-3 bg-white rounded-2xl shadow-sm border border-slate-200 shrink-0 flex items-center justify-center select-none scale-90 sm:scale-100">
+              <LeapmotorLogo 
+                size="sm" 
+                variant="green" 
+                style={{ height: '36px', width: 'auto' }} 
+                imgStyle={{ height: '36px', width: 'auto' }}
               />
             </div>
             <div className="space-y-1">
