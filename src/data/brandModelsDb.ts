@@ -252,7 +252,7 @@ export const BRAND_MODELS_DB: BrandModelInfo[] = [
   {
     brand: 'Leapmotor',
     model: 'B10',
-    claveGen: 'LB1025',
+    claveGen: 'LB1027',
     desc: 'Smart SUV 100% eléctrica inteligente con arquitectura global de conectividad.',
     img: 'https://images.unsplash.com/photo-1563720223185-11003d516935?w=350&q=80'
   }
