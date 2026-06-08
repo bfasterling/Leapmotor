@@ -347,6 +347,7 @@ export default function LeadForm({ c10ImgUrl, t03ImgUrl, b10ImgUrl }: LeadFormPr
 
   // Dynamic, fast database lookups for selected brand + state
   const [dbDistributors, setDbDistributors] = useState<any[]>([]);
+  const [allDbDistributors, setAllDbDistributors] = useState<any[]>([]);
   const [loadingDbDistributors, setLoadingDbDistributors] = useState(false);
 
   // Renders premium, responsive vector brand logos for the Multimarca experience
@@ -544,6 +545,9 @@ export default function LeadForm({ c10ImgUrl, t03ImgUrl, b10ImgUrl }: LeadFormPr
           allDocs.push({ id: docSnap.id, ...docSnap.data() });
         });
 
+        // Save all distributors in database for cross-referencing and name-to-disId matching
+        setAllDbDistributors(allDocs);
+
         // Filter client-side to bypass composite index constraints and query-permission quirks
         const list = allDocs.filter(d => 
           String(d.marca || '').toUpperCase() === activeBrandKey.toUpperCase() &&
@@ -588,6 +592,14 @@ export default function LeadForm({ c10ImgUrl, t03ImgUrl, b10ImgUrl }: LeadFormPr
         
         console.log(`[Firebase Fallback] Successfully filtered ${list.length} local dealers for Brand: "${activeBrandKey}", State: "${currentState}"`);
         setDbDistributors(list);
+        setAllDbDistributors(ALL_DEALERS.map(d => ({
+          marca: d.brand,
+          claveCorporativo: d.corpKey,
+          disId: d.id,
+          estado: d.state,
+          name: d.name,
+          url: d.url || ''
+        })));
         
         if (list.length > 0) {
           const matched = list.find(d => d.name === formData.distributor);
@@ -818,13 +830,20 @@ export default function LeadForm({ c10ImgUrl, t03ImgUrl, b10ImgUrl }: LeadFormPr
       );
       const modelClaveGen = matchedModel ? matchedModel.claveGen : '';
 
-      const chosenDistName = activeLanding === 'leapmotor' && formData.requestType !== 'cotizacion' && formData.requestType !== 'prueba'
+      let chosenDistName = activeLanding === 'leapmotor' && formData.requestType !== 'cotizacion' && formData.requestType !== 'prueba'
         ? 'Sin Asignar (Sincronizando con Asesor)' 
         : formData.distributor;
 
+      // In case we are auto-assigning a VIP sales advisor at creation (needsAdvisorAssignment is true),
+      // we must assign that advisor's distributor to the lead
+      if (needsAdvisorAssignment && minWaitingAdvisor?.distributor) {
+        chosenDistName = minWaitingAdvisor.distributor;
+      }
+
       let disId = '';
       if (chosenDistName && chosenDistName !== 'Sin Asignar (Sincronizando con Asesor)') {
-        const matchedDb = dbDistributors?.find(d => d.name === chosenDistName);
+        // Find inside allDbDistributors (which contains ALL distributors from the DB unfiltered)
+        const matchedDb = allDbDistributors?.find(d => d.name === chosenDistName) || dbDistributors?.find(d => d.name === chosenDistName);
         if (matchedDb && (matchedDb.disId || matchedDb.id)) {
           disId = matchedDb.disId || matchedDb.id;
         } else {

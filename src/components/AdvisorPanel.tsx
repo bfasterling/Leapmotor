@@ -19,6 +19,7 @@ import {
 } from 'firebase/firestore';
 import { db, handleFirestoreError, OperationType } from '../firebase';
 import { Lead, LeadStatus } from '../types';
+import { ALL_DEALERS } from '../data/dealers';
 import { playNewLeadAlert, speakNewLeadAnnouncement } from '../utils/audio';
 import { 
   Bell, 
@@ -114,6 +115,7 @@ export default function AdvisorPanel() {
   const [loginError, setLoginError] = useState('');
 
   const [leads, setLeads] = useState<Lead[]>([]);
+  const [dbDistributors, setDbDistributors] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   
   // Track notes being entered per lead ID
@@ -125,6 +127,20 @@ export default function AdvisorPanel() {
   
   // Keep track of which lead IDs we have already warned about to prevent duplicate alarms
   const warnedLeadsRef = useRef<Set<string>>(new Set());
+
+  // Subscribe to DISTRIBUTORS collection
+  useEffect(() => {
+    const unsubscribeDistributors = onSnapshot(collection(db, 'distributors'), (snapshot) => {
+      const list: any[] = [];
+      snapshot.forEach((docSnap) => {
+        list.push({ id: docSnap.id, ...docSnap.data() });
+      });
+      setDbDistributors(list);
+    }, (error) => {
+      console.error("Firestore loading distributors error for advisor panel:", error);
+    });
+    return () => unsubscribeDistributors();
+  }, []);
 
   // Request browser Notification permission on mount or login
   useEffect(() => {
@@ -354,6 +370,21 @@ export default function AdvisorPanel() {
       // Assign distributor associated to the advisor
       if (loggedInAdvisor.distributor) {
         payload.distributor = loggedInAdvisor.distributor;
+
+        // Lookup disId based on distributor name
+        let disId = '';
+        const matchedDb = dbDistributors?.find(d => d.name === loggedInAdvisor.distributor);
+        if (matchedDb && (matchedDb.disId || matchedDb.id)) {
+          disId = matchedDb.disId || matchedDb.id;
+        } else {
+          const matchedLocal = ALL_DEALERS.find(d => d.name === loggedInAdvisor.distributor);
+          if (matchedLocal) {
+            disId = matchedLocal.id;
+          }
+        }
+        if (disId) {
+          payload.disId = disId;
+        }
       }
 
       await updateDoc(docRef, payload);

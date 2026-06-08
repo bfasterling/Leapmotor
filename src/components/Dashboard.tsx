@@ -469,13 +469,22 @@ export default function Dashboard() {
     if (!advisorObj) return;
 
     try {
-      const foundDealer = ALL_DEALERS.find(d => d.name === advisorObj.distributor);
-      const disIdVal = foundDealer ? foundDealer.id : '';
+      const chosenDistName = advisorObj.distributor || 'Leapmotor Santa Fe';
+      let disIdVal = '';
+      const matchedDb = distributors?.find(d => d.name === chosenDistName);
+      if (matchedDb && (matchedDb.disId || matchedDb.id)) {
+        disIdVal = matchedDb.disId || matchedDb.id;
+      } else {
+        const matchedLocal = ALL_DEALERS.find(d => d.name === chosenDistName);
+        if (matchedLocal) {
+          disIdVal = matchedLocal.id;
+        }
+      }
 
       const payload: any = {
         advisorId: advisorObj.id,
         advisorName: advisorObj.name,
-        distributor: advisorObj.distributor || 'Leapmotor Santa Fe',
+        distributor: chosenDistName,
         disId: disIdVal
       };
       await updateDoc(doc(db, 'leads', leadId), payload);
