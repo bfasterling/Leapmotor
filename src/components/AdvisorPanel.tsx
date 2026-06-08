@@ -47,6 +47,7 @@ import {
 import { motion, AnimatePresence } from 'motion/react';
 import LeapmotorLogo from './LeapmotorLogo';
 import leapmotorLogoImg from '../assets/images/leapmotor_logo_1780268613531.png';
+import { sendLeapmotorLeadToCRM } from '../utils/crm';
 
 // Custom Advisor identification details (can be toggled in UI)
 const getLeadSourceText = (lead: Lead) => {
@@ -71,80 +72,6 @@ const DEFAULT_ADVISORS = [
   { id: 'ADV-02', name: 'Belinda Leap', email: 'belinda@leapmotor.com', password: '123', distributor: 'Leapmotor Mexicali', active: true },
   { id: 'ADV-03', name: 'Carlos Galería', email: 'carlos@leapmotor.com', password: '123', distributor: 'Leapmotor Acueducto', active: true }
 ];
-
-// Helper to push VIP leads of Leapmotor to Stellantis Netcar CRM API
-const sendLeadToCRM = async (lead: Lead, disIdVal: string): Promise<{
-  success: boolean;
-  status: number;
-  solicitudId?: any;
-  shiftDigitalId?: string;
-  error?: string;
-}> => {
-  try {
-    // For current testing purposes: set the URL field to "01L5000" and use the actual model name ("B10") instead of corporate modelClaveGen for Leapmotor VIP leads
-    const payload = {
-      url: "01L5000",
-      cliente: {
-        nombre: lead.name ? lead.name.trim() : "",
-        apellidoPaterno: lead.lastName ? lead.lastName.trim() : "",
-        apellidoMaterno: "",
-        correo: lead.email ? lead.email.trim() : "",
-        telefono: lead.phone ? lead.phone.trim() : ""
-      },
-      vehiculo: {
-        modelo: "B10"
-      },
-      comentarios: lead.postalCode ? `C.P. ${lead.postalCode.trim()}` : "C.P. No Asignado",
-      origen: "LANDING",
-      conversacion: "Contacto de atención VIP asignado al asesor comercial"
-    };
-
-    console.log("[CRM Connection] Posting to Netcar API:", payload);
-
-    const response = await fetch("https://api.stellantis.netcar.com.mx/api/v1/Cotizaciones/Rapida", {
-      method: "POST",
-      headers: {
-        "Usuario": "landings-st",
-        "Token": "e05100fa837ecf4e30d5318f6b9a6a0a",
-        "BusinessId": "77",
-        "Content-Type": "application/json"
-      },
-      body: JSON.stringify(payload)
-    });
-
-    const statusCode = response.status;
-    let data: any = null;
-    
-    try {
-      data = await response.json();
-    } catch (_) {}
-
-    console.log(`[CRM Connection] Response: Status Code ${statusCode}`, data);
-
-    // netcar api returns 201 when created successfully
-    if (statusCode === 201 && data && data.success) {
-      return {
-        success: true,
-        status: 201,
-        solicitudId: data.data?.solicitudId || null,
-        shiftDigitalId: data.data?.shiftDigitalId || ""
-      };
-    } else {
-      return {
-        success: false,
-        status: statusCode || 400,
-        error: data?.message || data?.error || `Error de respuesta del CRM (${statusCode})`
-      };
-    }
-  } catch (error: any) {
-    console.error("[CRM Connection] Client fetch network error (likely CORS or Offline):", error);
-    return {
-      success: false,
-      status: 0,
-      error: error.message || "Error de red / CORS bloqueado"
-    };
-  }
-};
 
 export default function AdvisorPanel() {
   const [theme, setTheme] = useState<'dark' | 'light'>(() => {
@@ -475,9 +402,15 @@ export default function AdvisorPanel() {
       const isLeapmotorVip = lead && lead.landing === 'leapmotor' && lead.requestType !== 'cotizacion' && lead.requestType !== 'prueba';
 
       if (isLeapmotorVip && lead) {
+        // Create an updated copy of the lead object with the assigned advisor's distributor details
+        const updatedLead: Lead = {
+          ...lead,
+          distributor: loggedInAdvisor.distributor || lead.distributor,
+          disId: disIdVal || lead.disId
+        };
         console.log(`[CRM Integration] Sending Leapmotor VIP lead ${leadId} to Stellantis CRM...`);
         // Call the rapid quotation API
-        const crmResult = await sendLeadToCRM(lead, disIdVal);
+        const crmResult = await sendLeapmotorLeadToCRM(updatedLead);
         
         // Save the results to payload to store in lead document
         payload.crmSuccess = crmResult.success;

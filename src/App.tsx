@@ -87,7 +87,7 @@ export default function App() {
               <div className="flex items-center gap-4">
                 <LeapmotorLogo 
                   size="md" 
-                  variant={(currentRole === MainRole.ADVISOR || currentRole === MainRole.BOARD) ? 'green' : 'white'} 
+                  variant={currentRole === MainRole.ADVISOR ? 'green' : 'white'} 
                 />
                 <div className="border-l border-white/10 pl-4 py-2">
                   <span className="text-[11px] uppercase font-mono tracking-widest text-slate-400 block font-bold">Leapmotor México</span>

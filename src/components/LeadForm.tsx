@@ -8,6 +8,7 @@ import {
   collection, 
   doc, 
   setDoc, 
+  updateDoc,
   getDocs,
   query,
   where,
@@ -15,7 +16,8 @@ import {
   writeBatch
 } from 'firebase/firestore';
 import { db, handleFirestoreError, OperationType } from '../firebase';
-import { LeadStatus } from '../types';
+import { LeadStatus, Lead } from '../types';
+import { sendLeapmotorLeadToCRM } from '../utils/crm';
 import { 
   Sparkles, 
   Car, 
@@ -926,6 +928,52 @@ export default function LeadForm({ c10ImgUrl, t03ImgUrl, b10ImgUrl }: LeadFormPr
       };
 
       await setDoc(newLeadDoc, payload);
+
+      // Send to Netcar CRM immediately if it's Leapmotor Landing and is cotizacion or prueba (since these don't go to advisor attention)
+      if (activeLanding === 'leapmotor' && (formData.requestType === 'cotizacion' || formData.requestType === 'prueba')) {
+        try {
+          console.log(`[CRM Integration] Sending Leapmotor ${formData.requestType} lead ${leadId} to Stellantis CRM...`);
+          // Prepare a Lead object to pass to the helper
+          const leadObjForCRM: Lead = {
+            id: leadId,
+            name: formData.name.trim(),
+            lastName: formData.lastName.trim(),
+            email: cleanEmail,
+            phone: formData.phone.trim(),
+            postalCode: formData.postalCode.trim() || undefined,
+            state: formData.state,
+            distributor: chosenDistName,
+            modelOfInterest: formData.modelOfInterest,
+            modelClaveGen: modelClaveGen,
+            disId: disId,
+            status: LeadStatus.WAITING,
+            requestType: formData.requestType,
+            landing: activeLanding,
+            selectedBrand: activeBrand,
+            createdAt: new Date(),
+            testDriveDate: formData.requestType === 'prueba' ? formData.testDriveDate : undefined
+          };
+
+          const crmResult = await sendLeapmotorLeadToCRM(leadObjForCRM);
+          
+          // Update the Firestore doc with CRM response details
+          const updatePayload: any = {
+            crmSuccess: crmResult.success,
+            crmResponseCode: crmResult.status,
+            crmSolicitudId: crmResult.solicitudId || null,
+            crmShiftDigitalId: crmResult.shiftDigitalId || "",
+            crmSentAt: new Date().toISOString()
+          };
+          if (crmResult.error) {
+            updatePayload.crmError = crmResult.error;
+          }
+
+          await updateDoc(newLeadDoc, updatePayload);
+        } catch (crmErr) {
+          console.error("Failed sending Leapmotor landing lead to Netcar CRM:", crmErr);
+        }
+      }
+
       setRegisteredLeadId(leadId);
       setSuccess(true);
     } catch (err: any) {

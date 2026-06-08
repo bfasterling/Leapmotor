@@ -984,7 +984,7 @@ export default function Dashboard() {
             <div className="p-1 px-3 bg-white rounded-2xl shadow-sm border border-slate-200 shrink-0 flex items-center justify-center select-none scale-90 sm:scale-100">
               <LeapmotorLogo 
                 size="sm" 
-                variant="green" 
+                variant="white" 
                 style={{ height: '36px', width: 'auto' }} 
                 imgStyle={{ height: '36px', width: 'auto' }}
               />

@@ -28,7 +28,11 @@ export default function LeapmotorLogo({
   };
 
   const selectedSizeClass = sizeClasses[size];
-  const logoPng = variant === 'green' ? logoGreen : logoWhite;
+  const logoPng = logoGreen;
+  const finalImgStyle: React.CSSProperties = {
+    ...imgStyle,
+    ...(variant === 'white' ? { filter: 'brightness(0) invert(1)' } : {})
+  };
 
   return (
     <div 
@@ -43,7 +47,7 @@ export default function LeapmotorLogo({
         className={`h-full select-none ${
           showText ? 'w-auto object-contain mx-auto' : 'aspect-square object-cover object-center'
         }`}
-        style={imgStyle}
+        style={finalImgStyle}
       />
     </div>
   );
