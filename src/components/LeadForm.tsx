@@ -316,9 +316,11 @@ export default function LeadForm({ c10ImgUrl, t03ImgUrl, b10ImgUrl }: LeadFormPr
       const searchParams = new URLSearchParams(window.location.search);
       const landingParam = searchParams.get('landing') || searchParams.get('campaign') || searchParams.get('site');
       
+      const isSoccerhouseParam = landingParam && landingParam.toLowerCase().startsWith('soccerhouse');
+      
       if (landingParam === 'jeep' || host.startsWith('jeep')) {
         return 'jeep';
-      } else if (landingParam === 'multimarca' || host.startsWith('multimarca') || host.startsWith('stellantis')) {
+      } else if (landingParam === 'multimarca' || host.startsWith('multimarca') || host.startsWith('stellantis') || host.startsWith('soccerhouse') || isSoccerhouseParam) {
         return 'multimarca';
       } else if (landingParam === 'leapmotor' || host.startsWith('leapmotor')) {
         return 'leapmotor';
@@ -354,9 +356,11 @@ export default function LeadForm({ c10ImgUrl, t03ImgUrl, b10ImgUrl }: LeadFormPr
       const searchParams = new URLSearchParams(window.location.search);
       const landingParam = searchParams.get('landing') || searchParams.get('campaign') || searchParams.get('site');
       
+      const isSoccerhouseParam = landingParam && landingParam.toLowerCase().startsWith('soccerhouse');
+      
       if (landingParam === 'jeep' || host.startsWith('jeep')) {
         initialLanding = 'jeep';
-      } else if (landingParam === 'multimarca' || host.startsWith('multimarca') || host.startsWith('stellantis')) {
+      } else if (landingParam === 'multimarca' || host.startsWith('multimarca') || host.startsWith('stellantis') || host.startsWith('soccerhouse') || isSoccerhouseParam) {
         initialLanding = 'multimarca';
       }
     }
@@ -512,9 +516,11 @@ export default function LeadForm({ c10ImgUrl, t03ImgUrl, b10ImgUrl }: LeadFormPr
     const searchParams = new URLSearchParams(window.location.search);
     const landingParam = searchParams.get('landing') || searchParams.get('campaign') || searchParams.get('site');
     
+    const isSoccerhouseParam = landingParam && landingParam.toLowerCase().startsWith('soccerhouse');
+    
     if (landingParam === 'jeep' || host.startsWith('jeep')) {
       handleLandingSwitch('jeep');
-    } else if (landingParam === 'multimarca' || host.startsWith('multimarca') || host.startsWith('stellantis')) {
+    } else if (landingParam === 'multimarca' || host.startsWith('multimarca') || host.startsWith('stellantis') || host.startsWith('soccerhouse') || isSoccerhouseParam) {
       handleLandingSwitch('multimarca');
     } else if (landingParam === 'leapmotor' || host.startsWith('leapmotor')) {
       handleLandingSwitch('leapmotor');
@@ -525,6 +531,150 @@ export default function LeadForm({ c10ImgUrl, t03ImgUrl, b10ImgUrl }: LeadFormPr
     const brandName = activeLanding === 'jeep' ? 'Jeep' : (activeLanding === 'leapmotor' ? 'Leapmotor' : selectedBrand);
     document.title = `Landing page campo marte - ${brandName}`;
   }, [activeLanding, selectedBrand]);
+
+  // Google Tag Manager dynamic injection for Leapmotor and Jeep Cherokee
+  useEffect(() => {
+    if (activeLanding === 'leapmotor') {
+      if (!(window as any).gtmLeapmotorInjected) {
+        (window as any).gtmLeapmotorInjected = true;
+
+        // Custom GTM script injection (placed as the second instruction in <head> dynamically)
+        const script = document.createElement('script');
+        script.type = 'text/javascript';
+        script.innerHTML = `
+          (function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+          new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+          j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+          'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+          })(window,document,'script','dataLayer','GTM-52MFNGBR');
+        `;
+        
+        const head = document.head;
+        if (head.children.length > 1) {
+          head.insertBefore(script, head.children[1]);
+        } else {
+          head.appendChild(script);
+        }
+
+        // Noscript alternative placed at the end of <body> dynamically
+        const noscript = document.createElement('noscript');
+        const iframe = document.createElement('iframe');
+        iframe.src = "https://www.googletagmanager.com/ns.html?id=GTM-52MFNGBR";
+        iframe.height = "0";
+        iframe.width = "0";
+        iframe.style.display = "none";
+        iframe.style.visibility = "hidden";
+        noscript.appendChild(iframe);
+        document.body.appendChild(noscript);
+      }
+    } else if (activeLanding === 'jeep') {
+      if (!(window as any).gtmJeepInjected) {
+        (window as any).gtmJeepInjected = true;
+
+        // Custom GTM script injection (placed as the second instruction in <head> dynamically)
+        const script = document.createElement('script');
+        script.type = 'text/javascript';
+        script.innerHTML = `
+          (function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+          new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+          j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+          'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+          })(window,document,'script','dataLayer','GTM-KBZTWBNW');
+        `;
+        
+        const head = document.head;
+        if (head.children.length > 1) {
+          head.insertBefore(script, head.children[1]);
+        } else {
+          head.appendChild(script);
+        }
+
+        // Noscript alternative placed at the end of <body> dynamically
+        const noscript = document.createElement('noscript');
+        const iframe = document.createElement('iframe');
+        iframe.src = "https://www.googletagmanager.com/ns.html?id=GTM-KBZTWBNW";
+        iframe.height = "0";
+        iframe.width = "0";
+        iframe.style.display = "none";
+        iframe.style.visibility = "hidden";
+        noscript.appendChild(iframe);
+        document.body.appendChild(noscript);
+      }
+    } else if (activeLanding === 'multimarca') {
+      const host = window.location.hostname.toLowerCase();
+      const searchParams = new URLSearchParams(window.location.search);
+      const landingParam = searchParams.get('landing') || searchParams.get('campaign') || searchParams.get('site') || searchParams.get('utm_source') || '';
+      const isSoccerhouse = host.startsWith('soccerhouse') || host.includes('soccerhouse') || landingParam.toLowerCase().startsWith('soccerhouse') || landingParam.toLowerCase().includes('soccerhouse');
+
+      if (isSoccerhouse) {
+        if (!(window as any).gtmSoccerhouseInjected) {
+          (window as any).gtmSoccerhouseInjected = true;
+
+          // Custom GTM script injection for soccerhouse (placed as the second instruction in <head> dynamically)
+          const script = document.createElement('script');
+          script.type = 'text/javascript';
+          script.innerHTML = `
+            (function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+            new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+            j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+            'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+            })(window,document,'script','dataLayer','GTM-57B77SKL');
+          `;
+          
+          const head = document.head;
+          if (head.children.length > 1) {
+            head.insertBefore(script, head.children[1]);
+          } else {
+            head.appendChild(script);
+          }
+
+          // Noscript alternative placed at the end of <body> dynamically
+          const noscript = document.createElement('noscript');
+          const iframe = document.createElement('iframe');
+          iframe.src = "https://www.googletagmanager.com/ns.html?id=GTM-57B77SKL";
+          iframe.height = "0";
+          iframe.width = "0";
+          iframe.style.display = "none";
+          iframe.style.visibility = "hidden";
+          noscript.appendChild(iframe);
+          document.body.appendChild(noscript);
+        }
+      } else {
+        if (!(window as any).gtmMultimarcaInjected) {
+          (window as any).gtmMultimarcaInjected = true;
+
+          // Custom GTM script injection (placed as the second instruction in <head> dynamically)
+          const script = document.createElement('script');
+          script.type = 'text/javascript';
+          script.innerHTML = `
+            (function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+            new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+            j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+            'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+            })(window,document,'script','dataLayer','GTM-N6RRXWDB');
+          `;
+          
+          const head = document.head;
+          if (head.children.length > 1) {
+            head.insertBefore(script, head.children[1]);
+          } else {
+            head.appendChild(script);
+          }
+
+          // Noscript alternative placed at the end of <body> dynamically
+          const noscript = document.createElement('noscript');
+          const iframe = document.createElement('iframe');
+          iframe.src = "https://www.googletagmanager.com/ns.html?id=GTM-N6RRXWDB";
+          iframe.height = "0";
+          iframe.width = "0";
+          iframe.style.display = "none";
+          iframe.style.visibility = "hidden";
+          noscript.appendChild(iframe);
+          document.body.appendChild(noscript);
+        }
+      }
+    }
+  }, [activeLanding]);
 
   // Update selected state automatically based on landing selection or brand selection
   useEffect(() => {
@@ -1024,14 +1174,14 @@ export default function LeadForm({ c10ImgUrl, t03ImgUrl, b10ImgUrl }: LeadFormPr
   const getThemeColors = () => {
     if (activeLanding === 'jeep') {
       return {
-        accent: 'bg-emerald-600',
-        hoverAccent: 'hover:bg-emerald-500',
-        bgPill: 'bg-emerald-950/40 border-emerald-500/20',
-        textAccent: 'text-emerald-400',
-        borderAccent: 'border-emerald-500',
-        btnBg: 'bg-[#1e4a2f] hover:bg-[#255d3b]',
-        successGradient: 'from-emerald-400 to-green-300',
-        thankYouBadge: 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/20'
+        accent: 'bg-[#22372B]',
+        hoverAccent: 'hover:bg-[#15231b]',
+        bgPill: 'bg-[#22372B]/70 border-[#22372B]/50',
+        textAccent: 'text-[#87a091]',
+        borderAccent: 'border-[#22372B]',
+        btnBg: 'bg-[#22372B] hover:bg-[#15231b]',
+        successGradient: 'from-[#22372B] to-[#3a5444]',
+        thankYouBadge: 'bg-[#22372B]/20 text-[#a3b899] border border-[#22372B]/30'
       };
     }
     if (activeLanding === 'multimarca') {
@@ -1068,7 +1218,7 @@ export default function LeadForm({ c10ImgUrl, t03ImgUrl, b10ImgUrl }: LeadFormPr
   const inputClass = activeLanding === 'leapmotor'
     ? 'w-full bg-[#2D2926] border border-[#deff01] focus:border-[#deff01] focus:ring-1 focus:ring-[#deff01]/40 rounded-xl pl-9 pr-3 py-2.5 text-xs text-slate-100 placeholder-slate-500 outline-none transition font-semibold font-sans'
     : (activeLanding === 'jeep'
-       ? 'w-full bg-[#0a0f18] border border-white/20 focus:border-emerald-400 focus:ring-1 focus:ring-emerald-400/40 rounded-xl pl-9 pr-3 py-2.5 text-xs text-white placeholder-slate-400 outline-none transition font-semibold'
+       ? 'w-full bg-[#0d1411] border border-white/10 focus:border-[#50755f] focus:ring-1 focus:ring-[#50755f]/40 rounded-xl pl-9 pr-3 py-2.5 text-xs text-white placeholder-slate-400 outline-none transition font-semibold'
        : 'w-full bg-[#0a0f18] border border-white/25 focus:border-indigo-400 focus:ring-1 focus:ring-indigo-400/40 rounded-xl pl-9 pr-3 py-2.5 text-xs text-white placeholder-slate-400 outline-none transition font-semibold');
 
   return (
@@ -1084,15 +1234,17 @@ export default function LeadForm({ c10ImgUrl, t03ImgUrl, b10ImgUrl }: LeadFormPr
         className={`w-full max-w-md mx-auto min-h-[82vh] border rounded-[40px] shadow-2xl relative overflow-hidden flex flex-col justify-between mt-1 mb-6 transition-all duration-500 ${
           activeLanding === 'leapmotor'
             ? 'bg-black border-[#009100]/40 shadow-[0_0_35px_rgba(0,145,0,0.25)]'
-            : 'bg-[#05070a] border-white/10'
+            : (activeLanding === 'jeep'
+               ? 'bg-[#050807] border-[#22372B]/60 shadow-[0_0_35px_rgba(34,55,43,0.35)]'
+               : 'bg-[#05070a] border-white/10')
         }`}
       >
         
         {/* Subtle Decorative Auras tailored by theme */}
         {activeLanding === 'leapmotor' ? null : (
           <>
-            <div className={`absolute top-20 left-12 w-60 h-60 ${activeLanding === 'jeep' ? 'bg-emerald-600/5' : (activeLanding === 'multimarca' ? 'bg-indigo-600/5' : 'bg-blue-600/10')} blur-[80px] rounded-full pointer-events-none -translate-x-1/2`} />
-            <div className={`absolute bottom-20 right-12 w-60 h-60 ${activeLanding === 'jeep' ? 'bg-teal-600/5' : (activeLanding === 'multimarca' ? 'bg-purple-600/5' : 'bg-purple-600/10')} blur-[80px] rounded-full pointer-events-none translate-x-1/2`} />
+            <div className={`absolute top-20 left-12 w-60 h-60 ${activeLanding === 'jeep' ? 'bg-[#22372B]/20' : (activeLanding === 'multimarca' ? 'bg-indigo-600/5' : 'bg-blue-600/10')} blur-[80px] rounded-full pointer-events-none -translate-x-1/2`} />
+            <div className={`absolute bottom-20 right-12 w-60 h-60 ${activeLanding === 'jeep' ? 'bg-[#22372B]/10' : (activeLanding === 'multimarca' ? 'bg-purple-600/5' : 'bg-purple-600/10')} blur-[80px] rounded-full pointer-events-none translate-x-1/2`} />
           </>
         )}
 
@@ -1103,8 +1255,12 @@ export default function LeadForm({ c10ImgUrl, t03ImgUrl, b10ImgUrl }: LeadFormPr
             paddingTop: '0px',
             marginBottom: '-7px',
             height: '196px'
-          } : { paddingBottom: '0px' }}
-          className={`px-6 ${activeLanding === 'multimarca' && selectedSubBrand !== null ? 'hidden' : (activeLanding === 'leapmotor' ? 'py-1 border-b border-white/5 relative z-10' : 'py-4 bg-[#05070a]/90 border-b border-white/5 relative z-10')} flex ${activeLanding === 'multimarca' || activeLanding === 'leapmotor' ? 'justify-center' : 'justify-between'} items-center ${activeLanding === 'leapmotor' ? '' : 'backdrop-blur-md'} sticky top-0 z-25`}
+          } : (activeLanding === 'jeep' ? {
+            paddingBottom: '0px',
+            paddingTop: '8px',
+            height: formActive ? '180px' : '110px'
+          } : { paddingBottom: '0px' })}
+          className={`px-6 ${activeLanding === 'multimarca' && selectedSubBrand !== null ? 'hidden' : (activeLanding === 'leapmotor' ? 'py-1 border-b border-white/5 relative z-10' : 'py-4 bg-[#05070a]/90 border-b border-white/5 relative z-10')} flex ${activeLanding === 'multimarca' || activeLanding === 'leapmotor' || activeLanding === 'jeep' ? 'justify-center' : 'justify-between'} items-center ${activeLanding === 'leapmotor' ? '' : 'backdrop-blur-md'} sticky top-0 z-25`}
         >
           {activeLanding === 'leapmotor' && (
             <div className="flex items-center justify-center w-full max-w-full py-3 sm:py-5">
@@ -1117,8 +1273,30 @@ export default function LeadForm({ c10ImgUrl, t03ImgUrl, b10ImgUrl }: LeadFormPr
               />
             </div>
           )}
-
+          
           {activeLanding === 'jeep' && (
+            <div style={{ height: formActive ? '160px' : '90px' }} className="flex flex-col items-center justify-center w-full py-2 bg-gradient-to-b from-black/20 to-transparent gap-3 select-none">
+              {/* Larger, Prominent Return Button located ABOVE the logo - only when form is active */}
+              {formActive && (
+                <button
+                  onClick={() => {
+                    setFormActive(false);
+                  }}
+                  className="flex items-center gap-2.5 px-6 py-2.5 rounded-full bg-[#22372B]/90 hover:bg-[#345241]/95 text-slate-100 hover:text-white text-[13px] font-extrabold tracking-wider transition-all duration-300 active:scale-95 shadow-md border border-[#22372B]/60 hover:border-[#22372B]/85"
+                  aria-label="Regresar"
+                >
+                  <ArrowLeft className="w-4.5 h-4.5 text-[#a3b899]" />
+                  <span>Regresar a la Landing</span>
+                </button>
+              )}
+
+              <svg role="img" viewBox="0 0 24 24" className="w-[110px] sm:w-[130px] h-auto fill-slate-100 transition-transform duration-300 hover:scale-[1.02]" xmlns="http://www.w3.org/2000/svg">
+                <path d="M4.1651 7.1687v5.2011c0 .6762-.444 1.0777-1.1628 1.0777-.7185 0-1.0992-.5283-1.0992-1.0992v-.9299H0v.9514c0 .972.296 2.7068 3.0235 2.7068 2.7272 0 3.1082-1.8614 3.1082-2.7488V7.1687Zm4.9177 2.1562c-1.7973 0-2.6003 1.6485-2.6003 3.0657 0 1.4168.9094 2.7912 2.7695 2.7912 1.6285.021 2.707-1.0361 2.707-1.8187h-1.7977s-.2113.5078-.8458.5078c-.6343 0-.9934-.3596-.9934-1.2265h3.6576c0-2.7277-1.3526-3.3195-2.897-3.3195zm5.8471 0c-1.7968 0-2.6007 1.6485-2.6007 3.0657 0 1.4168.9094 2.7912 2.7705 2.7912 1.628.021 2.7067-1.0361 2.7067-1.8187h-1.7978s-.2116.5078-.8454.5078c-.6348 0-.9942-.3596-.9942-1.2265h3.6574c0-2.7277-1.3523-3.3195-2.8965-3.3195zm6.7435.0635c-.9132 0-1.3186.4962-1.3401.522-.1283.1538-.2875.3165-.2875-.0782v-.2959h-1.8193v7.295h1.8398V14.822c0-.148.1478-.126.2543 0 .1063.1277.5711.4443 1.3752.4443C23.155 15.2663 24 13.9978 24 12.264c0-2.2415-1.4162-2.8757-2.3266-2.8756Zm-12.401 1.1203c.6766 0 .972.5073.972 1.0365H8.3843c0-.5718.2327-1.0365.8882-1.0365zm5.8468 0c.6767 0 .9724.5073.9724 1.0365H14.231c0-.5718.2332-1.0365.8883-1.0365zm5.9204.296c.9318 0 1.1.7189 1.1 1.4593 0 .74-.1272 1.7124-1.0141 1.7124-.8884 0-1.1212-.5709-1.1017-1.6486.022-1.0788.4441-1.523 1.0158-1.523zm2.2813 4.5664a.5855.5855 0 0 0-.5856.5857c0 .3233.2617.5856.5856.5856.3218 0 .585-.2623.585-.5856 0-.3233-.2632-.5857-.585-.5857zm0 .062a.524.524 0 0 1 .5236.5237c0 .2884-.2346.5246-.5236.5246a.5258.5258 0 0 1-.525-.5246c0-.289.2352-.5236.525-.5236zm-.2108.2024v.6208h.0725v-.2689h.1764l.1159.269h.0806l-.1216-.2873c.0386-.0133.0514-.0227.072-.0447.0266-.0287.0434-.0739.0434-.115 0-.1034-.0796-.174-.195-.174zm.0705.0676h.1722c.072 0 .1177.041.1177.1045 0 .072-.0485.1168-.1278.1168h-.1621z" />
+              </svg>
+            </div>
+          )}
+
+          {false && (
             <>
               <div className="flex items-center gap-2 py-1">
                 <Compass className="w-4.5 h-4.5 text-emerald-400 animate-spin-slow" />
@@ -1236,7 +1414,7 @@ export default function LeadForm({ c10ImgUrl, t03ImgUrl, b10ImgUrl }: LeadFormPr
                   </p>
 
                   {/* Cherokee Image Asset */}
-                  <div className="relative aspect-[16/10] my-1 select-none overflow-hidden rounded-2xl border border-emerald-500/30 group bg-slate-900/35 shadow-[0_0_20px_rgba(16,185,129,0.25)]">
+                  <div className="relative aspect-[16/10] my-1 select-none overflow-hidden rounded-2xl border border-[#22372B]/60 group bg-slate-900/35 shadow-[0_0_25px_rgba(34,55,43,0.45)]">
                     <img 
                       src={JEEP_IMG} 
                       alt="Jeep Cherokee 2026"
@@ -1247,24 +1425,24 @@ export default function LeadForm({ c10ImgUrl, t03ImgUrl, b10ImgUrl }: LeadFormPr
                   </div>
 
                   {/* Highlights Row */}
-                  <div className="grid grid-cols-3 gap-2 py-2 border-y border-emerald-500/10">
-                    <div className="flex flex-col items-center gap-1">
-                      <div className="w-7 h-7 rounded-full bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center text-emerald-400">
-                        <Compass className="w-3.5 h-3.5 text-emerald-300" />
+                  <div className="grid grid-cols-3 gap-2 py-3 border-y border-[#22372B]/35 bg-[#22372B]/5 rounded-xl">
+                    <div className="flex flex-col items-center gap-2">
+                      <div className="w-11 h-11 rounded-full bg-[#22372B]/20 border border-[#22372B]/40 flex items-center justify-center text-[#87a091] shadow-inner">
+                        <Compass className="w-6 h-6 text-[#a3b899]" />
                       </div>
-                      <span className="text-[8px] text-white font-bold uppercase font-mono">Terrain 4x4</span>
+                      <span className="text-[10px] sm:text-[11px] text-white font-extrabold uppercase font-sans tracking-wide">Terrain 4x4</span>
                     </div>
-                    <div className="flex flex-col items-center gap-1">
-                      <div className="w-7 h-7 rounded-full bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center text-emerald-400">
-                        <Zap className="w-3.5 h-3.5 text-emerald-300" />
+                    <div className="flex flex-col items-center gap-2">
+                      <div className="w-11 h-11 rounded-full bg-[#22372B]/20 border border-[#22372B]/40 flex items-center justify-center text-[#87a091] shadow-inner">
+                        <Zap className="w-6 h-6 text-[#a3b899]" />
                       </div>
-                      <span className="text-[8px] text-white font-bold uppercase font-mono">Hemi-Hybrid</span>
+                      <span className="text-[10px] sm:text-[11px] text-white font-extrabold uppercase font-sans tracking-wide">Hemi-Hybrid</span>
                     </div>
-                    <div className="flex flex-col items-center gap-1">
-                      <div className="w-7 h-7 rounded-full bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center text-emerald-400">
-                        <Award className="w-3.5 h-3.5 text-emerald-300" />
+                    <div className="flex flex-col items-center gap-2">
+                      <div className="w-11 h-11 rounded-full bg-[#22372B]/20 border border-[#22372B]/40 flex items-center justify-center text-[#87a091] shadow-inner">
+                        <Award className="w-6 h-6 text-[#a3b899]" />
                       </div>
-                      <span className="text-[8px] text-white font-bold uppercase font-mono">Trail Rated</span>
+                      <span className="text-[10px] sm:text-[11px] text-white font-extrabold uppercase font-sans tracking-wide">Trail Rated</span>
                     </div>
                   </div>
 
@@ -1272,16 +1450,16 @@ export default function LeadForm({ c10ImgUrl, t03ImgUrl, b10ImgUrl }: LeadFormPr
                   <div className="grid grid-cols-2 gap-2 pt-1">
                     <button
                       onClick={() => launchFormWithRequest('cotizacion', 'Jeep Cherokee')}
-                      className="bg-emerald-600 hover:bg-emerald-500 text-white font-extrabold py-3.5 px-4 rounded-xl text-[10px] uppercase tracking-wider flex items-center justify-center gap-1.5 transition-all duration-300 active:scale-95 shadow-md shadow-emerald-500/10 col-span-1"
+                      className="bg-[#22372B] hover:bg-[#345241] text-white font-extrabold py-3.5 px-4 rounded-xl text-[10px] uppercase tracking-wider flex items-center justify-center gap-1.5 transition-all duration-300 active:scale-95 shadow-md shadow-[#22372B]/20 col-span-1"
                     >
-                      <FileText className="w-3.5 h-3.5" />
+                      <FileText className="w-3.5 h-3.5 text-slate-100" />
                       <span>Cotización</span>
                     </button>
                     <button
                       onClick={() => launchFormWithRequest('prueba', 'Jeep Cherokee')}
-                      className="bg-[#0f1012] hover:bg-slate-900 text-slate-200 border border-emerald-500/30 hover:border-emerald-500/60 font-extrabold py-3.5 px-4 rounded-xl text-[10px] uppercase tracking-wider flex items-center justify-center gap-1.5 transition-all duration-300 active:scale-95 col-span-1"
+                      className="bg-[#0f1012] hover:bg-slate-900 text-slate-200 border border-[#22372B]/40 hover:border-[#22372B]/70 font-extrabold py-3.5 px-4 rounded-xl text-[10px] uppercase tracking-wider flex items-center justify-center gap-1.5 transition-all duration-300 active:scale-95 col-span-1"
                     >
-                      <Key className="w-3.5 h-3.5 text-emerald-400" />
+                      <Key className="w-3.5 h-3.5 text-[#a3b899]" />
                       <span>Prueba de Manejo</span>
                     </button>
 
@@ -1578,18 +1756,20 @@ export default function LeadForm({ c10ImgUrl, t03ImgUrl, b10ImgUrl }: LeadFormPr
             >
               <div>
                 {/* Back Link */}
-                <button 
-                  onClick={() => setFormActive(false)}
-                  className={`flex items-center gap-1.5 text-white hover:text-slate-200 text-[11px] font-semibold ${activeLanding === 'leapmotor' ? 'font-sans' : 'font-mono'} mb-4 transition bg-white/10 px-2 py-1 rounded`}
-                >
-                  <ArrowLeft className="w-3.5 h-3.5" />
-                  <span>{activeLanding === 'leapmotor' ? 'Regresar' : 'Volver a la Landing'}</span>
-                </button>
+                {activeLanding !== 'jeep' && (
+                  <button 
+                    onClick={() => setFormActive(false)}
+                    className={`flex items-center gap-1.5 text-white hover:text-slate-200 text-[11px] font-semibold ${activeLanding === 'leapmotor' ? 'font-sans' : 'font-mono'} mb-4 transition bg-white/10 px-2 py-1 rounded`}
+                  >
+                    <ArrowLeft className="w-3.5 h-3.5" />
+                    <span>{activeLanding === 'leapmotor' ? 'Regresar' : 'Volver a la Landing'}</span>
+                  </button>
+                )}
 
-                <h2 className={`text-xl tracking-wide text-white mb-1 uppercase font-sans ${activeLanding === 'leapmotor' ? 'font-semibold' : 'font-black'}`}>
+                <h2 className={`text-xl tracking-wide text-white mb-1 uppercase font-sans ${activeLanding === 'leapmotor' ? 'font-semibold' : 'font-black'} ${activeLanding === 'jeep' ? 'mt-3' : ''}`}>
                   DÉJANOS TUS DATOS
                 </h2>
-                {activeLanding !== 'leapmotor' && (
+                {activeLanding !== 'leapmotor' && activeLanding !== 'jeep' && (
                   <span className="text-[11px] text-white font-bold font-mono block mb-4 uppercase">
                     Marca de interés: <strong className={theme.textAccent}>{selectedBrand}</strong>
                   </span>
