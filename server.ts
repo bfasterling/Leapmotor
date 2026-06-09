@@ -2,7 +2,7 @@ import express from 'express';
 import path from 'path';
 import fs from 'fs';
 import { createServer as createViteServer } from 'vite';
-import { initializeApp } from 'firebase/app';
+import { initializeApp, getApp, getApps } from 'firebase/app';
 import { getFirestore, collection, query, where, getDocs, doc, updateDoc, Timestamp } from 'firebase/firestore';
 import { BRAND_MODELS_METADATA } from './src/data/brandModelsMetadata';
 import { ALL_DEALERS } from './src/data/dealers';
@@ -24,7 +24,7 @@ async function runLeadSync() {
   console.log('[CRON] Starting automated Lead CRM synchronization...');
   
   // Initialize dedicated Firebase instance safely in server mode
-  const firebaseApp = initializeApp(firebaseConfig);
+  const firebaseApp = getApps().length > 0 ? getApp() : initializeApp(firebaseConfig);
   const db = getFirestore(firebaseApp);
 
   const now = new Date();
@@ -310,48 +310,79 @@ app.all('/api/cron/sync-leads', async (req, res) => {
 // Full-stack on-demand Firestore database export
 app.get('/api/db/export', async (req, res) => {
   try {
-    console.log('[API] Starting on-demand database backup and export...');
-    const firebaseApp = initializeApp(firebaseConfig);
-    const db = getFirestore(firebaseApp);
+    console.log('[API] Starting on-demand dual-database backup and export...');
+    const firebaseApp = getApps().length > 0 ? getApp() : initializeApp(firebaseConfig);
+    
+    // Default Firestore DB
+    const dbDefault = getFirestore(firebaseApp);
+    
+    // Custom Firestore DB
+    const customDbId = firebaseConfig.firestoreDatabaseId || '';
+    const dbCustom = customDbId ? getFirestore(firebaseApp, customDbId) : null;
 
     const collectionsToBackup = ['leads', 'advisors', 'distributors'];
     const backupData: Record<string, any[]> = {};
 
     for (const colName of collectionsToBackup) {
+      const mergedDocsMap = new Map<string, any>();
+
+      // 1. Fetch from Default Database
       try {
-        console.log(`[API] Fetching collection: ${colName}...`);
-        const colRef = collection(db, colName);
-         const querySnapshot = await getDocs(colRef);
-        
-        const docsList: any[] = [];
+        console.log(`[API] Fetching collection: ${colName} from (default) database...`);
+        const colRef = collection(dbDefault, colName);
+        const querySnapshot = await getDocs(colRef);
         querySnapshot.forEach((docSnap) => {
           const data = docSnap.data();
           const formattedData = { ...data };
-          
-          // Convert Firestore timestamps to readable string representations
           for (const [key, val] of Object.entries(formattedData)) {
             if (val && typeof val === 'object' && 'seconds' in val && 'nanoseconds' in val) {
               formattedData[key] = new Date((val as any).seconds * 1000).toISOString();
             }
           }
-          
-          docsList.push({
+          mergedDocsMap.set(docSnap.id, {
             id: docSnap.id,
             ...formattedData
           });
         });
-        
-        backupData[colName] = docsList;
-        console.log(`[API] Exported ${docsList.length} documents from ${colName}.`);
-      } catch (colErr: any) {
-        console.error(`[API] Error exporting ${colName}:`, colErr.message);
+        console.log(`[API] (default) database had ${querySnapshot.size} records for ${colName}`);
+      } catch (defaultColErr: any) {
+        console.warn(`[API] Skip error querying (default) database for ${colName}:`, defaultColErr.message);
       }
+
+      // 2. Fetch from Custom Database (if configured)
+      if (dbCustom && customDbId) {
+        try {
+          console.log(`[API] Fetching collection: ${colName} from custom database (${customDbId})...`);
+          const colRef = collection(dbCustom, colName);
+          const querySnapshot = await getDocs(colRef);
+          querySnapshot.forEach((docSnap) => {
+            const data = docSnap.data();
+            const formattedData = { ...data };
+            for (const [key, val] of Object.entries(formattedData)) {
+              if (val && typeof val === 'object' && 'seconds' in val && 'nanoseconds' in val) {
+                formattedData[key] = new Date((val as any).seconds * 1000).toISOString();
+              }
+            }
+            // Overwrites or adds to the Map, thereby de-duplicating by ID and prioritizing newest values
+            mergedDocsMap.set(docSnap.id, {
+              id: docSnap.id,
+              ...formattedData
+            });
+          });
+          console.log(`[API] Custom database (${customDbId}) had ${querySnapshot.size} records for ${colName}`);
+        } catch (customColErr: any) {
+          console.warn(`[API] Skip error querying custom database for ${colName}:`, customColErr.message);
+        }
+      }
+
+      backupData[colName] = Array.from(mergedDocsMap.values());
+      console.log(`[API] Total consolidated/merged records for ${colName}: ${backupData[colName].length}`);
     }
 
     // Save a copy to the server workspace for safety and compliance
     const outputPath = path.join(process.cwd(), 'firestore_backup_export.json');
     fs.writeFileSync(outputPath, JSON.stringify(backupData, null, 2), 'utf-8');
-    console.log(`[API] Backup copy written to workspace file: ${outputPath}`);
+    console.log(`[API] Consolidated backup copy written to workspace file: ${outputPath}`);
 
     // Direct client attachment headers for instantaneous download
     res.setHeader('Content-Type', 'application/json');
