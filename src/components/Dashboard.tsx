@@ -288,6 +288,7 @@ export default function Dashboard() {
       setLoading(false);
     }, (error) => {
       console.error("Dashboard snap error:", error);
+      setLoading(false);
     });
 
     return () => unsubscribe();

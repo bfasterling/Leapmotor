@@ -316,6 +316,7 @@ export default function AdvisorPanel() {
       }
     }, (error) => {
       console.error("Firestore onSnapshot error:", error);
+      setLoading(false);
       try {
         handleFirestoreError(error, OperationType.LIST, 'leads');
       } catch (formattedErr) {
