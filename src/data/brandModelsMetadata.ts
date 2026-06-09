@@ -1,64 +1,20 @@
-/**
- * @license
- * SPDX-License-Identifier: Apache-2.0
- */
-
-// Import newly generated high-fidelity Jeep images matching the 2026 specifications
-import JEEP_RENEGADE_26 from '../assets/images/rene26_img_1780766111067.png';
-import JEEP_COMPASS_26 from '../assets/images/comp26_img_1780766127103.png';
-import JEEP_COMMANDER_26 from '../assets/images/comm26_img_1780766138766.png';
-import JEEP_CHEROKEE_26 from '../assets/images/chro26_img_1780766151284.png';
-import JEEP_WRANGLER_26 from '../assets/images/wrmh26_img_1780766163440.png';
-import JEEP_GLADIATOR_26 from '../assets/images/glad26_img_1780766174857.png';
-import JEEP_GRAND_CHEROKEE_26 from '../assets/images/tchr26_img_1780766187618.png';
-import JEEP_GRAND_WAGONEER_26 from '../assets/images/grwl26_img_1780766200696.png';
-
-// Import newly generated high-fidelity Fiat images
-import FIFA25_IMG from '../assets/images/fifa25_img_1780765331412.png';
-import FPAB25_IMG from '../assets/images/fpab25_img_1780765345796.png';
-import FPUL25_IMG from '../assets/images/fpul25_img_1780765359774.png';
-
-// Import newly generated high-fidelity Dodge images
-import DODGE_NEW_ATTITUDE_26 from '../assets/images/atti26_img_1780766639870.png';
-import DODGE_DURANGO_26 from '../assets/images/dura26_img_1780766655347.png';
-
-// Import newly generated high-fidelity RAM images matching the 2026 specifications
-import RAM_700_26 from '../assets/images/r70026_img_1780766834372.png';
-import RAM_1200_26 from '../assets/images/r120026_img_1780766850090.png';
-import RAM_4000_26 from '../assets/images/r400026_img_1780766861825.png';
-import RAM_PROMASTER_26 from '../assets/images/prom26_img_1780766873585.png';
-import RAM_1500_26 from '../assets/images/rlsh26_img_1780766885810.png';
-
-// Import newly generated high-fidelity Peugeot images matching the 2026-2027 specifications
-import PEUGEOT_PARTNER_27 from '../assets/images/pgpt27_img_1780767108136.png';
-import PEUGEOT_RIFTER_27 from '../assets/images/ptri27_img_1780767119616.png';
-import PEUGEOT_2008_27 from '../assets/images/p20027_img_1780767131886.png';
-import PEUGEOT_PARTNER_RAPID_26 from '../assets/images/parp26_img_1780767143669.png';
-import PEUGEOT_NUEVA_RIFTER_26 from '../assets/images/ptri26_img_1780767155554.png';
-import PEUGEOT_EXPERT_26 from '../assets/images/pnex26_img_1780767167222.png';
-import PEUGEOT_3008_26 from '../assets/images/psva26_img_1780767178761.png';
-import PEUGEOT_MANAGER_26 from '../assets/images/pgra26_img_1780767190869.png';
-import PEUGEOT_5008_26 from '../assets/images/ptsv26_img_1780767209886.png';
-
-export interface BrandModelInfo {
+export interface BrandModelMetadata {
   brand: string;        // E.g., 'Fiat', 'Jeep', 'Dodge', 'Ram', 'Peugeot', 'Leapmotor'
   model: string;        // UI Display Name
   claveGen: string;     // Database corporate lookup key
   desc: string;         // Customer-facing description
-  img: string;          // Model photograph
   version?: string;     // CSV Version (e.g., 'SE MT' or 'GT PLUS')
   idVersion?: string;   // CSV idVersion (e.g., 'DGATTI2401')
   anio?: string;        // CSV Anio (e.g., '24')
 }
 
-export const BRAND_MODELS_DB: BrandModelInfo[] = [
-  // --- FIAT BRAND (SPECIFIC CSV ALIGNMENT) ---
+export const BRAND_MODELS_METADATA: BrandModelMetadata[] = [
+  // --- FIAT BRAND ---
   {
     brand: 'Fiat',
     model: 'PULSE',
     claveGen: 'FPUL24',
     desc: 'Diseño deportivo italiano, confort elevado y tecnología intuitiva.',
-    img: FPUL25_IMG,
     version: 'Drive MT',
     idVersion: 'FIFPUL2401',
     anio: '24'
@@ -68,7 +24,6 @@ export const BRAND_MODELS_DB: BrandModelInfo[] = [
     model: 'PULSE ABARTH',
     claveGen: 'FPAB24',
     desc: 'El temperamento deportivo de pista del escorpión, hecho para la calle.',
-    img: FPAB25_IMG,
     version: 'PULSE ABARTH',
     idVersion: 'FIFPAB2401',
     anio: '24'
@@ -78,7 +33,6 @@ export const BRAND_MODELS_DB: BrandModelInfo[] = [
     model: 'PULSE ABARTH STRANGER THINGS',
     claveGen: 'PABE26',
     desc: 'Edición exclusiva Stranger Things, diseño retro futurista y potencia deportiva.',
-    img: FPAB25_IMG,
     version: 'Abarth',
     idVersion: 'FIPABE2601',
     anio: '26'
@@ -88,7 +42,6 @@ export const BRAND_MODELS_DB: BrandModelInfo[] = [
     model: 'FASTBACK',
     claveGen: 'FIFA25',
     desc: 'La elegancia del diseño coupé combinada con la robustez y espacio de un SUV.',
-    img: FIFA25_IMG,
     version: 'Audace',
     idVersion: 'FIFIFA2501',
     anio: '25'
@@ -98,19 +51,17 @@ export const BRAND_MODELS_DB: BrandModelInfo[] = [
     model: 'ARGO',
     claveGen: 'ARGO24',
     desc: 'Estilo moderno con amplio espacio y comodidad para cada viaje.',
-    img: FPUL25_IMG,
     version: 'Drive Plus MT',
     idVersion: 'FIARGO2401',
     anio: '24'
   },
 
-  // --- JEEP BRAND (UPDATED JEEP MODEL DATABASE FROM CSV) ---
+  // --- JEEP BRAND ---
   {
     brand: 'Jeep',
     model: 'RENEGADE',
     claveGen: 'RENE25',
     desc: 'Estilo aventurero urbano, dinámico y potente para almas jóvenes.',
-    img: JEEP_RENEGADE_26,
     version: 'Sport 1.3L Turbo 6AT',
     idVersion: 'JPRENE2503',
     anio: '25'
@@ -120,7 +71,6 @@ export const BRAND_MODELS_DB: BrandModelInfo[] = [
     model: 'COMPASS',
     claveGen: 'COMP25',
     desc: 'Diseño audaz y tecnología avanzada híbrida para tu día a día.',
-    img: JEEP_COMPASS_26,
     version: 'Compass Limited Premium 4X2 ATX6 1.3L Turbo',
     idVersion: 'JPCOMP2505',
     anio: '25'
@@ -130,7 +80,6 @@ export const BRAND_MODELS_DB: BrandModelInfo[] = [
     model: 'COMMANDER',
     claveGen: 'COMM25',
     desc: 'El SUV premium de 3 filas con diseño sofisticado y espacio inteligente.',
-    img: JEEP_COMMANDER_26,
     version: 'Overland FWD 6AT 1.3L Turbo',
     idVersion: 'JPCOMM2501',
     anio: '25'
@@ -140,7 +89,6 @@ export const BRAND_MODELS_DB: BrandModelInfo[] = [
     model: 'CHEROKEE',
     claveGen: 'CHRO26',
     desc: 'Lujo premium legendario, refinamiento y confort en carretera.',
-    img: JEEP_CHEROKEE_26,
     version: 'Limited 4x4',
     idVersion: 'JPCHRO2601',
     anio: '26'
@@ -150,7 +98,6 @@ export const BRAND_MODELS_DB: BrandModelInfo[] = [
     model: 'WRANGLER',
     claveGen: 'WRMH24',
     desc: 'El espíritu de libertad todoterreno indiscutible en cualquier terreno.',
-    img: JEEP_WRANGLER_26,
     version: 'Unlimited Willys 2.0L Turbo 4x4',
     idVersion: 'JPWRMH2401',
     anio: '24'
@@ -160,7 +107,6 @@ export const BRAND_MODELS_DB: BrandModelInfo[] = [
     model: 'WRANGLER 4xe',
     claveGen: 'WRPH24',
     desc: 'El espíritu Jeep electrificado, tecnología híbrida todoterreno sin precedentes.',
-    img: JEEP_WRANGLER_26,
     version: 'Unlimited Sahara PHEV 2.0L Turbo 4xe',
     idVersion: 'JPWRPH2401',
     anio: '24'
@@ -170,7 +116,6 @@ export const BRAND_MODELS_DB: BrandModelInfo[] = [
     model: 'JEEP JT',
     claveGen: 'GLAD24',
     desc: 'La pickup todoterreno definitiva con ADN Trail Rated y versatilidad inigualable.',
-    img: JEEP_GLADIATOR_26,
     version: 'Willys 4X4',
     idVersion: 'JPGLAD2401',
     anio: '24'
@@ -180,7 +125,6 @@ export const BRAND_MODELS_DB: BrandModelInfo[] = [
     model: 'GRAND CHEROKEE',
     claveGen: 'TCHR24',
     desc: 'Sofisticación sin paralelo con asombroso desempeño en todo camino.',
-    img: JEEP_GRAND_CHEROKEE_26,
     version: 'Altitude V6 4x2',
     idVersion: 'JPTCHR2407',
     anio: '24'
@@ -190,7 +134,6 @@ export const BRAND_MODELS_DB: BrandModelInfo[] = [
     model: 'GRAND CHEROKEE 4xe',
     claveGen: 'GCXE24',
     desc: 'Elegancia superior con propulsión híbrida avanzada.',
-    img: JEEP_GRAND_CHEROKEE_26,
     version: '2.0L PHEV',
     idVersion: 'JPGCXE2401',
     anio: '24'
@@ -200,7 +143,6 @@ export const BRAND_MODELS_DB: BrandModelInfo[] = [
     model: 'GRAND WAGONEER',
     claveGen: 'GRWL26',
     desc: 'La cumbre del confort absoluto y el refinamiento en un SUV de gran tamaño.',
-    img: JEEP_GRAND_WAGONEER_26,
     version: 'L Limited 4x4',
     idVersion: 'JPGRWL2601',
     anio: '26'
@@ -210,7 +152,6 @@ export const BRAND_MODELS_DB: BrandModelInfo[] = [
     model: 'GRAND WAGONEER L',
     claveGen: 'WGNL24',
     desc: 'Gran Wagoneer Premium extendido, suntuosidad y espacio para viajes idílicos.',
-    img: JEEP_GRAND_WAGONEER_26,
     version: 'Series III 4X4',
     idVersion: 'JPWGNL2401',
     anio: '24'
@@ -220,19 +161,17 @@ export const BRAND_MODELS_DB: BrandModelInfo[] = [
     model: 'WAGONEER L',
     claveGen: 'WGNR24',
     desc: 'Elegancia majestuosa en formato extendido, viaje sin límites.',
-    img: JEEP_GRAND_WAGONEER_26,
     version: 'Wagoneer L Series III 4X4',
     idVersion: 'JPWGNR2401',
     anio: '24'
   },
 
-  // --- DODGE BRAND (CSV ALIGNMENT) ---
+  // --- DODGE BRAND ---
   {
     brand: 'Dodge',
     model: 'ATTITUDE',
     claveGen: 'ATTI24',
     desc: 'La economía de combustible superior y el excelente manejo en ciudad.',
-    img: DODGE_NEW_ATTITUDE_26,
     version: 'SE MT',
     idVersion: 'DGATTI2401',
     anio: '24'
@@ -242,7 +181,6 @@ export const BRAND_MODELS_DB: BrandModelInfo[] = [
     model: 'NEW ATTITUDE',
     claveGen: 'NATT25',
     desc: 'Máxima evolución de diseño del sedán preferido de México.',
-    img: DODGE_NEW_ATTITUDE_26,
     version: 'SXT',
     idVersion: 'DGNATT2501',
     anio: '25'
@@ -252,7 +190,6 @@ export const BRAND_MODELS_DB: BrandModelInfo[] = [
     model: 'DURANGO',
     claveGen: 'DURA24',
     desc: 'SUV de tres filas con estilo agresivo y potencia deportiva superior.',
-    img: DODGE_DURANGO_26,
     version: 'GT PLUS',
     idVersion: 'DGDURA2401',
     anio: '24'
@@ -262,19 +199,17 @@ export const BRAND_MODELS_DB: BrandModelInfo[] = [
     model: 'JOURNEY',
     claveGen: 'JOUR24',
     desc: 'Confort, seguridad y espacio moderno para toda la familia.',
-    img: DODGE_DURANGO_26,
     version: 'SXT',
     idVersion: 'DGJOUR2401',
     anio: '24'
   },
 
-  // --- RAM BRAND (CSV ALIGNMENT) ---
+  // --- RAM BRAND ---
   {
     brand: 'Ram',
     model: 'RAM 700',
     claveGen: 'R70024',
     desc: 'La pickup compacta líder, versátil, eficiente y lista para cualquier trabajo.',
-    img: RAM_700_26,
     version: 'SLT Regular Cab',
     idVersion: 'RMR7002401',
     anio: '24'
@@ -284,7 +219,6 @@ export const BRAND_MODELS_DB: BrandModelInfo[] = [
     model: 'RAM 1200',
     claveGen: '120025',
     desc: 'Excelente capacidad de carga y fuerza de arrastre para el trabajo rudo diario.',
-    img: RAM_1200_26,
     version: 'Tradesman RC 2.4T 6M/T',
     idVersion: 'RM12002501',
     anio: '25'
@@ -294,7 +228,6 @@ export const BRAND_MODELS_DB: BrandModelInfo[] = [
     model: 'RAM 4000',
     claveGen: 'R400024',
     desc: 'Chasis robusto y versatilidad extrema para configurar tu fuerza de trabajo.',
-    img: RAM_4000_26,
     version: 'Chasis Plano Corto P V8 5MT 4X2',
     idVersion: 'RMR40002401',
     anio: '24'
@@ -304,7 +237,6 @@ export const BRAND_MODELS_DB: BrandModelInfo[] = [
     model: 'PROMASTER',
     claveGen: 'PROM24',
     desc: 'Máxima capacidad volumétrica y confort de conducción para tu negocio.',
-    img: RAM_PROMASTER_26,
     version: '2500 11.5m3',
     idVersion: 'RMPROM2401',
     anio: '24'
@@ -314,7 +246,6 @@ export const BRAND_MODELS_DB: BrandModelInfo[] = [
     model: 'PROMASTER RAPID',
     claveGen: 'PROR24',
     desc: 'La socia perfecta para entregas rápidas y logística urbana.',
-    img: RAM_PROMASTER_26,
     version: 'Rapid',
     idVersion: 'RMPROR2401',
     anio: '24'
@@ -324,7 +255,6 @@ export const BRAND_MODELS_DB: BrandModelInfo[] = [
     model: 'RAM 1500',
     claveGen: 'CRLM24',
     desc: 'Lujo sin límites, tecnología avanzada y un desempeño legendario y sofisticado.',
-    img: RAM_1500_26,
     version: '1500 MILD-HYBRID TRADESMAN V6',
     idVersion: 'RMRHTV2401',
     anio: '24'
@@ -334,7 +264,6 @@ export const BRAND_MODELS_DB: BrandModelInfo[] = [
     model: '1500 CLASSIC',
     claveGen: 'RCLS24',
     desc: 'Fuerza legendaria, diseño clásico y confiabilidad incomparable.',
-    img: RAM_1500_26,
     version: 'Tradesman Crew Cab - V6 8AT 4X2',
     idVersion: 'RMRCLS2401',
     anio: '24'
@@ -344,7 +273,6 @@ export const BRAND_MODELS_DB: BrandModelInfo[] = [
     model: '1500 MILD-HYBRID',
     claveGen: 'RHBV25',
     desc: 'Lujo sofisticado y eficiente, propulsión eTorque Mild Hybrid.',
-    img: RAM_1500_26,
     version: 'Bighorn V6',
     idVersion: 'RMRHBV2501',
     anio: '25'
@@ -354,7 +282,6 @@ export const BRAND_MODELS_DB: BrandModelInfo[] = [
     model: '2500 HD',
     claveGen: 'CRHD24',
     desc: 'El poder absoluto del trabajo rudo, diseño imponente y arrastre masivo.',
-    img: RAM_1500_26,
     version: 'Tradesman 6.4L 8A/T',
     idVersion: 'RMCRHD2401',
     anio: '24'
@@ -364,7 +291,6 @@ export const BRAND_MODELS_DB: BrandModelInfo[] = [
     model: '2500 HD LIMITED',
     claveGen: 'HDLI24',
     desc: 'La máxima expresión del lujo premium combinada con poder extremo.',
-    img: RAM_1500_26,
     version: '6.4L 8A/T RAMBOX',
     idVersion: 'RMHDLI2401',
     anio: '24'
@@ -374,19 +300,17 @@ export const BRAND_MODELS_DB: BrandModelInfo[] = [
     model: 'RAM 2500 POWER WAGON',
     claveGen: 'RMPW24',
     desc: 'La pickup off-road definitiva para terrenos indomables.',
-    img: RAM_1500_26,
     version: 'HD 6.4L 8A/T',
     idVersion: 'RMRMPW2401',
     anio: '24'
   },
 
-  // --- PEUGEOT BRAND (CSV COMPATIBILITY MAP) ---
+  // --- PEUGEOT BRAND ---
   {
     brand: 'Peugeot',
     model: 'PARTNER',
     claveGen: 'PGPT27',
     desc: 'Excelente capacidad volumétrica y acceso lateral para tu negocio diario.',
-    img: PEUGEOT_PARTNER_27,
     version: 'Partner',
     idVersion: 'PGPART2701',
     anio: '27'
@@ -396,7 +320,6 @@ export const BRAND_MODELS_DB: BrandModelInfo[] = [
     model: 'RIFTER',
     claveGen: 'PTRI27',
     desc: 'El espacio y estilo dinámico para las de aventuras en familia.',
-    img: PEUGEOT_RIFTER_27,
     version: 'Allure',
     idVersion: 'PGRIFT2701',
     anio: '27'
@@ -406,7 +329,6 @@ export const BRAND_MODELS_DB: BrandModelInfo[] = [
     model: '2008',
     claveGen: 'P20027',
     desc: 'La máxima elegancia y tecnología del SUV compacto con el i-Cockpit®.',
-    img: PEUGEOT_2008_27,
     version: 'Active',
     idVersion: 'PG20082701',
     anio: '27'
@@ -418,7 +340,6 @@ export const BRAND_MODELS_DB: BrandModelInfo[] = [
     model: 'B10',
     claveGen: 'LB1027',
     desc: 'Smart SUV 100% eléctrica inteligente con arquitectura global de conectividad.',
-    img: 'https://images.unsplash.com/photo-1563720223185-11003d516935?w=350&q=80',
     version: 'DESIGN',
     idVersion: 'LMLB102701',
     anio: '27'
@@ -428,7 +349,6 @@ export const BRAND_MODELS_DB: BrandModelInfo[] = [
     model: 'C10',
     claveGen: 'LC1027',
     desc: 'SUV Inteligente de formato mediano con tecnología de confort superior.',
-    img: 'https://images.unsplash.com/photo-1563720223185-11003d516935?w=350&q=80',
     version: 'DESIGN',
     idVersion: 'LMLC102701',
     anio: '27'
@@ -438,36 +358,8 @@ export const BRAND_MODELS_DB: BrandModelInfo[] = [
     model: 'C16',
     claveGen: 'LC1627',
     desc: 'SUV Familiar Premium de gran tamaño con propulsión 100% eléctrica avanzada.',
-    img: 'https://images.unsplash.com/photo-1563720223185-11003d516935?w=350&q=80',
     version: 'DESIGN',
     idVersion: 'LMLC162701',
     anio: '27'
   }
 ];
-
-// Helper functions to query the brand database
-export function getModelsByBrand(brandName: string): BrandModelInfo[] {
-  // Case-insensitive query that matches brand
-  const searchBrand = brandName.toLowerCase();
-  return BRAND_MODELS_DB.filter(
-    (item) => item.brand.toLowerCase() === searchBrand
-  );
-}
-
-export function getModelNamesByBrand(brandName: string): string[] {
-  return getModelsByBrand(brandName).map((item) => item.model);
-}
-
-export function getModelByClaveGen(claveGen: string): BrandModelInfo | undefined {
-  return BRAND_MODELS_DB.find(
-    (item) => item.claveGen.toUpperCase() === claveGen.toUpperCase()
-  );
-}
-
-export function getModelByBrandAndName(brandName: string, modelName: string): BrandModelInfo | undefined {
-  const searchBrand = brandName.toLowerCase();
-  const searchModel = modelName.toLowerCase();
-  return BRAND_MODELS_DB.find(
-    (item) => item.brand.toLowerCase() === searchBrand && item.model.toLowerCase() === searchModel
-  );
-}
