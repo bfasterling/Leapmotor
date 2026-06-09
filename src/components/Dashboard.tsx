@@ -35,7 +35,6 @@ import {
   Calendar, 
   Zap,
   Bell,
-  MapPin,
   FileText,
   Key,
   MessageSquare,
@@ -884,15 +883,29 @@ export default function Dashboard() {
   const pruebaLeads = filteredLeads.filter(l => l.requestType === 'prueba').length;
   const asesorLeads = filteredLeads.filter(l => !l.requestType || l.requestType === 'asesor').length;
 
+  // Helper to detect if lead is soccerhouse
+  const isLeadSoccerhouse = (l: any) => {
+    const landingVal = (l.landing || '').toLowerCase();
+    const utmSourceVal = (l.utm_source || '').toLowerCase();
+    return landingVal === 'soccerhouse' || utmSourceVal === 'soccerhouse' || utmSourceVal.includes('soccer');
+  };
+
+  const getLeadLanding = (l: any) => {
+    if (isLeadSoccerhouse(l)) return 'soccerhouse';
+    return l.landing || 'leapmotor';
+  };
+
   // Counts by Landing Page campaign
-  const leapmotorLandingCount = filteredLeads.filter(l => !l.landing || l.landing === 'leapmotor').length;
-  const jeepLandingCount = filteredLeads.filter(l => l.landing === 'jeep').length;
-  const multimarcaLandingCount = filteredLeads.filter(l => l.landing === 'multimarca').length;
+  const leapmotorLandingCount = filteredLeads.filter(l => getLeadLanding(l) === 'leapmotor').length;
+  const jeepLandingCount = filteredLeads.filter(l => getLeadLanding(l) === 'jeep').length;
+  const multimarcaLandingCount = filteredLeads.filter(l => getLeadLanding(l) === 'multimarca').length;
+  const soccerhouseLandingCount = filteredLeads.filter(l => getLeadLanding(l) === 'soccerhouse').length;
 
   const landingChartData = [
     { name: 'Leapmotor', Leads: leapmotorLandingCount },
     { name: 'Jeep', Leads: jeepLandingCount },
-    { name: 'Multimarca', Leads: multimarcaLandingCount }
+    { name: 'Multimarca', Leads: multimarcaLandingCount },
+    { name: 'SoccerHouse', Leads: soccerhouseLandingCount }
   ];
 
   // Leads por Marca / Multimarca data calculation
@@ -998,8 +1011,8 @@ export default function Dashboard() {
     // 6. Nuevo Filtro por Landing de Ingreso / Campaña / Marca (Permite filtrar marca y cotizacion/prueba simultaneamente)
     if (leadLandingFilter !== 'all') {
       const parts = leadLandingFilter.split('_');
-      const land = parts[0]; // 'leapmotor', 'jeep', 'multimarca'
-      const leadLanding = lead.landing || 'leapmotor';
+      const land = parts[0]; // 'leapmotor', 'jeep', 'multimarca', 'soccerhouse'
+      const leadLanding = getLeadLanding(lead);
       
       if (leadLanding !== land) return false;
       
@@ -1321,7 +1334,7 @@ export default function Dashboard() {
                       <Tooltip contentStyle={{ backgroundColor: isDark ? '#090d16' : '#ffffff', borderColor: isDark ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.1)', color: isDark ? '#ffffff' : '#333333' }} />
                       <Bar dataKey="Leads" fill="#6366f1" radius={[0, 4, 4, 0]} barSize={12}>
                         {landingChartData.map((entry, index) => {
-                          const colors = ['#3b82f6', '#10b981', '#6366f1'];
+                          const colors = ['#3b82f6', '#10b981', '#6366f1', '#f59e0b'];
                           return <Cell key={`cell-${index}`} fill={colors[index % colors.length]} />;
                         })}
                       </Bar>
@@ -1338,9 +1351,13 @@ export default function Dashboard() {
                     <span className="text-emerald-500 font-extrabold">● Jeep Experience</span>
                     <strong className={`font-black ${titleColor}`}>{jeepLandingCount}</strong>
                   </div>
-                  <div className={`flex justify-between font-semibold ${isDark ? 'border-white/5' : 'border-slate-100'}`}>
+                  <div className={`flex justify-between pb-1 border-b font-semibold ${isDark ? 'border-white/5' : 'border-slate-100'}`}>
                     <span className="text-indigo-500 font-extrabold">● Multimarca</span>
                     <strong className={`font-black ${titleColor}`}>{multimarcaLandingCount}</strong>
+                  </div>
+                  <div className={`flex justify-between font-semibold ${isDark ? 'border-white/5' : 'border-slate-100'}`}>
+                    <span className="text-amber-500 font-extrabold">● SoccerHouse</span>
+                    <strong className={`font-black ${titleColor}`}>{soccerhouseLandingCount}</strong>
                   </div>
                   <div className={`flex justify-between pt-1 border-t font-bold ${isDark ? 'border-white/10' : 'border-slate-200'}`}>
                     <span className={`font-bold ${titleColor}`}>Total Leads</span>
@@ -1397,35 +1414,7 @@ export default function Dashboard() {
         </div>
       </div>
 
-      <div className="grid grid-cols-1 gap-6">
-        {/* Top 5 Distributors interest */}
-        <div className={`${cardBg} rounded-2xl p-6 transition-all duration-300`}>
-          <h3 className={`text-sm font-black tracking-wide uppercase font-mono mb-4 flex items-center gap-2 ${titleColor}`}>
-            <MapPin className="w-4 h-4 text-emerald-400" /> Distribuidores de Interés
-          </h3>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 pt-2">
-            {distributorChartData.length === 0 ? (
-              <div className={`col-span-full text-center text-xs font-bold py-8 ${subColor}`}>Registrando distribuidores...</div>
-            ) : (
-              distributorChartData.map((d, i) => {
-                const qty = d.Cantidad as number;
-                const percentage = totalLeads > 0 ? Math.round((qty / totalLeads) * 100) : 0;
-                return (
-                  <div key={d.name} className={`space-y-1.5 p-4 rounded-xl border ${isDark ? 'bg-slate-950/40 border-slate-800' : 'bg-slate-50/50 border-slate-200'}`}>
-                     <div className="flex justify-between text-xs">
-                      <span className={`font-extrabold truncate max-w-[200px] ${titleColor}`}>{i + 1}. {d.name}</span>
-                      <span className="text-emerald-500 font-mono font-black">{qty} ({percentage}%)</span>
-                    </div>
-                    <div className={`w-full h-2.5 rounded-full overflow-hidden border ${isDark ? 'bg-slate-900 border-slate-800' : 'bg-slate-105 bg-slate-100 border-slate-205 border-slate-200'}`}>
-                      <div className="bg-gradient-to-r from-emerald-500 to-teal-500 h-full rounded-full" style={{ width: `${percentage}%` }} />
-                    </div>
-                  </div>
-                );
-              })
-            )}
-          </div>
-        </div>
-      </div>
+
 
       {/* SECCIÓN CONJUNTA DE ADMINISTRACIÓN TABULADA */}
       <div className={`mt-8 border rounded-3xl p-6 transition-all duration-300 relative overflow-hidden ${cardBg}`} id="tabbed-administration-system">
@@ -1568,6 +1557,12 @@ export default function Dashboard() {
                     <option value="multimarca_leapmotor_brand">Multimarca - Leapmotor (Todos)</option>
                     <option value="multimarca_leapmotor_brand_cotizacion">Multimarca - Leapmotor (Cotización)</option>
                     <option value="multimarca_leapmotor_brand_prueba">Multimarca - Leapmotor (Prueba de Manejo)</option>
+                  </optgroup>
+                  <optgroup label="SoccerHouse">
+                    <option value="soccerhouse_all">SoccerHouse - Todos</option>
+                    <option value="soccerhouse_cotizacion">SoccerHouse - Cotización</option>
+                    <option value="soccerhouse_prueba">SoccerHouse - Prueba de Manejo</option>
+                    <option value="soccerhouse_asesor">SoccerHouse - Atención Asesor</option>
                   </optgroup>
                 </select>
               </div>
@@ -1812,6 +1807,7 @@ export default function Dashboard() {
                                   let formTypeLabel = lead.requestType === 'cotizacion' ? 'Cotización' : lead.requestType === 'prueba' ? 'Prueba de Manejo' : 'Atención VIP';
                                   
                                   const landLower = (lead.landing || 'multimarca').toLowerCase();
+                                  const isSoccer = isLeadSoccerhouse(lead);
                                   let badgeStyle = 'bg-indigo-500/10 text-indigo-450 border-indigo-500/20';
                                   
                                   if (landLower.includes('leap') || landLower.includes('motor')) {
@@ -1822,6 +1818,9 @@ export default function Dashboard() {
                                     landingLabel = 'Jeep Cherokee';
                                     brandLabel = 'Jeep';
                                     badgeStyle = 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20';
+                                  } else if (isSoccer) {
+                                    landingLabel = 'SoccerHouse';
+                                    badgeStyle = 'bg-amber-500/10 text-amber-400 border-amber-500/20';
                                   }
 
                                   return (
@@ -1988,9 +1987,11 @@ export default function Dashboard() {
 
                             <td className="p-3 text-right">
                               {(lead.requestType === 'cotizacion' || (lead.requestType === 'prueba' && lead.landing !== 'leapmotor')) ? (
-                                <span className="px-3 py-1 bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-[9px] font-mono font-bold uppercase rounded-xl inline-block">
-                                  ✓ Almacenado para CRM
-                                </span>
+                                !lead.crmSuccess ? (
+                                  <span className="px-3 py-1 bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-[9px] font-mono font-bold uppercase rounded-xl inline-block">
+                                    ✓ Almacenado para CRM
+                                  </span>
+                                ) : null
                               ) : lead.status === LeadStatus.WAITING && (
                                 <div className="flex gap-2 justify-end items-center">
                                   <select

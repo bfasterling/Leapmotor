@@ -1224,10 +1224,10 @@ export default function LeadForm({ c10ImgUrl, t03ImgUrl, b10ImgUrl }: LeadFormPr
     : 'space-y-1 bg-slate-900/60 p-2.5 rounded-xl border border-white/15 hover:border-white/20 transition-all duration-350';
 
   const inputClass = activeLanding === 'leapmotor'
-    ? 'w-full bg-[#2D2926] border border-[#deff01] focus:border-[#deff01] focus:ring-1 focus:ring-[#deff01]/40 rounded-xl pl-9 pr-3 py-2.5 text-xs text-slate-100 placeholder-slate-500 outline-none transition font-semibold font-sans'
+    ? 'w-full bg-[#2D2926] border border-[#deff01] focus:border-[#deff01] focus:ring-1 focus:ring-[#deff01]/40 rounded-xl pl-9 pr-3 py-2.5 text-base md:text-xs text-slate-100 placeholder-slate-500 outline-none transition font-semibold font-sans'
     : (activeLanding === 'jeep'
-       ? 'w-full bg-[#0d1411] border border-white/10 focus:border-[#50755f] focus:ring-1 focus:ring-[#50755f]/40 rounded-xl pl-9 pr-3 py-2.5 text-xs text-white placeholder-slate-400 outline-none transition font-semibold'
-       : 'w-full bg-[#0a0f18] border border-white/25 focus:border-indigo-400 focus:ring-1 focus:ring-indigo-400/40 rounded-xl pl-9 pr-3 py-2.5 text-xs text-white placeholder-slate-400 outline-none transition font-semibold');
+       ? 'w-full bg-[#0d1411] border border-white/10 focus:border-[#50755f] focus:ring-1 focus:ring-[#50755f]/40 rounded-xl pl-9 pr-3 py-2.5 text-base md:text-xs text-white placeholder-slate-400 outline-none transition font-semibold'
+       : 'w-full bg-[#0a0f18] border border-white/25 focus:border-indigo-400 focus:ring-1 focus:ring-indigo-400/40 rounded-xl pl-9 pr-3 py-2.5 text-base md:text-xs text-white placeholder-slate-400 outline-none transition font-semibold');
 
   return (
     <div className="w-full text-slate-100 flex flex-col justify-start items-center" id="landing-page-view">
@@ -1941,7 +1941,7 @@ export default function LeadForm({ c10ImgUrl, t03ImgUrl, b10ImgUrl }: LeadFormPr
                           disabled={selectedBrand === 'Leapmotor'}
                           value={formData.modelOfInterest}
                           onChange={handleChange}
-                          className={`w-full text-white rounded-xl pl-11 pr-7 py-2.5 text-xs outline-none appearance-none transition uppercase ${activeLanding === 'leapmotor' ? 'font-sans' : 'font-mono'} disabled:opacity-85 disabled:cursor-not-allowed ${
+                          className={`w-full text-white rounded-xl pl-11 pr-7 py-2.5 text-base md:text-xs outline-none appearance-none transition uppercase ${activeLanding === 'leapmotor' ? 'font-sans' : 'font-mono'} disabled:opacity-85 disabled:cursor-not-allowed ${
                             activeLanding === 'leapmotor'
                               ? 'bg-[#2D2926] border border-[#deff01] focus:border-[#deff01] font-semibold'
                               : 'bg-[#0a0f18] border border-white/25 focus:border-indigo-400 font-bold'
@@ -1982,7 +1982,7 @@ export default function LeadForm({ c10ImgUrl, t03ImgUrl, b10ImgUrl }: LeadFormPr
                                 state: stateValue
                               }));
                             }}
-                            className={`w-full text-white rounded-xl pl-11 pr-7 py-2.5 text-xs outline-none appearance-none transition uppercase ${activeLanding === 'leapmotor' ? 'font-sans' : 'font-mono'} ${
+                            className={`w-full text-white rounded-xl pl-11 pr-7 py-2.5 text-base md:text-xs outline-none appearance-none transition uppercase ${activeLanding === 'leapmotor' ? 'font-sans' : 'font-mono'} ${
                               activeLanding === 'leapmotor'
                                 ? 'bg-[#2D2926] border border-[#deff01] focus:border-[#deff01] font-semibold'
                                 : 'bg-[#0a0f18] border border-white/25 focus:border-indigo-400 font-bold'
@@ -2014,7 +2014,7 @@ export default function LeadForm({ c10ImgUrl, t03ImgUrl, b10ImgUrl }: LeadFormPr
                               const dealerValue = e.target.value;
                               setFormData(prev => ({ ...prev, distributor: dealerValue }));
                             }}
-                            className={`w-full text-white rounded-xl pl-11 pr-7 py-2.5 text-xs outline-none appearance-none transition uppercase ${activeLanding === 'leapmotor' ? 'font-sans' : 'font-mono'} ${
+                            className={`w-full text-white rounded-xl pl-11 pr-7 py-2.5 text-base md:text-xs outline-none appearance-none transition uppercase ${activeLanding === 'leapmotor' ? 'font-sans' : 'font-mono'} ${
                               activeLanding === 'leapmotor'
                                 ? 'bg-[#2D2926] border border-[#deff01] focus:border-[#deff01] font-semibold'
                                 : 'bg-[#0a0f18] border border-white/25 focus:border-indigo-400 font-bold'
@@ -2052,7 +2052,7 @@ export default function LeadForm({ c10ImgUrl, t03ImgUrl, b10ImgUrl }: LeadFormPr
                         min={new Date().toISOString().split('T')[0]}
                         value={formData.testDriveDate}
                         onChange={handleChange}
-                        className="w-full bg-white/5 border border-amber-500/30 focus:border-amber-500 rounded-xl px-4 py-2.5 text-xs text-white outline-none transition font-bold font-mono"
+                        className="w-full bg-white/5 border border-amber-500/30 focus:border-amber-500 rounded-xl px-4 py-2.5 text-base md:text-xs text-white outline-none transition font-bold font-mono"
                       />
                     </div>
                   )}
