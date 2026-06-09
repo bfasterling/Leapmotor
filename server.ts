@@ -262,9 +262,13 @@ async function runLeadSync() {
         const statusCode = response.status;
         const responseText = await response.text();
         
+        // Extract the clean inner string from XML if wrapped in <string>...</string>
+        const xmlMatch = responseText.match(/<string[^>]*>([\s\S]*?)<\/string>/);
+        const parsedText = xmlMatch ? xmlMatch[1].trim() : responseText.trim();
+        
         // As request does not return JSON, check if the response contains the "**Error**" text.
         // If it does, then it is NOT successful. Otherwise, it is successful.
-        const isSuccess = statusCode >= 200 && statusCode < 300 && responseText && !responseText.includes("**Error**") && !responseText.includes("Error");
+        const isSuccess = statusCode >= 200 && statusCode < 300 && parsedText && !parsedText.includes("**Error**") && !parsedText.includes("Error");
 
         if (isSuccess) {
           const docRef = doc(db, 'leads', leadId);
@@ -273,7 +277,7 @@ async function runLeadSync() {
             crmResponseCode: statusCode,
             crmSentAt: new Date().toISOString(),
             crmRawResponse: responseText.slice(0, 500),
-            crmShiftDigitalId: responseText.trim(), // Save response text as the CRM / shift digital ID
+            crmShiftDigitalId: parsedText, // Save the clean parsed response text as the CRM / shift digital ID
             status: 'enviado'
           });
           results.syncedLeads.push({ leadId, brand: autoMarca, type: lead.requestType, status: 'success' });
@@ -282,10 +286,10 @@ async function runLeadSync() {
           await updateDoc(docRef, {
             crmSuccess: false,
             crmResponseCode: statusCode,
-            crmError: responseText ? responseText.slice(0, 500) : `Error status ${statusCode}`,
+            crmError: parsedText ? parsedText.slice(0, 500) : `Error status ${statusCode}`,
             status: 'error'
           });
-          results.failedLeads.push({ leadId, brand: autoMarca, error: responseText ? `WS returned Error: ${responseText.slice(0, 100)}` : `WS returned status ${statusCode}` });
+          results.failedLeads.push({ leadId, brand: autoMarca, error: parsedText ? `WS returned Error: ${parsedText.slice(0, 100)}` : `WS returned status ${statusCode}` });
         }
       } catch (err: any) {
         console.error(`[CRON] Loop Exception for Stellantis lead ${leadId}:`, err);
