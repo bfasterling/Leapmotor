@@ -307,6 +307,66 @@ app.all('/api/cron/sync-leads', async (req, res) => {
   }
 });
 
+// Full-stack on-demand Firestore database export
+app.get('/api/db/export', async (req, res) => {
+  try {
+    console.log('[API] Starting on-demand database backup and export...');
+    const firebaseApp = initializeApp(firebaseConfig);
+    const db = getFirestore(firebaseApp);
+
+    const collectionsToBackup = ['leads', 'advisors', 'distributors'];
+    const backupData: Record<string, any[]> = {};
+
+    for (const colName of collectionsToBackup) {
+      try {
+        console.log(`[API] Fetching collection: ${colName}...`);
+        const colRef = collection(db, colName);
+         const querySnapshot = await getDocs(colRef);
+        
+        const docsList: any[] = [];
+        querySnapshot.forEach((docSnap) => {
+          const data = docSnap.data();
+          const formattedData = { ...data };
+          
+          // Convert Firestore timestamps to readable string representations
+          for (const [key, val] of Object.entries(formattedData)) {
+            if (val && typeof val === 'object' && 'seconds' in val && 'nanoseconds' in val) {
+              formattedData[key] = new Date((val as any).seconds * 1000).toISOString();
+            }
+          }
+          
+          docsList.push({
+            id: docSnap.id,
+            ...formattedData
+          });
+        });
+        
+        backupData[colName] = docsList;
+        console.log(`[API] Exported ${docsList.length} documents from ${colName}.`);
+      } catch (colErr: any) {
+        console.error(`[API] Error exporting ${colName}:`, colErr.message);
+      }
+    }
+
+    // Save a copy to the server workspace for safety and compliance
+    const outputPath = path.join(process.cwd(), 'firestore_backup_export.json');
+    fs.writeFileSync(outputPath, JSON.stringify(backupData, null, 2), 'utf-8');
+    console.log(`[API] Backup copy written to workspace file: ${outputPath}`);
+
+    // Direct client attachment headers for instantaneous download
+    res.setHeader('Content-Type', 'application/json');
+    res.setHeader('Content-Disposition', 'attachment; filename="firestore_backup_export.json"');
+    res.status(200).send(JSON.stringify(backupData, null, 2));
+  } catch (error: any) {
+    console.error('[API] Global export handler exception:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Failed to generate instant database backup',
+      error: error.message
+    });
+  }
+});
+
 // App Health Check endpoint
 app.get('/api/health', (req, res) => {
   res.json({ status: "healthy", time: new Date().toISOString() });

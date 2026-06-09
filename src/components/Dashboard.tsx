@@ -2534,6 +2534,33 @@ export default function Dashboard() {
                   </button>
                 </div>
               </div>
+
+              {/* Option C: Complete Firestore Database Backup & Direct Download */}
+              <div className={`p-6 rounded-2xl border lg:col-span-2 ${isDark ? 'bg-slate-950/20 border-slate-800/60' : 'bg-white border-slate-200 shadow-sm'}`}>
+                <h4 className={`text-xs font-bold uppercase tracking-wider font-mono mb-2 flex items-center gap-2 ${titleColor}`}>
+                  <Database className="w-4 h-4 text-emerald-400" /> Método C: Respaldar Base de Datos Completa (Guardar en Equipo)
+                </h4>
+                <p className={`text-xs font-semibold leading-relaxed mb-4 ${subColor}`}>
+                  Descargue un respaldo completo e instantáneo en formato JSON con la información en tiempo real de leads, asesores y distribuidores. Podrá guardarlo inmediatamente en su computadora local.
+                </p>
+                
+                <div className="flex flex-col sm:flex-row gap-4 items-center justify-between p-4 rounded-xl border border-dashed border-emerald-550/30 bg-emerald-500/5">
+                  <div className="space-y-1">
+                    <p className="text-xs font-bold text-emerald-550 uppercase tracking-wide">Fichero del Respaldo:</p>
+                    <p className={`text-[11px] font-medium leading-relaxed ${subColor}`}>
+                      Genera <span className="font-mono text-emerald-500 font-bold">firestore_backup_export.json</span> con todos los registros activos.
+                    </p>
+                  </div>
+                  
+                  <a
+                    href="/api/db/export"
+                    download="firestore_backup_export.json"
+                    className="w-full sm:w-auto px-6 py-3 bg-emerald-600 hover:bg-emerald-500 text-white hover:text-white rounded-xl text-xs font-black uppercase font-mono tracking-widest transition flex items-center justify-center gap-2 cursor-pointer shadow-lg shadow-emerald-600/10"
+                  >
+                    <Database className="w-4 h-4" /> Descargar Respaldo JSON en mi Equipo
+                  </a>
+                </div>
+              </div>
             </div>
 
             {/* Active Operations Log Console (Monospace box) */}
