@@ -7,7 +7,8 @@ export enum LeadStatus {
   WAITING = 'waiting',
   ATTENDING = 'attending',
   ATTENDED = 'attended',
-  LOST = 'lost'
+  LOST = 'lost',
+  ENVIADO = 'enviado'
 }
 
 export interface Lead {

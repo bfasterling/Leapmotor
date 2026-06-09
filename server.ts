@@ -23,17 +23,13 @@ app.use(express.urlencoded({ extended: true }));
 async function runLeadSync() {
   console.log('[CRON] Starting automated Lead CRM synchronization...');
   
-  // Initialize dedicated Firebase instance safely in server mode
+  // Initialize dedicated Firebase instance safely in server mode using the database named 'default'
   const firebaseApp = getApps().length > 0 ? getApp() : initializeApp(firebaseConfig);
-  const db = getFirestore(firebaseApp);
+  const db = getFirestore(firebaseApp, 'default');
 
-  const now = new Date();
-  const sevenDaysAgo = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
-
-  // Query recent leads created in the past 7 days to process
+  // Query all leads to ensure we process pending leads (crmSuccess !== true)
   const leadsRef = collection(db, 'leads');
-  const q = query(leadsRef, where('createdAt', '>=', Timestamp.fromDate(sevenDaysAgo)));
-  const querySnapshot = await getDocs(q);
+  const querySnapshot = await getDocs(leadsRef);
 
   const results = {
     totalScanned: querySnapshot.size,
@@ -59,98 +55,101 @@ async function runLeadSync() {
 
     if (isLeapmotor) {
       // Leapmotor leads are synced using the Leapmotor JSON API
-      if (lead.requestType === 'cotizacion' || lead.requestType === 'prueba') {
-        try {
-          console.log(`[CRON] Synchronizing Leapmotor lead ${leadId} with Rapid Quotation JSON API...`);
-          
-          let urlVal = "01L5000";
-          const isTestLead = 
-            (lead.name && lead.name.toLowerCase().includes('test')) || 
-            (lead.lastName && lead.lastName.toLowerCase().includes('test'));
+      try {
+        console.log(`[CRON] Synchronizing Leapmotor lead ${leadId} with Rapid Quotation JSON API...`);
+        
+        let urlVal = "01L5000";
+        const isTestLead = 
+          (lead.name && lead.name.toLowerCase().includes('test')) || 
+          (lead.lastName && lead.lastName.toLowerCase().includes('test'));
 
-          if (!isTestLead && lead.distributor && lead.distributor !== 'Sin Asignar (Pool Leapmotor)' && lead.distributor !== 'Sin Asignar (Sincronizando con Asesor)') {
-            const matchedLocal = ALL_DEALERS.find(d => d.name === lead.distributor);
-            if (matchedLocal && matchedLocal.corpKey) {
-              urlVal = matchedLocal.corpKey;
-            }
+        if (!isTestLead && lead.distributor && lead.distributor !== 'Sin Asignar (Pool Leapmotor)' && lead.distributor !== 'Sin Asignar (Sincronizando con Asesor)') {
+          const matchedLocal = ALL_DEALERS.find(d => d.name === lead.distributor);
+          if (matchedLocal && matchedLocal.corpKey) {
+            urlVal = matchedLocal.corpKey;
           }
-
-          // Resolve dynamic origin based on user guidelines
-          let origVal = "LANDING";
-          const lLanding = lead.landing ? lead.landing.toLowerCase() : "";
-          const isSoccerhouse = lead.utm_source && (lead.utm_source.toLowerCase().startsWith('soccerhouse') || lead.utm_source.toLowerCase().includes('soccerhouse'));
-
-          if (isSoccerhouse) {
-            origVal = lead.requestType === 'prueba' ? "SHMLPM" : "SHML";
-          } else if (lLanding === 'jeep') {
-            origVal = lead.requestType === 'prueba' ? "CMCHPM" : "CMCH";
-          } else if (lLanding === 'leapmotor') {
-            origVal = "CMLM";
-          } else if (lLanding === 'multimarca') {
-            origVal = lead.requestType === 'prueba' ? "CMMLPM" : "CMML";
-          } else {
-            origVal = lead.requestType === 'prueba' ? "CMMLPM" : "CMML";
-          }
-
-          const payload = {
-            url: urlVal,
-            cliente: {
-              nombre: lead.name ? lead.name.trim() : "",
-              apellidoPaterno: lead.lastName ? lead.lastName.trim() : "",
-              apellidoMaterno: "",
-              correo: lead.email ? lead.email.trim() : "",
-              telefono: lead.phone ? lead.phone.trim() : ""
-            },
-            vehiculo: {
-              modelo: lead.modelOfInterest || "B10"
-            },
-            comentarios: lead.postalCode ? `C.P. ${lead.postalCode.trim()}` : "C.P. No Asignado",
-            origen: origVal,
-            conversacion: lead.requestType === 'cotizacion' 
-              ? "Formulario de cotización de la landing Leapmotor (Cron)" 
-              : "Solicitud de prueba de manejo de la landing Leapmotor (Cron)"
-          };
-
-          const response = await fetch("https://api.stellantis.netcar.com.mx/api/v1/Cotizaciones/Rapida", {
-            method: "POST",
-            headers: {
-              "Usuario": "landings-st",
-              "Token": "e05100fa837ecf4e30d5318f6b9a6a0a",
-              "BusinessId": "77",
-              "Content-Type": "application/json"
-            },
-            body: JSON.stringify(payload)
-          });
-
-          const statusCode = response.status;
-          let responseData: any = null;
-          try {
-            responseData = await response.json();
-          } catch (_) {}
-
-          if (statusCode === 201 && responseData && responseData.success) {
-            const docRef = doc(db, 'leads', leadId);
-            await updateDoc(docRef, {
-              crmSuccess: true,
-              crmResponseCode: 201,
-              crmSolicitudId: responseData.data?.solicitudId || null,
-              crmShiftDigitalId: responseData.data?.shiftDigitalId || "",
-              crmSentAt: new Date().toISOString()
-            });
-            results.syncedLeads.push({ leadId, brand: 'Leapmotor', type: lead.requestType, status: 'success' });
-          } else {
-            const docRef = doc(db, 'leads', leadId);
-            await updateDoc(docRef, {
-              crmSuccess: false,
-              crmResponseCode: statusCode || 400,
-              crmError: responseData?.message || responseData?.error || `Error (${statusCode})`
-            });
-            results.failedLeads.push({ leadId, brand: 'Leapmotor', error: responseData?.message || `Response code ${statusCode}` });
-          }
-        } catch (err: any) {
-          console.error(`[CRON] Loop Exception for Leapmotor lead ${leadId}:`, err);
-          results.failedLeads.push({ leadId, brand: 'Leapmotor', error: err.message });
         }
+
+        // Resolve dynamic origin based on user guidelines
+        let origVal = "LANDING";
+        const lLanding = lead.landing ? lead.landing.toLowerCase() : "";
+        const isSoccerhouse = lead.utm_source && (lead.utm_source.toLowerCase().startsWith('soccerhouse') || lead.utm_source.toLowerCase().includes('soccerhouse'));
+
+        if (isSoccerhouse) {
+          origVal = lead.requestType === 'prueba' ? "SHMLPM" : "SHML";
+        } else if (lLanding === 'jeep') {
+          origVal = lead.requestType === 'prueba' ? "CMCHPM" : "CMCH";
+        } else if (lLanding === 'leapmotor') {
+          origVal = "CMLM";
+        } else if (lLanding === 'multimarca') {
+          origVal = lead.requestType === 'prueba' ? "CMMLPM" : "CMML";
+        } else {
+          origVal = lead.requestType === 'prueba' ? "CMMLPM" : "CMML";
+        }
+
+        const payload = {
+          url: urlVal,
+          cliente: {
+            nombre: lead.name ? lead.name.trim() : "",
+            apellidoPaterno: lead.lastName ? lead.lastName.trim() : "",
+            apellidoMaterno: "",
+            correo: lead.email ? lead.email.trim() : "",
+            telefono: lead.phone ? lead.phone.trim() : ""
+          },
+          vehiculo: {
+            modelo: lead.modelOfInterest || "B10"
+          },
+          comentarios: lead.postalCode ? `C.P. ${lead.postalCode.trim()}` : "C.P. No Asignado",
+          origen: origVal,
+          conversacion: lead.requestType === 'cotizacion' 
+            ? "Formulario de cotización de la landing Leapmotor (Cron)" 
+            : lead.requestType === 'prueba'
+            ? "Solicitud de prueba de manejo de la landing Leapmotor (Cron)"
+            : "Contacto de atención VIP asignado al asesor comercial Leapmotor (Cron)"
+        };
+
+        const response = await fetch("https://api.stellantis.netcar.com.mx/api/v1/Cotizaciones/Rapida", {
+          method: "POST",
+          headers: {
+            "Usuario": "landings-st",
+            "Token": "e05100fa837ecf4e30d5318f6b9a6a0a",
+            "BusinessId": "77",
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify(payload)
+        });
+
+        const statusCode = response.status;
+        let responseData: any = null;
+        try {
+          responseData = await response.json();
+        } catch (_) {}
+
+        const isSuccess = statusCode === 201 && responseData && (responseData.success === true || responseData.success === 'true' || responseData.success === 'True');
+
+        if (isSuccess) {
+          const docRef = doc(db, 'leads', leadId);
+          await updateDoc(docRef, {
+            crmSuccess: true,
+            crmResponseCode: 201,
+            crmSolicitudId: responseData.data?.solicitudId || null,
+            crmShiftDigitalId: responseData.data?.shiftDigitalId || "",
+            crmSentAt: new Date().toISOString(),
+            status: 'enviado'
+          });
+          results.syncedLeads.push({ leadId, brand: 'Leapmotor', type: lead.requestType, status: 'success' });
+        } else {
+          const docRef = doc(db, 'leads', leadId);
+          await updateDoc(docRef, {
+            crmSuccess: false,
+            crmResponseCode: statusCode || 400,
+            crmError: responseData?.message || responseData?.error || `Error (${statusCode})`
+          });
+          results.failedLeads.push({ leadId, brand: 'Leapmotor', error: responseData?.message || `Response code ${statusCode}` });
+        }
+      } catch (err: any) {
+        console.error(`[CRON] Loop Exception for Leapmotor lead ${leadId}:`, err);
+        results.failedLeads.push({ leadId, brand: 'Leapmotor', error: err.message });
       }
     } else {
       // Non-Leapmotor leads are synced using the form-urlencoded WS RegistraCOT API
@@ -255,14 +254,16 @@ async function runLeadSync() {
 
         const statusCode = response.status;
         const responseText = await response.text();
+        const hasTrueResponse = responseText && responseText.toLowerCase().includes('true');
 
-        if (statusCode >= 200 && statusCode < 300) {
+        if (statusCode >= 200 && statusCode < 300 && hasTrueResponse) {
           const docRef = doc(db, 'leads', leadId);
           await updateDoc(docRef, {
             crmSuccess: true,
             crmResponseCode: statusCode,
             crmSentAt: new Date().toISOString(),
-            crmRawResponse: responseText.slice(0, 500)
+            crmRawResponse: responseText.slice(0, 500),
+            status: 'enviado'
           });
           results.syncedLeads.push({ leadId, brand: autoMarca, type: lead.requestType, status: 'success' });
         } else {
@@ -270,9 +271,10 @@ async function runLeadSync() {
           await updateDoc(docRef, {
             crmSuccess: false,
             crmResponseCode: statusCode,
-            crmError: responseText.slice(0, 500)
+            crmError: responseText ? responseText.slice(0, 500) : `Error status ${statusCode}`,
+            status: 'error'
           });
-          results.failedLeads.push({ leadId, brand: autoMarca, error: `WS returned code ${statusCode}` });
+          results.failedLeads.push({ leadId, brand: autoMarca, error: `WS returned code ${statusCode} or did not contain True` });
         }
       } catch (err: any) {
         console.error(`[CRON] Loop Exception for Stellantis lead ${leadId}:`, err);
