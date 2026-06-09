@@ -123,6 +123,9 @@ export default function AdvisorPanel() {
   // Track notes being entered per lead ID
   const [notesInput, setNotesInput] = useState<{ [leadId: string]: string }>({});
   
+  // Track lead ID to confirm no-show (No Asistió) action
+  const [confirmNoShowLeadId, setConfirmNoShowLeadId] = useState<string | null>(null);
+  
   // Audio configuration & control
   const [audioEnabled, setAudioEnabled] = useState(true);
   const [lastNotificationLeadId, setLastNotificationLeadId] = useState<string>('');
@@ -980,7 +983,7 @@ export default function AdvisorPanel() {
                         {/* Conclude outcomes */}
                         <div className={`grid grid-cols-2 gap-2 pt-1 border-t ${isDark ? 'border-slate-900' : 'border-slate-100'}`}>
                           <button
-                            onClick={() => handleConcludeLead(lead.id, LeadStatus.LOST)}
+                            onClick={() => setConfirmNoShowLeadId(lead.id)}
                             className={`text-[10px] font-black uppercase py-2.5 rounded-lg flex items-center justify-center gap-1 transition border ${
                               isDark ? 'bg-slate-900 border-amber-500/30 hover:border-amber-500/60 text-amber-400' : 'bg-amber-50 hover:bg-amber-100 border-amber-200 text-amber-700'
                             }`}
@@ -1079,6 +1082,62 @@ export default function AdvisorPanel() {
         </div>
         
       </div>
+
+      {/* Confirmation Modal for "No Asistió" */}
+      <AnimatePresence>
+        {confirmNoShowLeadId && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-sm"
+          >
+            <motion.div
+              initial={{ scale: 0.95, opacity: 0, y: 10 }}
+              animate={{ scale: 1, opacity: 1, y: 0 }}
+              exit={{ scale: 0.95, opacity: 0, y: 10 }}
+              transition={{ type: "spring", stiffness: 300, damping: 25 }}
+              className={`w-full max-w-md p-6 rounded-2xl shadow-2xl border text-center ${
+                isDark ? 'bg-slate-900 border-slate-800 text-white' : 'bg-white border-slate-200 text-slate-800 shadow-xl'
+              }`}
+            >
+              <div className="mx-auto w-12 h-12 flex items-center justify-center rounded-full bg-amber-500/10 text-amber-500 mb-4 border border-amber-500/25">
+                <AlertTriangle className="w-5 h-5 animate-pulse" />
+              </div>
+              <h3 className={`text-base font-black uppercase tracking-wider mb-2 ${isDark ? 'text-white' : 'text-slate-900'}`}>
+                Confirmar Acción
+              </h3>
+              <p className={`text-sm font-semibold mb-6 px-2 ${isDark ? 'text-slate-300' : 'text-slate-650'}`}>
+                Estas seguro de confirmar ?
+              </p>
+              <div className="flex gap-3 justify-center">
+                <button
+                  type="button"
+                  onClick={() => setConfirmNoShowLeadId(null)}
+                  className={`px-5 py-2.5 rounded-xl text-xs font-bold transition hover:scale-[1.01] active:scale-[0.99] border ${
+                    isDark 
+                      ? 'bg-slate-850 hover:bg-slate-800 border-slate-750 text-slate-300' 
+                      : 'bg-slate-50 hover:bg-slate-100 border-slate-201 border-slate-200 text-slate-700 shadow-sm'
+                  }`}
+                >
+                  Cancelar
+                </button>
+                <button
+                  type="button"
+                  onClick={async () => {
+                    const leadId = confirmNoShowLeadId;
+                    setConfirmNoShowLeadId(null);
+                    await handleConcludeLead(leadId, LeadStatus.LOST);
+                  }}
+                  className="bg-red-650 bg-red-600 hover:bg-red-500 text-white px-5 py-2.5 rounded-xl text-xs font-bold shadow-lg shadow-red-500/15 transition hover:scale-[1.01] active:scale-[0.99]"
+                >
+                  Confirmar
+                </button>
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
 
       {/* Embedded CSS for the required red blinking animation as requested */}
       <style>{`

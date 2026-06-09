@@ -1755,7 +1755,7 @@ export default function Dashboard() {
                                         <span className="w-1 h-1 rounded-full bg-current" />
                                         {landingLabel}: {formTypeLabel}
                                       </div>
-                                      <div className={`text-[10px] font-semibold flex items-center gap-1 ${isDark ? 'text-slate-300' : 'text-slate-600'}`}>
+                                      <div className={`text-[10px] font-semibold flex items-center gap-1 flex-wrap ${isDark ? 'text-slate-300' : 'text-slate-600'}`}>
                                         <span>Marca: <strong className="font-black font-mono text-[9px] uppercase text-cyan-400">{brandLabel}</strong></span>
                                         {lead.modelOfInterest && (
                                           <>
@@ -1764,6 +1764,25 @@ export default function Dashboard() {
                                           </>
                                         )}
                                       </div>
+                                      {(lead.utm_source || lead.utm_medium || lead.utm_campaign) && (
+                                        <div className="flex flex-wrap gap-1 mt-1 font-mono text-[8px] max-w-xs">
+                                          {lead.utm_source && (
+                                            <span className="bg-cyan-500/10 text-cyan-450 border border-cyan-500/20 px-1 py-0.2 rounded" title={`UTM Source: ${lead.utm_source}`}>
+                                              src: {lead.utm_source}
+                                            </span>
+                                          )}
+                                          {lead.utm_medium && (
+                                            <span className="bg-indigo-500/10 text-indigo-400 border border-indigo-500/20 px-1 py-0.2 rounded" title={`UTM Medium: ${lead.utm_medium}`}>
+                                              med: {lead.utm_medium}
+                                            </span>
+                                          )}
+                                          {lead.utm_campaign && (
+                                            <span className="bg-amber-500/10 text-amber-500 border border-amber-500/20 px-1 py-0.2 rounded" title={`UTM Campaign: ${lead.utm_campaign}`}>
+                                              cam: {lead.utm_campaign}
+                                            </span>
+                                          )}
+                                        </div>
+                                      )}
                                     </div>
                                   );
                                 })()}

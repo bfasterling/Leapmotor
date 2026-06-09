@@ -46,6 +46,46 @@ export const sendLeapmotorLeadToCRM = async (lead: Lead): Promise<{
       }
     }
 
+    // Resolve dynamic origen based on user instructions
+    let origVal = "LANDING"; // Dynamic default fallback
+    const lLanding = lead.landing ? lead.landing.toLowerCase() : "";
+    const isSoccerhouse = 
+      (lead.utm_source && (lead.utm_source.toLowerCase().startsWith('soccerhouse') || lead.utm_source.toLowerCase().includes('soccerhouse'))) ||
+      (typeof window !== 'undefined' && (
+        window.location.hostname.toLowerCase().includes('soccerhouse') || 
+        new URLSearchParams(window.location.search).get('landing')?.toLowerCase().startsWith('soccerhouse') ||
+        new URLSearchParams(window.location.search).get('campaign')?.toLowerCase().startsWith('soccerhouse') ||
+        new URLSearchParams(window.location.search).get('site')?.toLowerCase().startsWith('soccerhouse')
+      ));
+
+    if (isSoccerhouse) {
+      if (lead.requestType === 'prueba') {
+        origVal = "SHMLPM";
+      } else {
+        origVal = "SHML";
+      }
+    } else if (lLanding === 'jeep') {
+      if (lead.requestType === 'prueba') {
+        origVal = "CMCHPM";
+      } else {
+        origVal = "CMCH";
+      }
+    } else if (lLanding === 'leapmotor') {
+      origVal = "CMLM";
+    } else if (lLanding === 'multimarca') {
+      if (lead.requestType === 'prueba') {
+        origVal = "CMMLPM";
+      } else {
+        origVal = "CMML";
+      }
+    } else {
+      if (lead.requestType === 'prueba') {
+        origVal = "CMMLPM";
+      } else {
+        origVal = "CMML";
+      }
+    }
+
     const payload = {
       url: urlVal,
       cliente: {
@@ -59,7 +99,7 @@ export const sendLeapmotorLeadToCRM = async (lead: Lead): Promise<{
         modelo: lead.modelOfInterest || "B10"
       },
       comentarios: lead.postalCode ? `C.P. ${lead.postalCode.trim()}` : "C.P. No Asignado",
-      origen: "LANDING",
+      origen: origVal,
       conversacion: lead.requestType === 'cotizacion' 
         ? "Formulario de cotización de la landing Leapmotor" 
         : lead.requestType === 'prueba'

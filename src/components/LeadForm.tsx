@@ -383,6 +383,50 @@ export default function LeadForm({ c10ImgUrl, t03ImgUrl, b10ImgUrl }: LeadFormPr
     };
   });
 
+  // State for tracking UTM Parameters securely
+  const [utmParams, setUtmParams] = useState<{
+    utm_source?: string;
+    utm_medium?: string;
+    utm_campaign?: string;
+    utm_term?: string;
+    utm_content?: string;
+  }>(() => {
+    if (typeof window !== 'undefined') {
+      const searchParams = new URLSearchParams(window.location.search);
+      const host = window.location.hostname.toLowerCase();
+      const landingParam = searchParams.get('landing') || searchParams.get('campaign') || searchParams.get('site') || searchParams.get('utm_source') || '';
+      const isSoccerhouse = host.startsWith('soccerhouse') || host.includes('soccerhouse') || landingParam.toLowerCase().startsWith('soccerhouse') || landingParam.toLowerCase().includes('soccerhouse');
+
+      let utm_source = searchParams.get('utm_source') || localStorage.getItem('utm_source') || '';
+      if (isSoccerhouse && !utm_source) {
+        utm_source = 'soccerhouse';
+      }
+
+      const utm_medium = searchParams.get('utm_medium') || localStorage.getItem('utm_medium') || '';
+      const utm_campaign = searchParams.get('utm_campaign') || localStorage.getItem('utm_campaign') || '';
+      const utm_term = searchParams.get('utm_term') || localStorage.getItem('utm_term') || '';
+      const utm_content = searchParams.get('utm_content') || localStorage.getItem('utm_content') || '';
+
+      // Persist in localStorage if found in URL for future sessions or navigations
+      if (searchParams.get('utm_source')) localStorage.setItem('utm_source', searchParams.get('utm_source')!);
+      else if (isSoccerhouse && utm_source === 'soccerhouse') localStorage.setItem('utm_source', 'soccerhouse');
+
+      if (searchParams.get('utm_medium')) localStorage.setItem('utm_medium', searchParams.get('utm_medium')!);
+      if (searchParams.get('utm_campaign')) localStorage.setItem('utm_campaign', searchParams.get('utm_campaign')!);
+      if (searchParams.get('utm_term')) localStorage.setItem('utm_term', searchParams.get('utm_term')!);
+      if (searchParams.get('utm_content')) localStorage.setItem('utm_content', searchParams.get('utm_content')!);
+
+      return {
+        utm_source: utm_source || undefined,
+        utm_medium: utm_medium || undefined,
+        utm_campaign: utm_campaign || undefined,
+        utm_term: utm_term || undefined,
+        utm_content: utm_content || undefined
+      };
+    }
+    return {};
+  });
+
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState(false);
   const [formActive, setFormActive] = useState(false); // false = landing sheet, true = form sheet
@@ -1085,7 +1129,13 @@ export default function LeadForm({ c10ImgUrl, t03ImgUrl, b10ImgUrl }: LeadFormPr
         // New features parameters
         landing: activeLanding,
         selectedBrand: activeBrand,
-        testDriveDate: formData.requestType === 'prueba' ? formData.testDriveDate : null
+        testDriveDate: formData.requestType === 'prueba' ? formData.testDriveDate : null,
+        // UTM parameters
+        utm_source: utmParams.utm_source || null,
+        utm_medium: utmParams.utm_medium || null,
+        utm_campaign: utmParams.utm_campaign || null,
+        utm_term: utmParams.utm_term || null,
+        utm_content: utmParams.utm_content || null
       };
 
       await setDoc(newLeadDoc, payload);
@@ -1112,7 +1162,12 @@ export default function LeadForm({ c10ImgUrl, t03ImgUrl, b10ImgUrl }: LeadFormPr
             landing: activeLanding,
             selectedBrand: activeBrand,
             createdAt: new Date(),
-            testDriveDate: formData.requestType === 'prueba' ? formData.testDriveDate : undefined
+            testDriveDate: formData.requestType === 'prueba' ? formData.testDriveDate : undefined,
+            utm_source: utmParams.utm_source || undefined,
+            utm_medium: utmParams.utm_medium || undefined,
+            utm_campaign: utmParams.utm_campaign || undefined,
+            utm_term: utmParams.utm_term || undefined,
+            utm_content: utmParams.utm_content || undefined
           };
 
           const crmResult = await sendLeapmotorLeadToCRM(leadObjForCRM);
