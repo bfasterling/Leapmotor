@@ -1262,7 +1262,7 @@ export default function LeadForm({ c10ImgUrl, t03ImgUrl, b10ImgUrl }: LeadFormPr
             paddingBottom: '0px',
             paddingTop: '0px',
             marginBottom: '-7px',
-            height: '196px'
+            height: '152px'
           } : (activeLanding === 'jeep' ? {
             paddingBottom: '0px',
             paddingTop: '8px',
@@ -1271,7 +1271,7 @@ export default function LeadForm({ c10ImgUrl, t03ImgUrl, b10ImgUrl }: LeadFormPr
           className={`px-6 ${activeLanding === 'multimarca' && selectedSubBrand !== null ? 'hidden' : (activeLanding === 'leapmotor' ? 'py-1 border-b border-white/5 relative z-10' : 'py-4 bg-[#05070a]/90 border-b border-white/5 relative z-10')} flex ${activeLanding === 'multimarca' || activeLanding === 'leapmotor' || activeLanding === 'jeep' ? 'justify-center' : 'justify-between'} items-center ${activeLanding === 'leapmotor' ? '' : 'backdrop-blur-md'} sticky top-0 z-25`}
         >
           {activeLanding === 'leapmotor' && (
-            <div className="flex items-center justify-center w-full max-w-full py-3 sm:py-5">
+            <div style={{ height: '143px' }} className="flex items-center justify-center w-full max-w-full py-3 sm:py-5">
               <LeapmotorLogo 
                 size="lg" 
                 variant="outline"

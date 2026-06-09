@@ -8,6 +8,7 @@ import { collection, onSnapshot, query, orderBy, doc, setDoc, deleteDoc, updateD
 import { db, activeDbId } from '../firebase';
 import { Lead, LeadStatus } from '../types';
 import { ALL_DEALERS } from '../data/dealers';
+import StellantisLogo from './StellantisLogo';
 import LeapmotorLogo from './LeapmotorLogo';
 import leapmotorLogoImg from '../assets/images/leapmotor_logo_1780268613531.png';
 import { 
@@ -1070,11 +1071,9 @@ export default function Dashboard() {
         }`}>
           <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4">
             <div className="p-1 px-3 bg-white rounded-2xl shadow-sm border border-slate-200 shrink-0 flex items-center justify-center select-none scale-90 sm:scale-100">
-              <LeapmotorLogo 
+              <StellantisLogo 
                 size="sm" 
-                variant="white" 
                 style={{ height: '36px', width: 'auto' }} 
-                imgStyle={{ height: '36px', width: 'auto' }}
               />
             </div>
             <div className="space-y-1">
