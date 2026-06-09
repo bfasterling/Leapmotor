@@ -186,7 +186,21 @@ export default function Dashboard() {
     setSyncCrmConsoleLogs(prev => [...prev, `[${new Date().toLocaleTimeString()}] Iniciando conexión a /api/cron/sync-leads en el servidor local...`]);
     try {
       const res = await fetch('/api/cron/sync-leads', { method: 'POST' });
-      const data = await res.json();
+      const rawText = await res.text();
+      
+      let data: any = null;
+      try {
+        data = JSON.parse(rawText);
+      } catch (jsonErr: any) {
+        setSyncCrmSuccess(false);
+        setSyncCrmConsoleLogs(prev => [
+          ...prev,
+          `[ERROR HTTP ${res.status}] El servidor no retornó un JSON válido.`,
+          `[Respuesta del Servidor (Primeros 600 caracteres)]:` ,
+          rawText.substring(0, 600)
+        ]);
+        return;
+      }
       
       if (res.ok && data.success) {
         setSyncCrmSuccess(true);
