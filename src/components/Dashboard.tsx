@@ -173,6 +173,54 @@ export default function Dashboard() {
   const [csvMessage, setCsvMessage] = useState<{ text: string, type: 'info' | 'success' | 'error' } | null>(null);
   const [csvDetails, setCsvDetails] = useState<string[]>([]);
 
+  // Estados para simulación y ejecución manual de Sincronización CRM
+  const [syncCrmLoading, setSyncCrmLoading] = useState(false);
+  const [syncCrmResults, setSyncCrmResults] = useState<any | null>(null);
+  const [syncCrmConsoleLogs, setSyncCrmConsoleLogs] = useState<string[]>([]);
+  const [syncCrmSuccess, setSyncCrmSuccess] = useState<boolean | null>(null);
+
+  const handleTriggerCrmSync = async () => {
+    setSyncCrmLoading(true);
+    setSyncCrmSuccess(null);
+    setSyncCrmResults(null);
+    setSyncCrmConsoleLogs(prev => [...prev, `[${new Date().toLocaleTimeString()}] Iniciando conexión a /api/cron/sync-leads en el servidor local...`]);
+    try {
+      const res = await fetch('/api/cron/sync-leads', { method: 'POST' });
+      const data = await res.json();
+      
+      if (res.ok && data.success) {
+        setSyncCrmSuccess(true);
+        setSyncCrmResults(data.results || data);
+        setSyncCrmConsoleLogs(prev => [
+          ...prev, 
+          `[${new Date().toLocaleTimeString()}] Respuesta exitosa del servidor. Código HTTP: ${res.status}`,
+          `[Resultado] Mensaje: ${data.message}`,
+          `[Resultado] Leads procesados en esta ejecución: ${data.results?.processedCount ?? 0}`,
+          `[Resultado] Leads escaneados en total: ${data.results?.totalScanned ?? 0}`,
+          `[Sincronizados] (${data.results?.syncedLeads?.length ?? 0} leads): ${JSON.stringify(data.results?.syncedLeads ?? [])}`,
+          `[Fallidos] (${data.results?.failedLeads?.length ?? 0} leads): ${JSON.stringify(data.results?.failedLeads ?? [])}`,
+          `[INFO] La sincronización se cargó correctamente desde la base de datos "default" como fue ordenado.`
+        ]);
+      } else {
+        setSyncCrmSuccess(false);
+        setSyncCrmResults(data);
+        setSyncCrmConsoleLogs(prev => [
+          ...prev,
+          `[ERROR] El servidor respondió con un código de error: ${res.status}`,
+          `[Detalle] ${JSON.stringify(data)}`
+        ]);
+      }
+    } catch (err: any) {
+      setSyncCrmSuccess(false);
+      setSyncCrmConsoleLogs(prev => [
+        ...prev,
+        `[EXCEPTION] Error al invocar el sync-leads: ${err.message || err}`
+      ]);
+    } finally {
+      setSyncCrmLoading(false);
+    }
+  };
+
   useEffect(() => {
     document.title = "Stellantis Campo Marte - Tablero digital";
   }, []);
@@ -2559,6 +2607,80 @@ export default function Dashboard() {
                   >
                     <Database className="w-4 h-4" /> Descargar Respaldo JSON en mi Equipo
                   </a>
+                </div>
+              </div>
+
+              {/* Option D: Live CRM Lead Synchronizer Tool (Sync-Leads) */}
+              <div className={`p-6 rounded-2xl border lg:col-span-2 ${isDark ? 'bg-slate-950/20 border-slate-800/60' : 'bg-white border-slate-200 shadow-sm'}`}>
+                <h4 className={`text-xs font-bold uppercase tracking-wider font-mono mb-2 flex items-center gap-2 ${titleColor}`}>
+                  <Zap className="w-4 h-4 text-blue-400 animate-pulse" /> Método D: Sincronizador de Leads a CRM en Vivo (Ejecución de Cron)
+                </h4>
+                <p className={`text-xs font-semibold leading-relaxed mb-4 ${subColor}`}>
+                  El sistema ejecuta de forma automática una rutina todos los días a la 1:00 AM para sincronizar todos los prospectos pendientes con los CRM de Stellantis (Netcar/RegistraCOT) y Leapmotor. Puede activar e inspeccionar este proceso de sincronización manualmente en tiempo real desde este panel.
+                </p>
+
+                <div className={`p-4 rounded-xl border text-[11px] leading-relaxed mb-4 ${isDark ? 'bg-slate-900/40 border-slate-850 text-slate-350' : 'bg-slate-50 border-slate-250 text-slate-750'}`}>
+                  <p className="font-bold uppercase tracking-wider text-blue-400 mb-1">🛠️ Información de Arquitectura del Servidor:</p>
+                  <p className="mb-2">
+                    Esta ruta es procesada programáticamente en el servidor de Node.js mediante Express en el archivo <span className="font-mono text-blue-450 font-bold">/server.ts</span>. Al ser una Single Page Application con un custom backend de Express, todas las peticiones con prefijo <span className="font-mono text-slate-400">/api/</span> se capturan programáticamente en el archivo del servidor en lugar de requerir una carpeta física de ficheros como en otros frameworks.
+                  </p>
+                  <p className="font-bold text-emerald-500 font-mono text-[10.5px]">
+                    ✓ Conexión Segura: El proceso está programado para conectarse exclusivamente a la base de datos de Firestore llamada "default" para mantener coherencia en los registros.
+                  </p>
+                </div>
+
+                <div className="flex flex-col gap-4">
+                  <div className="flex flex-col sm:flex-row gap-4 items-center justify-between p-4 rounded-xl border border-dashed border-blue-550/30 bg-blue-500/5">
+                    <div className="space-y-1">
+                      <p className="text-xs font-bold text-blue-500 uppercase tracking-wide">Acción de sincronización:</p>
+                      <p className={`text-[11px] font-medium leading-relaxed ${subColor}`}>
+                        Iniciará una petición interna HTTP POST para invocar <span className="font-mono text-blue-400 font-bold">/api/cron/sync-leads</span> y reportará el avance de cada prospecto.
+                      </p>
+                    </div>
+                    
+                    <button
+                      type="button"
+                      onClick={handleTriggerCrmSync}
+                      disabled={syncCrmLoading}
+                      className="w-full sm:w-auto px-6 py-3 bg-blue-600 hover:bg-blue-500 disabled:bg-slate-850 disabled:text-slate-500 text-white rounded-xl text-xs font-black uppercase font-mono tracking-widest transition flex items-center justify-center gap-2 cursor-pointer shadow-lg shadow-blue-650/10"
+                    >
+                      {syncCrmLoading ? (
+                        <>
+                          <RefreshCw className="w-4 h-4 animate-spin" />
+                          Sincronizando Leads...
+                        </>
+                      ) : (
+                        <>
+                          <Zap className="w-4 h-4" />
+                          Ejecutar Sincronización en Vivo
+                        </>
+                      )}
+                    </button>
+                  </div>
+
+                  {/* Interactivo Micro Console Output Log de Sincronización */}
+                  {syncCrmConsoleLogs.length > 0 && (
+                    <div className="mt-2 space-y-2">
+                      <p className="text-[10px] uppercase font-mono font-black tracking-wider text-slate-500">Consola de Respuestas de la Sincronización:</p>
+                      <div className="bg-black/90 border border-slate-900 rounded-xl p-4 font-mono text-[10px] text-slate-300 max-h-[220px] overflow-y-auto space-y-1.5 scrollbar-thin">
+                        {syncCrmConsoleLogs.map((logLine, idx) => {
+                          let colorClass = 'text-slate-300';
+                          if (logLine.includes('[ERROR]')) colorClass = 'text-red-400 font-bold';
+                          if (logLine.includes('[EXCEPTION]')) colorClass = 'text-pink-500 font-bold';
+                          if (logLine.includes('[Resultado]')) colorClass = 'text-blue-400';
+                          if (logLine.includes('[Sincronizados]')) colorClass = 'text-emerald-400';
+                          if (logLine.includes('Respuesta exitosa')) colorClass = 'text-emerald-350 font-bold';
+                          if (logLine.includes('[INFO]')) colorClass = 'text-yellow-450 font-bold';
+                          
+                          return (
+                            <p key={idx} className={colorClass}>
+                              {logLine}
+                            </p>
+                          );
+                        })}
+                      </div>
+                    </div>
+                  )}
                 </div>
               </div>
             </div>
