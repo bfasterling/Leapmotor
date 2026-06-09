@@ -15,12 +15,11 @@ import firebaseConfig from '../firebase-applet-config.json';
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);
 
-// Resolve Firestore Database ID dynamically prioritizing the config from firebase-applet-config.json, then the environment variable
-// Resolve Firestore Database ID dynamically prioritizing (default) as requested by the user
-export const activeDbId = '(default)';
-console.log(`[Firebase] Database Forced: activeDbId="${activeDbId}"`);
+// Resolve Firestore Database ID dynamically prioritizing the config from firebase-applet-config.json, then 'default'
+export const activeDbId = firebaseConfig.firestoreDatabaseId || 'default';
+console.log(`[Firebase] Database Resolved: activeDbId="${activeDbId}"`);
 
-export const db = getFirestore(app);
+export const db = getFirestore(app, activeDbId);
 export const auth = getAuth();
 
 // Error Handling Infrastructure as mandated by Firebase Integration Skill

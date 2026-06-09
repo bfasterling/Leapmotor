@@ -15,7 +15,7 @@ async function runBackup() {
   
   const firebaseConfig = JSON.parse(fs.readFileSync(configPath, 'utf-8'));
   const app = initializeApp(firebaseConfig);
-  const db = getFirestore(app);
+  const db = getFirestore(app, 'default');
 
   const collectionsToBackup = ['leads', 'advisors', 'distributors'];
   const backupData: Record<string, any[]> = {};

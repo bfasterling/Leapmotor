@@ -25,7 +25,26 @@ async function runLeadSync() {
   
   // Initialize dedicated Firebase instance safely in server mode using the database named 'default'
   const firebaseApp = getApps().length > 0 ? getApp() : initializeApp(firebaseConfig);
-  const db = getFirestore(firebaseApp, 'default');
+  let db = getFirestore(firebaseApp, 'default');
+
+  // Verify if database 'default' is accessible, otherwise fall back to firestoreDatabaseId for development/sandbox debugging.
+  try {
+    const testRef = collection(db, 'leads');
+    // Using a lightweight, limited check
+    await getDocs(query(testRef, where('crmSuccess', '==', true)));
+    console.log('[CRON] Successfully connected to default Firestore database.');
+  } catch (err: any) {
+    const errMsg = err?.message || String(err);
+    if (errMsg.includes('NOT_FOUND') || errMsg.includes('not found') || errMsg.includes('code=5') || errMsg.includes('5 NOT_FOUND') || errMsg.includes('Database not found')) {
+      const sandboxDbId = firebaseConfig.firestoreDatabaseId;
+      if (sandboxDbId) {
+        console.warn(`[CRON] Database 'default' was not found in this environment. Falling back to sandbox database: ${sandboxDbId} for AI Studio workspace testing.`);
+        db = getFirestore(firebaseApp, sandboxDbId);
+      }
+    } else {
+      console.error('[CRON] Firestore connection check error:', err);
+    }
+  }
 
   // Query all leads to ensure we process pending leads (crmSuccess !== true)
   const leadsRef = collection(db, 'leads');
@@ -315,8 +334,8 @@ app.get('/api/db/export', async (req, res) => {
     console.log('[API] Starting on-demand dual-database backup and export...');
     const firebaseApp = getApps().length > 0 ? getApp() : initializeApp(firebaseConfig);
     
-    // Default Firestore DB
-    const dbDefault = getFirestore(firebaseApp);
+    // Default Firestore DB - using 'default' database
+    const dbDefault = getFirestore(firebaseApp, 'default');
     
     // Custom Firestore DB
     const customDbId = firebaseConfig.firestoreDatabaseId || '';
