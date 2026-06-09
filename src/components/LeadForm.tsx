@@ -61,7 +61,7 @@ import { BRAND_MODELS_DB } from '../data/brandModelsDb';
 
 // Import newly generated design assets
 import LEAPMOTOR_TUNNEL_BG from '../assets/images/leapmotor_b10_tunnel_bg_1780692970544.png';
-import LEAPMOTOR_LOGO_IMG from '../assets/images/leapmotor_logo_black_bg_1780690813034.png';
+import LEAPMOTOR_LOGO_IMG from '../assets/images/regenerated_image_1780979872662.png';
 import JEEP_LOGO_IMG from '../assets/images/regenerated_image_1780715177952.jpg';
 import FIAT_LOGO_IMG from '../assets/images/regenerated_image_1780715561130.jpg';
 import DODGE_LOGO_BG_IMG from '../assets/images/regenerated_image_1780970482939.png';
@@ -411,7 +411,8 @@ export default function LeadForm({ c10ImgUrl, t03ImgUrl, b10ImgUrl }: LeadFormPr
               src={LEAPMOTOR_LOGO_IMG} 
               alt="Leapmotor"
               referrerPolicy="no-referrer"
-              className={`w-full ${isLarge ? 'max-w-[400px] sm:max-w-[490px] h-13 sm:h-16' : 'max-w-[105px] sm:max-w-[125px] h-6.5 sm:h-7.5'} object-contain mix-blend-screen transition-all duration-300`} 
+              className={`w-full ${isLarge ? 'max-w-[400px] sm:max-w-[490px] h-13 sm:h-16' : 'max-w-[105px] sm:max-w-[125px] h-6.5 sm:h-7.5'} object-contain transition-all duration-300`} 
+              style={{ mixBlendMode: 'normal' }}
             />
           </div>
         );
@@ -1109,10 +1110,10 @@ export default function LeadForm({ c10ImgUrl, t03ImgUrl, b10ImgUrl }: LeadFormPr
             <div className="flex items-center justify-center w-full max-w-full py-3 sm:py-5">
               <LeapmotorLogo 
                 size="lg" 
-                variant="white"
+                variant="outline"
                 className="text-white mx-auto transition-transform duration-300 hover:scale-[1.02]" 
-                style={{ height: 'clamp(115px, 26vw, 210px)', aspectRatio: 'auto', maxWidth: '100%', width: 'auto' }} 
-                imgStyle={{ height: 'clamp(115px, 26vw, 210px)', width: 'auto', objectFit: 'contain' }} 
+                style={{ height: 'clamp(110px, 25vw, 160px)', aspectRatio: 'auto', maxWidth: '100%', width: 'auto' }} 
+                imgStyle={{ height: 'clamp(80px, 20vw, 120px)', width: 'auto', objectFit: 'contain' }} 
               />
             </div>
           )}
@@ -1325,7 +1326,8 @@ export default function LeadForm({ c10ImgUrl, t03ImgUrl, b10ImgUrl }: LeadFormPr
                                   src={LEAPMOTOR_LOGO_IMG} 
                                   alt="Leapmotor"
                                   referrerPolicy="no-referrer"
-                                  className="w-full h-full object-contain pointer-events-none mix-blend-screen transition-transform duration-300 scale-[1.7] group-hover:scale-[1.78] p-1"
+                                  className="w-full h-full object-contain pointer-events-none transition-transform duration-300 scale-[1.7] group-hover:scale-[1.78] p-1"
+                                  style={{ mixBlendMode: 'normal' }}
                                 />
                               </button>
                             );

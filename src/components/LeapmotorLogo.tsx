@@ -1,14 +1,16 @@
 import React from 'react';
 import logoGreen from '../assets/images/leapmotor_logo_1780268613531.png';
-import logoWhite from '../assets/images/leapmotor_logo_black_bg_1780690813034.png';
+import logoWhite from '../assets/images/regenerated_image_1780979872662.png';
+import logoOutline from '../assets/images/regenerated_image_1780979872662.png';
 
 interface LeapmotorLogoProps {
   className?: string; // Standard text color class (preserved for compatibility)
   size?: 'sm' | 'md' | 'lg' | 'auto'; // Horizontal logo size
   showText?: boolean; // If false, renders emblem only
-  variant?: 'white' | 'green'; // Logo color variant
+  variant?: 'white' | 'green' | 'outline'; // Logo color variant
   style?: React.CSSProperties;
   imgStyle?: React.CSSProperties;
+  isCapsule?: boolean; // Premium capsule badge presentation
 }
 
 export default function LeapmotorLogo({ 
@@ -17,7 +19,8 @@ export default function LeapmotorLogo({
   showText = true,
   variant = 'white',
   style,
-  imgStyle
+  imgStyle,
+  isCapsule = false
 }: LeapmotorLogoProps) {
   // Styles for sizing the container - doubled in size for massive, premium prominence
   const sizeClasses = {
@@ -28,17 +31,37 @@ export default function LeapmotorLogo({
   };
 
   const selectedSizeClass = sizeClasses[size];
-  const logoPng = variant === 'white' ? logoWhite : logoGreen;
+  const logoPng = variant === 'outline' ? logoOutline : (variant === 'white' ? logoWhite : logoGreen);
+
+  // Track if we need to render with white background
+  const hasWhiteBackground = isCapsule || style?.backgroundColor === '#ffffff' || style?.backgroundColor === 'white';
+
+  const finalContainerStyle: React.CSSProperties = {
+    aspectRatio: showText ? '6.15 / 1' : '1 / 1',
+    ...(hasWhiteBackground ? {
+      backgroundColor: '#ffffff',
+      borderRadius: '9999px',
+      padding: '12px 32px',
+      boxShadow: '0 10px 30px -5px rgba(0,0,0,0.3)',
+      border: '1px solid rgba(255,255,255,0.2)',
+    } : {}),
+    ...style
+  };
+
   const finalImgStyle: React.CSSProperties = {
     ...imgStyle,
-    mixBlendMode: 'screen',
-    ...(variant === 'white' ? { filter: 'contrast(1.4) brightness(1.2)' } : {})
+    ...(hasWhiteBackground ? {
+      mixBlendMode: 'normal',
+      filter: 'invert(1) contrast(2) brightness(0.15)' // Crisp black vector look from white PNG
+    } : {
+      mixBlendMode: 'normal'
+    })
   };
 
   return (
     <div 
       className={`relative overflow-hidden shrink-0 flex items-center justify-center ${selectedSizeClass} ${className}`} 
-      style={{ aspectRatio: showText ? '6.15 / 1' : '1 / 1', ...style }}
+      style={finalContainerStyle}
       id="leapmotor-composite-logo"
     >
       <img
