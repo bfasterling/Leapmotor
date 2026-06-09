@@ -421,7 +421,7 @@ export default function AdvisorPanel() {
         payload.crmResponseCode = crmResult.status;
         payload.crmSolicitudId = crmResult.solicitudId || null;
         payload.crmShiftDigitalId = crmResult.shiftDigitalId || "";
-        payload.crmSentAt = new Date().toISOString();
+        payload.crmSentAt = serverTimestamp();
         if (crmResult.error) {
           payload.crmError = crmResult.error;
         }

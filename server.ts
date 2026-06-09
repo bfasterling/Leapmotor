@@ -141,10 +141,17 @@ async function runLeadSync() {
             crmResponseCode: statusCode,
             crmSolicitudId: responseData.data?.solicitudId || responseData.solicitudId || null,
             crmShiftDigitalId: responseData.data?.shiftDigitalId || responseData.shiftDigitalId || "",
-            crmSentAt: new Date().toISOString(),
+            crmSentAt: Timestamp.now(),
             status: 'enviado'
           });
-          results.syncedLeads.push({ leadId, brand: 'Leapmotor', type: lead.requestType, status: 'success' });
+          results.syncedLeads.push({ 
+            leadId, 
+            brand: 'Leapmotor', 
+            type: lead.requestType, 
+            status: 'success',
+            crmResponseCode: statusCode,
+            crmRawResponse: JSON.stringify(responseData)
+          });
         } else {
           const docRef = doc(db, 'leads', leadId);
           await updateDoc(docRef, {
@@ -152,7 +159,13 @@ async function runLeadSync() {
             crmResponseCode: statusCode || 400,
             crmError: responseData?.message || responseData?.error || `Error (${statusCode})`
           });
-          results.failedLeads.push({ leadId, brand: 'Leapmotor', error: responseData?.message || `Response code ${statusCode}` });
+          results.failedLeads.push({ 
+            leadId, 
+            brand: 'Leapmotor', 
+            error: responseData?.message || `Response code ${statusCode}`,
+            crmResponseCode: statusCode || 400,
+            crmRawResponse: JSON.stringify(responseData)
+          });
         }
       } catch (err: any) {
         console.error(`[CRON] Loop Exception for Leapmotor lead ${leadId}:`, err);
@@ -268,19 +281,26 @@ async function runLeadSync() {
         
         // As request does not return JSON, check if the response contains the "**Error**" text.
         // If it does, then it is NOT successful. Otherwise, it is successful.
-        const isSuccess = statusCode >= 200 && statusCode < 300 && parsedText && !parsedText.includes("**Error**") && !parsedText.includes("Error");
+        const isSuccess = statusCode >= 200 && statusCode < 300 && parsedText && !parsedText.includes("**Error**");
 
         if (isSuccess) {
           const docRef = doc(db, 'leads', leadId);
           await updateDoc(docRef, {
             crmSuccess: true,
             crmResponseCode: statusCode,
-            crmSentAt: new Date().toISOString(),
+            crmSentAt: Timestamp.now(),
             crmRawResponse: responseText.slice(0, 500),
             crmShiftDigitalId: parsedText, // Save the clean parsed response text as the CRM / shift digital ID
             status: 'enviado'
           });
-          results.syncedLeads.push({ leadId, brand: autoMarca, type: lead.requestType, status: 'success' });
+          results.syncedLeads.push({ 
+            leadId, 
+            brand: autoMarca, 
+            type: lead.requestType, 
+            status: 'success',
+            crmResponseCode: statusCode,
+            crmRawResponse: parsedText
+          });
         } else {
           const docRef = doc(db, 'leads', leadId);
           await updateDoc(docRef, {
@@ -289,7 +309,13 @@ async function runLeadSync() {
             crmError: parsedText ? parsedText.slice(0, 500) : `Error status ${statusCode}`,
             status: 'error'
           });
-          results.failedLeads.push({ leadId, brand: autoMarca, error: parsedText ? `WS returned Error: ${parsedText.slice(0, 100)}` : `WS returned status ${statusCode}` });
+          results.failedLeads.push({ 
+            leadId, 
+            brand: autoMarca, 
+            error: parsedText ? `WS returned Error: ${parsedText.slice(0, 100)}` : `WS returned status ${statusCode}`,
+            crmResponseCode: statusCode,
+            crmRawResponse: parsedText || responseText
+          });
         }
       } catch (err: any) {
         console.error(`[CRON] Loop Exception for Stellantis lead ${leadId}:`, err);

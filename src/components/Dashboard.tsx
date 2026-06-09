@@ -205,16 +205,28 @@ export default function Dashboard() {
       if (res.ok && data.success) {
         setSyncCrmSuccess(true);
         setSyncCrmResults(data.results || data);
-        setSyncCrmConsoleLogs(prev => [
-          ...prev, 
+        const logsToAdd = [
           `[${new Date().toLocaleTimeString()}] Respuesta exitosa del servidor. Código HTTP: ${res.status}`,
           `[Resultado] Mensaje: ${data.message}`,
           `[Resultado] Leads procesados en esta ejecución: ${data.results?.processedCount ?? 0}`,
           `[Resultado] Leads escaneados en total: ${data.results?.totalScanned ?? 0}`,
-          `[Sincronizados] (${data.results?.syncedLeads?.length ?? 0} leads): ${JSON.stringify(data.results?.syncedLeads ?? [])}`,
-          `[Fallidos] (${data.results?.failedLeads?.length ?? 0} leads): ${JSON.stringify(data.results?.failedLeads ?? [])}`,
-          `[INFO] La sincronización se cargó correctamente desde la base de datos "default" como fue ordenado.`
-        ]);
+        ];
+
+        if (data.results?.syncedLeads && data.results.syncedLeads.length > 0) {
+          logsToAdd.push(`🟢 -- DETALLE DE LEADS SINCRONIZADOS [CORRECTOS] --`);
+          data.results.syncedLeads.forEach((l: any) => {
+            logsToAdd.push(`  • Lead ID: ${l.leadId} | Marca: ${l.brand} | Código HTTP API: ${l.crmResponseCode} | ID/Respuesta: ${l.crmRawResponse}`);
+          });
+        }
+        if (data.results?.failedLeads && data.results.failedLeads.length > 0) {
+          logsToAdd.push(`🔴 -- DETALLE DE LEADS CON ERROR [FALLIDOS] --`);
+          data.results.failedLeads.forEach((l: any) => {
+            logsToAdd.push(`  • Lead ID: ${l.leadId} | Marca: ${l.brand} | Código HTTP API: ${l.crmResponseCode} | Error: ${l.error} | Respuesta Completa API: ${l.crmRawResponse}`);
+          });
+        }
+
+        logsToAdd.push(`[INFO] Sincronización realizada directamente sobre la base de datos "default".`);
+        setSyncCrmConsoleLogs(prev => [...prev, ...logsToAdd]);
       } else {
         setSyncCrmSuccess(false);
         setSyncCrmResults(data);
@@ -1758,7 +1770,7 @@ export default function Dashboard() {
                     <th className={`sticky top-0 z-10 p-3 shadow-sm ${isDark ? 'bg-slate-900 border-b border-slate-800 text-white' : 'bg-slate-100 border-b border-slate-200 text-slate-700'}`}>Asesor Asignado</th>
                     <th className={`sticky top-0 z-10 p-3 shadow-sm ${isDark ? 'bg-slate-900 border-b border-slate-800 text-white' : 'bg-slate-100 border-b border-slate-200 text-slate-700'}`}>Fecha Registro</th>
                     <th className={`sticky top-0 z-10 p-3 shadow-sm ${isDark ? 'bg-slate-900 border-b border-slate-800 text-white' : 'bg-slate-100 border-b border-slate-200 text-slate-700'}`}>Fila de Coordinador (Hover)</th>
-                    <th className={`sticky top-0 z-10 p-3 shadow-sm ${isDark ? 'bg-slate-900 border-b border-slate-800 text-white' : 'bg-slate-100 border-b border-slate-200 text-slate-700'}`}>Estado</th>
+                    <th className={`sticky top-0 z-10 p-3 shadow-sm w-[160px] max-w-[170px] ${isDark ? 'bg-slate-900 border-b border-slate-800 text-white' : 'bg-slate-100 border-b border-slate-200 text-slate-700'}`}>Estado</th>
                     <th className={`sticky top-0 z-10 p-3 text-right shadow-sm ${isDark ? 'bg-slate-900 border-b border-slate-800 text-white' : 'bg-slate-100 border-b border-slate-200 text-slate-700'}`}>Acciones de Coordinación</th>
                   </tr>
                 </thead>
@@ -1941,7 +1953,7 @@ export default function Dashboard() {
                               )}
                             </td>
 
-                            <td className="p-3">
+                            <td className="p-3 w-[160px] max-w-[170px] break-words">
                               <span className={`inline-block px-2.5 py-1 rounded-full text-[9px] font-black uppercase font-mono border ${
                                 (lead.requestType === 'cotizacion' || (lead.requestType === 'prueba' && lead.landing !== 'leapmotor')) ? 'bg-emerald-500/15 text-emerald-400 border-emerald-500/30' :
                                 lead.status === LeadStatus.WAITING ? 'bg-amber-500/15 text-amber-400 border-amber-500/30' :
