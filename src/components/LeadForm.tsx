@@ -64,7 +64,8 @@ import LEAPMOTOR_TUNNEL_BG from '../assets/images/leapmotor_b10_tunnel_bg_178069
 import LEAPMOTOR_LOGO_IMG from '../assets/images/leapmotor_logo_black_bg_1780690813034.png';
 import JEEP_LOGO_IMG from '../assets/images/regenerated_image_1780715177952.jpg';
 import FIAT_LOGO_IMG from '../assets/images/regenerated_image_1780715561130.jpg';
-import DODGE_LOGO_IMG from '../assets/images/regenerated_image_1780716360947.png';
+import DODGE_LOGO_BG_IMG from '../assets/images/regenerated_image_1780970482939.png';
+import DODGE_LOGO_IMG from '../assets/images/regenerated_image_1780970830147.jpg';
 import PEUGEOT_LOGO_IMG from '../assets/images/peugeot_logo_new_1780716886504.png';
 import RAM_LOGO_IMG from '../assets/images/ram_logo_new_1780717149923.png';
 import JEEP_IMG from '../assets/images/jeep_cherokee_green_1780407967325.png';
@@ -410,7 +411,7 @@ export default function LeadForm({ c10ImgUrl, t03ImgUrl, b10ImgUrl }: LeadFormPr
               src={LEAPMOTOR_LOGO_IMG} 
               alt="Leapmotor"
               referrerPolicy="no-referrer"
-              className={`w-full ${isLarge ? 'max-w-[400px] sm:max-w-[490px] h-13 sm:h-16' : 'max-w-[105px] sm:max-w-[125px] h-6.5 sm:h-7.5'} object-contain transition-all duration-300`} 
+              className={`w-full ${isLarge ? 'max-w-[400px] sm:max-w-[490px] h-13 sm:h-16' : 'max-w-[105px] sm:max-w-[125px] h-6.5 sm:h-7.5'} object-contain mix-blend-screen transition-all duration-300`} 
             />
           </div>
         );
@@ -432,18 +433,27 @@ export default function LeadForm({ c10ImgUrl, t03ImgUrl, b10ImgUrl }: LeadFormPr
               src={RAM_LOGO_IMG} 
               alt="Ram"
               referrerPolicy="no-referrer"
-              className={`w-full ${isLarge ? 'max-w-[400px] sm:max-w-[490px] h-20 sm:h-24' : 'max-w-[105px] sm:max-w-[125px] h-6.5 sm:h-7.5'} object-contain transition-all duration-300`} 
+              className={`w-full ${isLarge ? 'max-w-[400px] sm:max-w-[490px] h-24 sm:h-28' : 'max-w-[105px] sm:max-w-[125px] h-6.5 sm:h-7.5'} object-contain transition-all duration-300`} 
             />
           </div>
         );
       case 'Dodge':
         return (
-          <div className="flex flex-col items-center justify-center w-full px-0.5" id="brand-logo-dodge">
+          <div 
+            className="flex flex-col items-center justify-center w-full px-0.5" 
+            id="brand-logo-dodge"
+            style={isLarge ? {} : { 
+              backgroundImage: `url(${DODGE_LOGO_BG_IMG})`, 
+              backgroundSize: 'contain', 
+              backgroundRepeat: 'no-repeat', 
+              backgroundPosition: 'center' 
+            }}
+          >
             <img 
               src={DODGE_LOGO_IMG} 
               alt="Dodge"
               referrerPolicy="no-referrer"
-              className={`w-full ${isLarge ? 'max-w-[400px] sm:max-w-[490px] h-30 sm:h-36' : 'max-w-[105px] sm:max-w-[125px] h-6.5 sm:h-7.5'} object-contain transition-all duration-300`} 
+              className={`w-full ${isLarge ? 'max-w-[180px] sm:max-w-[220px] h-12 sm:h-14' : 'max-w-[105px] sm:max-w-[125px] h-6.5 sm:h-7.5'} object-contain transition-all duration-300`} 
             />
           </div>
         );
@@ -454,7 +464,7 @@ export default function LeadForm({ c10ImgUrl, t03ImgUrl, b10ImgUrl }: LeadFormPr
               src={FIAT_LOGO_IMG} 
               alt="Fiat"
               referrerPolicy="no-referrer"
-              className={`w-full ${isLarge ? 'max-w-[400px] sm:max-w-[490px] h-30 sm:h-36' : 'max-w-[105px] sm:max-w-[125px] h-6.5 sm:h-7.5'} object-contain transition-all duration-300`} 
+              className={`w-full ${isLarge ? 'max-w-[400px] sm:max-w-[490px] h-26 sm:h-30' : 'max-w-[105px] sm:max-w-[125px] h-6.5 sm:h-7.5'} object-contain transition-all duration-300`} 
             />
           </div>
         );
@@ -465,7 +475,7 @@ export default function LeadForm({ c10ImgUrl, t03ImgUrl, b10ImgUrl }: LeadFormPr
               src={PEUGEOT_LOGO_IMG} 
               alt="Peugeot"
               referrerPolicy="no-referrer"
-              className={`w-full ${isLarge ? 'max-w-[400px] sm:max-w-[490px] h-20 sm:h-24' : 'max-w-[105px] sm:max-w-[125px] h-6.5 sm:h-7.5'} object-contain transition-all duration-300`} 
+              className={`w-full ${isLarge ? 'max-w-[400px] sm:max-w-[490px] h-28 sm:h-32' : 'max-w-[105px] sm:max-w-[125px] h-6.5 sm:h-7.5'} object-contain transition-all duration-300`} 
             />
           </div>
         );
@@ -1087,8 +1097,13 @@ export default function LeadForm({ c10ImgUrl, t03ImgUrl, b10ImgUrl }: LeadFormPr
 
         {/* Brand Header */}
         <div 
-          style={{ paddingBottom: '0px' }}
-          className={`px-6 ${activeLanding === 'leapmotor' ? 'py-1 border-b border-white/5 relative z-10' : 'py-4 bg-[#05070a]/90 border-b border-white/5 relative z-10'} flex ${activeLanding === 'multimarca' || activeLanding === 'leapmotor' ? 'justify-center' : 'justify-between'} items-center backdrop-blur-md sticky top-0 z-25`}
+          style={activeLanding === 'leapmotor' ? {
+            paddingBottom: '0px',
+            paddingTop: '0px',
+            marginBottom: '-7px',
+            height: '196px'
+          } : { paddingBottom: '0px' }}
+          className={`px-6 ${activeLanding === 'multimarca' && selectedSubBrand !== null ? 'hidden' : (activeLanding === 'leapmotor' ? 'py-1 border-b border-white/5 relative z-10' : 'py-4 bg-[#05070a]/90 border-b border-white/5 relative z-10')} flex ${activeLanding === 'multimarca' || activeLanding === 'leapmotor' ? 'justify-center' : 'justify-between'} items-center ${activeLanding === 'leapmotor' ? '' : 'backdrop-blur-md'} sticky top-0 z-25`}
         >
           {activeLanding === 'leapmotor' && (
             <div className="flex items-center justify-center w-full max-w-full py-3 sm:py-5">
@@ -1114,7 +1129,7 @@ export default function LeadForm({ c10ImgUrl, t03ImgUrl, b10ImgUrl }: LeadFormPr
           </>
         )}
 
-          {activeLanding === 'multimarca' && (
+          {activeLanding === 'multimarca' && selectedSubBrand === null && (
             <div className="flex items-center justify-center py-4 h-28">
               <StellantisLogo size="md" color="#ffffff" style={{ height: '102px' }} />
             </div>
@@ -1310,7 +1325,7 @@ export default function LeadForm({ c10ImgUrl, t03ImgUrl, b10ImgUrl }: LeadFormPr
                                   src={LEAPMOTOR_LOGO_IMG} 
                                   alt="Leapmotor"
                                   referrerPolicy="no-referrer"
-                                  className="w-full h-full object-contain pointer-events-none transition-transform duration-300 scale-[1.7] group-hover:scale-[1.78] p-1"
+                                  className="w-full h-full object-contain pointer-events-none mix-blend-screen transition-transform duration-300 scale-[1.7] group-hover:scale-[1.78] p-1"
                                 />
                               </button>
                             );
@@ -1367,7 +1382,7 @@ export default function LeadForm({ c10ImgUrl, t03ImgUrl, b10ImgUrl }: LeadFormPr
                                   src={DODGE_LOGO_IMG} 
                                   alt="Dodge"
                                   referrerPolicy="no-referrer"
-                                  className="w-full h-full object-contain pointer-events-none transition-transform duration-300 scale-[2.4] group-hover:scale-[2.5] p-0.5"
+                                  className="w-full h-full object-contain pointer-events-none transition-transform duration-300 scale-[1.15] group-hover:scale-[1.22] p-2"
                                 />
                               </button>
                             );
@@ -1444,7 +1459,7 @@ export default function LeadForm({ c10ImgUrl, t03ImgUrl, b10ImgUrl }: LeadFormPr
                           : brandDetailSource.bgImage
                       };
                       return (
-                        <div className="relative flex flex-col w-full text-center pb-2 select-none overflow-hidden">
+                        <div className="relative flex flex-col w-full text-center pb-6 select-none overflow-hidden gap-5 items-center">
                           {/* Ambient Brand Color Glow Dressing */}
                           <div 
                             className="absolute top-24 left-1/2 -translate-x-1/2 w-64 h-64 rounded-full blur-[110px] opacity-[0.18] pointer-events-none transition-all duration-700" 
@@ -1452,36 +1467,26 @@ export default function LeadForm({ c10ImgUrl, t03ImgUrl, b10ImgUrl }: LeadFormPr
                           />
 
                           {/* Premium mockup top navbar heading */}
-                          <div className="flex items-center justify-between py-2 border-b border-white/5 h-12 w-full z-10">
+                          <div className="flex items-center justify-start pt-5 px-4 z-10 w-full mb-1">
                             <button
                               onClick={() => setSelectedSubBrand(null)}
-                              className="flex items-center justify-center w-8 h-8 rounded-full hover:bg-white/5 text-slate-300 hover:text-white transition active:scale-90"
+                              className="flex items-center gap-2 px-4 py-2.5 rounded-full bg-white/5 hover:bg-white/10 border border-white/10 text-slate-200 hover:text-white text-sm font-bold tracking-wider transition duration-300 active:scale-[0.98] shadow-sm"
                               aria-label="Regresar"
                             >
-                              <ArrowLeft className="w-5 h-5" />
+                              <ArrowLeft className="w-5 h-5 text-indigo-400" />
+                              <span>Regresar</span>
                             </button>
-                            
-                            {/* Centered Brand Logo */}
-                            <div className="flex items-center justify-center max-h-7 flex-1">
-                              {renderBrandLogo(selectedSubBrand, true, false)}
-                            </div>
-                            
-                            {/* Balance spacer */}
-                            <div className="w-8" />
                           </div>
 
-                          {/* Centered big display name */}
-                          <div className="mt-5 space-y-1 z-10 px-4">
-                            <h2 className="text-xl sm:text-2xl font-extrabold text-white tracking-tight font-encode">
-                              {brandDetail.modelName}
-                            </h2>
-                            <p className="text-[10px] sm:text-[11px] font-bold text-slate-300 tracking-[0.16em] uppercase leading-relaxed max-w-xs mx-auto">
-                              {brandDetail.tagline}
-                            </p>
+                          {/* Brand Logo right above the car photo */}
+                          <div className="z-10 px-5 flex items-center justify-center [&_img]:max-h-36 [&_img]:w-auto [&_img]:object-contain w-full">
+                            <div className="w-full max-w-[280px] flex items-center justify-center">
+                              {renderBrandLogo(selectedSubBrand, true, true)}
+                            </div>
                           </div>
 
                           {/* Representative high-contrast car picture on dark gradient */}
-                          <div className="relative mt-5 aspect-[16/10] w-full max-w-[420px] mx-auto overflow-hidden rounded-2xl border border-white/5 bg-black/40 shadow-xl shadow-black/40 z-10">
+                          <div className="relative aspect-[16/10] w-full max-w-[420px] mx-auto overflow-hidden rounded-2xl border border-white/5 bg-black/40 shadow-xl shadow-black/40 z-10">
                             <img 
                               src={brandDetail.bgImage} 
                               alt={brandDetail.modelName} 
@@ -1494,18 +1499,18 @@ export default function LeadForm({ c10ImgUrl, t03ImgUrl, b10ImgUrl }: LeadFormPr
                           </div>
 
                           {/* ¿Qué deseas hacer? prompt */}
-                          <div className="mt-6 mb-3 px-4 z-10">
-                            <h3 className="text-sm sm:text-base font-semibold text-white tracking-wide">
+                          <div className="px-5 z-10 w-full text-center">
+                            <h3 className="text-sm sm:text-base font-bold text-white tracking-widest uppercase font-encode text-slate-300">
                               ¿Qué deseas hacer?
                             </h3>
                           </div>
 
                           {/* Interactive stacked button panels - Matching the mockup */}
-                          <div className="space-y-2.5 px-3 z-10">
+                          <div className="space-y-3 px-4 z-10 w-full max-w-[420px] mx-auto">
                             {/* COTIZA */}
                             <button
                               onClick={() => launchFormWithRequest('cotizacion', BRAND_MODELS[selectedSubBrand]?.[0])}
-                              className="group w-full p-3.5 rounded-2xl bg-[#1b1c1e]/60 hover:bg-[#25272a]/75 border border-white/5 hover:border-white/15 flex items-center gap-4 text-left transition-all duration-300 shadow-md transform active:scale-[0.99]"
+                              className="group w-full p-4 rounded-2xl bg-[#1b1c1e]/60 hover:bg-[#25272a]/75 border border-white/5 hover:border-white/15 flex items-center gap-4 text-left transition-all duration-300 shadow-md transform active:scale-[0.99]"
                             >
                               {/* White outlined badge represent request for quotation */}
                               <div className="w-11 h-11 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center shrink-0 transition-colors duration-300 group-hover:bg-white/10">
@@ -1528,7 +1533,7 @@ export default function LeadForm({ c10ImgUrl, t03ImgUrl, b10ImgUrl }: LeadFormPr
                             {selectedSubBrand !== 'Leapmotor' && (
                               <button
                                 onClick={() => launchFormWithRequest('prueba', BRAND_MODELS[selectedSubBrand]?.[0])}
-                                className="group w-full p-3.5 rounded-2xl bg-[#1b1c1e]/60 hover:bg-[#25272a]/75 border border-white/5 hover:border-white/15 flex items-center gap-4 text-left transition-all duration-300 shadow-md transform active:scale-[0.99]"
+                                className="group w-full p-4 rounded-2xl bg-[#1b1c1e]/60 hover:bg-[#25272a]/75 border border-white/5 hover:border-white/15 flex items-center gap-4 text-left transition-all duration-300 shadow-md transform active:scale-[0.99]"
                               >
                                 {/* White/Silver outlined badge for Calendar */}
                                 <div className="w-11 h-11 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center shrink-0 transition-colors duration-300 group-hover:bg-white/10">
@@ -1718,6 +1723,7 @@ export default function LeadForm({ c10ImgUrl, t03ImgUrl, b10ImgUrl }: LeadFormPr
                           type="button"
                           id="model-modal-trigger-btn"
                           disabled={activeLanding === 'jeep'}
+                          style={{ backgroundColor: '#deff01' }}
                           onClick={() => {
                             if (activeLanding === 'jeep') return;
                             // Ensure formData of interest is initialized correctly of the active brand if empty
@@ -1726,12 +1732,12 @@ export default function LeadForm({ c10ImgUrl, t03ImgUrl, b10ImgUrl }: LeadFormPr
                             }
                             setShowModelModal(true);
                           }}
-                          className={`w-full text-left bg-[#0a0f18] text-white border border-white/25 rounded-xl pl-11 pr-7 py-2.5 text-xs outline-none transition uppercase ${activeLanding === 'leapmotor' ? 'font-sans' : 'font-mono'} font-bold flex items-center justify-between disabled:opacity-75 disabled:cursor-not-allowed`}
+                          className={`w-full text-left bg-[#0a0f18] text-slate-950 border border-white/25 rounded-xl pl-11 pr-7 py-2.5 text-xs outline-none transition uppercase ${activeLanding === 'leapmotor' ? 'font-sans' : 'font-mono'} font-bold flex items-center justify-between disabled:opacity-75 disabled:cursor-not-allowed`}
                         >
-                          <span className="truncate text-slate-200">
+                          <span className="truncate text-slate-950">
                             {selectedBrand} {formData.modelOfInterest || activeModelsList[0]}
                           </span>
-                          {activeLanding !== 'jeep' && <ChevronDown className="w-3.5 h-3.5 text-slate-300 shrink-0" />}
+                          {activeLanding !== 'jeep' && <ChevronDown className="w-3.5 h-3.5 text-slate-950 shrink-0" />}
                         </button>
                       </div>
                     ) : (

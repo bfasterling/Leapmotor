@@ -28,10 +28,11 @@ export default function LeapmotorLogo({
   };
 
   const selectedSizeClass = sizeClasses[size];
-  const logoPng = logoGreen;
+  const logoPng = variant === 'white' ? logoWhite : logoGreen;
   const finalImgStyle: React.CSSProperties = {
     ...imgStyle,
-    ...(variant === 'white' ? { filter: 'brightness(0) invert(1)' } : {})
+    mixBlendMode: 'screen',
+    ...(variant === 'white' ? { filter: 'contrast(1.4) brightness(1.2)' } : {})
   };
 
   return (

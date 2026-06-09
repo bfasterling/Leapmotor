@@ -615,7 +615,8 @@ export default function AdvisorPanel() {
             <button
               type="submit"
               disabled={advisors.length === 0}
-              className="w-full bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-400 hover:to-teal-400 text-slate-950 py-3.5 rounded-xl text-sm font-bold shadow-lg shadow-emerald-500/10 transition hover:scale-[1.01] active:scale-[0.99] disabled:opacity-50 disabled:pointer-events-none"
+              style={{ backgroundColor: '#deff01' }}
+              className="w-full text-slate-950 py-3.5 rounded-xl text-sm font-bold shadow-lg shadow-[#deff01]/10 transition hover:brightness-110 hover:scale-[1.01] active:scale-[0.99] disabled:opacity-50 disabled:pointer-events-none"
             >
               Iniciar sesión
             </button>
@@ -674,12 +675,12 @@ export default function AdvisorPanel() {
           isDark ? 'bg-slate-900 border-slate-800' : 'bg-white border-slate-205 border-slate-200 text-slate-800 shadow-md'
         }`}>
           <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4">
-            <div className="p-1 px-3 bg-white rounded-2xl shadow-sm border border-slate-200 shrink-0 flex items-center justify-center select-none scale-90 sm:scale-100">
+            <div className="p-1.5 px-4 bg-white rounded-2xl shrink-0 flex items-center justify-center select-none scale-100 sm:scale-105">
               <LeapmotorLogo 
-                size="sm" 
+                size="md" 
                 variant="green" 
-                style={{ height: '36px', width: 'auto' }} 
-                imgStyle={{ height: '36px', width: 'auto' }}
+                style={{ height: '48px', width: 'auto' }} 
+                imgStyle={{ height: '48px', width: 'auto' }}
               />
             </div>
             <div className="space-y-1">
@@ -767,7 +768,7 @@ export default function AdvisorPanel() {
                     <Smile className={`w-8 h-8 mb-3 ${isDark ? 'text-emerald-400' : 'text-emerald-600'}`} />
                     <p className={`text-sm font-extrabold ${isDark ? 'text-white' : 'text-slate-900'}`}>Base libre de espera</p>
                     <p className={`text-xs max-w-[200px] mt-1.5 leading-relaxed font-semibold ${isDark ? 'text-slate-200' : 'text-slate-500'}`}>
-                      No hay clientes esperando atención actualmente. ¡Buen trabajo de respuesta rápida!
+                      No hay clientes en espera
                     </p>
                   </motion.div>
                 ) : (
@@ -876,7 +877,7 @@ export default function AdvisorPanel() {
                     isDark ? 'border-slate-700/60 text-white' : 'border-slate-300 text-slate-850 bg-slate-50'
                   }`}>
                     <User className={`w-8 h-8 mb-3 ${isDark ? 'text-cyan-400' : 'text-cyan-600'}`} />
-                    <p className={`text-sm font-extrabold ${textTitle}`}>Consola de llamada vacía</p>
+                    <p className={`text-sm font-extrabold ${textTitle}`}>No hay clientes siendo atendidos en este momento</p>
                     <p className={`text-xs mt-1.5 leading-relaxed font-semibold ${textSub}`}>
                       Los leads asignados aparecerán aquí para contacto telefónico o WhatsApp.
                     </p>
