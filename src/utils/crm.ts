@@ -129,12 +129,21 @@ export const sendLeapmotorLeadToCRM = async (lead: Lead): Promise<{
 
     console.log(`[CRM Connection] Response: Status Code ${statusCode}`, data);
 
-    if (statusCode === 201 && data && data.success) {
+    const isSuccess = (statusCode === 201 || statusCode === 200) && data && (
+      data.success === true || 
+      data.success === 'true' || 
+      data.success === 'True' ||
+      data.status === 'success' ||
+      data.status === 'OK' ||
+      (data.data && (data.data.solicitudId || data.data.shiftDigitalId))
+    );
+
+    if (isSuccess) {
       return {
         success: true,
-        status: 201,
-        solicitudId: data.data?.solicitudId || null,
-        shiftDigitalId: data.data?.shiftDigitalId || ""
+        status: statusCode,
+        solicitudId: data.data?.solicitudId || data.solicitudId || null,
+        shiftDigitalId: data.data?.shiftDigitalId || data.shiftDigitalId || ""
       };
     } else {
       return {

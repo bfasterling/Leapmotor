@@ -125,15 +125,22 @@ async function runLeadSync() {
           responseData = await response.json();
         } catch (_) {}
 
-        const isSuccess = statusCode === 201 && responseData && (responseData.success === true || responseData.success === 'true' || responseData.success === 'True');
+        const isSuccess = (statusCode === 201 || statusCode === 200) && responseData && (
+          responseData.success === true || 
+          responseData.success === 'true' || 
+          responseData.success === 'True' ||
+          responseData.status === 'success' ||
+          responseData.status === 'OK' ||
+          (responseData.data && (responseData.data.solicitudId || responseData.data.shiftDigitalId))
+        );
 
         if (isSuccess) {
           const docRef = doc(db, 'leads', leadId);
           await updateDoc(docRef, {
             crmSuccess: true,
-            crmResponseCode: 201,
-            crmSolicitudId: responseData.data?.solicitudId || null,
-            crmShiftDigitalId: responseData.data?.shiftDigitalId || "",
+            crmResponseCode: statusCode,
+            crmSolicitudId: responseData.data?.solicitudId || responseData.solicitudId || null,
+            crmShiftDigitalId: responseData.data?.shiftDigitalId || responseData.shiftDigitalId || "",
             crmSentAt: new Date().toISOString(),
             status: 'enviado'
           });
@@ -254,15 +261,19 @@ async function runLeadSync() {
 
         const statusCode = response.status;
         const responseText = await response.text();
-        const hasTrueResponse = responseText && responseText.toLowerCase().includes('true');
+        
+        // As request does not return JSON, check if the response contains the "**Error**" text.
+        // If it does, then it is NOT successful. Otherwise, it is successful.
+        const isSuccess = statusCode >= 200 && statusCode < 300 && responseText && !responseText.includes("**Error**") && !responseText.includes("Error");
 
-        if (statusCode >= 200 && statusCode < 300 && hasTrueResponse) {
+        if (isSuccess) {
           const docRef = doc(db, 'leads', leadId);
           await updateDoc(docRef, {
             crmSuccess: true,
             crmResponseCode: statusCode,
             crmSentAt: new Date().toISOString(),
             crmRawResponse: responseText.slice(0, 500),
+            crmShiftDigitalId: responseText.trim(), // Save response text as the CRM / shift digital ID
             status: 'enviado'
           });
           results.syncedLeads.push({ leadId, brand: autoMarca, type: lead.requestType, status: 'success' });
@@ -274,7 +285,7 @@ async function runLeadSync() {
             crmError: responseText ? responseText.slice(0, 500) : `Error status ${statusCode}`,
             status: 'error'
           });
-          results.failedLeads.push({ leadId, brand: autoMarca, error: `WS returned code ${statusCode} or did not contain True` });
+          results.failedLeads.push({ leadId, brand: autoMarca, error: responseText ? `WS returned Error: ${responseText.slice(0, 100)}` : `WS returned status ${statusCode}` });
         }
       } catch (err: any) {
         console.error(`[CRON] Loop Exception for Stellantis lead ${leadId}:`, err);
