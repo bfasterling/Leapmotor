@@ -2042,7 +2042,7 @@ export default function Dashboard() {
                                       className="bg-red-500/15 hover:bg-red-500/25 text-red-400 hover:text-red-350 text-[9px] uppercase border border-red-500/20 px-2.5 py-1 rounded-lg font-black transition cursor-pointer"
                                       title="Cerrar prospecto indicando que no asistió"
                                     >
-                                      No Asistió
+                                      No encontrado
                                     </button>
                                   </div>
                                 </div>

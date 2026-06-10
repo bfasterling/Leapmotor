@@ -71,7 +71,11 @@ export const sendLeapmotorLeadToCRM = async (lead: Lead): Promise<{
         origVal = "CMCH";
       }
     } else if (lLanding === 'leapmotor') {
-      origVal = "CMLM";
+      if (lead.requestType === 'asesor') {
+        origVal = "CMLMPM";
+      } else {
+        origVal = "CMLM";
+      }
     } else if (lLanding === 'multimarca') {
       if (lead.requestType === 'prueba') {
         origVal = "CMMLPM";
@@ -86,6 +90,11 @@ export const sendLeapmotorLeadToCRM = async (lead: Lead): Promise<{
       }
     }
 
+    let commentsVal = lead.postalCode ? `C.P. ${lead.postalCode.trim()}` : "C.P. No Asignado";
+    if (lLanding === 'leapmotor' && lead.requestType === 'asesor' && lead.advisorName) {
+      commentsVal += ` Asesor : ${lead.advisorName.trim()}`;
+    }
+
     const payload = {
       url: urlVal,
       cliente: {
@@ -98,7 +107,7 @@ export const sendLeapmotorLeadToCRM = async (lead: Lead): Promise<{
       vehiculo: {
         modelo: lead.modelOfInterest || "B10"
       },
-      comentarios: lead.postalCode ? `C.P. ${lead.postalCode.trim()}` : "C.P. No Asignado",
+      comentarios: commentsVal,
       origen: origVal,
       conversacion: lead.requestType === 'cotizacion' 
         ? "Formulario de cotización de la landing Leapmotor" 

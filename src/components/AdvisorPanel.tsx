@@ -989,7 +989,7 @@ export default function AdvisorPanel() {
                               isDark ? 'bg-slate-900 border-amber-500/30 hover:border-amber-500/60 text-amber-400' : 'bg-amber-50 hover:bg-amber-100 border-amber-200 text-amber-700'
                             }`}
                           >
-                            <X className="w-3.5 h-3.5 shrink-0" /> No Asistió
+                            <X className="w-3.5 h-3.5 shrink-0" /> No encontrado
                           </button>
                           <button
                             onClick={() => handleConcludeLead(lead.id, LeadStatus.ATTENDED)}

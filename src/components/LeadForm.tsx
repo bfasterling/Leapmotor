@@ -1222,7 +1222,10 @@ export default function LeadForm({ c10ImgUrl, t03ImgUrl, b10ImgUrl }: LeadFormPr
     : ALL_DEALERS.filter(d => d.brand === 'JEEP');
 
   // Get list of states from activeDealers
-  const availableStates = Array.from(new Set(activeDealers.map(d => d.state))).sort();
+  let availableStates = Array.from(new Set(activeDealers.map(d => d.state))).sort();
+  if (activeLanding === 'leapmotor') {
+    availableStates = ['CIUDAD DE MÉXICO', 'ESTADO DE MÉXICO', 'MORELOS'];
+  }
 
   // Get dealers in the currently selected state, fully deduplicated by name to prevent duplication, and sorted alphabetically
   const stateDealers = activeDealers.filter(d => d.state === formData.state);
@@ -1461,7 +1464,7 @@ export default function LeadForm({ c10ImgUrl, t03ImgUrl, b10ImgUrl }: LeadFormPr
                         className="bg-[#deff01] hover:bg-[#c9e600] text-slate-950 font-extrabold py-3.5 px-4 rounded-xl text-[10px] uppercase tracking-widest flex items-center justify-center gap-1.5 transition-all duration-300 active:scale-95 shadow-lg shadow-[rgba(222,255,1,0.25)] border border-[#deff01]/40"
                       >
                         <UserCheck className="w-3.5 h-3.5 text-slate-950 shrink-0" />
-                        <span style={{ fontSize: '13px' }}>Atención VIP</span>
+                        <span style={{ fontSize: '13px' }}>Atención Personalizada</span>
                       </button>
                     </div>
                   </div>
@@ -1531,7 +1534,7 @@ export default function LeadForm({ c10ImgUrl, t03ImgUrl, b10ImgUrl }: LeadFormPr
                       className="bg-gradient-to-r from-amber-600/20 to-indigo-600/20 hover:from-amber-600/30 hover:to-indigo-600/30 text-amber-300 border border-amber-500/40 hover:border-amber-400 font-extrabold py-3 px-4 rounded-xl text-[10px] uppercase tracking-wider flex items-center justify-center gap-1.5 transition-all duration-300 active:scale-95 col-span-2 shadow-lg shadow-black/30"
                     >
                       <Map className="w-3.5 h-3.5 text-amber-400" />
-                      <span>Atención Personalizada (Ver Ubicación Carpa)</span>
+                      <span>Atención Personalizada (Ver Ubicación)</span>
                     </button>
                   </div>
                 </div>
@@ -1955,65 +1958,67 @@ export default function LeadForm({ c10ImgUrl, t03ImgUrl, b10ImgUrl }: LeadFormPr
                   </div>
 
                   {/* Models dropdown list tailored by Selected Brand */}
-                  <div className={rowClass}>
-                    <label id="frm-model-label" className={`text-[11px] uppercase ${activeLanding === 'leapmotor' ? 'font-sans' : 'font-mono'} tracking-wider block mb-0.5 ${activeLanding === 'leapmotor' ? 'font-semibold text-white' : 'text-white font-extrabold'}`}>
-                      Modelo Seleccionado *
-                    </label>
-                    
-                    {(activeLanding === 'jeep' || activeLanding === 'multimarca') ? (
-                      /* Custom visually rich selection trigger */
-                      <div className="relative">
-                        <Car className="absolute left-3.5 top-3 w-4 h-4 text-slate-300 pointer-events-none" />
-                        <button
-                          type="button"
-                          id="model-modal-trigger-btn"
-                          disabled={activeLanding === 'jeep'}
-                          style={{ backgroundColor: '#deff01' }}
-                          onClick={() => {
-                            if (activeLanding === 'jeep') return;
-                            // Ensure formData of interest is initialized correctly of the active brand if empty
-                            if (!formData.modelOfInterest || !activeModelsList.includes(formData.modelOfInterest)) {
-                              setFormData(prev => ({ ...prev, modelOfInterest: activeModelsList[0] }));
-                            }
-                            setShowModelModal(true);
-                          }}
-                          className={`w-full text-left bg-[#0a0f18] text-slate-950 border border-white/25 rounded-xl pl-11 pr-7 py-2.5 text-xs outline-none transition uppercase ${activeLanding === 'leapmotor' ? 'font-sans' : 'font-mono'} font-bold flex items-center justify-between disabled:opacity-75 disabled:cursor-not-allowed`}
-                        >
-                          <span className="truncate text-slate-950">
-                            {selectedBrand} {formData.modelOfInterest || activeModelsList[0]}
-                          </span>
-                          {activeLanding !== 'jeep' && <ChevronDown className="w-3.5 h-3.5 text-slate-950 shrink-0" />}
-                        </button>
-                      </div>
-                    ) : (
-                      /* Standard selection select block for single leapmotor landing */
-                      <div className="relative">
-                        <Car className="absolute left-3.5 top-3 w-4 h-4 text-slate-300" />
-                        <select
-                          id="modelOfInterest"
-                          name="modelOfInterest"
-                          required
-                          disabled={selectedBrand === 'Leapmotor'}
-                          value={formData.modelOfInterest}
-                          onChange={handleChange}
-                          className={`w-full text-white rounded-xl pl-11 pr-7 py-2.5 text-base md:text-xs outline-none appearance-none transition uppercase ${activeLanding === 'leapmotor' ? 'font-sans' : 'font-mono'} disabled:opacity-85 disabled:cursor-not-allowed ${
-                            activeLanding === 'leapmotor'
-                              ? 'bg-[#2D2926] border border-[#deff01] focus:border-[#deff01] font-semibold'
-                              : 'bg-[#0a0f18] border border-white/25 focus:border-indigo-400 font-bold'
-                          }`}
-                        >
-                          {activeModelsList.map(m => (
-                            <option key={m} value={m} className="bg-slate-900 text-white">
-                              {selectedBrand} {m}
-                            </option>
-                          ))}
-                        </select>
-                        {selectedBrand !== 'Leapmotor' && (
-                          <ChevronDown className="absolute right-3 top-3.5 w-4 h-4 text-slate-300 pointer-events-none" />
-                        )}
-                      </div>
-                    )}
-                  </div>
+                  {activeLanding !== 'leapmotor' && (
+                    <div className={rowClass}>
+                      <label id="frm-model-label" className={`text-[11px] uppercase ${activeLanding === 'leapmotor' ? 'font-sans' : 'font-mono'} tracking-wider block mb-0.5 ${activeLanding === 'leapmotor' ? 'font-semibold text-white' : 'text-white font-extrabold'}`}>
+                        Modelo Seleccionado *
+                      </label>
+                      
+                      {(activeLanding === 'jeep' || activeLanding === 'multimarca') ? (
+                        /* Custom visually rich selection trigger */
+                        <div className="relative">
+                          <Car className="absolute left-3.5 top-3 w-4 h-4 text-slate-300 pointer-events-none" />
+                          <button
+                            type="button"
+                            id="model-modal-trigger-btn"
+                            disabled={activeLanding === 'jeep'}
+                            style={{ backgroundColor: '#deff01' }}
+                            onClick={() => {
+                              if (activeLanding === 'jeep') return;
+                              // Ensure formData of interest is initialized correctly of the active brand if empty
+                              if (!formData.modelOfInterest || !activeModelsList.includes(formData.modelOfInterest)) {
+                                setFormData(prev => ({ ...prev, modelOfInterest: activeModelsList[0] }));
+                              }
+                              setShowModelModal(true);
+                            }}
+                            className={`w-full text-left bg-[#0a0f18] text-slate-950 border border-white/25 rounded-xl pl-11 pr-7 py-2.5 text-xs outline-none transition uppercase ${activeLanding === 'leapmotor' ? 'font-sans' : 'font-mono'} font-bold flex items-center justify-between disabled:opacity-75 disabled:cursor-not-allowed`}
+                          >
+                            <span className="truncate text-slate-950">
+                              {selectedBrand} {formData.modelOfInterest || activeModelsList[0]}
+                            </span>
+                            {activeLanding !== 'jeep' && <ChevronDown className="w-3.5 h-3.5 text-slate-950 shrink-0" />}
+                          </button>
+                        </div>
+                      ) : (
+                        /* Standard selection select block for single leapmotor landing */
+                        <div className="relative">
+                          <Car className="absolute left-3.5 top-3 w-4 h-4 text-slate-300" />
+                          <select
+                            id="modelOfInterest"
+                            name="modelOfInterest"
+                            required
+                            disabled={selectedBrand === 'Leapmotor'}
+                            value={formData.modelOfInterest}
+                            onChange={handleChange}
+                            className={`w-full text-white rounded-xl pl-11 pr-7 py-2.5 text-base md:text-xs outline-none appearance-none transition uppercase ${activeLanding === 'leapmotor' ? 'font-sans' : 'font-mono'} disabled:opacity-85 disabled:cursor-not-allowed ${
+                              activeLanding === 'leapmotor'
+                                ? 'bg-[#2D2926] border border-[#deff01] focus:border-[#deff01] font-semibold'
+                                : 'bg-[#0a0f18] border border-white/25 focus:border-indigo-400 font-bold'
+                            }`}
+                          >
+                            {activeModelsList.map(m => (
+                              <option key={m} value={m} className="bg-slate-900 text-white">
+                                {selectedBrand} {m}
+                              </option>
+                            ))}
+                          </select>
+                          {selectedBrand !== 'Leapmotor' && (
+                            <ChevronDown className="absolute right-3 top-3.5 w-4 h-4 text-slate-300 pointer-events-none" />
+                          )}
+                        </div>
+                      )}
+                    </div>
+                  )}
 
                   {/* Estado y Distribuidor / State and Distributor cascading selectors */}
                   {(activeLanding !== 'leapmotor' || formData.requestType === 'cotizacion') && (
