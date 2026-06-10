@@ -1397,13 +1397,13 @@ export default function LeadForm({ c10ImgUrl, t03ImgUrl, b10ImgUrl }: LeadFormPr
                 paddingTop: '0px', 
                 marginLeft: '0px', 
                 marginTop: '0px',
-                backgroundColor: activeLanding === 'multimarca' ? '#243782' : undefined
+                backgroundColor: activeLanding === 'multimarca' ? '#000000' : undefined
               }}
               initial={{ opacity: 0, scale: 0.98 }}
               animate={{ opacity: 1, scale: 1 }}
               exit={{ opacity: 0, scale: 0.98 }}
               transition={{ duration: 0.3 }}
-              className={`px-6 ${activeLanding === 'leapmotor' ? 'pt-2 pb-5 relative z-10 flex flex-col justify-between h-full' : (activeLanding === 'multimarca' ? 'py-4 gap-4 relative z-10 flex flex-col justify-start bg-[#243782]' : 'py-4 gap-4 relative z-10 flex flex-col justify-start')} flex-1`}
+              className={`px-6 ${activeLanding === 'leapmotor' ? 'pt-2 pb-5 relative z-10 flex flex-col justify-between h-full' : (activeLanding === 'multimarca' ? 'py-4 gap-4 relative z-10 flex flex-col justify-start bg-black' : 'py-4 gap-4 relative z-10 flex flex-col justify-start')} flex-1`}
             >
               {/* LEAPMOTOR LANDING VIEW - Professional Presentation Deck Layout */}
               {activeLanding === 'leapmotor' && (
@@ -1670,8 +1670,8 @@ export default function LeadForm({ c10ImgUrl, t03ImgUrl, b10ImgUrl }: LeadFormPr
                                   handleBrandSelect(brand);
                                   setSelectedSubBrand(brand);
                                 }}
-                                style={{ backgroundColor: '#000000' }}
-                                className="group relative overflow-hidden rounded-2xl border border-white/10 bg-black hover:bg-zinc-900 hover:border-white/20 h-20 sm:h-24 w-full flex items-center justify-center select-none transition-all duration-300 transform active:scale-[0.99] shadow-lg shadow-black/20"
+                                style={{ backgroundColor: '#040404' }}
+                                className="group relative overflow-hidden rounded-2xl border border-white/10 bg-[#040404] hover:bg-zinc-900 hover:border-white/20 h-20 sm:h-24 w-full flex items-center justify-center select-none transition-all duration-300 transform active:scale-[0.99] shadow-lg shadow-black/20"
                               >
                                 <img 
                                   src={RAM_LOGO_IMG} 
