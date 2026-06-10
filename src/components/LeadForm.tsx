@@ -79,6 +79,7 @@ import JEEP_GRAND_WAGONEER_IMG from '../assets/images/jeep_grand_wagoneer_178044
 import JEEP_JT_IMG from '../assets/images/jeep_jt_1780440462196.png';
 import JEEP_RENEGADE_IMG from '../assets/images/jeep_renegade_1780440473660.png';
 import STELLANTIS_IMG from '../assets/images/stellantis_multibrand_1780407983016.png';
+import STELLANTIS_HEADER_LOGO_TRANSPARENT_IMG from '../assets/images/regenerated_image_1781104822022.jpg';
 import CARPA_MAP_IMG from '../assets/images/stellantis_carpa_map_1780431196502.png';
 import MAP_800X800_IMG from '../assets/images/mapa-800x800.jpg';
 
@@ -1339,9 +1340,9 @@ export default function LeadForm({ c10ImgUrl, t03ImgUrl, b10ImgUrl }: LeadFormPr
           } : { 
             paddingBottom: '0px',
             height: '120px',
-            backgroundColor: activeLanding === 'multimarca' ? '#000000' : undefined
+            backgroundColor: activeLanding === 'multimarca' ? '#103586' : undefined
           })}
-          className={`px-6 ${activeLanding === 'multimarca' && selectedSubBrand !== null ? 'hidden' : (activeLanding === 'leapmotor' ? 'py-1 border-b border-white/5 relative z-10' : (activeLanding === 'multimarca' ? 'py-4 bg-[#000000] border-b border-white/5 relative z-10' : 'py-4 bg-[#05070a]/90 border-b border-white/5 relative z-10'))} flex ${activeLanding === 'multimarca' || activeLanding === 'leapmotor' || activeLanding === 'jeep' ? 'justify-center' : 'justify-between'} items-center ${activeLanding === 'leapmotor' ? '' : 'backdrop-blur-md'} sticky top-0 z-25`}
+          className={`px-6 ${activeLanding === 'multimarca' && selectedSubBrand !== null ? 'hidden' : (activeLanding === 'leapmotor' ? 'py-1 border-b border-white/5 relative z-10' : (activeLanding === 'multimarca' ? 'py-4 bg-[#103586] border-b border-white/5 relative z-10' : 'py-4 bg-[#05070a]/90 border-b border-white/5 relative z-10'))} flex ${activeLanding === 'multimarca' || activeLanding === 'leapmotor' || activeLanding === 'jeep' ? 'justify-center' : 'justify-between'} items-center ${activeLanding === 'leapmotor' ? '' : 'backdrop-blur-md'} sticky top-0 z-25`}
         >
           {activeLanding === 'leapmotor' && (
             <div style={{ height: '102px' }} className="flex items-center justify-center w-full max-w-full py-3 sm:py-5">
@@ -1380,8 +1381,14 @@ export default function LeadForm({ c10ImgUrl, t03ImgUrl, b10ImgUrl }: LeadFormPr
         )}
 
           {activeLanding === 'multimarca' && selectedSubBrand === null && (
-            <div className="flex items-center justify-center py-4 h-28">
-              <StellantisLogo size="md" color="#ffffff" style={{ height: '102px' }} />
+            <div className="flex items-center justify-center py-4 h-28 select-none">
+              <img 
+                src={STELLANTIS_HEADER_LOGO_TRANSPARENT_IMG} 
+                alt="Stellantis"
+                referrerPolicy="no-referrer"
+                style={{ height: '102px', maxHeight: '100%', width: 'auto', objectFit: 'contain' }}
+                className="pointer-events-none block"
+              />
             </div>
           )}
         </div>
@@ -1397,13 +1404,13 @@ export default function LeadForm({ c10ImgUrl, t03ImgUrl, b10ImgUrl }: LeadFormPr
                 paddingTop: '0px', 
                 marginLeft: '0px', 
                 marginTop: '0px',
-                backgroundColor: activeLanding === 'multimarca' ? '#000000' : undefined
+                backgroundColor: activeLanding === 'multimarca' ? '#103586' : (activeLanding === 'jeep' ? '#ffffff' : undefined)
               }}
               initial={{ opacity: 0, scale: 0.98 }}
               animate={{ opacity: 1, scale: 1 }}
               exit={{ opacity: 0, scale: 0.98 }}
               transition={{ duration: 0.3 }}
-              className={`px-6 ${activeLanding === 'leapmotor' ? 'pt-2 pb-5 relative z-10 flex flex-col justify-between h-full' : (activeLanding === 'multimarca' ? 'py-4 gap-4 relative z-10 flex flex-col justify-start bg-black' : 'py-4 gap-4 relative z-10 flex flex-col justify-start')} flex-1`}
+              className={`px-6 ${activeLanding === 'leapmotor' ? 'pt-2 pb-5 relative z-10 flex flex-col justify-between h-full' : (activeLanding === 'multimarca' ? 'py-4 gap-4 relative z-10 flex flex-col justify-start bg-[#103586]' : (activeLanding === 'jeep' ? 'py-4 gap-4 relative z-10 flex flex-col justify-start bg-[#ffffff]' : 'py-4 gap-4 relative z-10 flex flex-col justify-start'))} flex-1`}
             >
               {/* LEAPMOTOR LANDING VIEW - Professional Presentation Deck Layout */}
               {activeLanding === 'leapmotor' && (
@@ -1478,12 +1485,15 @@ export default function LeadForm({ c10ImgUrl, t03ImgUrl, b10ImgUrl }: LeadFormPr
               {activeLanding === 'jeep' && (
                 <div className="space-y-4 text-center mt-1">
                   
-                  <p className="text-white text-xs font-semibold max-w-xs mx-auto leading-relaxed">
-                    La leyenda todoterreno, rediseñada con motorización Hemi-Hybrid de máxima potencia. Desafía el asfalto.
+                  <p 
+                    style={{ fontSize: '19px', marginTop: '14px' }}
+                    className="text-slate-800 font-semibold max-w-xs mx-auto leading-relaxed"
+                  >
+                    Híbrido por Naturaleza
                   </p>
 
                   {/* Cherokee Image Asset */}
-                  <div className="relative my-1 select-none overflow-hidden rounded-2xl border border-[#22372B]/60 group bg-slate-900/10 shadow-[0_0_25px_rgba(34,55,43,0.45)]">
+                  <div className="relative my-1 select-none overflow-hidden rounded-2xl border border-[#22372B]/20 group bg-slate-900/5 shadow-[0_4px_16px_rgba(0,0,0,0.1)]">
                     <img 
                       src={JEEP_IMG} 
                       alt="Jeep Cherokee 2026"
@@ -1493,24 +1503,36 @@ export default function LeadForm({ c10ImgUrl, t03ImgUrl, b10ImgUrl }: LeadFormPr
                   </div>
 
                   {/* Highlights Row */}
-                  <div className="grid grid-cols-3 gap-2 py-3 border-y border-[#22372B]/35 bg-[#22372B]/5 rounded-xl">
+                  <div 
+                    style={{ borderColor: '#7d9267' }} 
+                    className="grid grid-cols-3 gap-2 py-3 border-y bg-transparent rounded-xl"
+                  >
                     <div className="flex flex-col items-center gap-2">
-                      <div className="w-11 h-11 rounded-full bg-[#22372B]/20 border border-[#22372B]/40 flex items-center justify-center text-[#87a091] shadow-inner">
-                        <Compass className="w-6 h-6 text-[#a3b899]" />
+                      <div 
+                        style={{ borderColor: '#7d9267' }} 
+                        className="w-11 h-11 rounded-full bg-transparent border flex items-center justify-center text-[#7d9267] shadow-inner"
+                      >
+                        <Compass className="w-6 h-6 text-[#7d9267]" style={{ borderColor: '#7d9267' }} />
                       </div>
-                      <span className="text-[10px] sm:text-[11px] text-white font-extrabold uppercase font-sans tracking-wide">Terrain 4x4</span>
+                      <span style={{ color: '#000000' }} className="text-[10px] sm:text-[11px] font-extrabold uppercase font-sans tracking-wide">Terrain 4x4</span>
                     </div>
                     <div className="flex flex-col items-center gap-2">
-                      <div className="w-11 h-11 rounded-full bg-[#22372B]/20 border border-[#22372B]/40 flex items-center justify-center text-[#87a091] shadow-inner">
-                        <Zap className="w-6 h-6 text-[#a3b899]" />
+                      <div 
+                        style={{ borderColor: '#7d9267' }} 
+                        className="w-11 h-11 rounded-full bg-transparent border flex items-center justify-center text-[#7d9267] shadow-inner"
+                      >
+                        <Zap className="w-6 h-6 text-[#7d9267]" style={{ borderColor: '#7d9267' }} />
                       </div>
-                      <span className="text-[10px] sm:text-[11px] text-white font-extrabold uppercase font-sans tracking-wide">Hemi-Hybrid</span>
+                      <span style={{ color: '#000000' }} className="text-[10px] sm:text-[11px] font-extrabold uppercase font-sans tracking-wide">Hemi-Hybrid</span>
                     </div>
                     <div className="flex flex-col items-center gap-2">
-                      <div className="w-11 h-11 rounded-full bg-[#22372B]/20 border border-[#22372B]/40 flex items-center justify-center text-[#87a091] shadow-inner">
-                        <Award className="w-6 h-6 text-[#a3b899]" />
+                      <div 
+                        style={{ borderColor: '#7d9267' }} 
+                        className="w-11 h-11 rounded-full bg-transparent border flex items-center justify-center text-[#7d9267] shadow-inner"
+                      >
+                        <Award className="w-6 h-6 text-[#7d9267]" style={{ borderColor: '#7d9267' }} />
                       </div>
-                      <span className="text-[10px] sm:text-[11px] text-white font-extrabold uppercase font-sans tracking-wide">Trail Rated</span>
+                      <span style={{ color: '#000000' }} className="text-[10px] sm:text-[11px] font-extrabold uppercase font-sans tracking-wide">Trail Rated</span>
                     </div>
                   </div>
 
@@ -1518,25 +1540,28 @@ export default function LeadForm({ c10ImgUrl, t03ImgUrl, b10ImgUrl }: LeadFormPr
                   <div className="grid grid-cols-2 gap-2 pt-1">
                     <button
                       onClick={() => launchFormWithRequest('cotizacion', 'Jeep Cherokee')}
-                      className="bg-[#22372B] hover:bg-[#345241] text-white font-extrabold py-3.5 px-4 rounded-xl text-[10px] uppercase tracking-wider flex items-center justify-center gap-1.5 transition-all duration-300 active:scale-95 shadow-md shadow-[#22372B]/20 col-span-1"
+                      style={{ backgroundColor: '#7d9267' }}
+                      className="text-white hover:bg-[#8da376] font-extrabold py-3.5 px-4 rounded-xl text-[10px] uppercase tracking-wider flex items-center justify-center gap-1.5 transition-all duration-300 active:scale-95 shadow-md shadow-[#7d9267]/25 col-span-1"
                     >
                       <FileText className="w-3.5 h-3.5 text-slate-100" />
                       <span>Cotización</span>
                     </button>
                     <button
                       onClick={() => launchFormWithRequest('prueba', 'Jeep Cherokee')}
-                      className="bg-[#0f1012] hover:bg-slate-900 text-slate-200 border border-[#22372B]/40 hover:border-[#22372B]/70 font-extrabold py-3.5 px-4 rounded-xl text-[10px] uppercase tracking-wider flex items-center justify-center gap-1.5 transition-all duration-300 active:scale-95 col-span-1"
+                      style={{ backgroundColor: '#7d9267' }}
+                      className="text-white hover:bg-[#8da376] font-extrabold py-3.5 px-4 rounded-xl text-[10px] uppercase tracking-wider flex items-center justify-center gap-1.5 transition-all duration-300 active:scale-95 col-span-1"
                     >
-                      <Key className="w-3.5 h-3.5 text-[#a3b899]" />
+                      <Key className="w-3.5 h-3.5 text-white" style={{ borderColor: '#ffffff' }} />
                       <span>Prueba de Manejo</span>
                     </button>
 
                     <button
                       onClick={() => setShowStellantisMap(true)}
-                      className="bg-gradient-to-r from-amber-600/20 to-indigo-600/20 hover:from-amber-600/30 hover:to-indigo-600/30 text-amber-300 border border-amber-500/40 hover:border-amber-400 font-extrabold py-3 px-4 rounded-xl text-[10px] uppercase tracking-wider flex items-center justify-center gap-1.5 transition-all duration-300 active:scale-95 col-span-2 shadow-lg shadow-black/30"
+                      style={{ borderColor: '#7d9267', backgroundColor: '#ffffff' }}
+                      className="hover:bg-slate-50 border font-extrabold py-3 px-4 rounded-xl text-[10px] uppercase tracking-wider flex items-center justify-center gap-1.5 transition-all duration-300 active:scale-95 col-span-2 shadow-sm text-[#7d9267]"
                     >
-                      <Map className="w-3.5 h-3.5 text-amber-400" />
-                      <span>Atención Personalizada (Ver Ubicación)</span>
+                      <Map className="w-3.5 h-3.5" style={{ color: '#7d9267' }} />
+                      <span style={{ color: '#7d9267' }}>Atención Personalizada (Ver Ubicación)</span>
                     </button>
                   </div>
                 </div>
