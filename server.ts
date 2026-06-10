@@ -200,8 +200,6 @@ async function runLeadSync() {
         params.append('CliTel', lead.phone || '');
         params.append('CliTipoTel', 'Celular');
         params.append('CliRecibirPromo', '0');
-        params.append('CotTipo', '1');
-        params.append('AutoIDSeminuevo', '0');
 
         // Vehicle metadata mapping using updated BRAND_MODELS_METADATA database
         let autoAnio = '25';
@@ -224,14 +222,6 @@ async function runLeadSync() {
           autoIDClaveversion = matchedModel.idVersion || '';
         }
 
-        params.append('AutoAnio', autoAnio);
-        params.append('AutoMarca', autoMarca);
-        params.append('AutoModelo', autoModelo);
-        params.append('AutoClaveGen', autoClaveGen);
-        params.append('AutoVersion', autoVersion);
-        params.append('AutoIDClaveversion', autoIDClaveversion);
-        params.append('CotComentarios', lead.postalCode ? `C.P. ${lead.postalCode}` : 'C.P. No Asignado');
-
         // Resolve dynamic origin based on user instructions
         let origVal = "LANDING";
         const lLanding = lead.landing ? lead.landing.toLowerCase() : "";
@@ -249,22 +239,54 @@ async function runLeadSync() {
           origVal = lead.requestType === 'prueba' ? "CMMLPM" : "CMML";
         }
 
-        params.append('CotOrigen', origVal);
-        params.append('CotIDTipodeContacto', '1');
-        params.append('CotIDTipodeCompra', '1');
-        params.append('CotPlazo', '0');
-        params.append('CotEnganche', '0');
-        params.append('CotMensualidad', '0');
+        const isPruebaPM = lead.requestType === 'prueba';
 
-        params.append('UTMsource', lead.utm_source || '');
-        params.append('UTMmedium', lead.utm_medium || '');
-        params.append('UTMcampaign', lead.utm_campaign || '');
-        params.append('UTMcontent', lead.utm_content || '');
-        params.append('UTMterm', lead.utm_term || '');
-        params.append('CotOrigenCampana', origVal);
-        params.append('IP', '');
+        if (isPruebaPM) {
+          params.append('AutoAnio', autoAnio);
+          params.append('AutoMarca', autoMarca);
+          params.append('AutoModelo', autoModelo);
+          params.append('AutoClaveGen', autoClaveGen);
+          params.append('fecha', lead.testDriveDate || '');
+          params.append('horario', '2');
+          params.append('PMComentarios', lead.postalCode ? `C.P. ${lead.postalCode}` : 'C.P. No Asignado');
+          params.append('PMOrigen', origVal);
+          params.append('UTMsource', lead.utm_source || '');
+          params.append('UTMmedium', lead.utm_medium || '');
+          params.append('UTMcampaign', lead.utm_campaign || '');
+          params.append('UTMcontent', lead.utm_content || '');
+          params.append('UTMterm', lead.utm_term || '');
+          params.append('PMOrigenCampana', origVal);
+          params.append('IP', '');
+        } else {
+          params.append('CotTipo', '1');
+          params.append('AutoIDSeminuevo', '0');
+          params.append('AutoAnio', autoAnio);
+          params.append('AutoMarca', autoMarca);
+          params.append('AutoModelo', autoModelo);
+          params.append('AutoClaveGen', autoClaveGen);
+          params.append('AutoVersion', autoVersion);
+          params.append('AutoIDClaveversion', autoIDClaveversion);
+          params.append('CotComentarios', lead.postalCode ? `C.P. ${lead.postalCode}` : 'C.P. No Asignado');
+          params.append('CotOrigen', origVal);
+          params.append('CotIDTipodeContacto', '1');
+          params.append('CotIDTipodeCompra', '1');
+          params.append('CotPlazo', '0');
+          params.append('CotEnganche', '0');
+          params.append('CotMensualidad', '0');
+          params.append('UTMsource', lead.utm_source || '');
+          params.append('UTMmedium', lead.utm_medium || '');
+          params.append('UTMcampaign', lead.utm_campaign || '');
+          params.append('UTMcontent', lead.utm_content || '');
+          params.append('UTMterm', lead.utm_term || '');
+          params.append('CotOrigenCampana', origVal);
+          params.append('IP', '');
+        }
 
-        const response = await fetch("http://servicios.chv3.netcar.com.mx/admin/ws/Leads.asmx/RegistraCOT", {
+        const apiUrl = isPruebaPM 
+          ? "http://servicios.chv3.netcar.com.mx/admin/ws/Leads.asmx/RegistraPM"
+          : "http://servicios.chv3.netcar.com.mx/admin/ws/Leads.asmx/RegistraCOT";
+
+        const response = await fetch(apiUrl, {
           method: "POST",
           headers: {
             "Content-Type": "application/x-www-form-urlencoded"
