@@ -13,7 +13,8 @@ import {
   query,
   where,
   serverTimestamp,
-  writeBatch
+  writeBatch,
+  onSnapshot
 } from 'firebase/firestore';
 import { db, handleFirestoreError, OperationType } from '../firebase';
 import { LeadStatus, Lead } from '../types';
@@ -432,6 +433,26 @@ export default function LeadForm({ c10ImgUrl, t03ImgUrl, b10ImgUrl }: LeadFormPr
   const [formActive, setFormActive] = useState(false); // false = landing sheet, true = form sheet
   const [registeredLeadId, setRegisteredLeadId] = useState('');
   const [errorText, setErrorText] = useState('');
+  const [currentLeadData, setCurrentLeadData] = useState<any>(null);
+
+  useEffect(() => {
+    if (!registeredLeadId) {
+      setCurrentLeadData(null);
+      return;
+    }
+
+    const leadDocRef = doc(db, 'leads', registeredLeadId);
+    const unsubscribe = onSnapshot(leadDocRef, (snapshot) => {
+      if (snapshot.exists()) {
+        const data = snapshot.data();
+        setCurrentLeadData(data);
+      }
+    }, (error) => {
+      console.error("Error listening to lead:", error);
+    });
+
+    return () => unsubscribe();
+  }, [registeredLeadId]);
 
   // Interactive Map Event Callout Section for Jeep Landing
   const [activeJeepEventSpot, setActiveJeepEventSpot] = useState<string>('track');
@@ -1344,7 +1365,7 @@ export default function LeadForm({ c10ImgUrl, t03ImgUrl, b10ImgUrl }: LeadFormPr
                     <span className="text-[12px] font-black tracking-[0.25em] text-[#deff01] uppercase block animate-pulse">
                       Tranquilidad sin límites
                     </span>
-                    <h1 className="leading-tight font-sans">
+                    <h1 style={{ fontSize: '14px' }} className="leading-tight font-sans">
                       <span className="text-[#deff01] font-extrabold text-4xl tracking-tighter inline-block drop-shadow-[0_2px_10px_rgba(222,255,1,0.15)] uppercase">
                         INCREÍBLE
                       </span>{' '}
@@ -2204,34 +2225,73 @@ export default function LeadForm({ c10ImgUrl, t03ImgUrl, b10ImgUrl }: LeadFormPr
                   </p>
                 </div>
 
-                {formData.requestType === 'prueba' ? (
-                  <div className="p-3 bg-slate-900 border border-indigo-500/20 rounded-2xl max-w-xs mx-auto text-left font-mono text-[11px] leading-relaxed">
-                    <div className="text-indigo-400 font-bold block uppercase mb-1 flex items-center gap-1">
-                      <Key className="w-3.5 h-3.5" /> TEST DRIVE RESERVADO OK
-                    </div>
-                    <span>Gracias por agendar tu prueba de manejo, a la brevedad un asesor te contactará para confirmar tu cita.</span>
-                  </div>
-                ) : (
-                  <p 
-                    style={
-                      (formData.requestType === 'cotizacion' && (selectedBrand === 'Leapmotor' || activeLanding === 'leapmotor'))
-                        ? { color: '#deff01' }
-                        : (activeLanding === 'leapmotor' ? { color: '#deff01' } : undefined)
-                    }
-                    className={`text-xs font-bold font-mono tracking-wide ${
-                      (formData.requestType === 'cotizacion' && (selectedBrand === 'Leapmotor' || activeLanding === 'leapmotor'))
-                        ? ''
-                        : (activeLanding === 'leapmotor' ? '' : 'text-emerald-400')
+                {currentLeadData && (currentLeadData.status === 'attending' || currentLeadData.status === 'attended') && currentLeadData.advisorId && !currentLeadData.advisorName?.includes('Sin Asignar') ? (
+                  <div 
+                    style={activeLanding === 'leapmotor' ? { borderColor: '#deff01', backgroundColor: 'rgba(222,255,1,0.08)' } : undefined}
+                    className={`p-4 rounded-xl max-w-xs mx-auto text-center border transition-all duration-300 ${
+                      activeLanding === 'leapmotor'
+                        ? 'border-[#deff01] shadow-[0_0_15px_rgba(222,255,1,0.1)]'
+                        : (activeLanding === 'jeep'
+                           ? 'bg-emerald-950/20 border-emerald-500/30 text-emerald-400 shadow-[0_0_15px_rgba(16,185,129,0.1)]'
+                           : 'bg-indigo-950/20 border-indigo-500/30 text-indigo-400 shadow-[0_0_15px_rgba(99,102,241,0.1)]')
                     }`}
                   >
-                    {formData.requestType === 'cotizacion' && (selectedBrand === 'Leapmotor' || activeLanding === 'leapmotor')
-                      ? "Gracias por solicitar una cotización, en breve un asesor se pondrá en contacto."
-                      : (activeLanding === 'leapmotor' 
-                          ? "Un asesor especializado ha recibido tu alerta, te contactará a la brevedad en el Hospitality de LeapMotor."
-                          : "Un asesor especializado ha recibido tu alerta. Contacto en menos de 2 Minutos."
-                        )
-                    }
-                  </p>
+                    <div className="flex justify-center items-center gap-2 mb-1.5">
+                      <span className="relative flex h-2 w-2">
+                        <span className={`animate-ping absolute inline-flex h-full w-full rounded-full opacity-75 ${activeLanding === 'leapmotor' ? 'bg-[#deff01]' : (activeLanding === 'jeep' ? 'bg-emerald-400' : 'bg-indigo-400')}`}></span>
+                        <span className={`relative inline-flex rounded-full h-2 w-2 ${activeLanding === 'leapmotor' ? 'bg-[#deff01]' : (activeLanding === 'jeep' ? 'bg-emerald-500' : 'bg-indigo-500')}`}></span>
+                      </span>
+                      <strong 
+                        style={activeLanding === 'leapmotor' ? { color: '#deff01' } : undefined}
+                        className={`text-[10px] font-mono font-black tracking-widest uppercase ${
+                          activeLanding === 'leapmotor' ? '' : (activeLanding === 'jeep' ? 'text-emerald-400' : 'text-indigo-400')
+                        }`}
+                      >
+                        Atención en Curso
+                      </strong>
+                    </div>
+                    <p className="text-white text-xs font-semibold leading-relaxed">
+                      Gracias, te está atendiendo :
+                    </p>
+                    <p 
+                      style={activeLanding === 'leapmotor' ? { color: '#deff01' } : undefined}
+                      className={`text-base font-black uppercase tracking-tight mt-1 truncate ${
+                        activeLanding === 'leapmotor' ? '' : (activeLanding === 'jeep' ? 'text-emerald-400' : 'text-indigo-400')
+                      }`}
+                    >
+                      {currentLeadData.advisorName}
+                    </p>
+                  </div>
+                ) : (
+                  formData.requestType === 'prueba' ? (
+                    <div className="p-3 bg-slate-900 border border-indigo-500/20 rounded-2xl max-w-xs mx-auto text-left font-mono text-[11px] leading-relaxed">
+                      <div className="text-indigo-400 font-bold block uppercase mb-1 flex items-center gap-1">
+                        <Key className="w-3.5 h-3.5" /> TEST DRIVE RESERVADO OK
+                      </div>
+                      <span>Gracias por agendar tu prueba de manejo, a la brevedad un asesor te contactará para confirmar tu cita.</span>
+                    </div>
+                  ) : (
+                    <p 
+                      style={
+                        (formData.requestType === 'cotizacion' && (selectedBrand === 'Leapmotor' || activeLanding === 'leapmotor'))
+                          ? { color: '#deff01' }
+                          : (activeLanding === 'leapmotor' ? { color: '#deff01' } : undefined)
+                      }
+                      className={`text-xs font-bold font-mono tracking-wide ${
+                        (formData.requestType === 'cotizacion' && (selectedBrand === 'Leapmotor' || activeLanding === 'leapmotor'))
+                          ? ''
+                          : (activeLanding === 'leapmotor' ? '' : 'text-emerald-400')
+                      }`}
+                    >
+                      {formData.requestType === 'cotizacion' && (selectedBrand === 'Leapmotor' || activeLanding === 'leapmotor')
+                        ? "Gracias por solicitar una cotización, en breve un asesor se pondrá en contacto."
+                        : (activeLanding === 'leapmotor' 
+                            ? "Un asesor especializado ha recibido tu alerta, te contactará a la brevedad en el Hospitality de LeapMotor."
+                            : "Un asesor especializado ha recibido tu alerta. Contacto en menos de 2 Minutos."
+                          )
+                      }
+                    </p>
+                  )
                 )}
 
                 {/* Show brand graphic mockup preview with dynamic branding border & shadow */}
@@ -2261,6 +2321,8 @@ export default function LeadForm({ c10ImgUrl, t03ImgUrl, b10ImgUrl }: LeadFormPr
                     setSuccess(false);
                     setFormActive(false);
                     setFormData(getInitialFormData(activeLanding, selectedBrand));
+                    setRegisteredLeadId('');
+                    setCurrentLeadData(null);
                   }}
                   style={activeLanding === 'leapmotor' ? {
                     backgroundColor: '#deff01',
