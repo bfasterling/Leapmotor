@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { 
   collection, 
   doc, 
@@ -434,10 +434,15 @@ export default function LeadForm({ c10ImgUrl, t03ImgUrl, b10ImgUrl }: LeadFormPr
   const [registeredLeadId, setRegisteredLeadId] = useState('');
   const [errorText, setErrorText] = useState('');
   const [currentLeadData, setCurrentLeadData] = useState<any>(null);
+  const redirectTimerRef = useRef<any>(null);
 
   useEffect(() => {
     if (!registeredLeadId) {
       setCurrentLeadData(null);
+      if (redirectTimerRef.current) {
+        clearTimeout(redirectTimerRef.current);
+        redirectTimerRef.current = null;
+      }
       return;
     }
 
@@ -446,12 +451,41 @@ export default function LeadForm({ c10ImgUrl, t03ImgUrl, b10ImgUrl }: LeadFormPr
       if (snapshot.exists()) {
         const data = snapshot.data();
         setCurrentLeadData(data);
+
+        // If the status is completed (attended or lost)
+        if (data.status === 'attended' || data.status === 'lost') {
+          if (!redirectTimerRef.current) {
+            redirectTimerRef.current = setTimeout(() => {
+              setSuccess(false);
+              setFormActive(false);
+              setFormData(getInitialFormData(activeLanding, selectedBrand));
+              setRegisteredLeadId('');
+              setCurrentLeadData(null);
+              if (redirectTimerRef.current) {
+                clearTimeout(redirectTimerRef.current);
+                redirectTimerRef.current = null;
+              }
+            }, 4000); // Wait 4 seconds to display the ended status message before redirecting
+          }
+        } else {
+          // If the status is not completed, make sure any pending redirect timer is cleared
+          if (redirectTimerRef.current) {
+            clearTimeout(redirectTimerRef.current);
+            redirectTimerRef.current = null;
+          }
+        }
       }
     }, (error) => {
       console.error("Error listening to lead:", error);
     });
 
-    return () => unsubscribe();
+    return () => {
+      unsubscribe();
+      if (redirectTimerRef.current) {
+        clearTimeout(redirectTimerRef.current);
+        redirectTimerRef.current = null;
+      }
+    };
   }, [registeredLeadId]);
 
   // Interactive Map Event Callout Section for Jeep Landing
@@ -2225,7 +2259,7 @@ export default function LeadForm({ c10ImgUrl, t03ImgUrl, b10ImgUrl }: LeadFormPr
                   </p>
                 </div>
 
-                {currentLeadData && (currentLeadData.status === 'attending' || currentLeadData.status === 'attended') && currentLeadData.advisorId && !currentLeadData.advisorName?.includes('Sin Asignar') ? (
+                {currentLeadData && (currentLeadData.status === 'attending' || currentLeadData.status === 'attended' || currentLeadData.status === 'lost') && currentLeadData.advisorId && !currentLeadData.advisorName?.includes('Sin Asignar') ? (
                   <div 
                     style={activeLanding === 'leapmotor' ? { borderColor: '#deff01', backgroundColor: 'rgba(222,255,1,0.08)' } : undefined}
                     className={`p-4 rounded-xl max-w-xs mx-auto text-center border transition-all duration-300 ${
@@ -2236,31 +2270,54 @@ export default function LeadForm({ c10ImgUrl, t03ImgUrl, b10ImgUrl }: LeadFormPr
                            : 'bg-indigo-950/20 border-indigo-500/30 text-indigo-400 shadow-[0_0_15px_rgba(99,102,241,0.1)]')
                     }`}
                   >
-                    <div className="flex justify-center items-center gap-2 mb-1.5">
-                      <span className="relative flex h-2 w-2">
-                        <span className={`animate-ping absolute inline-flex h-full w-full rounded-full opacity-75 ${activeLanding === 'leapmotor' ? 'bg-[#deff01]' : (activeLanding === 'jeep' ? 'bg-emerald-400' : 'bg-indigo-400')}`}></span>
-                        <span className={`relative inline-flex rounded-full h-2 w-2 ${activeLanding === 'leapmotor' ? 'bg-[#deff01]' : (activeLanding === 'jeep' ? 'bg-emerald-500' : 'bg-indigo-500')}`}></span>
-                      </span>
-                      <strong 
-                        style={activeLanding === 'leapmotor' ? { color: '#deff01' } : undefined}
-                        className={`text-[10px] font-mono font-black tracking-widest uppercase ${
-                          activeLanding === 'leapmotor' ? '' : (activeLanding === 'jeep' ? 'text-emerald-400' : 'text-indigo-400')
-                        }`}
-                      >
-                        Atención en Curso
-                      </strong>
-                    </div>
-                    <p className="text-white text-xs font-semibold leading-relaxed">
-                      Gracias, te está atendiendo :
-                    </p>
-                    <p 
-                      style={activeLanding === 'leapmotor' ? { color: '#deff01' } : undefined}
-                      className={`text-base font-black uppercase tracking-tight mt-1 truncate ${
-                        activeLanding === 'leapmotor' ? '' : (activeLanding === 'jeep' ? 'text-emerald-400' : 'text-indigo-400')
-                      }`}
-                    >
-                      {currentLeadData.advisorName}
-                    </p>
+                    {currentLeadData.status === 'attended' || currentLeadData.status === 'lost' ? (
+                      <>
+                        <div className="flex justify-center items-center gap-2 mb-1.5 animate-pulse">
+                          <strong 
+                            style={activeLanding === 'leapmotor' ? { color: '#deff01' } : undefined}
+                            className={`text-[10px] font-mono font-black tracking-widest uppercase ${
+                              activeLanding === 'leapmotor' ? '' : (activeLanding === 'jeep' ? 'text-emerald-400' : 'text-indigo-400')
+                            }`}
+                          >
+                            ✓ ATENCIÓN FINALIZADA
+                          </strong>
+                        </div>
+                        <p className="text-white text-xs font-semibold leading-relaxed">
+                          La atención ha concluido. ¡Muchas gracias por tu visita!
+                        </p>
+                        <p className="text-[10px] text-slate-400 mt-2 font-mono">
+                          Redireccionando al inicio...
+                        </p>
+                      </>
+                    ) : (
+                      <>
+                        <div className="flex justify-center items-center gap-2 mb-1.5">
+                          <span className="relative flex h-2 w-2">
+                            <span className={`animate-ping absolute inline-flex h-full w-full rounded-full opacity-75 ${activeLanding === 'leapmotor' ? 'bg-[#deff01]' : (activeLanding === 'jeep' ? 'bg-emerald-400' : 'bg-indigo-400')}`}></span>
+                            <span className={`relative inline-flex rounded-full h-2 w-2 ${activeLanding === 'leapmotor' ? 'bg-[#deff01]' : (activeLanding === 'jeep' ? 'bg-emerald-500' : 'bg-indigo-500')}`}></span>
+                          </span>
+                          <strong 
+                            style={activeLanding === 'leapmotor' ? { color: '#deff01' } : undefined}
+                            className={`text-[10px] font-mono font-black tracking-widest uppercase ${
+                              activeLanding === 'leapmotor' ? '' : (activeLanding === 'jeep' ? 'text-emerald-400' : 'text-indigo-400')
+                            }`}
+                          >
+                            Atención en Curso
+                          </strong>
+                        </div>
+                        <p className="text-white text-xs font-semibold leading-relaxed">
+                          Gracias, te está atendiendo :
+                        </p>
+                        <p 
+                          style={activeLanding === 'leapmotor' ? { color: '#deff01' } : undefined}
+                          className={`text-base font-black uppercase tracking-tight mt-1 truncate ${
+                            activeLanding === 'leapmotor' ? '' : (activeLanding === 'jeep' ? 'text-emerald-400' : 'text-indigo-400')
+                          }`}
+                        >
+                          {currentLeadData.advisorName}
+                        </p>
+                      </>
+                    )}
                   </div>
                 ) : (
                   formData.requestType === 'prueba' ? (
