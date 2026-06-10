@@ -1336,7 +1336,7 @@ export default function LeadForm({ c10ImgUrl, t03ImgUrl, b10ImgUrl }: LeadFormPr
           } : (activeLanding === 'jeep' ? {
             paddingBottom: '0px',
             paddingTop: '8px',
-            height: formActive ? '180px' : '122px'
+            height: formActive ? '120px' : '122px'
           } : { 
             paddingBottom: '0px',
             height: '120px',
@@ -1357,12 +1357,12 @@ export default function LeadForm({ c10ImgUrl, t03ImgUrl, b10ImgUrl }: LeadFormPr
           )}
           
           {activeLanding === 'jeep' && (
-            <div style={{ height: '90px' }} className="flex items-center justify-center w-full select-none">
+            <div style={{ height: formActive ? '72px' : '90px' }} className="flex items-center justify-center w-full select-none">
               <img 
                 src={JEEP_HEADER_LOGO_IMG} 
                 alt="Jeep"
                 referrerPolicy="no-referrer"
-                style={{ height: '80px', maxHeight: '100%', width: 'auto', objectFit: 'contain' }}
+                style={{ height: formActive ? '64px' : '80px', maxHeight: '100%', width: 'auto', objectFit: 'contain' }}
                 className="pointer-events-none"
               />
             </div>
@@ -1854,22 +1854,20 @@ export default function LeadForm({ c10ImgUrl, t03ImgUrl, b10ImgUrl }: LeadFormPr
               animate={{ opacity: 1, x: 0 }}
               exit={{ opacity: 0, x: -20 }}
               transition={{ duration: 0.35 }}
-              className="px-6 py-4 flex flex-col gap-4 flex-1 relative z-10"
-              style={{ paddingTop: '9px', paddingBottom: '9px' }}
+              className="px-6 py-4 flex flex-col gap-3 flex-1 min-h-0 relative z-10 overflow-y-auto custom-scrollbar touch-pan-y"
+              style={{ paddingTop: '6px', paddingBottom: '6px', scrollbarWidth: 'thin' }}
             >
               <div>
                 {/* Back Link */}
-                {activeLanding !== 'jeep' && (
-                  <button 
-                    onClick={() => setFormActive(false)}
-                    className={`flex items-center gap-1.5 text-white hover:text-slate-200 text-[11px] font-semibold ${activeLanding === 'leapmotor' ? 'font-sans' : 'font-mono'} mb-4 transition bg-white/10 px-2 py-1 rounded`}
-                  >
-                    <ArrowLeft className="w-3.5 h-3.5" />
-                    <span>{activeLanding === 'leapmotor' ? 'Regresar' : 'Volver a la Landing'}</span>
-                  </button>
-                )}
+                <button 
+                  onClick={() => setFormActive(false)}
+                  className={`flex items-center gap-1.5 text-white hover:text-slate-200 text-[11px] font-semibold ${activeLanding === 'leapmotor' ? 'font-sans' : 'font-mono'} mb-4 transition bg-white/10 px-2 py-1 rounded`}
+                >
+                  <ArrowLeft className="w-3.5 h-3.5" />
+                  <span>{(activeLanding === 'leapmotor' || activeLanding === 'jeep') ? 'Regresar' : 'Volver a la Landing'}</span>
+                </button>
 
-                <h2 className={`text-xl tracking-wide text-white mb-1 uppercase font-sans ${activeLanding === 'leapmotor' ? 'font-semibold' : 'font-black'} ${activeLanding === 'jeep' ? 'mt-3' : ''}`}>
+                <h2 className={`text-xl tracking-wide text-white mb-1 uppercase font-sans ${activeLanding === 'leapmotor' ? 'font-semibold' : 'font-black'}`}>
                   DÉJANOS TUS DATOS
                 </h2>
                 {activeLanding !== 'leapmotor' && activeLanding !== 'jeep' && (
@@ -1888,42 +1886,44 @@ export default function LeadForm({ c10ImgUrl, t03ImgUrl, b10ImgUrl }: LeadFormPr
                 <form onSubmit={handleSubmit} className="space-y-3.5">
                   {activeLanding === 'jeep' ? (
                     <>
-                      {/* Rearranged full-width stacked layout for Jeep Cherokee */}
-                      <div className={rowClass}>
-                        <label id="frm-name-label" htmlFor="name" className="text-[11px] uppercase font-mono tracking-wider block mb-0.5 text-white font-extrabold">
-                          Nombre *
-                        </label>
-                        <div className="relative">
-                          <User className="absolute left-3 top-3 w-4 h-4 text-slate-300" />
-                          <input
-                            id="name"
-                            type="text"
-                            name="name"
-                            required
-                            placeholder="Tu nombre"
-                            value={formData.name}
-                            onChange={handleChange}
-                            className={inputClass}
-                          />
+                      {/* Rearranged compact layout for Jeep Cherokee */}
+                      <div className="grid grid-cols-2 gap-2.5">
+                        <div className={rowClass}>
+                          <label id="frm-name-label" htmlFor="name" className="text-[11px] uppercase font-mono tracking-wider block mb-0.5 text-white font-extrabold truncate">
+                            Nombre *
+                          </label>
+                          <div className="relative">
+                            <User className="absolute left-3 top-3 w-4 h-4 text-slate-300" />
+                            <input
+                              id="name"
+                              type="text"
+                              name="name"
+                              required
+                              placeholder="Nombre"
+                              value={formData.name}
+                              onChange={handleChange}
+                              className={inputClass}
+                            />
+                          </div>
                         </div>
-                      </div>
 
-                      <div className={rowClass}>
-                        <label id="frm-lastname-label" htmlFor="lastName" className="text-[11px] uppercase font-mono tracking-wider block mb-0.5 text-white font-extrabold">
-                          Apellido *
-                        </label>
-                        <div className="relative">
-                          <User className="absolute left-3 top-3 w-4 h-4 text-slate-300" />
-                          <input
-                            id="lastName"
-                            type="text"
-                            name="lastName"
-                            required
-                            placeholder="Tu apellido"
-                            value={formData.lastName}
-                            onChange={handleChange}
-                            className={inputClass}
-                          />
+                        <div className={rowClass}>
+                          <label id="frm-lastname-label" htmlFor="lastName" className="text-[11px] uppercase font-mono tracking-wider block mb-0.5 text-white font-extrabold truncate">
+                            Apellido *
+                          </label>
+                          <div className="relative">
+                            <User className="absolute left-3 top-3 w-4 h-4 text-slate-300" />
+                            <input
+                              id="lastName"
+                              type="text"
+                              name="lastName"
+                              required
+                              placeholder="Apellido"
+                              value={formData.lastName}
+                              onChange={handleChange}
+                              className={inputClass}
+                            />
+                          </div>
                         </div>
                       </div>
 
@@ -1946,45 +1946,47 @@ export default function LeadForm({ c10ImgUrl, t03ImgUrl, b10ImgUrl }: LeadFormPr
                         </div>
                       </div>
 
-                      <div className={rowClass}>
-                        <label id="frm-phone-label" htmlFor="phone" className="text-[11px] uppercase font-mono tracking-wider block mb-0.5 text-white font-extrabold">
-                          Teléfono *
-                        </label>
-                        <div className="relative">
-                          <Phone className="absolute left-3 top-3 w-4 h-4 text-slate-300" />
-                          <input
-                            id="phone"
-                            type="tel"
-                            name="phone"
-                            required
-                            placeholder="10 dígitos"
-                            value={formData.phone}
-                            onChange={handleChange}
-                            className={inputClass}
-                          />
+                      <div className="grid grid-cols-2 gap-2.5">
+                        <div className={rowClass}>
+                          <label id="frm-phone-label" htmlFor="phone" className="text-[11px] uppercase font-mono tracking-wider block mb-0.5 text-white font-extrabold truncate">
+                            Teléfono *
+                          </label>
+                          <div className="relative">
+                            <Phone className="absolute left-3 top-3 w-4 h-4 text-slate-300" />
+                            <input
+                              id="phone"
+                              type="tel"
+                              name="phone"
+                              required
+                              placeholder="10 dígitos"
+                              value={formData.phone}
+                              onChange={handleChange}
+                              className={inputClass}
+                            />
+                          </div>
                         </div>
-                      </div>
 
-                      <div className={rowClass}>
-                        <label id="frm-postalcode-label" htmlFor="postalCode" className="text-[11px] uppercase font-mono tracking-wider block mb-0.5 text-white font-extrabold" title="Tu Código Postal *">
-                          Tu Código Postal *
-                        </label>
-                        <div className="relative">
-                          <MapPin className="absolute left-3 top-3 w-4 h-4 text-slate-300" />
-                          <input
-                            id="postalCode"
-                            type="text"
-                            name="postalCode"
-                            required
-                            maxLength={5}
-                            placeholder="Ej. 06000"
-                            value={formData.postalCode}
-                            onChange={(e) => {
-                               const cleaned = e.target.value.replace(/[^0-9]/g, '');
-                               setFormData(prev => ({ ...prev, postalCode: cleaned }));
-                            }}
-                            className={inputClass}
-                          />
+                        <div className={rowClass}>
+                          <label id="frm-postalcode-label" htmlFor="postalCode" className="text-[11px] uppercase font-mono tracking-wider block mb-0.5 text-white font-extrabold truncate" title="Tu Código Postal *">
+                            C.P. *
+                          </label>
+                          <div className="relative">
+                            <MapPin className="absolute left-3 top-3 w-4 h-4 text-slate-300" />
+                            <input
+                              id="postalCode"
+                              type="text"
+                              name="postalCode"
+                              required
+                              maxLength={5}
+                              placeholder="C.P."
+                              value={formData.postalCode}
+                              onChange={(e) => {
+                                 const cleaned = e.target.value.replace(/[^0-9]/g, '');
+                                 setFormData(prev => ({ ...prev, postalCode: cleaned }));
+                              }}
+                              className={inputClass}
+                            />
+                          </div>
                         </div>
                       </div>
                     </>
