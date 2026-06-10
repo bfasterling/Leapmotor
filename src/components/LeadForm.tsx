@@ -326,10 +326,11 @@ export default function LeadForm({ c10ImgUrl, t03ImgUrl, b10ImgUrl }: LeadFormPr
         landingParam.toLowerCase().includes('socer')
       );
       const isSoccerhouseHost = host.includes('soccer') || host.includes('socer');
+      const isSoccerhouseQuery = window.location.search.toLowerCase().includes('soccer') || window.location.search.toLowerCase().includes('socer');
       
       if (landingParam === 'jeep' || host.startsWith('jeep')) {
         return 'jeep';
-      } else if (landingParam === 'multimarca' || host.startsWith('multimarca') || host.startsWith('stellantis') || host.startsWith('soccerhouse') || isSoccerhouseParam || isSoccerhouseHost) {
+      } else if (landingParam === 'multimarca' || host.startsWith('multimarca') || host.startsWith('stellantis') || host.startsWith('soccerhouse') || isSoccerhouseParam || isSoccerhouseHost || isSoccerhouseQuery) {
         return 'multimarca';
       } else if (landingParam === 'leapmotor' || host.startsWith('leapmotor')) {
         return 'leapmotor';
@@ -370,10 +371,11 @@ export default function LeadForm({ c10ImgUrl, t03ImgUrl, b10ImgUrl }: LeadFormPr
         landingParam.toLowerCase().includes('socer')
       );
       const isSoccerhouseHost = host.includes('soccer') || host.includes('socer');
+      const isSoccerhouseQuery = window.location.search.toLowerCase().includes('soccer') || window.location.search.toLowerCase().includes('socer');
       
       if (landingParam === 'jeep' || host.startsWith('jeep')) {
         initialLanding = 'jeep';
-      } else if (landingParam === 'multimarca' || host.startsWith('multimarca') || host.startsWith('stellantis') || host.startsWith('soccerhouse') || isSoccerhouseParam || isSoccerhouseHost) {
+      } else if (landingParam === 'multimarca' || host.startsWith('multimarca') || host.startsWith('stellantis') || host.startsWith('soccerhouse') || isSoccerhouseParam || isSoccerhouseHost || isSoccerhouseQuery) {
         initialLanding = 'multimarca';
       }
     }
@@ -407,15 +409,17 @@ export default function LeadForm({ c10ImgUrl, t03ImgUrl, b10ImgUrl }: LeadFormPr
     if (typeof window !== 'undefined') {
       const searchParams = new URLSearchParams(window.location.search);
       const host = window.location.hostname.toLowerCase();
-      const landingParam = searchParams.get('landing') || searchParams.get('campaign') || searchParams.get('site') || searchParams.get('utm_source') || '';
+      const rawSearch = (window.location.search || '').toLowerCase();
       const isSoccerhouse = 
         host.includes('soccer') || 
         host.includes('socer') || 
-        landingParam.toLowerCase().includes('soccer') || 
-        landingParam.toLowerCase().includes('socer');
+        rawSearch.includes('soccer') || 
+        rawSearch.includes('socer') ||
+        (searchParams.get('landing') || '').toLowerCase().includes('soccer') || 
+        (searchParams.get('landing') || '').toLowerCase().includes('socer');
 
       let utm_source = searchParams.get('utm_source') || localStorage.getItem('utm_source') || '';
-      if (isSoccerhouse && !utm_source) {
+      if (isSoccerhouse) {
         utm_source = 'soccerhouse';
       }
 
@@ -636,10 +640,11 @@ export default function LeadForm({ c10ImgUrl, t03ImgUrl, b10ImgUrl }: LeadFormPr
       landingParam.toLowerCase().includes('socer')
     );
     const isSoccerhouseHost = host.includes('soccer') || host.includes('socer');
+    const isSoccerhouseQuery = window.location.search.toLowerCase().includes('soccer') || window.location.search.toLowerCase().includes('socer');
     
     if (landingParam === 'jeep' || host.startsWith('jeep')) {
       handleLandingSwitch('jeep');
-    } else if (landingParam === 'multimarca' || host.startsWith('multimarca') || host.startsWith('stellantis') || host.startsWith('soccerhouse') || isSoccerhouseParam || isSoccerhouseHost) {
+    } else if (landingParam === 'multimarca' || host.startsWith('multimarca') || host.startsWith('stellantis') || host.startsWith('soccerhouse') || isSoccerhouseParam || isSoccerhouseHost || isSoccerhouseQuery) {
       handleLandingSwitch('multimarca');
     } else if (landingParam === 'leapmotor' || host.startsWith('leapmotor')) {
       handleLandingSwitch('leapmotor');
@@ -722,12 +727,14 @@ export default function LeadForm({ c10ImgUrl, t03ImgUrl, b10ImgUrl }: LeadFormPr
     } else if (activeLanding === 'multimarca') {
       const host = window.location.hostname.toLowerCase();
       const searchParams = new URLSearchParams(window.location.search);
-      const landingParam = searchParams.get('landing') || searchParams.get('campaign') || searchParams.get('site') || searchParams.get('utm_source') || '';
+      const rawSearch = (window.location.search || '').toLowerCase();
       const isSoccerhouse = 
         host.includes('soccer') || 
         host.includes('socer') || 
-        landingParam.toLowerCase().includes('soccer') || 
-        landingParam.toLowerCase().includes('socer');
+        rawSearch.includes('soccer') || 
+        rawSearch.includes('socer') ||
+        (searchParams.get('landing') || '').toLowerCase().includes('soccer') || 
+        (searchParams.get('landing') || '').toLowerCase().includes('socer');
 
       if (isSoccerhouse) {
         if (!(window as any).gtmSoccerhouseInjected) {
