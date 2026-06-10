@@ -218,12 +218,12 @@ const SUB_BRAND_DETAILS: Record<string, {
   'Leapmotor': {
     name: 'Leapmotor',
     modelName: 'B10',
-    tagline: 'Algo increíble te está esperando.',
+    tagline: 'Increíble todos los días',
     bgImage: 'https://images.unsplash.com/photo-1617788138017-80ad40651399?w=600&q=80',
-    pantoneHex: '#035F1D',
-    accentBg: 'from-[#035F1D]/90 via-[#035F1D]/35 to-[#2D2926]/40',
-    btnBg: 'bg-[#035F1D] hover:bg-[#009100]',
-    btnBorder: 'border-[#035F1D]/35',
+    pantoneHex: '#000000',
+    accentBg: 'from-[#000000]/90 via-[#000000]/35 to-[#000000]/40',
+    btnBg: 'bg-[#1a1a1a] hover:bg-[#333333]',
+    btnBorder: 'border-[#1a1a1a]/35',
     highlights: [
       { title: 'Tecnología 100% Eléctrica', desc: 'Sistemas inteligentes de propulsión de alta eficiencia cero emisiones.' },
       { title: 'Conectividad Inteligente', desc: 'Cabina inmersiva integrada con control remoto y seguridad ADAS avanzada.' },
@@ -233,12 +233,12 @@ const SUB_BRAND_DETAILS: Record<string, {
   'Jeep': {
     name: 'Jeep',
     modelName: 'Wrangler',
-    tagline: 'El original 4x4 más capaz de la historia.',
+    tagline: 'Solo hay uno',
     bgImage: JEEP_LANDING_BG_26,
-    pantoneHex: '#1E2A22',
-    accentBg: 'from-[#1E2A22]/90 via-[#1E2A22]/35 to-[#050706]/10',
-    btnBg: 'bg-[#1E2A22] hover:bg-[#324538]',
-    btnBorder: 'border-[#1E2A22]/30',
+    pantoneHex: '#7d9267',
+    accentBg: 'from-[#7d9267]/90 via-[#7d9267]/35 to-[#050706]/10',
+    btnBg: 'bg-[#7d9267] hover:bg-[#8da374]',
+    btnBorder: 'border-[#7d9267]/30',
     highlights: [
       { title: 'Poder de Tracción 4x4', desc: 'Capacidad de vadeo y control de tracción legendarios en cualquier superficie.' },
       { title: 'Refinamiento Premium', desc: 'Asientos de piel premium y espacios amplios con acabados de alta calidad.' },
@@ -248,12 +248,12 @@ const SUB_BRAND_DETAILS: Record<string, {
   'Fiat': {
     name: 'Fiat',
     modelName: 'Pulse Abarth',
-    tagline: 'El SUV que despierta tu modo poison.',
+    tagline: 'Llenos de vida',
     bgImage: FIAT_LANDING_BG_26,
-    pantoneHex: '#C8102E',
-    accentBg: 'from-[#C8102E]/85 via-[#C8102E]/25 to-[#0b0102]/10',
-    btnBg: 'bg-[#C8102E] hover:bg-[#eb2c4b]',
-    btnBorder: 'border-[#C8102E]/25',
+    pantoneHex: '#ffffff',
+    accentBg: 'from-[#ffffff]/90 via-[#ffffff]/35 to-[#ffffff]/10',
+    btnBg: 'bg-[#222222] hover:bg-[#333333]',
+    btnBorder: 'border-[#222222]/25',
     highlights: [
       { title: 'Diseño Italiano Compacto', desc: 'Estética europea audaz y gran agilidad para moverte con estilo por la ciudad.' },
       { title: 'Eficiencia de Combustible', desc: 'Motores Firefly altamente eficientes que combinan gran respuesta con bajo consumo.' },
@@ -263,12 +263,12 @@ const SUB_BRAND_DETAILS: Record<string, {
   'Dodge': {
     name: 'Dodge',
     modelName: 'Attitude',
-    tagline: 'Unleash your Attitude.',
+    tagline: 'ADN de potencia y rebeldía',
     bgImage: DODGE_LANDING_BG_26,
-    pantoneHex: '#DA291C',
-    accentBg: 'from-[#DA291C]/85 via-[#DA291C]/25 to-[#0c0202]/10',
-    btnBg: 'bg-[#DA291C] hover:bg-[#f63d2f]',
-    btnBorder: 'border-[#DA291C]/25',
+    pantoneHex: '#000000',
+    accentBg: 'from-[#000000]/85 via-[#000000]/25 to-[#000000]/10',
+    btnBg: 'bg-[#1a1a1a] hover:bg-[#333333]',
+    btnBorder: 'border-[#1a1a1a]/25',
     highlights: [
       { title: 'Espíritu de Muscle Car', desc: 'Desempeño brutal, aceleración emocionante y actitud imponente en las calles.' },
       { title: 'Tecnología SRT Hellcat', desc: 'Enfoque deportivo con componentes de pista para máxima respuesta y agarre.' },
@@ -278,12 +278,12 @@ const SUB_BRAND_DETAILS: Record<string, {
   'Peugeot': {
     name: 'Peugeot',
     modelName: '3008',
-    tagline: 'Súbete y entenderás lo extraordinario.',
+    tagline: 'Súbete y entenderás lo extraordinario',
     bgImage: PEUGEOT_LANDING_BG_26,
-    pantoneHex: '#041E42',
-    accentBg: 'from-[#041E42]/90 via-[#041E42]/25 to-[#01060e]/10',
-    btnBg: 'bg-[#041E42] hover:bg-[#072f66]',
-    btnBorder: 'border-[#041E42]/25',
+    pantoneHex: '#ffffff',
+    accentBg: 'from-[#ffffff]/90 via-[#ffffff]/25 to-[#ffffff]/10',
+    btnBg: 'bg-[#222222] hover:bg-[#333333]',
+    btnBorder: 'border-[#222222]/25',
     highlights: [
       { title: 'Diseño Felino Exclusivo', desc: 'Líneas afiladas, firma luminosa de colmillos LED y un perfil de vanguardia estética.' },
       { title: 'Cabina Peugeot i-Cockpit®', desc: 'Puesto de conducción envolvente, volante compacto y cuadro de instrumentos elevado.' },
@@ -293,12 +293,12 @@ const SUB_BRAND_DETAILS: Record<string, {
   'Ram': {
     name: 'RAM',
     modelName: 'RAM 1500',
-    tagline: 'Grandeza Amplificada.',
+    tagline: 'A todo. Con todo',
     bgImage: RAM_LANDING_BG_26,
-    pantoneHex: '#2D2926',
-    accentBg: 'from-[#1A1A1A]/95 via-[#1A1A1A]/35 to-[#1c1c1c]/10',
-    btnBg: 'bg-[#2D2926] hover:bg-[#3f3a35]',
-    btnBorder: 'border-[#2D2926]/20',
+    pantoneHex: '#000000',
+    accentBg: 'from-[#000000]/95 via-[#000000]/35 to-[#000000]/10',
+    btnBg: 'bg-[#1a1a1a] hover:bg-[#333333]',
+    btnBorder: 'border-[#1a1a1a]/20',
     highlights: [
       { title: 'Desempeño Trabajo rudo', desc: 'Suspensión trasera multilink con resortes para un andar ultra confortable sin sacrificar carga.' },
       { title: 'Lujo en Cada Rincón', desc: 'Pantalla vertical de 12 pulgadas, acabados premium y sistema de audio de alta fidelidad.' },
@@ -1280,24 +1280,42 @@ export default function LeadForm({ c10ImgUrl, t03ImgUrl, b10ImgUrl }: LeadFormPr
 
   const theme = getThemeColors();
 
-  // Dynamic input styling based on active branding (Leapmotor Pantone 2427C #035F1D and Highlight #009100)
-  const rowClass = activeLanding === 'leapmotor'
-    ? 'space-y-1 bg-[#035F1D]/10 p-2 sm:p-2.5 rounded-xl border border-[#009100]/25 hover:border-[#deff01]/40 hover:bg-[#035F1D]/15 transition-all duration-350'
-    : (activeLanding === 'jeep'
-       ? 'space-y-1 bg-slate-950/40 p-2 sm:p-2.5 rounded-xl border border-[#424D07] hover:border-[#424D07]/80 transition-all duration-350 shadow-inner'
-       : 'space-y-1 bg-slate-900/60 p-2 sm:p-2.5 rounded-xl border border-white/15 hover:border-white/20 transition-all duration-350');
+  // Get active multimarca sub-brand key to apply background colors dynamically
+  const activeMultimarcaBrandKey = activeLanding === 'multimarca'
+    ? (selectedSubBrand || (formActive ? selectedBrand : null))
+    : null;
 
-  const inputClass = activeLanding === 'leapmotor'
-    ? 'w-full bg-[#2D2926] border border-[#deff01] focus:border-[#deff01] focus:ring-1 focus:ring-[#deff01]/40 rounded-xl pl-9 pr-3 py-2 sm:py-2.5 text-base md:text-xs text-slate-100 placeholder-slate-500 outline-none transition font-semibold font-sans'
-    : (activeLanding === 'jeep'
-       ? 'w-full bg-[#0d1411] border border-[#424D07] focus:border-[#424D07] focus:ring-1 focus:ring-[#424D07]/40 rounded-xl pl-9 pr-3 py-2 sm:py-2.5 text-base md:text-xs text-white placeholder-slate-400 outline-none transition font-semibold'
-       : 'w-full bg-[#0a0f18] border border-white/25 focus:border-indigo-400 focus:ring-1 focus:ring-indigo-400/40 rounded-xl pl-9 pr-3 py-2 sm:py-2.5 text-base md:text-xs text-white placeholder-slate-400 outline-none transition font-semibold');
+  const currentBrandDetails = activeMultimarcaBrandKey ? SUB_BRAND_DETAILS[activeMultimarcaBrandKey] : null;
+  const subBrandBgColor = currentBrandDetails ? currentBrandDetails.pantoneHex : undefined;
+
+  const isLightBg = activeLanding === 'multimarca' && subBrandBgColor === '#ffffff';
+
+  const labelTextClass = `text-[11px] uppercase ${activeLanding === 'leapmotor' ? 'font-sans' : 'font-mono'} tracking-wider block mb-0.5 truncate ${
+    activeLanding === 'leapmotor' ? 'font-semibold' : 'font-extrabold'
+  } ${isLightBg ? 'text-slate-800' : 'text-white'}`;
+
+  // Dynamic input styling based on active branding (Leapmotor Pantone 2427C #035F1D and Highlight #009100)
+  const rowClass = isLightBg
+    ? 'space-y-1 bg-slate-100 p-2 sm:p-2.5 rounded-xl border border-slate-200 hover:border-slate-300 transition-all duration-350'
+    : (activeLanding === 'leapmotor'
+       ? 'space-y-1 bg-[#035F1D]/10 p-2 sm:p-2.5 rounded-xl border border-[#009100]/25 hover:border-[#deff01]/40 hover:bg-[#035F1D]/15 transition-all duration-350'
+       : (activeLanding === 'jeep'
+          ? 'space-y-1 bg-slate-950/40 p-2 sm:p-2.5 rounded-xl border border-[#424D07] hover:border-[#424D07]/80 transition-all duration-350 shadow-inner'
+          : 'space-y-1 bg-slate-900/60 p-2 sm:p-2.5 rounded-xl border border-white/15 hover:border-white/20 transition-all duration-350'));
+
+  const inputClass = isLightBg
+    ? 'w-full bg-white border border-slate-300 focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500/40 rounded-xl pl-9 pr-3 py-2 sm:py-2.5 text-base md:text-sm text-slate-900 placeholder-slate-400 outline-none transition font-semibold'
+    : (activeLanding === 'leapmotor'
+       ? 'w-full bg-[#2D2926] border border-[#deff01] focus:border-[#deff01] focus:ring-1 focus:ring-[#deff01]/40 rounded-xl pl-9 pr-3 py-2 sm:py-2.5 text-base md:text-xs text-slate-100 placeholder-slate-500 outline-none transition font-semibold font-sans'
+       : (activeLanding === 'jeep'
+          ? 'w-full bg-[#0d1411] border border-[#424D07] focus:border-[#424D07] focus:ring-1 focus:ring-[#424D07]/40 rounded-xl pl-9 pr-3 py-2 sm:py-2.5 text-base md:text-xs text-white placeholder-slate-400 outline-none transition font-semibold'
+          : 'w-full bg-[#0a0f18] border border-white/25 focus:border-indigo-400 focus:ring-1 focus:ring-indigo-400/40 rounded-xl pl-9 pr-3 py-2 sm:py-2.5 text-base md:text-xs text-white placeholder-slate-400 outline-none transition font-semibold'));
 
   return (
     <div 
       className="w-full text-slate-100 flex flex-col justify-start items-center min-h-screen transition-all duration-500" 
       id="landing-page-view"
-      style={activeLanding === 'multimarca' ? { backgroundColor: '#243782' } : undefined}
+      style={activeLanding === 'multimarca' ? { backgroundColor: subBrandBgColor || '#243782' } : undefined}
     >
       
       {/* Outer Mobile Mock Wrapper with Pantone 2427C and Highlight R0 G145 B0 theme */}
@@ -1307,14 +1325,14 @@ export default function LeadForm({ c10ImgUrl, t03ImgUrl, b10ImgUrl }: LeadFormPr
           backgroundSize: 'cover',
           backgroundPosition: 'center',
         } : (activeLanding === 'multimarca' ? {
-          backgroundColor: '#243782'
+          backgroundColor: subBrandBgColor || '#243782'
         } : undefined)}
         className={`w-full max-w-md mx-auto h-[100dvh] sm:h-auto sm:min-h-[82vh] border-0 sm:border rounded-none sm:rounded-[40px] shadow-2xl relative overflow-hidden flex flex-col justify-between mt-0 sm:mt-1 mb-0 sm:mb-6 transition-all duration-500 ${
           activeLanding === 'leapmotor'
             ? 'bg-black border-[#009100]/40 shadow-[0_0_35px_rgba(0,145,0,0.25)]'
             : (activeLanding === 'jeep'
                ? 'bg-[#050807] border-[#22372B]/60 shadow-[0_0_35px_rgba(34,55,43,0.35)]'
-               : (activeLanding === 'multimarca' ? 'bg-[#243782] border-white/10 shadow-[0_0_35px_rgba(36,55,130,0.25)]' : 'bg-[#05070a] border-white/10'))
+               : (activeLanding === 'multimarca' ? `${subBrandBgColor ? 'border-white/10' : 'bg-[#243782] border-white/10 shadow-[0_0_35px_rgba(36,55,130,0.25)]'}` : 'bg-[#05070a] border-white/10'))
         }`}
       >
         
@@ -1340,9 +1358,9 @@ export default function LeadForm({ c10ImgUrl, t03ImgUrl, b10ImgUrl }: LeadFormPr
           } : { 
             paddingBottom: '0px',
             height: '120px',
-            backgroundColor: activeLanding === 'multimarca' ? '#103586' : undefined
+            backgroundColor: activeLanding === 'multimarca' ? (subBrandBgColor || '#103586') : undefined
           })}
-          className={`px-6 ${activeLanding === 'multimarca' && selectedSubBrand !== null ? 'hidden' : (activeLanding === 'leapmotor' ? 'py-1 border-b border-white/5 relative z-10' : (activeLanding === 'multimarca' ? 'py-4 bg-[#103586] border-b border-white/5 relative z-10' : 'py-4 bg-[#05070a]/90 border-b border-white/5 relative z-10'))} flex ${activeLanding === 'multimarca' || activeLanding === 'leapmotor' || activeLanding === 'jeep' ? 'justify-center' : 'justify-between'} items-center ${activeLanding === 'leapmotor' ? '' : 'backdrop-blur-md'} sticky top-0 z-25`}
+          className={`px-6 ${activeLanding === 'multimarca' && selectedSubBrand !== null ? 'hidden' : (activeLanding === 'leapmotor' ? 'py-1 border-b border-white/5 relative z-10' : (activeLanding === 'multimarca' ? `py-4 ${subBrandBgColor ? '' : 'bg-[#103586]'} border-b border-white/5 relative z-10` : 'py-4 bg-[#05070a]/90 border-b border-white/5 relative z-10'))} flex ${activeLanding === 'multimarca' || activeLanding === 'leapmotor' || activeLanding === 'jeep' ? 'justify-center' : 'justify-between'} items-center ${activeLanding === 'leapmotor' ? '' : 'backdrop-blur-md'} sticky top-0 z-25`}
         >
           {activeLanding === 'leapmotor' && (
             <div style={{ height: '102px' }} className="flex items-center justify-center w-full max-w-full py-3 sm:py-5">
@@ -1404,13 +1422,13 @@ export default function LeadForm({ c10ImgUrl, t03ImgUrl, b10ImgUrl }: LeadFormPr
                 paddingTop: '0px', 
                 marginLeft: '0px', 
                 marginTop: '0px',
-                backgroundColor: activeLanding === 'multimarca' ? '#103586' : (activeLanding === 'jeep' ? '#ffffff' : undefined)
+                backgroundColor: activeLanding === 'multimarca' ? (subBrandBgColor || '#103586') : (activeLanding === 'jeep' ? '#ffffff' : undefined)
               }}
               initial={{ opacity: 0, scale: 0.98 }}
               animate={{ opacity: 1, scale: 1 }}
               exit={{ opacity: 0, scale: 0.98 }}
               transition={{ duration: 0.3 }}
-              className={`px-6 ${activeLanding === 'leapmotor' ? 'pt-2 pb-5 relative z-10 flex flex-col justify-between h-full' : (activeLanding === 'multimarca' ? 'py-4 gap-4 relative z-10 flex flex-col justify-start bg-[#103586]' : (activeLanding === 'jeep' ? 'py-4 gap-4 relative z-10 flex flex-col justify-start bg-[#ffffff]' : 'py-4 gap-4 relative z-10 flex flex-col justify-start'))} flex-1`}
+              className={`px-6 ${activeLanding === 'leapmotor' ? 'pt-2 pb-5 relative z-10 flex flex-col justify-between h-full' : (activeLanding === 'multimarca' ? `py-4 gap-4 relative z-10 flex flex-col justify-start ${subBrandBgColor ? '' : 'bg-[#103586]'}` : (activeLanding === 'jeep' ? 'py-4 gap-4 relative z-10 flex flex-col justify-start bg-[#ffffff]' : 'py-4 gap-4 relative z-10 flex flex-col justify-start'))} flex-1`}
             >
               {/* LEAPMOTOR LANDING VIEW - Professional Presentation Deck Layout */}
               {activeLanding === 'leapmotor' && (
@@ -1753,18 +1771,28 @@ export default function LeadForm({ c10ImgUrl, t03ImgUrl, b10ImgUrl }: LeadFormPr
                           <div className="flex items-center justify-start pt-5 px-4 z-10 w-full mb-1">
                             <button
                               onClick={() => setSelectedSubBrand(null)}
-                              className="flex items-center gap-2 px-4 py-2.5 rounded-full bg-white/5 hover:bg-white/10 border border-white/10 text-slate-200 hover:text-white text-sm font-bold tracking-wider transition duration-300 active:scale-[0.98] shadow-sm"
+                              className={`flex items-center gap-2 px-4 py-2.5 rounded-full border text-sm font-bold tracking-wider transition duration-300 active:scale-[0.98] shadow-sm ${
+                                isLightBg 
+                                  ? 'bg-black/5 hover:bg-black/10 border-black/10 text-slate-800 hover:text-slate-950 font-black' 
+                                  : 'bg-white/5 hover:bg-white/10 border-white/10 text-slate-200 hover:text-white'
+                              }`}
                               aria-label="Regresar"
                             >
-                              <ArrowLeft className="w-5 h-5 text-indigo-400" />
+                              <ArrowLeft className={`w-5 h-5 ${isLightBg ? 'text-indigo-600' : 'text-indigo-400'}`} />
                               <span>Regresar</span>
                             </button>
                           </div>
 
                           {/* Brand Logo right above the car photo */}
-                          <div className="z-10 px-5 flex items-center justify-center [&_img]:max-h-36 [&_img]:w-auto [&_img]:object-contain w-full">
+                          <div className="z-10 px-5 flex flex-col items-center justify-center [&_img]:max-h-36 [&_img]:w-auto [&_img]:object-contain w-full">
                             <div className="w-full max-w-[280px] flex items-center justify-center">
                               {renderBrandLogo(selectedSubBrand, true, true)}
+                            </div>
+                            {/* Brand tagline of selected brand in clean white text */}
+                            <div className="mt-3">
+                              <p className="text-white text-sm sm:text-base font-extrabold tracking-wide uppercase px-5 py-2.5 rounded-2xl bg-black/55 backdrop-blur-md text-center inline-block max-w-[90%] mx-auto shadow-lg border border-white/10">
+                                {brandDetail.tagline}
+                              </p>
                             </div>
                           </div>
 
@@ -1855,24 +1883,37 @@ export default function LeadForm({ c10ImgUrl, t03ImgUrl, b10ImgUrl }: LeadFormPr
               exit={{ opacity: 0, x: -20 }}
               transition={{ duration: 0.35 }}
               className="px-4 sm:px-6 py-3 sm:py-4 flex flex-col gap-2 sm:gap-3 flex-1 min-h-0 relative z-10 overflow-y-auto custom-scrollbar"
-              style={{ paddingTop: '4px', paddingBottom: '4px', scrollbarWidth: 'thin' }}
+              style={{ 
+                paddingTop: '4px', 
+                paddingBottom: '4px', 
+                scrollbarWidth: 'thin',
+                backgroundColor: activeLanding === 'multimarca' ? (subBrandBgColor || '#103586') : undefined
+              }}
             >
               <div>
                 {/* Back Link */}
                 <button 
                   onClick={() => setFormActive(false)}
-                  className={`flex items-center gap-1.5 text-white hover:text-slate-200 text-[11px] font-semibold ${activeLanding === 'leapmotor' ? 'font-sans' : 'font-mono'} mb-4 transition bg-white/10 px-2 py-1 rounded`}
+                  className={`flex items-center gap-1.5 text-xs font-semibold ${activeLanding === 'leapmotor' ? 'font-sans' : 'font-mono'} mb-4 transition px-2 py-1.5 rounded ${
+                    isLightBg
+                      ? 'text-slate-800 hover:text-slate-950 bg-black/5 border border-black/10'
+                      : 'text-white hover:text-slate-200 bg-white/10'
+                  }`}
                 >
                   <ArrowLeft className="w-3.5 h-3.5" />
                   <span>{(activeLanding === 'leapmotor' || activeLanding === 'jeep') ? 'Regresar' : 'Volver a la Landing'}</span>
                 </button>
 
-                <h2 className={`text-xl tracking-wide text-white mb-1 uppercase font-sans ${activeLanding === 'leapmotor' ? 'font-semibold' : 'font-black'}`}>
+                <h2 className={`text-xl tracking-wide mb-1 uppercase font-sans ${activeLanding === 'leapmotor' ? 'font-semibold' : 'font-black'} ${
+                  isLightBg ? 'text-slate-900' : 'text-white'
+                }`}>
                   DÉJANOS TUS DATOS
                 </h2>
                 {activeLanding !== 'leapmotor' && activeLanding !== 'jeep' && (
-                  <span className="text-[11px] text-white font-bold font-mono block mb-4 uppercase">
-                    Marca de interés: <strong className={theme.textAccent}>{selectedBrand}</strong>
+                  <span className={`text-[11px] font-bold font-mono block mb-4 uppercase ${
+                    isLightBg ? 'text-slate-700' : 'text-white'
+                  }`}>
+                    Marca de interés: <strong className={isLightBg ? 'text-indigo-600 font-extrabold' : theme.textAccent}>{selectedBrand}</strong>
                   </span>
                 )}
 
@@ -1995,11 +2036,11 @@ export default function LeadForm({ c10ImgUrl, t03ImgUrl, b10ImgUrl }: LeadFormPr
                       {/* Name and Last Name in elegant side-by-side layout */}
                       <div className="grid grid-cols-2 gap-3">
                         <div className={rowClass}>
-                          <label id="frm-name-label" htmlFor="name" className={`text-[11px] uppercase ${activeLanding === 'leapmotor' ? 'font-sans' : 'font-mono'} tracking-wider block mb-0.5 ${activeLanding === 'leapmotor' ? 'font-semibold text-white' : 'text-white font-extrabold'}`}>
+                          <label id="frm-name-label" htmlFor="name" className={labelTextClass}>
                             Nombre *
                           </label>
                           <div className="relative">
-                            <User className="absolute left-3 top-3 w-4 h-4 text-slate-300" />
+                            <User className={`absolute left-3 top-3 w-4 h-4 ${isLightBg ? 'text-slate-400' : 'text-slate-300'}`} />
                             <input
                               id="name"
                               type="text"
@@ -2014,11 +2055,11 @@ export default function LeadForm({ c10ImgUrl, t03ImgUrl, b10ImgUrl }: LeadFormPr
                         </div>
 
                         <div className={rowClass}>
-                          <label id="frm-lastname-label" htmlFor="lastName" className={`text-[11px] uppercase ${activeLanding === 'leapmotor' ? 'font-sans' : 'font-mono'} tracking-wider block mb-0.5 ${activeLanding === 'leapmotor' ? 'font-semibold text-white' : 'text-white font-extrabold'}`}>
+                          <label id="frm-lastname-label" htmlFor="lastName" className={labelTextClass}>
                             Apellido *
                           </label>
                           <div className="relative">
-                            <User className="absolute left-3 top-3 w-4 h-4 text-slate-300" />
+                            <User className={`absolute left-3 top-3 w-4 h-4 ${isLightBg ? 'text-slate-400' : 'text-slate-300'}`} />
                             <input
                               id="lastName"
                               type="text"
@@ -2037,11 +2078,11 @@ export default function LeadForm({ c10ImgUrl, t03ImgUrl, b10ImgUrl }: LeadFormPr
                       <div className="grid grid-cols-2 gap-2">
                         {/* Phone field */}
                         <div className={rowClass}>
-                          <label id="frm-phone-label" htmlFor="phone" className={`text-[11px] uppercase ${activeLanding === 'leapmotor' ? 'font-sans' : 'font-mono'} tracking-wider block mb-0.5 truncate ${activeLanding === 'leapmotor' ? 'font-semibold text-white' : 'text-white font-extrabold'}`}>
+                          <label id="frm-phone-label" htmlFor="phone" className={labelTextClass}>
                             Teléfono *
                           </label>
                           <div className="relative">
-                            <Phone className="absolute left-3 top-3 w-4 h-4 text-slate-300" />
+                            <Phone className={`absolute left-3 top-3 w-4 h-4 ${isLightBg ? 'text-slate-400' : 'text-slate-300'}`} />
                             <input
                               id="phone"
                               type="tel"
@@ -2057,11 +2098,11 @@ export default function LeadForm({ c10ImgUrl, t03ImgUrl, b10ImgUrl }: LeadFormPr
 
                         {/* Postal Code field */}
                         <div className={rowClass}>
-                          <label id="frm-postalcode-label" htmlFor="postalCode" className={`text-[11px] uppercase ${activeLanding === 'leapmotor' ? 'font-sans' : 'font-mono'} tracking-wider block mb-0.5 truncate ${activeLanding === 'leapmotor' ? 'font-semibold text-white' : 'text-white font-extrabold'}`} title="Tu Código Postal *">
+                          <label id="frm-postalcode-label" htmlFor="postalCode" className={labelTextClass} title="Tu Código Postal *">
                             {activeLanding === 'multimarca' ? 'C.P. *' : 'Tu Código Postal *'}
                           </label>
                           <div className="relative">
-                            <MapPin className="absolute left-3 top-3 w-4 h-4 text-slate-300" />
+                            <MapPin className={`absolute left-3 top-3 w-4 h-4 ${isLightBg ? 'text-slate-400' : 'text-slate-300'}`} />
                             <input
                               id="postalCode"
                               type="text"
@@ -2082,11 +2123,11 @@ export default function LeadForm({ c10ImgUrl, t03ImgUrl, b10ImgUrl }: LeadFormPr
 
                       {/* Mail field */}
                       <div className={rowClass}>
-                        <label id="frm-email-label" htmlFor="email" className={`text-[11px] uppercase ${activeLanding === 'leapmotor' ? 'font-sans' : 'font-mono'} tracking-wider block mb-0.5 ${activeLanding === 'leapmotor' ? 'font-semibold text-white' : 'text-white font-extrabold'}`}>
+                        <label id="frm-email-label" htmlFor="email" className={labelTextClass}>
                           {activeLanding === 'multimarca' ? 'Correo *' : 'Correo Electrónico *'}
                         </label>
                         <div className="relative">
-                          <Mail className="absolute left-3 top-3 w-4 h-4 text-slate-300" />
+                          <Mail className={`absolute left-3 top-3 w-4 h-4 ${isLightBg ? 'text-slate-400' : 'text-slate-300'}`} />
                           <input
                             id="email"
                             type="email"
@@ -2103,14 +2144,14 @@ export default function LeadForm({ c10ImgUrl, t03ImgUrl, b10ImgUrl }: LeadFormPr
                       {/* Models dropdown list tailored by Selected Brand */}
                       {activeLanding !== 'leapmotor' && activeLanding !== 'jeep' && (
                         <div className={rowClass}>
-                          <label id="frm-model-label" className={`text-[11px] uppercase ${activeLanding === 'leapmotor' ? 'font-sans' : 'font-mono'} tracking-wider block mb-0.5 ${activeLanding === 'leapmotor' ? 'font-semibold text-white' : 'text-white font-extrabold'}`}>
+                          <label id="frm-model-label" className={labelTextClass}>
                             {activeLanding === 'multimarca' ? 'Modelo *' : 'Modelo Seleccionado *'}
                           </label>
                           
                           {(activeLanding === 'jeep' || activeLanding === 'multimarca') ? (
                             /* Custom visually rich selection trigger */
                             <div className="relative">
-                              <Car className="absolute left-3.5 top-3 w-4 h-4 text-slate-300 pointer-events-none" />
+                              <Car className={`absolute left-3.5 top-3.5 w-4 h-4 pointer-events-none z-10 ${isLightBg ? 'text-slate-500' : 'text-slate-300'}`} />
                               <button
                                 type="button"
                                 id="model-modal-trigger-btn"
@@ -2135,7 +2176,7 @@ export default function LeadForm({ c10ImgUrl, t03ImgUrl, b10ImgUrl }: LeadFormPr
                           ) : (
                             /* Standard selection select block for single leapmotor landing */
                             <div className="relative">
-                              <Car className="absolute left-3.5 top-3 w-4 h-4 text-slate-400" />
+                              <Car className={`absolute left-3.5 top-3.5 w-4 h-4 pointer-events-none z-10 ${isLightBg ? 'text-slate-500' : 'text-slate-400'}`} />
                               <select
                                 id="modelOfInterest"
                                 name="modelOfInterest"
@@ -2143,20 +2184,22 @@ export default function LeadForm({ c10ImgUrl, t03ImgUrl, b10ImgUrl }: LeadFormPr
                                 disabled={selectedBrand === 'Leapmotor'}
                                 value={formData.modelOfInterest}
                                 onChange={handleChange}
-                                className={`w-full text-white rounded-xl pl-11 pr-7 py-2.5 text-base md:text-xs outline-none appearance-none transition uppercase ${activeLanding === 'leapmotor' ? 'font-sans' : 'font-mono'} disabled:opacity-85 disabled:cursor-not-allowed ${
-                                  activeLanding === 'leapmotor'
-                                    ? 'bg-[#2D2926] border border-[#deff01] focus:border-[#deff01] font-semibold'
-                                    : 'bg-[#0a0f18] border border-white/25 focus:border-indigo-400 font-bold'
+                                className={`w-full rounded-xl pl-11 pr-7 py-2.5 text-base md:text-xs outline-none appearance-none transition uppercase ${activeLanding === 'leapmotor' ? 'font-sans' : 'font-mono'} disabled:opacity-85 disabled:cursor-not-allowed ${
+                                  isLightBg
+                                    ? 'bg-white border border-slate-300 text-slate-900 focus:border-indigo-500 font-bold'
+                                    : (activeLanding === 'leapmotor'
+                                      ? 'bg-[#2D2926] border border-[#deff01] focus:border-[#deff01] text-white font-semibold'
+                                      : 'bg-[#0a0f18] border border-white/25 focus:border-indigo-400 text-white font-bold')
                                 }`}
                               >
                                 {activeModelsList.map(m => (
-                                  <option key={m} value={m} className="bg-slate-900 text-white">
+                                  <option key={m} value={m} className={isLightBg ? "bg-white text-slate-900" : "bg-slate-900 text-white"}>
                                     {selectedBrand} {m}
                                   </option>
                                 ))}
                               </select>
                               {selectedBrand !== 'Leapmotor' && (
-                                <ChevronDown className="absolute right-3 top-3.5 w-4 h-4 text-slate-300 pointer-events-none" />
+                                <ChevronDown className={`absolute right-3 top-3.5 w-4 h-4 pointer-events-none ${isLightBg ? 'text-slate-500' : 'text-slate-300'}`} />
                               )}
                             </div>
                           )}
@@ -2170,11 +2213,11 @@ export default function LeadForm({ c10ImgUrl, t03ImgUrl, b10ImgUrl }: LeadFormPr
                     <div className="space-y-3.5 animate-fade-in">
                       {/* Estado selector */}
                       <div className={rowClass}>
-                        <label id="frm-state-label" htmlFor="state" className={`text-[11px] uppercase ${activeLanding === 'leapmotor' ? 'font-sans' : 'font-mono'} tracking-wider block mb-0.5 ${activeLanding === 'leapmotor' ? 'font-semibold text-white' : 'text-white font-extrabold'}`}>
+                        <label id="frm-state-label" htmlFor="state" className={labelTextClass}>
                           Estado *
                         </label>
                         <div className="relative">
-                          <MapPin className="absolute left-3.5 top-3.5 w-4 h-4 text-slate-300 pointer-events-none z-10" />
+                          <MapPin className={`absolute left-3.5 top-3.5 w-4 h-4 pointer-events-none z-10 ${isLightBg ? 'text-slate-500' : 'text-slate-300'}`} />
                           <select
                             id="state"
                             name="state"
@@ -2187,31 +2230,33 @@ export default function LeadForm({ c10ImgUrl, t03ImgUrl, b10ImgUrl }: LeadFormPr
                                 state: stateValue
                               }));
                             }}
-                            className={`w-full text-white rounded-xl pl-11 pr-7 py-2.5 text-base md:text-xs outline-none appearance-none transition uppercase ${activeLanding === 'leapmotor' ? 'font-sans' : 'font-mono'} ${
-                              activeLanding === 'leapmotor'
-                                ? 'bg-[#2D2926] border border-[#deff01] focus:border-[#deff01] font-semibold'
-                                : (activeLanding === 'jeep'
-                                   ? 'bg-[#0d1411] border border-[#424D07] focus:border-[#424D07] font-semibold'
-                                   : 'bg-[#0a0f18] border border-white/25 focus:border-indigo-400 font-bold')
+                            className={`w-full rounded-xl pl-11 pr-7 py-2.5 text-base md:text-xs outline-none appearance-none transition uppercase ${activeLanding === 'leapmotor' ? 'font-sans' : 'font-mono'} ${
+                              isLightBg
+                                ? 'bg-white border border-slate-300 text-slate-900 focus:border-indigo-500 font-bold'
+                                : (activeLanding === 'leapmotor'
+                                   ? 'bg-[#2D2926] border border-[#deff01] focus:border-[#deff01] text-white font-semibold'
+                                   : (activeLanding === 'jeep'
+                                      ? 'bg-[#0d1411] border border-[#424D07] focus:border-[#424D07] text-white font-semibold'
+                                      : 'bg-[#0a0f18] border border-white/25 focus:border-indigo-400 text-white font-bold'))
                             }`}
                           >
                             {availableStates.map(st => (
-                              <option key={st} value={st} className="bg-slate-900 text-white">
+                              <option key={st} value={st} className={isLightBg ? "bg-white text-slate-900" : "bg-slate-900 text-white"}>
                                 {st}
                               </option>
                             ))}
                           </select>
-                          <ChevronDown className="absolute right-3 top-3.5 w-4 h-4 text-slate-300 pointer-events-none" />
+                          <ChevronDown className={`absolute right-3 top-3.5 w-4 h-4 pointer-events-none ${isLightBg ? 'text-slate-500' : 'text-slate-300'}`} />
                         </div>
                       </div>
 
                       {/* Distribuidor de Preferencia selector */}
                       <div className={rowClass}>
-                        <label id="frm-distributor-label" htmlFor="distributor" className={`text-[11px] uppercase ${activeLanding === 'leapmotor' ? 'font-sans' : 'font-mono'} tracking-wider block mb-0.5 ${activeLanding === 'leapmotor' ? 'font-semibold text-white' : 'text-white font-extrabold'}`}>
+                        <label id="frm-distributor-label" htmlFor="distributor" className={labelTextClass}>
                           {activeLanding === 'multimarca' ? 'Distribuidor *' : 'Distribuidor de Preferencia *'} {loadingDbDistributors && <span className="text-emerald-400 font-bold animate-pulse text-[9px] lowercase">(consultando BD...)</span>}
                         </label>
                         <div className="relative">
-                          <Settings className="absolute left-3.5 top-3.5 w-4 h-4 text-slate-300 pointer-events-none z-10" />
+                          <Settings className={`absolute left-3.5 top-3.5 w-4 h-4 pointer-events-none z-10 ${isLightBg ? 'text-slate-500' : 'text-slate-300'}`} />
                           <select
                             id="distributor"
                             name="distributor"
@@ -2221,27 +2266,29 @@ export default function LeadForm({ c10ImgUrl, t03ImgUrl, b10ImgUrl }: LeadFormPr
                               const dealerValue = e.target.value;
                               setFormData(prev => ({ ...prev, distributor: dealerValue }));
                             }}
-                            className={`w-full text-white rounded-xl pl-11 pr-7 py-2.5 text-base md:text-xs outline-none appearance-none transition uppercase ${activeLanding === 'leapmotor' ? 'font-sans' : 'font-mono'} ${
-                              activeLanding === 'leapmotor'
-                                ? 'bg-[#2D2926] border border-[#deff01] focus:border-[#deff01] font-semibold'
-                                : (activeLanding === 'jeep'
-                                   ? 'bg-[#0d1411] border border-[#424D07] focus:border-[#424D07] font-semibold'
-                                   : 'bg-[#0a0f18] border border-white/25 focus:border-indigo-400 font-bold')
+                            className={`w-full rounded-xl pl-11 pr-7 py-2.5 text-base md:text-xs outline-none appearance-none transition uppercase ${activeLanding === 'leapmotor' ? 'font-sans' : 'font-mono'} ${
+                              isLightBg
+                                ? 'bg-white border border-slate-300 text-slate-900 focus:border-indigo-500 font-bold'
+                                : (activeLanding === 'leapmotor'
+                                   ? 'bg-[#2D2926] border border-[#deff01] focus:border-[#deff01] text-white font-semibold'
+                                   : (activeLanding === 'jeep'
+                                      ? 'bg-[#0d1411] border border-[#424D07] focus:border-[#424D07] text-white font-semibold'
+                                      : 'bg-[#0a0f18] border border-white/25 focus:border-indigo-400 text-white font-bold'))
                             }`}
                           >
                             {loadingDbDistributors ? (
-                              <option className="bg-slate-900 text-slate-400">Cargando distribuidores de la BD...</option>
+                              <option className={isLightBg ? "bg-white text-slate-400" : "bg-slate-900 text-slate-400"}>Cargando distribuidores de la BD...</option>
                             ) : dbDistributors.length === 0 ? (
-                              <option className="bg-slate-900 text-slate-400">Sin distribuidores registrados</option>
+                              <option className={isLightBg ? "bg-white text-slate-400" : "bg-slate-900 text-slate-400"}>Sin distribuidores registrados</option>
                             ) : (
                               dbDistributors.map((d, idx) => (
-                                <option key={(d.disId || d.id || idx) + '-' + d.name} value={d.name} className="bg-slate-900 text-white">
+                                <option key={(d.disId || d.id || idx) + '-' + d.name} value={d.name} className={isLightBg ? "bg-white text-slate-900" : "bg-slate-900 text-white"}>
                                   {d.name}
                                 </option>
                               ))
                             )}
                           </select>
-                          <ChevronDown className="absolute right-3 top-3.5 w-4 h-4 text-slate-300 pointer-events-none" />
+                          <ChevronDown className={`absolute right-3 top-3.5 w-4 h-4 pointer-events-none ${isLightBg ? 'text-slate-500' : 'text-slate-300'}`} />
                         </div>
                       </div>
                     </div>
@@ -2315,14 +2362,22 @@ export default function LeadForm({ c10ImgUrl, t03ImgUrl, b10ImgUrl }: LeadFormPr
                     id="privacyActiveCheckbox"
                     checked={privacyAccepted}
                     onChange={(e) => setPrivacyAccepted(e.target.checked)}
-                    className="w-4.5 h-4.5 rounded border-white/20 bg-black/40 text-indigo-500 focus:ring-indigo-500/50 focus:ring-offset-slate-950 mt-0.5 shrink-0 accent-indigo-500 cursor-pointer"
+                    className={`w-4.5 h-4.5 rounded text-indigo-500 focus:ring-indigo-500/50 focus:ring-offset-slate-950 mt-0.5 shrink-0 accent-indigo-500 cursor-pointer ${
+                      isLightBg 
+                        ? 'border-slate-300 bg-slate-100' 
+                        : 'border-white/20 bg-black/40'
+                    }`}
                   />
-                  <label htmlFor="privacyActiveCheckbox" className={`text-[10px] sm:text-[11px] uppercase tracking-wider cursor-pointer leading-relaxed ${activeLanding === 'leapmotor' ? 'font-semibold text-white' : 'font-bold text-white'}`}>
+                  <label htmlFor="privacyActiveCheckbox" className={`text-[10px] sm:text-[11px] uppercase tracking-wider cursor-pointer leading-relaxed ${
+                    isLightBg ? 'font-bold text-slate-800' : (activeLanding === 'leapmotor' ? 'font-semibold text-white' : 'font-bold text-white')
+                  }`}>
                     HE LEÍDO Y ACEPTO EL{' '}
                     <button
                       type="button"
                       onClick={() => setShowPrivacyText(!showPrivacyText)}
-                      className={`underline text-white hover:text-white/80 transition-colors uppercase ${activeLanding === 'leapmotor' ? 'font-semibold' : 'font-black'}`}
+                      className={`underline hover:opacity-80 transition-colors uppercase ${
+                        isLightBg ? 'text-indigo-600 font-extrabold' : 'text-white font-black'
+                      }`}
                     >
                       AVISO DE PRIVACIDAD
                     </button>
@@ -2343,9 +2398,11 @@ export default function LeadForm({ c10ImgUrl, t03ImgUrl, b10ImgUrl }: LeadFormPr
                     fontSize: '14px',
                     borderWidth: '1px'
                   } : undefined}
-                  className={`w-full ${theme.btnBg} active:scale-[0.98] disabled:opacity-40 disabled:cursor-not-allowed disabled:pointer-events-none ${
-                    activeLanding === 'leapmotor' ? 'text-slate-950 font-black' : 'text-white font-bold'
-                  } py-4 px-6 rounded-2xl text-[11px] uppercase tracking-widest flex items-center justify-center gap-1.5 transition-all duration-300 shadow-xl`}
+                  className={`w-full active:scale-[0.98] disabled:opacity-40 disabled:cursor-not-allowed disabled:pointer-events-none py-4 px-6 rounded-2xl text-[11px] uppercase tracking-widest flex items-center justify-center gap-1.5 transition-all duration-300 shadow-xl ${
+                    isLightBg
+                      ? 'bg-slate-950 hover:bg-slate-900 text-white font-black'
+                      : (`${theme.btnBg} ${activeLanding === 'leapmotor' ? 'text-slate-950 font-black' : 'text-white font-bold'}`)
+                  }`}
                 >
                   {loading ? (
                     <div className={`w-4 h-4 border-2 ${
@@ -2371,7 +2428,11 @@ export default function LeadForm({ c10ImgUrl, t03ImgUrl, b10ImgUrl }: LeadFormPr
               animate={{ opacity: 1, scale: 1 }}
               exit={{ opacity: 0 }}
               className="px-6 py-4 flex flex-col gap-3 flex-1 text-center relative z-10"
-              style={{ paddingTop: '6px', paddingBottom: '6px' }}
+              style={{ 
+                paddingTop: '6px', 
+                paddingBottom: '6px',
+                backgroundColor: activeLanding === 'multimarca' ? (subBrandBgColor || '#103586') : undefined
+              }}
             >
               <div className="space-y-3 my-1">
                 
@@ -2397,7 +2458,7 @@ export default function LeadForm({ c10ImgUrl, t03ImgUrl, b10ImgUrl }: LeadFormPr
                 </div>
 
                 <div className="space-y-1">
-                  <h3 className="text-2xl font-light text-white leading-tight">
+                  <h3 className={`text-2xl font-light leading-tight ${isLightBg ? 'text-slate-900 font-bold' : 'text-white'}`}>
                     ¡Gracias, <span 
                       style={activeLanding === 'leapmotor' || selectedBrand === 'Leapmotor' ? { color: '#deff01', background: 'none', WebkitTextFillColor: 'initial', WebkitBackgroundClip: 'initial' } : undefined}
                       className={activeLanding === 'leapmotor' || selectedBrand === 'Leapmotor' ? "font-extrabold" : `font-extrabold text-transparent bg-clip-text bg-gradient-to-r ${theme.successGradient}`}
@@ -2407,7 +2468,7 @@ export default function LeadForm({ c10ImgUrl, t03ImgUrl, b10ImgUrl }: LeadFormPr
                   </h3>
                   {activeLanding !== 'leapmotor' && selectedBrand !== 'Leapmotor' && (
                     <p 
-                      className="text-sm font-bold text-white"
+                      className={`text-sm font-bold ${isLightBg ? 'text-slate-800' : 'text-white'}`}
                     >
                       Tu solicitud ha sido registrada en el sistema.
                     </p>
@@ -2418,11 +2479,13 @@ export default function LeadForm({ c10ImgUrl, t03ImgUrl, b10ImgUrl }: LeadFormPr
                   <div 
                     style={activeLanding === 'leapmotor' ? { borderColor: '#deff01', backgroundColor: 'rgba(222,255,1,0.08)' } : undefined}
                     className={`p-4 rounded-xl max-w-xs mx-auto text-center border transition-all duration-300 ${
-                      activeLanding === 'leapmotor'
-                        ? 'border-[#deff01] shadow-[0_0_15px_rgba(222,255,1,0.1)]'
-                        : (activeLanding === 'jeep'
-                           ? 'bg-emerald-950/20 border-emerald-500/30 text-emerald-400 shadow-[0_0_15px_rgba(16,185,129,0.1)]'
-                           : 'bg-indigo-950/20 border-indigo-500/30 text-indigo-400 shadow-[0_0_15px_rgba(99,102,241,0.1)]')
+                      isLightBg
+                        ? 'bg-slate-50 border-slate-200 text-slate-800 shadow-[0_4px_15px_rgba(0,0,0,0.05)]'
+                        : (activeLanding === 'leapmotor'
+                           ? 'border-[#deff01] shadow-[0_0_15px_rgba(222,255,1,0.1)]'
+                           : (activeLanding === 'jeep'
+                              ? 'bg-emerald-950/20 border-emerald-500/30 text-emerald-400 shadow-[0_0_15px_rgba(16,185,129,0.1)]'
+                              : 'bg-indigo-950/20 border-indigo-500/30 text-indigo-400 shadow-[0_0_15px_rgba(99,102,241,0.1)]'))
                     }`}
                   >
                     {currentLeadData.status === 'attended' || currentLeadData.status === 'lost' ? (
@@ -2431,16 +2494,18 @@ export default function LeadForm({ c10ImgUrl, t03ImgUrl, b10ImgUrl }: LeadFormPr
                           <strong 
                             style={activeLanding === 'leapmotor' ? { color: '#deff01' } : undefined}
                             className={`text-[10px] font-mono font-black tracking-widest uppercase ${
-                              activeLanding === 'leapmotor' ? '' : (activeLanding === 'jeep' ? 'text-emerald-400' : 'text-indigo-400')
+                              isLightBg
+                                ? 'text-indigo-600'
+                                : (activeLanding === 'leapmotor' ? '' : (activeLanding === 'jeep' ? 'text-emerald-400' : 'text-indigo-400'))
                             }`}
                           >
                             ✓ ATENCIÓN FINALIZADA
                           </strong>
                         </div>
-                        <p className="text-white text-xs font-semibold leading-relaxed">
+                        <p className={`text-xs font-semibold leading-relaxed ${isLightBg ? 'text-slate-800' : 'text-white'}`}>
                           La atención ha concluido. ¡Muchas gracias por tu visita!
                         </p>
-                        <p className="text-[10px] text-slate-400 mt-2 font-mono">
+                        <p className={`text-[10px] mt-2 font-mono ${isLightBg ? 'text-slate-500' : 'text-slate-400'}`}>
                           Redireccionando al inicio...
                         </p>
                       </>
@@ -2454,19 +2519,23 @@ export default function LeadForm({ c10ImgUrl, t03ImgUrl, b10ImgUrl }: LeadFormPr
                           <strong 
                             style={activeLanding === 'leapmotor' ? { color: '#deff01' } : undefined}
                             className={`text-[10px] font-mono font-black tracking-widest uppercase ${
-                              activeLanding === 'leapmotor' ? '' : (activeLanding === 'jeep' ? 'text-emerald-400' : 'text-indigo-400')
+                              isLightBg
+                                ? 'text-indigo-600'
+                                : (activeLanding === 'leapmotor' ? '' : (activeLanding === 'jeep' ? 'text-emerald-400' : 'text-indigo-400'))
                             }`}
                           >
                             Atención en Curso
                           </strong>
                         </div>
-                        <p className="text-white text-xs font-semibold leading-relaxed">
+                        <p className={`text-xs font-semibold leading-relaxed ${isLightBg ? 'text-slate-800 font-bold' : 'text-white'}`}>
                           Gracias, te está atendiendo :
                         </p>
                         <p 
                           style={activeLanding === 'leapmotor' ? { color: '#deff01' } : undefined}
                           className={`text-base font-black uppercase tracking-tight mt-1 truncate ${
-                            activeLanding === 'leapmotor' ? '' : (activeLanding === 'jeep' ? 'text-emerald-400' : 'text-indigo-400')
+                            isLightBg
+                              ? 'text-slate-900 font-extrabold'
+                              : (activeLanding === 'leapmotor' ? '' : (activeLanding === 'jeep' ? 'text-emerald-400' : 'text-indigo-400'))
                           }`}
                         >
                           {currentLeadData.advisorName}
@@ -2476,8 +2545,12 @@ export default function LeadForm({ c10ImgUrl, t03ImgUrl, b10ImgUrl }: LeadFormPr
                   </div>
                 ) : (
                   formData.requestType === 'prueba' ? (
-                    <div className="p-3 bg-slate-900 border border-indigo-500/20 rounded-2xl max-w-xs mx-auto text-left font-mono text-[11px] leading-relaxed">
-                      <div className="text-indigo-400 font-bold block uppercase mb-1 flex items-center gap-1">
+                    <div className={`p-3 border rounded-2xl max-w-xs mx-auto text-left font-mono text-[11px] leading-relaxed ${
+                      isLightBg 
+                        ? 'bg-slate-50 border-slate-200 text-slate-800' 
+                        : 'bg-slate-900 border-indigo-500/20 text-slate-100'
+                    }`}>
+                      <div className={`font-bold block uppercase mb-1 flex items-center gap-1 ${isLightBg ? 'text-indigo-600' : 'text-indigo-400'}`}>
                         <Key className="w-3.5 h-3.5" /> TEST DRIVE RESERVADO OK
                       </div>
                       <span>Gracias por agendar tu prueba de manejo, a la brevedad un asesor te contactará para confirmar tu cita.</span>
@@ -2485,14 +2558,18 @@ export default function LeadForm({ c10ImgUrl, t03ImgUrl, b10ImgUrl }: LeadFormPr
                   ) : (
                     <p 
                       style={
-                        (formData.requestType === 'cotizacion' && (selectedBrand === 'Leapmotor' || activeLanding === 'leapmotor'))
-                          ? { color: '#deff01' }
-                          : (activeLanding === 'leapmotor' ? { color: '#deff01' } : undefined)
+                        isLightBg
+                          ? undefined
+                          : ((formData.requestType === 'cotizacion' && (selectedBrand === 'Leapmotor' || activeLanding === 'leapmotor'))
+                             ? { color: '#deff01' }
+                             : (activeLanding === 'leapmotor' ? { color: '#deff01' } : undefined))
                       }
-                      className={`text-xs font-bold font-mono tracking-wide ${
-                        (formData.requestType === 'cotizacion' && (selectedBrand === 'Leapmotor' || activeLanding === 'leapmotor'))
-                          ? ''
-                          : (activeLanding === 'leapmotor' ? '' : 'text-emerald-400')
+                      className={`text-xs font-mono tracking-wide ${
+                        isLightBg
+                          ? 'text-indigo-600 font-extrabold'
+                          : ((formData.requestType === 'cotizacion' && (selectedBrand === 'Leapmotor' || activeLanding === 'leapmotor'))
+                            ? 'text-white font-bold'
+                            : (activeLanding === 'leapmotor' ? 'text-white font-bold' : 'text-emerald-400 font-bold'))
                       }`}
                     >
                       {formData.requestType === 'cotizacion' && (selectedBrand === 'Leapmotor' || activeLanding === 'leapmotor')
