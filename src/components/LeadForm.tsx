@@ -68,7 +68,7 @@ import JEEP_LOGO_IMG from '../assets/images/regenerated_image_1781121932966.png'
 import JEEP_HEADER_LOGO_IMG from '../assets/images/jeep_logo_new_1780714816380.png';
 import FIAT_LOGO_IMG from '../assets/images/regenerated_image_1780715561130.jpg';
 import DODGE_LOGO_BG_IMG from '../assets/images/regenerated_image_1780970482939.png';
-import DODGE_LOGO_IMG from '../assets/images/regenerated_image_1780970830147.jpg';
+import DODGE_LOGO_IMG from '../assets/images/regenerated_image_1781124802310.jpg';
 import PEUGEOT_LOGO_IMG from '../assets/images/peugeot_logo_new_1780716886504.png';
 import RAM_LOGO_IMG from '../assets/images/ram_logo_new_1780717149923.png';
 import JEEP_IMG from '../assets/images/regenerated_image_1781067758543.jpg';
@@ -321,11 +321,15 @@ export default function LeadForm({ c10ImgUrl, t03ImgUrl, b10ImgUrl }: LeadFormPr
       const searchParams = new URLSearchParams(window.location.search);
       const landingParam = searchParams.get('landing') || searchParams.get('campaign') || searchParams.get('site');
       
-      const isSoccerhouseParam = landingParam && landingParam.toLowerCase().startsWith('soccerhouse');
+      const isSoccerhouseParam = landingParam && (
+        landingParam.toLowerCase().includes('soccer') || 
+        landingParam.toLowerCase().includes('socer')
+      );
+      const isSoccerhouseHost = host.includes('soccer') || host.includes('socer');
       
       if (landingParam === 'jeep' || host.startsWith('jeep')) {
         return 'jeep';
-      } else if (landingParam === 'multimarca' || host.startsWith('multimarca') || host.startsWith('stellantis') || host.startsWith('soccerhouse') || isSoccerhouseParam) {
+      } else if (landingParam === 'multimarca' || host.startsWith('multimarca') || host.startsWith('stellantis') || host.startsWith('soccerhouse') || isSoccerhouseParam || isSoccerhouseHost) {
         return 'multimarca';
       } else if (landingParam === 'leapmotor' || host.startsWith('leapmotor')) {
         return 'leapmotor';
@@ -361,11 +365,15 @@ export default function LeadForm({ c10ImgUrl, t03ImgUrl, b10ImgUrl }: LeadFormPr
       const searchParams = new URLSearchParams(window.location.search);
       const landingParam = searchParams.get('landing') || searchParams.get('campaign') || searchParams.get('site');
       
-      const isSoccerhouseParam = landingParam && landingParam.toLowerCase().startsWith('soccerhouse');
+      const isSoccerhouseParam = landingParam && (
+        landingParam.toLowerCase().includes('soccer') || 
+        landingParam.toLowerCase().includes('socer')
+      );
+      const isSoccerhouseHost = host.includes('soccer') || host.includes('socer');
       
       if (landingParam === 'jeep' || host.startsWith('jeep')) {
         initialLanding = 'jeep';
-      } else if (landingParam === 'multimarca' || host.startsWith('multimarca') || host.startsWith('stellantis') || host.startsWith('soccerhouse') || isSoccerhouseParam) {
+      } else if (landingParam === 'multimarca' || host.startsWith('multimarca') || host.startsWith('stellantis') || host.startsWith('soccerhouse') || isSoccerhouseParam || isSoccerhouseHost) {
         initialLanding = 'multimarca';
       }
     }
@@ -400,7 +408,11 @@ export default function LeadForm({ c10ImgUrl, t03ImgUrl, b10ImgUrl }: LeadFormPr
       const searchParams = new URLSearchParams(window.location.search);
       const host = window.location.hostname.toLowerCase();
       const landingParam = searchParams.get('landing') || searchParams.get('campaign') || searchParams.get('site') || searchParams.get('utm_source') || '';
-      const isSoccerhouse = host.startsWith('soccerhouse') || host.includes('soccerhouse') || landingParam.toLowerCase().startsWith('soccerhouse') || landingParam.toLowerCase().includes('soccerhouse');
+      const isSoccerhouse = 
+        host.includes('soccer') || 
+        host.includes('socer') || 
+        landingParam.toLowerCase().includes('soccer') || 
+        landingParam.toLowerCase().includes('socer');
 
       let utm_source = searchParams.get('utm_source') || localStorage.getItem('utm_source') || '';
       if (isSoccerhouse && !utm_source) {
@@ -619,11 +631,15 @@ export default function LeadForm({ c10ImgUrl, t03ImgUrl, b10ImgUrl }: LeadFormPr
     const searchParams = new URLSearchParams(window.location.search);
     const landingParam = searchParams.get('landing') || searchParams.get('campaign') || searchParams.get('site');
     
-    const isSoccerhouseParam = landingParam && landingParam.toLowerCase().startsWith('soccerhouse');
+    const isSoccerhouseParam = landingParam && (
+      landingParam.toLowerCase().includes('soccer') || 
+      landingParam.toLowerCase().includes('socer')
+    );
+    const isSoccerhouseHost = host.includes('soccer') || host.includes('socer');
     
     if (landingParam === 'jeep' || host.startsWith('jeep')) {
       handleLandingSwitch('jeep');
-    } else if (landingParam === 'multimarca' || host.startsWith('multimarca') || host.startsWith('stellantis') || host.startsWith('soccerhouse') || isSoccerhouseParam) {
+    } else if (landingParam === 'multimarca' || host.startsWith('multimarca') || host.startsWith('stellantis') || host.startsWith('soccerhouse') || isSoccerhouseParam || isSoccerhouseHost) {
       handleLandingSwitch('multimarca');
     } else if (landingParam === 'leapmotor' || host.startsWith('leapmotor')) {
       handleLandingSwitch('leapmotor');
@@ -707,7 +723,11 @@ export default function LeadForm({ c10ImgUrl, t03ImgUrl, b10ImgUrl }: LeadFormPr
       const host = window.location.hostname.toLowerCase();
       const searchParams = new URLSearchParams(window.location.search);
       const landingParam = searchParams.get('landing') || searchParams.get('campaign') || searchParams.get('site') || searchParams.get('utm_source') || '';
-      const isSoccerhouse = host.startsWith('soccerhouse') || host.includes('soccerhouse') || landingParam.toLowerCase().startsWith('soccerhouse') || landingParam.toLowerCase().includes('soccerhouse');
+      const isSoccerhouse = 
+        host.includes('soccer') || 
+        host.includes('socer') || 
+        landingParam.toLowerCase().includes('soccer') || 
+        landingParam.toLowerCase().includes('socer');
 
       if (isSoccerhouse) {
         if (!(window as any).gtmSoccerhouseInjected) {

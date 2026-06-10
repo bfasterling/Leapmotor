@@ -73,7 +73,19 @@ async function runLeadSync() {
         // Resolve dynamic origin based on user guidelines
         let origVal = "LANDING";
         const lLanding = lead.landing ? lead.landing.toLowerCase() : "";
-        const isSoccerhouse = lead.utm_source && (lead.utm_source.toLowerCase().startsWith('soccerhouse') || lead.utm_source.toLowerCase().includes('soccerhouse'));
+        const isSoccerhouse = 
+          (lead.utm_source && (
+            lead.utm_source.toLowerCase().includes('soccer') || 
+            lead.utm_source.toLowerCase().includes('socer')
+          )) ||
+          (lead.landing && (
+            lead.landing.toLowerCase().includes('soccer') || 
+            lead.landing.toLowerCase().includes('socer')
+          )) ||
+          (lead.selectedBrand && (
+            lead.selectedBrand.toLowerCase().includes('soccer') || 
+            lead.selectedBrand.toLowerCase().includes('socer')
+          ));
 
         if (isSoccerhouse) {
           origVal = lead.requestType === 'prueba' ? "SHMLPM" : "SHML";
@@ -225,7 +237,19 @@ async function runLeadSync() {
         // Resolve dynamic origin based on user instructions
         let origVal = "LANDING";
         const lLanding = lead.landing ? lead.landing.toLowerCase() : "";
-        const isSoccerhouse = lead.utm_source && (lead.utm_source.toLowerCase().startsWith('soccerhouse') || lead.utm_source.toLowerCase().includes('soccerhouse'));
+        const isSoccerhouse = 
+          (lead.utm_source && (
+            lead.utm_source.toLowerCase().includes('soccer') || 
+            lead.utm_source.toLowerCase().includes('socer')
+          )) ||
+          (lead.landing && (
+            lead.landing.toLowerCase().includes('soccer') || 
+            lead.landing.toLowerCase().includes('socer')
+          )) ||
+          (lead.selectedBrand && (
+            lead.selectedBrand.toLowerCase().includes('soccer') || 
+            lead.selectedBrand.toLowerCase().includes('socer')
+          ));
 
         if (isSoccerhouse) {
           origVal = lead.requestType === 'prueba' ? "SHMLPM" : "SHML";

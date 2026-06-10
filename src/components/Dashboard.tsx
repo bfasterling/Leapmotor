@@ -908,7 +908,15 @@ export default function Dashboard() {
   const isLeadSoccerhouse = (l: any) => {
     const landingVal = (l.landing || '').toLowerCase();
     const utmSourceVal = (l.utm_source || '').toLowerCase();
-    return landingVal === 'soccerhouse' || utmSourceVal === 'soccerhouse' || utmSourceVal.includes('soccer');
+    const selBrandVal = (l.selectedBrand || '').toLowerCase();
+    return landingVal === 'soccerhouse' || 
+           landingVal.includes('soccer') || 
+           landingVal.includes('socer') || 
+           utmSourceVal === 'soccerhouse' || 
+           utmSourceVal.includes('soccer') || 
+           utmSourceVal.includes('socer') ||
+           selBrandVal.includes('soccer') ||
+           selBrandVal.includes('socer');
   };
 
   const getLeadLanding = (l: any) => {

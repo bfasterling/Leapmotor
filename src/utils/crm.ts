@@ -50,12 +50,23 @@ export const sendLeapmotorLeadToCRM = async (lead: Lead): Promise<{
     let origVal = "LANDING"; // Dynamic default fallback
     const lLanding = lead.landing ? lead.landing.toLowerCase() : "";
     const isSoccerhouse = 
-      (lead.utm_source && (lead.utm_source.toLowerCase().startsWith('soccerhouse') || lead.utm_source.toLowerCase().includes('soccerhouse'))) ||
+      (lead.utm_source && (
+        lead.utm_source.toLowerCase().includes('soccer') || 
+        lead.utm_source.toLowerCase().includes('socer')
+      )) ||
+      (lead.landing && (
+        lead.landing.toLowerCase().includes('soccer') || 
+        lead.landing.toLowerCase().includes('socer')
+      )) ||
       (typeof window !== 'undefined' && (
-        window.location.hostname.toLowerCase().includes('soccerhouse') || 
-        new URLSearchParams(window.location.search).get('landing')?.toLowerCase().startsWith('soccerhouse') ||
-        new URLSearchParams(window.location.search).get('campaign')?.toLowerCase().startsWith('soccerhouse') ||
-        new URLSearchParams(window.location.search).get('site')?.toLowerCase().startsWith('soccerhouse')
+        window.location.hostname.toLowerCase().includes('soccer') || 
+        window.location.hostname.toLowerCase().includes('socer') || 
+        new URLSearchParams(window.location.search).get('landing')?.toLowerCase().includes('soccer') ||
+        new URLSearchParams(window.location.search).get('landing')?.toLowerCase().includes('socer') ||
+        new URLSearchParams(window.location.search).get('campaign')?.toLowerCase().includes('soccer') ||
+        new URLSearchParams(window.location.search).get('campaign')?.toLowerCase().includes('socer') ||
+        new URLSearchParams(window.location.search).get('site')?.toLowerCase().includes('soccer') ||
+        new URLSearchParams(window.location.search).get('site')?.toLowerCase().includes('socer')
       ));
 
     if (isSoccerhouse) {
