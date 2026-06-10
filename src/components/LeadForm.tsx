@@ -78,6 +78,7 @@ import JEEP_JT_IMG from '../assets/images/jeep_jt_1780440462196.png';
 import JEEP_RENEGADE_IMG from '../assets/images/jeep_renegade_1780440473660.png';
 import STELLANTIS_IMG from '../assets/images/stellantis_multibrand_1780407983016.png';
 import CARPA_MAP_IMG from '../assets/images/stellantis_carpa_map_1780431196502.png';
+import MAP_800X800_IMG from '../assets/images/mapa-800x800.jpg';
 
 // Import newly generated high-fidelity brand landing background/hero images
 import RAM_LANDING_BG_26 from '../assets/images/ram_landing_2026_1780767734197.png';
@@ -2425,40 +2426,20 @@ export default function LeadForm({ c10ImgUrl, t03ImgUrl, b10ImgUrl }: LeadFormPr
               exit={{ scale: 0.95, y: 15 }}
               className="bg-[#0b0f17] border border-white/10 w-full max-w-sm rounded-3xl overflow-hidden shadow-2xl flex flex-col"
             >
-              {/* Header */}
-              <div className="p-4 bg-gradient-to-r from-indigo-950/60 to-[#0b0f17] border-b border-white/5 flex items-center justify-between">
-                <div className="flex items-center gap-2">
-                  <Map className="w-4 h-4 text-amber-400" />
-                  <h3 className="text-sm font-black uppercase text-white font-mono tracking-wide">
-                    Carpa Stellantis CDMX
-                  </h3>
-                </div>
-                <button 
-                  onClick={() => setShowStellantisMap(false)}
-                  className="bg-white/10 hover:bg-white/20 text-white rounded-lg p-1.5 transition text-xs"
-                >
-                  ✕
-                </button>
-              </div>
-
               {/* Map Canvas body */}
               <div className="p-4 flex flex-col items-center gap-3">
                 <div className="relative aspect-square w-full rounded-2xl overflow-hidden border border-amber-500/30 shadow-[0_0_20px_rgba(245,158,11,0.2)]">
                   <img 
-                    src={CARPA_MAP_IMG} 
+                    src={MAP_800X800_IMG} 
                     alt="Mapa Carpa Stellantis"
                     referrerPolicy="no-referrer"
-                    className="w-full h-full object-cover brightness-[1.25] contrast-[1.08] saturate-[1.1]"
+                    className="w-full h-full object-cover"
                   />
-                  <div className="absolute top-3 left-3 bg-slate-950/80 border border-amber-500/30 px-2 py-0.5 rounded text-[8px] font-bold font-mono text-amber-400 uppercase tracking-widest animate-pulse">
-                    Vip hospitality
-                  </div>
                 </div>
 
-                <div className="bg-slate-950/60 p-3 rounded-2xl border border-white/5 text-center space-y-1.5">
-                  <span className="text-[10px] text-indigo-400 font-bold font-mono uppercase tracking-widest block">Acceso Prioritario</span>
-                  <p className="text-[11px] text-slate-300 leading-relaxed font-sans">
-                    Nuestra carpa se ubica en el <strong className="text-white">Hospitality Zone Stellantis, Campo Marte</strong>. Presenta tu código para acceso prioritario.
+                <div className="bg-slate-950/60 p-3 rounded-2xl border border-white/5 text-center">
+                  <p className="text-[14px] sm:text-[15px] text-slate-200 leading-relaxed font-sans font-semibold">
+                    Te esperamos en el hospitality zone de Leapmotor, para que seas atendido por uno de nuestros asesores.
                   </p>
                 </div>
               </div>
@@ -2468,7 +2449,7 @@ export default function LeadForm({ c10ImgUrl, t03ImgUrl, b10ImgUrl }: LeadFormPr
                 <button
                   type="button"
                   onClick={() => setShowStellantisMap(false)}
-                  className="w-full bg-indigo-600 hover:bg-indigo-500 text-white font-extrabold py-3 rounded-xl text-xs uppercase tracking-wider transition-all duration-300"
+                  className="w-full bg-[#22372B] hover:bg-[#15231b] text-white font-extrabold py-3 rounded-xl text-xs uppercase tracking-wider transition-all duration-300 shadow-md shadow-[#22372B]/20"
                 >
                   Entendido, volver
                 </button>
