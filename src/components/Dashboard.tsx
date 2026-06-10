@@ -51,7 +51,9 @@ import {
   RefreshCw,
   Trash2,
   AlertTriangle,
-  FileSpreadsheet
+  FileSpreadsheet,
+  Lock,
+  LogOut
 } from 'lucide-react';
 import { motion } from 'motion/react';
 
@@ -88,6 +90,16 @@ const OFFICIAL_DISTRIBUTORS_STATIC = [
 ];
 
 export default function Dashboard() {
+  const [isAuthenticated, setIsAuthenticated] = useState<boolean>(() => {
+    try {
+      return sessionStorage.getItem('dashboard_authenticated') === 'true';
+    } catch (_) {
+      return false;
+    }
+  });
+  const [passcode, setPasscode] = useState('');
+  const [passcodeError, setPasscodeError] = useState('');
+
   const [theme, setTheme] = useState<'dark' | 'light'>(() => {
     try {
       return (localStorage.getItem('dashboard_theme') as 'dark' | 'light') || 'dark';
@@ -97,6 +109,14 @@ export default function Dashboard() {
   });
 
   const isDark = theme === 'dark';
+
+  const handleSignOff = () => {
+    try {
+      sessionStorage.removeItem('dashboard_authenticated');
+    } catch (_) {}
+    setIsAuthenticated(false);
+    setPasscode('');
+  };
 
   // Theme helpers for clean code structure in Dashboard
   const dashBg = isDark ? 'bg-slate-950 text-slate-100' : 'bg-slate-50 text-slate-800';
@@ -1053,6 +1073,95 @@ export default function Dashboard() {
   const endIndex = Math.min(startIndex + pageSize, totalLeadsCount);
   const paginatedCoordinatorLeads = filteredCoordinatorLeads.slice(startIndex, endIndex);
 
+  if (!isAuthenticated) {
+    const handlePasscodeSubmit = (e: React.FormEvent) => {
+      e.preventDefault();
+      if (passcode.trim() === 'soccerlm') {
+        try {
+          sessionStorage.setItem('dashboard_authenticated', 'true');
+        } catch (_) {}
+        setIsAuthenticated(true);
+        setPasscodeError('');
+      } else {
+        setPasscodeError('Clave de acceso incorrecta. Inténtelo de nuevo.');
+      }
+    };
+
+    return (
+      <div className={`w-full min-h-screen flex flex-col justify-center items-center px-4 transition-colors duration-500 py-12 ${dashBg}`}>
+        <motion.div 
+          initial={{ opacity: 0, scale: 0.95 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ duration: 0.4 }}
+          className={`w-full max-w-md p-8 rounded-3xl border ${cardBg} flex flex-col items-center gap-6 shadow-2xl relative overflow-hidden`}
+        >
+          {/* Decorative glowing gradient circle background */}
+          <div className="absolute -top-12 -right-12 w-40 h-40 bg-emerald-500/15 blur-3xl rounded-full pointer-events-none" />
+          <div className="absolute -bottom-12 -left-12 w-40 h-40 bg-blue-500/15 blur-3xl rounded-full pointer-events-none" />
+          
+          <div className="flex flex-col items-center gap-3">
+            <div className="p-1 px-3 bg-white rounded-2xl shadow-sm border border-slate-200 shrink-0 flex items-center justify-center select-none scale-90 sm:scale-100">
+              <StellantisLogo size="sm" style={{ height: '36px', width: 'auto' }} />
+            </div>
+            <div className="text-center mt-2">
+              <h1 className={`text-xl font-black font-sans tracking-tight ${titleColor}`}>
+                Tablero de Mando Digital
+              </h1>
+              <p className={`text-xs ${mutedColor} font-bold mt-1`}>
+                Stellantis &bull; Campo Marte Coordinación
+              </p>
+            </div>
+          </div>
+
+          <div className={`w-full border-t ${borderLine}`} />
+
+          <form onSubmit={handlePasscodeSubmit} className="w-full space-y-4">
+            <div className="space-y-2">
+              <label className={`text-xs font-mono uppercase tracking-wider font-extrabold flex items-center gap-2 ${mutedColor}`}>
+                <Lock className="w-3.5 h-3.5" /> Clave de Acceso Requerida
+              </label>
+              <div className="relative">
+                <input
+                  type="password"
+                  placeholder="Ingrese clave..."
+                  value={passcode}
+                  onChange={(e) => {
+                    setPasscode(e.target.value);
+                    if (passcodeError) setPasscodeError('');
+                  }}
+                  className={`w-full px-4 py-3.5 rounded-xl border text-center font-mono text-base tracking-widest ${inputStyle}`}
+                  autoFocus
+                />
+              </div>
+              {passcodeError && (
+                <motion.p 
+                  initial={{ opacity: 0, y: -5 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  className="text-red-500 text-xs font-semibold font-mono text-center mt-1"
+                >
+                  {passcodeError}
+                </motion.p>
+              )}
+            </div>
+
+            <button
+              type="submit"
+              style={{ backgroundColor: '#7d9267' }}
+              className="w-full text-white hover:bg-[#8da376] font-extrabold py-3.5 rounded-xl text-xs uppercase tracking-wider flex items-center justify-center gap-2 transition-all duration-300 active:scale-95 shadow-md shadow-[#7d9267]/20"
+            >
+              <Key className="w-4 h-4 text-white" />
+              <span>Ingresar al Tablero</span>
+            </button>
+          </form>
+
+          <p className="text-[10px] text-slate-500 font-mono text-center mt-2 uppercase font-semibold">
+            Acceso restringido a coordinadores autorizados
+          </p>
+        </motion.div>
+      </div>
+    );
+  }
+
   if (loading) {
     return (
       <div className={`w-full min-h-screen flex justify-center items-center ${isDark ? 'bg-slate-950 text-emerald-400' : 'bg-slate-50 text-emerald-600'}`}>
@@ -1103,6 +1212,21 @@ export default function Dashboard() {
             >
               {isDark ? <Sun className="w-4 h-4 text-amber-400 shrink-0" /> : <Moon className="w-4 h-4 text-indigo-650 text-indigo-600 shrink-0" />}
               <span>ESTILO: {isDark ? 'NEGRO' : 'BLANCO'}</span>
+            </button>
+
+            {/* Clear session (Sign Off) Option */}
+            <button
+              onClick={handleSignOff}
+              type="button"
+              className={`flex items-center gap-1.5 px-3.5 py-2.5 rounded-xl text-xs font-extrabold transition-all border cursor-pointer ${
+                isDark 
+                  ? 'bg-red-500/10 border-red-500/20 hover:bg-red-500/20 text-red-400' 
+                  : 'bg-red-50 border-red-200 hover:bg-red-100 text-red-600 shadow-sm'
+              }`}
+              title="Cerrar Sesión del Tablero / Sign Off"
+            >
+              <LogOut className="w-4 h-4 shrink-0" />
+              <span>SIGN OFF</span>
             </button>
           </div>
         </div>
