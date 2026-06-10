@@ -63,13 +63,14 @@ import { BRAND_MODELS_DB } from '../data/brandModelsDb';
 // Import newly generated design assets
 import LEAPMOTOR_TUNNEL_BG from '../assets/images/leapmotor_b10_tunnel_bg_1780692970544.png';
 import LEAPMOTOR_LOGO_IMG from '../assets/images/regenerated_image_1780979872662.png';
+import LEAPMOTOR_LOGO_NEW_IMG from '../assets/images/leapmotor_outline_white_1780977081063.png';
 import JEEP_LOGO_IMG from '../assets/images/regenerated_image_1780715177952.jpg';
 import FIAT_LOGO_IMG from '../assets/images/regenerated_image_1780715561130.jpg';
 import DODGE_LOGO_BG_IMG from '../assets/images/regenerated_image_1780970482939.png';
 import DODGE_LOGO_IMG from '../assets/images/regenerated_image_1780970830147.jpg';
 import PEUGEOT_LOGO_IMG from '../assets/images/peugeot_logo_new_1780716886504.png';
 import RAM_LOGO_IMG from '../assets/images/ram_logo_new_1780717149923.png';
-import JEEP_IMG from '../assets/images/jeep_cherokee_green_1780407967325.png';
+import JEEP_IMG from '../assets/images/regenerated_image_1781067758543.jpg';
 import JEEP_COMMANDER_IMG from '../assets/images/jeep_commander_1780440413653.png';
 import JEEP_COMPASS_IMG from '../assets/images/jeep_compass_1780440426004.png';
 import JEEP_GRAND_CHEROKEE_IMG from '../assets/images/jeep_grand_cherokee_1780440437533.png';
@@ -1321,22 +1322,25 @@ export default function LeadForm({ c10ImgUrl, t03ImgUrl, b10ImgUrl }: LeadFormPr
             paddingBottom: '0px',
             paddingTop: '0px',
             marginBottom: '-7px',
-            height: '152px'
+            height: '114px'
           } : (activeLanding === 'jeep' ? {
             paddingBottom: '0px',
             paddingTop: '8px',
-            height: formActive ? '180px' : '110px'
-          } : { paddingBottom: '0px' })}
+            height: formActive ? '180px' : '122px'
+          } : { 
+            paddingBottom: '0px',
+            height: '122px'
+          })}
           className={`px-6 ${activeLanding === 'multimarca' && selectedSubBrand !== null ? 'hidden' : (activeLanding === 'leapmotor' ? 'py-1 border-b border-white/5 relative z-10' : 'py-4 bg-[#05070a]/90 border-b border-white/5 relative z-10')} flex ${activeLanding === 'multimarca' || activeLanding === 'leapmotor' || activeLanding === 'jeep' ? 'justify-center' : 'justify-between'} items-center ${activeLanding === 'leapmotor' ? '' : 'backdrop-blur-md'} sticky top-0 z-25`}
         >
           {activeLanding === 'leapmotor' && (
-            <div style={{ height: '143px' }} className="flex items-center justify-center w-full max-w-full py-3 sm:py-5">
+            <div style={{ height: '102px' }} className="flex items-center justify-center w-full max-w-full py-3 sm:py-5">
               <LeapmotorLogo 
                 size="lg" 
                 variant="outline"
-                className="text-white mx-auto transition-transform duration-300 hover:scale-[1.02]" 
-                style={{ height: 'clamp(110px, 25vw, 160px)', aspectRatio: 'auto', maxWidth: '100%', width: 'auto' }} 
-                imgStyle={{ height: 'clamp(80px, 20vw, 120px)', width: 'auto', objectFit: 'contain' }} 
+                className="text-white mx-auto" 
+                style={{ height: 'clamp(82px, 19vw, 118px)', aspectRatio: 'auto', maxWidth: '100%', width: 'auto' }} 
+                imgStyle={{ height: 'clamp(60px, 14vw, 86px)', width: 'auto', objectFit: 'contain' }} 
               />
             </div>
           )}
@@ -1403,22 +1407,39 @@ export default function LeadForm({ c10ImgUrl, t03ImgUrl, b10ImgUrl }: LeadFormPr
                     <span className="text-[12px] font-black tracking-[0.25em] text-[#deff01] uppercase block animate-pulse">
                       Tranquilidad sin límites
                     </span>
-                    <h1 style={{ fontSize: '14px' }} className="leading-tight font-sans">
-                      <span className="text-[#deff01] font-extrabold text-4xl tracking-tighter inline-block drop-shadow-[0_2px_10px_rgba(222,255,1,0.15)] uppercase">
+                    <h1 style={{ fontSize: '14px' }} className="leading-tight font-sans text-[14px]">
+                      <span 
+                        style={{ fontWeight: 'normal' }}
+                        className="text-[#deff01] text-[inherit] tracking-tighter inline-block drop-shadow-[0_2px_10px_rgba(222,255,1,0.15)] uppercase"
+                      >
                         INCREÍBLE
                       </span>{' '}
-                      <span className="text-white font-extrabold text-4xl tracking-tighter inline-block drop-shadow-[0_2px_10px_rgba(222,255,1,0.15)] uppercase">
+                      <span 
+                        style={{ fontWeight: 'normal' }}
+                        className="text-white text-[inherit] tracking-tighter inline-block drop-shadow-[0_2px_10px_rgba(222,255,1,0.15)] uppercase"
+                      >
                         TODOS LOS DIAS
                       </span>
                       <br />
-                      <span className="text-[#deff01] font-extrabold text-4xl tracking-tighter inline-block mt-1.5 drop-shadow-[0_2px_10px_rgba(222,255,1,0.15)]">
+                      <span 
+                        style={{ fontWeight: 'bold', lineHeight: '20.5px', fontSize: '19px', marginTop: '11px' }}
+                        className="text-[#deff01] text-[inherit] tracking-tighter inline-block drop-shadow-[0_2px_10px_rgba(222,255,1,0.15)]"
+                      >
                         LEAPMOTOR B10
                       </span>
                     </h1>
                     
                     <p 
-                      style={activeLanding === 'leapmotor' ? { fontFamily: 'Montserrat', fontSize: '13px', color: '#ffffff' } : undefined}
-                      className="text-slate-200 text-xs font-semibold max-w-xs mx-auto leading-relaxed mt-2.5"
+                      style={activeLanding === 'leapmotor' ? { 
+                        fontFamily: 'Montserrat', 
+                        fontSize: '13px', 
+                        color: '#ffffff',
+                        fontWeight: 'normal',
+                        marginLeft: '39px',
+                        marginRight: '39px',
+                        marginTop: '10px'
+                      } : undefined}
+                      className="text-slate-200 text-xs max-w-xs mx-auto leading-relaxed mt-2.5"
                     >
                       LEAPMOTOR te da confianza y seguridad para tu camino. Una marca con más de 85 años de respaldo en México
                     </p>
@@ -1481,14 +1502,13 @@ export default function LeadForm({ c10ImgUrl, t03ImgUrl, b10ImgUrl }: LeadFormPr
                   </p>
 
                   {/* Cherokee Image Asset */}
-                  <div className="relative aspect-[16/10] my-1 select-none overflow-hidden rounded-2xl border border-[#22372B]/60 group bg-slate-900/35 shadow-[0_0_25px_rgba(34,55,43,0.45)]">
+                  <div className="relative my-1 select-none overflow-hidden rounded-2xl border border-[#22372B]/60 group bg-slate-900/10 shadow-[0_0_25px_rgba(34,55,43,0.45)]">
                     <img 
                       src={JEEP_IMG} 
                       alt="Jeep Cherokee 2026"
                       referrerPolicy="no-referrer"
-                      className="w-full h-full object-cover rounded-2xl transform transition-transform duration-700 brightness-[1.25] contrast-[1.08] saturate-[1.1]"
+                      className="w-full h-auto block rounded-2xl transform transition-transform duration-700"
                     />
-                    <div className="absolute inset-0 bg-gradient-to-t from-[#05070a]/60 via-transparent to-transparent opacity-40" />
                   </div>
 
                   {/* Highlights Row */}
@@ -1565,13 +1585,14 @@ export default function LeadForm({ c10ImgUrl, t03ImgUrl, b10ImgUrl }: LeadFormPr
                                   handleBrandSelect(brand);
                                   setSelectedSubBrand(brand);
                                 }}
-                                className="group relative overflow-hidden rounded-2xl border border-white/10 bg-black hover:border-white/20 h-20 sm:h-24 w-full flex items-center justify-center select-none transition-all duration-300 transform active:scale-[0.99] shadow-lg shadow-black/20"
+                                style={{ height: '92.5px' }}
+                                className="group relative overflow-hidden rounded-2xl border border-white/10 bg-black hover:border-white/20 w-full flex items-center justify-center select-none transition-all duration-300 transform active:scale-[0.99] shadow-lg shadow-black/20"
                               >
                                 <img 
-                                  src={LEAPMOTOR_LOGO_IMG} 
+                                  src={LEAPMOTOR_LOGO_NEW_IMG} 
                                   alt="Leapmotor"
                                   referrerPolicy="no-referrer"
-                                  className="w-full h-full object-contain pointer-events-none transition-transform duration-300 scale-[1.7] group-hover:scale-[1.78] p-1"
+                                  className="w-auto max-w-[85%] max-h-[50%] object-contain pointer-events-none transition-transform duration-300 group-hover:scale-[1.05] p-0.5"
                                   style={{ mixBlendMode: 'normal' }}
                                 />
                               </button>
@@ -2369,7 +2390,7 @@ export default function LeadForm({ c10ImgUrl, t03ImgUrl, b10ImgUrl }: LeadFormPr
                     src={selectedBrand === 'Jeep' ? JEEP_IMG : (selectedBrand === 'Leapmotor' ? b10ImgUrl : STELLANTIS_IMG)} 
                     alt={selectedBrand}
                     referrerPolicy="no-referrer"
-                    className={`w-full h-full object-cover ${selectedBrand === 'Leapmotor' ? '' : 'brightness-[1.25] contrast-[1.08] saturate-[1.1]'}`}
+                    className={`w-full h-full object-cover ${(selectedBrand === 'Leapmotor' || selectedBrand === 'Jeep') ? '' : 'brightness-[1.25] contrast-[1.08] saturate-[1.1]'}`}
                   />
                   <div className="absolute inset-x-0 bottom-2 text-[10px] font-bold tracking-[0.2em] uppercase text-white/90">
                     {selectedBrand} {formData.modelOfInterest}
