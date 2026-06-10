@@ -1291,7 +1291,11 @@ export default function LeadForm({ c10ImgUrl, t03ImgUrl, b10ImgUrl }: LeadFormPr
        : 'w-full bg-[#0a0f18] border border-white/25 focus:border-indigo-400 focus:ring-1 focus:ring-indigo-400/40 rounded-xl pl-9 pr-3 py-2.5 text-base md:text-xs text-white placeholder-slate-400 outline-none transition font-semibold');
 
   return (
-    <div className="w-full text-slate-100 flex flex-col justify-start items-center" id="landing-page-view">
+    <div 
+      className="w-full text-slate-100 flex flex-col justify-start items-center min-h-screen transition-all duration-500" 
+      id="landing-page-view"
+      style={activeLanding === 'multimarca' ? { backgroundColor: '#243782' } : undefined}
+    >
       
       {/* Outer Mobile Mock Wrapper with Pantone 2427C and Highlight R0 G145 B0 theme */}
       <div 
@@ -1299,13 +1303,15 @@ export default function LeadForm({ c10ImgUrl, t03ImgUrl, b10ImgUrl }: LeadFormPr
           backgroundImage: `url(${LEAPMOTOR_TUNNEL_BG})`,
           backgroundSize: 'cover',
           backgroundPosition: 'center',
-        } : undefined}
+        } : (activeLanding === 'multimarca' ? {
+          backgroundColor: '#243782'
+        } : undefined)}
         className={`w-full max-w-md mx-auto h-[100dvh] sm:h-auto sm:min-h-[82vh] border-0 sm:border rounded-none sm:rounded-[40px] shadow-2xl relative overflow-hidden flex flex-col justify-between mt-0 sm:mt-1 mb-0 sm:mb-6 transition-all duration-500 ${
           activeLanding === 'leapmotor'
             ? 'bg-black border-[#009100]/40 shadow-[0_0_35px_rgba(0,145,0,0.25)]'
             : (activeLanding === 'jeep'
                ? 'bg-[#050807] border-[#22372B]/60 shadow-[0_0_35px_rgba(34,55,43,0.35)]'
-               : 'bg-[#05070a] border-white/10')
+               : (activeLanding === 'multimarca' ? 'bg-[#243782] border-white/10 shadow-[0_0_35px_rgba(36,55,130,0.25)]' : 'bg-[#05070a] border-white/10'))
         }`}
       >
         
@@ -1330,9 +1336,10 @@ export default function LeadForm({ c10ImgUrl, t03ImgUrl, b10ImgUrl }: LeadFormPr
             height: formActive ? '180px' : '122px'
           } : { 
             paddingBottom: '0px',
-            height: '122px'
+            height: '122px',
+            backgroundColor: activeLanding === 'multimarca' ? '#243782' : undefined
           })}
-          className={`px-6 ${activeLanding === 'multimarca' && selectedSubBrand !== null ? 'hidden' : (activeLanding === 'leapmotor' ? 'py-1 border-b border-white/5 relative z-10' : 'py-4 bg-[#05070a]/90 border-b border-white/5 relative z-10')} flex ${activeLanding === 'multimarca' || activeLanding === 'leapmotor' || activeLanding === 'jeep' ? 'justify-center' : 'justify-between'} items-center ${activeLanding === 'leapmotor' ? '' : 'backdrop-blur-md'} sticky top-0 z-25`}
+          className={`px-6 ${activeLanding === 'multimarca' && selectedSubBrand !== null ? 'hidden' : (activeLanding === 'leapmotor' ? 'py-1 border-b border-white/5 relative z-10' : (activeLanding === 'multimarca' ? 'py-4 bg-[#243782] border-b border-white/5 relative z-10' : 'py-4 bg-[#05070a]/90 border-b border-white/5 relative z-10'))} flex ${activeLanding === 'multimarca' || activeLanding === 'leapmotor' || activeLanding === 'jeep' ? 'justify-center' : 'justify-between'} items-center ${activeLanding === 'leapmotor' ? '' : 'backdrop-blur-md'} sticky top-0 z-25`}
         >
           {activeLanding === 'leapmotor' && (
             <div style={{ height: '102px' }} className="flex items-center justify-center w-full max-w-full py-3 sm:py-5">
@@ -1384,12 +1391,17 @@ export default function LeadForm({ c10ImgUrl, t03ImgUrl, b10ImgUrl }: LeadFormPr
           {!formActive && !success && (
             <motion.div
               key={`${activeLanding}-sheet`}
-              style={{ paddingTop: '0px', marginLeft: '0px', marginTop: '0px' }}
+              style={{ 
+                paddingTop: '0px', 
+                marginLeft: '0px', 
+                marginTop: '0px',
+                backgroundColor: activeLanding === 'multimarca' ? '#243782' : undefined
+              }}
               initial={{ opacity: 0, scale: 0.98 }}
               animate={{ opacity: 1, scale: 1 }}
               exit={{ opacity: 0, scale: 0.98 }}
               transition={{ duration: 0.3 }}
-              className={`px-6 ${activeLanding === 'leapmotor' ? 'pt-2 pb-5 relative z-10 flex flex-col justify-between h-full' : 'py-4 gap-4 relative z-10 flex flex-col justify-start'} flex-1`}
+              className={`px-6 ${activeLanding === 'leapmotor' ? 'pt-2 pb-5 relative z-10 flex flex-col justify-between h-full' : (activeLanding === 'multimarca' ? 'py-4 gap-4 relative z-10 flex flex-col justify-start bg-[#243782]' : 'py-4 gap-4 relative z-10 flex flex-col justify-start')} flex-1`}
             >
               {/* LEAPMOTOR LANDING VIEW - Professional Presentation Deck Layout */}
               {activeLanding === 'leapmotor' && (
@@ -1400,11 +1412,11 @@ export default function LeadForm({ c10ImgUrl, t03ImgUrl, b10ImgUrl }: LeadFormPr
                       Tranquilidad sin límites
                     </span>
                     
-                    <h1 style={{ fontWeight: '900', fontSize: '24px' }} className="text-[#deff01] font-sans tracking-tight uppercase drop-shadow-[0_2px_8px_rgba(0,0,0,0.9)]">
+                    <h1 style={{ fontWeight: '900', fontSize: '24px', marginBottom: '7px' }} className="text-[#deff01] font-sans tracking-tight uppercase drop-shadow-[0_2px_8px_rgba(0,0,0,0.9)]">
                       LEAPMOTOR B10
                     </h1>
                     
-                    <p className="text-slate-100 text-[13px] max-w-xs leading-relaxed font-semibold px-4 py-3 bg-black/55 backdrop-blur-md rounded-2xl border border-white/5 shadow-2xl drop-shadow-[0_4px_10px_rgba(0,0,0,0.7)] text-center">
+                    <p style={{ paddingTop: '9px', paddingBottom: '9px' }} className="text-slate-100 text-[13px] max-w-xs leading-relaxed font-semibold px-4 bg-black/55 backdrop-blur-md rounded-2xl border border-white/5 shadow-2xl drop-shadow-[0_4px_10px_rgba(0,0,0,0.7)] text-center">
                       LEAPMOTOR te da confianza y seguridad para tu camino. Una marca con más de 85 años de respaldo en México
                     </p>
                   </div>
@@ -1413,7 +1425,8 @@ export default function LeadForm({ c10ImgUrl, t03ImgUrl, b10ImgUrl }: LeadFormPr
                   <div className="space-y-4 pb-2 mt-auto">
                     {/* Features Row - Tecnología, Autonomía, Respaldo de Mopar */}
                     <div 
-                      className="grid grid-cols-3 gap-1.5 py-3 border-y border-[#deff01]/20 bg-black/60 backdrop-blur-md rounded-2xl px-1.5 shadow-xl border border-white/5"
+                      style={{ paddingTop: '8px', paddingBottom: '6px', marginBottom: '8px' }}
+                      className="grid grid-cols-3 gap-1.5 border-y border-[#deff01]/20 bg-black/60 backdrop-blur-md rounded-2xl px-1.5 shadow-xl border border-white/5"
                     >
                       <div className="flex flex-col items-center gap-1">
                         <div className="w-8.5 h-8.5 rounded-full bg-[#deff01]/10 border border-[#deff01]/30 flex items-center justify-center text-[#deff01] shadow-inner">
@@ -1439,7 +1452,8 @@ export default function LeadForm({ c10ImgUrl, t03ImgUrl, b10ImgUrl }: LeadFormPr
                     <div className="flex flex-col gap-2.5">
                       <button
                         onClick={() => launchFormWithRequest('cotizacion', 'B10')}
-                        className="bg-[#035F1D] hover:bg-[#009100] text-white font-extrabold py-3.5 px-4 rounded-xl text-xs uppercase tracking-widest flex items-center justify-center gap-1.5 transition-all duration-300 active:scale-95 shadow-lg shadow-[#035F1D]/45 border border-[#009100]/40 w-full"
+                        style={{ paddingBottom: '12px' }}
+                        className="bg-[#035F1D] hover:bg-[#009100] text-white font-extrabold pt-3.5 px-4 rounded-xl text-xs uppercase tracking-widest flex items-center justify-center gap-1.5 transition-all duration-300 active:scale-95 shadow-lg shadow-[#035F1D]/45 border border-[#009100]/40 w-full"
                       >
                         <FileText className="w-4 h-4" />
                         <span>Cotizar</span>
@@ -1447,7 +1461,8 @@ export default function LeadForm({ c10ImgUrl, t03ImgUrl, b10ImgUrl }: LeadFormPr
                       
                       <button
                         onClick={() => launchFormWithRequest('asesor', 'B10')}
-                        className="bg-[#deff01] hover:bg-[#c9e600] text-slate-950 font-extrabold py-3.5 px-4 rounded-xl text-xs uppercase tracking-widest flex items-center justify-center gap-1.5 transition-all duration-300 active:scale-95 shadow-lg shadow-[rgba(222,255,1,0.3)] border border-[#deff01]/50 w-full"
+                        style={{ paddingBottom: '6px' }}
+                        className="bg-[#deff01] hover:bg-[#c9e600] text-slate-950 font-extrabold pt-3.5 px-4 rounded-xl text-xs uppercase tracking-widest flex items-center justify-center gap-1.5 transition-all duration-300 active:scale-95 shadow-lg shadow-[rgba(222,255,1,0.3)] border border-[#deff01]/50 w-full"
                       >
                         <UserCheck className="w-4 h-4 text-slate-950 shrink-0" />
                         <span>Atención Personalizada</span>
@@ -1549,8 +1564,8 @@ export default function LeadForm({ c10ImgUrl, t03ImgUrl, b10ImgUrl }: LeadFormPr
                                   handleBrandSelect(brand);
                                   setSelectedSubBrand(brand);
                                 }}
-                                style={{ height: '92.5px' }}
-                                className="group relative overflow-hidden rounded-2xl border border-white/10 bg-black hover:border-white/20 w-full flex items-center justify-center select-none transition-all duration-300 transform active:scale-[0.99] shadow-lg shadow-black/20"
+                                style={{ height: '92.5px', backgroundColor: '#243782' }}
+                                className="group relative overflow-hidden rounded-2xl border border-white/10 bg-[#243782] hover:bg-[#1d2c69] hover:border-white/20 w-full flex items-center justify-center select-none transition-all duration-300 transform active:scale-[0.99] shadow-lg shadow-black/20"
                               >
                                 <img 
                                   src={LEAPMOTOR_LOGO_NEW_IMG} 
@@ -1570,7 +1585,8 @@ export default function LeadForm({ c10ImgUrl, t03ImgUrl, b10ImgUrl }: LeadFormPr
                                   handleBrandSelect(brand);
                                   setSelectedSubBrand(brand);
                                 }}
-                                className="group relative overflow-hidden rounded-2xl border border-white/10 bg-black hover:border-white/20 h-20 sm:h-24 w-full flex items-center justify-center select-none transition-all duration-300 transform active:scale-[0.99] shadow-lg shadow-black/20"
+                                style={{ backgroundColor: '#243782' }}
+                                className="group relative overflow-hidden rounded-2xl border border-white/10 bg-[#243782] hover:bg-[#1d2c69] hover:border-white/20 h-20 sm:h-24 w-full flex items-center justify-center select-none transition-all duration-300 transform active:scale-[0.99] shadow-lg shadow-black/20"
                               >
                                 <img 
                                   src={JEEP_LOGO_IMG} 
@@ -1589,7 +1605,8 @@ export default function LeadForm({ c10ImgUrl, t03ImgUrl, b10ImgUrl }: LeadFormPr
                                   handleBrandSelect(brand);
                                   setSelectedSubBrand(brand);
                                 }}
-                                className="group relative overflow-hidden rounded-2xl border border-white/10 bg-black hover:border-white/20 h-20 sm:h-24 w-full flex items-center justify-center select-none transition-all duration-300 transform active:scale-[0.99] shadow-lg shadow-black/20"
+                                style={{ backgroundColor: '#243782' }}
+                                className="group relative overflow-hidden rounded-2xl border border-white/10 bg-[#243782] hover:bg-[#1d2c69] hover:border-white/20 h-20 sm:h-24 w-full flex items-center justify-center select-none transition-all duration-300 transform active:scale-[0.99] shadow-lg shadow-black/20"
                               >
                                 <img 
                                   src={FIAT_LOGO_IMG} 
@@ -1608,7 +1625,8 @@ export default function LeadForm({ c10ImgUrl, t03ImgUrl, b10ImgUrl }: LeadFormPr
                                   handleBrandSelect(brand);
                                   setSelectedSubBrand(brand);
                                 }}
-                                className="group relative overflow-hidden rounded-2xl border border-white/10 bg-black hover:border-white/20 h-20 sm:h-24 w-full flex items-center justify-center select-none transition-all duration-300 transform active:scale-[0.99] shadow-lg shadow-black/20"
+                                style={{ backgroundColor: '#243782' }}
+                                className="group relative overflow-hidden rounded-2xl border border-white/10 bg-[#243782] hover:bg-[#1d2c69] hover:border-white/20 h-20 sm:h-24 w-full flex items-center justify-center select-none transition-all duration-300 transform active:scale-[0.99] shadow-lg shadow-black/20"
                               >
                                 <img 
                                   src={DODGE_LOGO_IMG} 
@@ -1627,7 +1645,8 @@ export default function LeadForm({ c10ImgUrl, t03ImgUrl, b10ImgUrl }: LeadFormPr
                                   handleBrandSelect(brand);
                                   setSelectedSubBrand(brand);
                                 }}
-                                className="group relative overflow-hidden rounded-2xl border border-white/10 bg-black hover:border-white/20 h-20 sm:h-24 w-full flex items-center justify-center select-none transition-all duration-300 transform active:scale-[0.99] shadow-lg shadow-black/20"
+                                style={{ backgroundColor: '#243782' }}
+                                className="group relative overflow-hidden rounded-2xl border border-white/10 bg-[#243782] hover:bg-[#1d2c69] hover:border-white/20 h-20 sm:h-24 w-full flex items-center justify-center select-none transition-all duration-300 transform active:scale-[0.99] shadow-lg shadow-black/20"
                               >
                                 <img 
                                   src={PEUGEOT_LOGO_IMG} 
@@ -1646,7 +1665,8 @@ export default function LeadForm({ c10ImgUrl, t03ImgUrl, b10ImgUrl }: LeadFormPr
                                   handleBrandSelect(brand);
                                   setSelectedSubBrand(brand);
                                 }}
-                                className="group relative overflow-hidden rounded-2xl border border-white/10 bg-black hover:border-white/20 h-20 sm:h-24 w-full flex items-center justify-center select-none transition-all duration-300 transform active:scale-[0.99] shadow-lg shadow-black/20"
+                                style={{ backgroundColor: '#243782' }}
+                                className="group relative overflow-hidden rounded-2xl border border-white/10 bg-[#243782] hover:bg-[#1d2c69] hover:border-white/20 h-20 sm:h-24 w-full flex items-center justify-center select-none transition-all duration-300 transform active:scale-[0.99] shadow-lg shadow-black/20"
                               >
                                 <img 
                                   src={RAM_LOGO_IMG} 
@@ -1664,7 +1684,8 @@ export default function LeadForm({ c10ImgUrl, t03ImgUrl, b10ImgUrl }: LeadFormPr
                                 handleBrandSelect(brand);
                                 setSelectedSubBrand(brand);
                               }}
-                              className={`group relative overflow-hidden rounded-2xl border border-white/10 bg-black hover:bg-zinc-950 hover:border-white/20 h-20 sm:h-24 w-full flex items-center justify-center select-none transition-all duration-300 transform active:scale-[0.99] shadow-lg shadow-black/20`}
+                              style={{ backgroundColor: '#243782' }}
+                              className={`group relative overflow-hidden rounded-2xl border border-white/10 bg-[#243782] hover:bg-[#1d2c69] hover:border-white/20 h-20 sm:h-24 w-full flex items-center justify-center select-none transition-all duration-300 transform active:scale-[0.99] shadow-lg shadow-black/20`}
                             >
                               {/* Centralized Brand Logo */}
                               <div className="z-10 flex items-center justify-center w-full px-8 pointer-events-none transition-transform duration-300 group-hover:scale-[1.02]">
