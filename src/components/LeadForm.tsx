@@ -1213,7 +1213,7 @@ export default function LeadForm({ c10ImgUrl, t03ImgUrl, b10ImgUrl }: LeadFormPr
           : (formData.requestType === 'cotizacion' ? "Sin Asignar (Solo Cotización)" : (formData.requestType === 'prueba' ? "Sin Asignar (Solo Prueba de Manejo)" : (minWaitingAdvisor?.name || "Sin Asignar"))),
         createdAt: serverTimestamp(),
         // New features parameters
-        landing: activeLanding,
+        landing: (utmParams.utm_source === 'soccerhouse' || (typeof window !== 'undefined' && (window.location.hostname.toLowerCase().includes('soccer') || window.location.hostname.toLowerCase().includes('socer') || (window.location.search || '').toLowerCase().includes('soccer') || (window.location.search || '').toLowerCase().includes('socer')))) ? 'soccerhouse' : activeLanding,
         selectedBrand: activeBrand,
         testDriveDate: formData.requestType === 'prueba' ? formData.testDriveDate : null,
         // UTM parameters
