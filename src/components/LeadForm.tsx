@@ -1282,12 +1282,14 @@ export default function LeadForm({ c10ImgUrl, t03ImgUrl, b10ImgUrl }: LeadFormPr
   // Dynamic input styling based on active branding (Leapmotor Pantone 2427C #035F1D and Highlight #009100)
   const rowClass = activeLanding === 'leapmotor'
     ? 'space-y-1 bg-[#035F1D]/10 p-2.5 rounded-xl border border-[#009100]/25 hover:border-[#deff01]/40 hover:bg-[#035F1D]/15 transition-all duration-350'
-    : 'space-y-1 bg-slate-900/60 p-2.5 rounded-xl border border-white/15 hover:border-white/20 transition-all duration-350';
+    : (activeLanding === 'jeep'
+       ? 'space-y-1 bg-slate-950/40 p-2.5 rounded-xl border border-[#424D07] hover:border-[#424D07]/80 transition-all duration-350 shadow-inner'
+       : 'space-y-1 bg-slate-900/60 p-2.5 rounded-xl border border-white/15 hover:border-white/20 transition-all duration-350');
 
   const inputClass = activeLanding === 'leapmotor'
     ? 'w-full bg-[#2D2926] border border-[#deff01] focus:border-[#deff01] focus:ring-1 focus:ring-[#deff01]/40 rounded-xl pl-9 pr-3 py-2.5 text-base md:text-xs text-slate-100 placeholder-slate-500 outline-none transition font-semibold font-sans'
     : (activeLanding === 'jeep'
-       ? 'w-full bg-[#0d1411] border border-white/10 focus:border-[#50755f] focus:ring-1 focus:ring-[#50755f]/40 rounded-xl pl-9 pr-3 py-2.5 text-base md:text-xs text-white placeholder-slate-400 outline-none transition font-semibold'
+       ? 'w-full bg-[#0d1411] border border-[#424D07] focus:border-[#424D07] focus:ring-1 focus:ring-[#424D07]/40 rounded-xl pl-9 pr-3 py-2.5 text-base md:text-xs text-white placeholder-slate-400 outline-none transition font-semibold'
        : 'w-full bg-[#0a0f18] border border-white/25 focus:border-indigo-400 focus:ring-1 focus:ring-indigo-400/40 rounded-xl pl-9 pr-3 py-2.5 text-base md:text-xs text-white placeholder-slate-400 outline-none transition font-semibold');
 
   return (
@@ -1336,10 +1338,10 @@ export default function LeadForm({ c10ImgUrl, t03ImgUrl, b10ImgUrl }: LeadFormPr
             height: formActive ? '180px' : '122px'
           } : { 
             paddingBottom: '0px',
-            height: '122px',
-            backgroundColor: activeLanding === 'multimarca' ? '#243782' : undefined
+            height: '120px',
+            backgroundColor: activeLanding === 'multimarca' ? '#000000' : undefined
           })}
-          className={`px-6 ${activeLanding === 'multimarca' && selectedSubBrand !== null ? 'hidden' : (activeLanding === 'leapmotor' ? 'py-1 border-b border-white/5 relative z-10' : (activeLanding === 'multimarca' ? 'py-4 bg-[#243782] border-b border-white/5 relative z-10' : 'py-4 bg-[#05070a]/90 border-b border-white/5 relative z-10'))} flex ${activeLanding === 'multimarca' || activeLanding === 'leapmotor' || activeLanding === 'jeep' ? 'justify-center' : 'justify-between'} items-center ${activeLanding === 'leapmotor' ? '' : 'backdrop-blur-md'} sticky top-0 z-25`}
+          className={`px-6 ${activeLanding === 'multimarca' && selectedSubBrand !== null ? 'hidden' : (activeLanding === 'leapmotor' ? 'py-1 border-b border-white/5 relative z-10' : (activeLanding === 'multimarca' ? 'py-4 bg-[#000000] border-b border-white/5 relative z-10' : 'py-4 bg-[#05070a]/90 border-b border-white/5 relative z-10'))} flex ${activeLanding === 'multimarca' || activeLanding === 'leapmotor' || activeLanding === 'jeep' ? 'justify-center' : 'justify-between'} items-center ${activeLanding === 'leapmotor' ? '' : 'backdrop-blur-md'} sticky top-0 z-25`}
         >
           {activeLanding === 'leapmotor' && (
             <div style={{ height: '102px' }} className="flex items-center justify-center w-full max-w-full py-3 sm:py-5">
@@ -1461,7 +1463,7 @@ export default function LeadForm({ c10ImgUrl, t03ImgUrl, b10ImgUrl }: LeadFormPr
                       
                       <button
                         onClick={() => launchFormWithRequest('asesor', 'B10')}
-                        style={{ paddingBottom: '6px' }}
+                        style={{ paddingBottom: '14px', marginBottom: '-24px' }}
                         className="bg-[#deff01] hover:bg-[#c9e600] text-slate-950 font-extrabold pt-3.5 px-4 rounded-xl text-xs uppercase tracking-widest flex items-center justify-center gap-1.5 transition-all duration-300 active:scale-95 shadow-lg shadow-[rgba(222,255,1,0.3)] border border-[#deff01]/50 w-full"
                       >
                         <UserCheck className="w-4 h-4 text-slate-950 shrink-0" />
@@ -1548,7 +1550,10 @@ export default function LeadForm({ c10ImgUrl, t03ImgUrl, b10ImgUrl }: LeadFormPr
                     <>
                       {/* Main Multimarca Brands Selector view */}
                       <div className="text-center py-2">
-                        <h1 className="text-lg sm:text-xl font-bold tracking-[0.16em] text-white uppercase font-encode leading-normal">
+                        <h1 
+                          style={{ fontSize: '14px', lineHeight: '30px' }}
+                          className="font-bold tracking-[0.16em] text-white uppercase font-encode"
+                        >
                           ELIGE LA MARCA DE TU INTERÉS
                         </h1>
                       </div>
@@ -1564,8 +1569,8 @@ export default function LeadForm({ c10ImgUrl, t03ImgUrl, b10ImgUrl }: LeadFormPr
                                   handleBrandSelect(brand);
                                   setSelectedSubBrand(brand);
                                 }}
-                                style={{ height: '92.5px', backgroundColor: '#243782' }}
-                                className="group relative overflow-hidden rounded-2xl border border-white/10 bg-[#243782] hover:bg-[#1d2c69] hover:border-white/20 w-full flex items-center justify-center select-none transition-all duration-300 transform active:scale-[0.99] shadow-lg shadow-black/20"
+                                style={{ height: '92.5px', backgroundColor: '#000000' }}
+                                className="group relative overflow-hidden rounded-2xl border border-white/10 bg-black hover:bg-zinc-900 hover:border-white/20 w-full flex items-center justify-center select-none transition-all duration-300 transform active:scale-[0.99] shadow-lg shadow-black/20"
                               >
                                 <img 
                                   src={LEAPMOTOR_LOGO_NEW_IMG} 
@@ -1585,8 +1590,8 @@ export default function LeadForm({ c10ImgUrl, t03ImgUrl, b10ImgUrl }: LeadFormPr
                                   handleBrandSelect(brand);
                                   setSelectedSubBrand(brand);
                                 }}
-                                style={{ backgroundColor: '#243782' }}
-                                className="group relative overflow-hidden rounded-2xl border border-white/10 bg-[#243782] hover:bg-[#1d2c69] hover:border-white/20 h-20 sm:h-24 w-full flex items-center justify-center select-none transition-all duration-300 transform active:scale-[0.99] shadow-lg shadow-black/20"
+                                style={{ backgroundColor: '#000000' }}
+                                className="group relative overflow-hidden rounded-2xl border border-white/10 bg-black hover:bg-zinc-900 hover:border-white/20 h-20 sm:h-24 w-full flex items-center justify-center select-none transition-all duration-300 transform active:scale-[0.99] shadow-lg shadow-black/20"
                               >
                                 <img 
                                   src={JEEP_LOGO_IMG} 
@@ -1605,8 +1610,8 @@ export default function LeadForm({ c10ImgUrl, t03ImgUrl, b10ImgUrl }: LeadFormPr
                                   handleBrandSelect(brand);
                                   setSelectedSubBrand(brand);
                                 }}
-                                style={{ backgroundColor: '#243782' }}
-                                className="group relative overflow-hidden rounded-2xl border border-white/10 bg-[#243782] hover:bg-[#1d2c69] hover:border-white/20 h-20 sm:h-24 w-full flex items-center justify-center select-none transition-all duration-300 transform active:scale-[0.99] shadow-lg shadow-black/20"
+                                style={{ backgroundColor: '#000000' }}
+                                className="group relative overflow-hidden rounded-2xl border border-white/10 bg-black hover:bg-zinc-900 hover:border-white/20 h-20 sm:h-24 w-full flex items-center justify-center select-none transition-all duration-300 transform active:scale-[0.99] shadow-lg shadow-black/20"
                               >
                                 <img 
                                   src={FIAT_LOGO_IMG} 
@@ -1625,8 +1630,8 @@ export default function LeadForm({ c10ImgUrl, t03ImgUrl, b10ImgUrl }: LeadFormPr
                                   handleBrandSelect(brand);
                                   setSelectedSubBrand(brand);
                                 }}
-                                style={{ backgroundColor: '#243782' }}
-                                className="group relative overflow-hidden rounded-2xl border border-white/10 bg-[#243782] hover:bg-[#1d2c69] hover:border-white/20 h-20 sm:h-24 w-full flex items-center justify-center select-none transition-all duration-300 transform active:scale-[0.99] shadow-lg shadow-black/20"
+                                style={{ backgroundColor: '#000000' }}
+                                className="group relative overflow-hidden rounded-2xl border border-white/10 bg-black hover:bg-zinc-900 hover:border-white/20 h-20 sm:h-24 w-full flex items-center justify-center select-none transition-all duration-300 transform active:scale-[0.99] shadow-lg shadow-black/20"
                               >
                                 <img 
                                   src={DODGE_LOGO_IMG} 
@@ -1645,8 +1650,8 @@ export default function LeadForm({ c10ImgUrl, t03ImgUrl, b10ImgUrl }: LeadFormPr
                                   handleBrandSelect(brand);
                                   setSelectedSubBrand(brand);
                                 }}
-                                style={{ backgroundColor: '#243782' }}
-                                className="group relative overflow-hidden rounded-2xl border border-white/10 bg-[#243782] hover:bg-[#1d2c69] hover:border-white/20 h-20 sm:h-24 w-full flex items-center justify-center select-none transition-all duration-300 transform active:scale-[0.99] shadow-lg shadow-black/20"
+                                style={{ backgroundColor: '#000000' }}
+                                className="group relative overflow-hidden rounded-2xl border border-white/10 bg-black hover:bg-zinc-900 hover:border-white/20 h-20 sm:h-24 w-full flex items-center justify-center select-none transition-all duration-300 transform active:scale-[0.99] shadow-lg shadow-black/20"
                               >
                                 <img 
                                   src={PEUGEOT_LOGO_IMG} 
@@ -1665,8 +1670,8 @@ export default function LeadForm({ c10ImgUrl, t03ImgUrl, b10ImgUrl }: LeadFormPr
                                   handleBrandSelect(brand);
                                   setSelectedSubBrand(brand);
                                 }}
-                                style={{ backgroundColor: '#243782' }}
-                                className="group relative overflow-hidden rounded-2xl border border-white/10 bg-[#243782] hover:bg-[#1d2c69] hover:border-white/20 h-20 sm:h-24 w-full flex items-center justify-center select-none transition-all duration-300 transform active:scale-[0.99] shadow-lg shadow-black/20"
+                                style={{ backgroundColor: '#000000' }}
+                                className="group relative overflow-hidden rounded-2xl border border-white/10 bg-black hover:bg-zinc-900 hover:border-white/20 h-20 sm:h-24 w-full flex items-center justify-center select-none transition-all duration-300 transform active:scale-[0.99] shadow-lg shadow-black/20"
                               >
                                 <img 
                                   src={RAM_LOGO_IMG} 
@@ -1684,8 +1689,8 @@ export default function LeadForm({ c10ImgUrl, t03ImgUrl, b10ImgUrl }: LeadFormPr
                                 handleBrandSelect(brand);
                                 setSelectedSubBrand(brand);
                               }}
-                              style={{ backgroundColor: '#243782' }}
-                              className={`group relative overflow-hidden rounded-2xl border border-white/10 bg-[#243782] hover:bg-[#1d2c69] hover:border-white/20 h-20 sm:h-24 w-full flex items-center justify-center select-none transition-all duration-300 transform active:scale-[0.99] shadow-lg shadow-black/20`}
+                              style={{ backgroundColor: '#000000' }}
+                              className={`group relative overflow-hidden rounded-2xl border border-white/10 bg-black hover:bg-zinc-900 hover:border-white/20 h-20 sm:h-24 w-full flex items-center justify-center select-none transition-all duration-300 transform active:scale-[0.99] shadow-lg shadow-black/20`}
                             >
                               {/* Centralized Brand Logo */}
                               <div className="z-10 flex items-center justify-center w-full px-8 pointer-events-none transition-transform duration-300 group-hover:scale-[1.02]">
@@ -1856,175 +1861,281 @@ export default function LeadForm({ c10ImgUrl, t03ImgUrl, b10ImgUrl }: LeadFormPr
                 )}
 
                 <form onSubmit={handleSubmit} className="space-y-3.5">
-                  {/* Name and Last Name in elegant side-by-side layout */}
-                  <div className="grid grid-cols-2 gap-3">
-                    <div className={rowClass}>
-                      <label id="frm-name-label" htmlFor="name" className={`text-[11px] uppercase ${activeLanding === 'leapmotor' ? 'font-sans' : 'font-mono'} tracking-wider block mb-0.5 ${activeLanding === 'leapmotor' ? 'font-semibold text-white' : 'text-white font-extrabold'}`}>
-                        Nombre *
-                      </label>
-                      <div className="relative">
-                        <User className="absolute left-3 top-3 w-4 h-4 text-slate-300" />
-                        <input
-                          id="name"
-                          type="text"
-                          name="name"
-                          required
-                          placeholder="Tu nombre"
-                          value={formData.name}
-                          onChange={handleChange}
-                          className={inputClass}
-                        />
-                      </div>
-                    </div>
-
-                    <div className={rowClass}>
-                      <label id="frm-lastname-label" htmlFor="lastName" className={`text-[11px] uppercase ${activeLanding === 'leapmotor' ? 'font-sans' : 'font-mono'} tracking-wider block mb-0.5 ${activeLanding === 'leapmotor' ? 'font-semibold text-white' : 'text-white font-extrabold'}`}>
-                        Apellido *
-                      </label>
-                      <div className="relative">
-                        <User className="absolute left-3 top-3 w-4 h-4 text-slate-300" />
-                        <input
-                          id="lastName"
-                          type="text"
-                          name="lastName"
-                          required
-                          placeholder="Tu apellido"
-                          value={formData.lastName}
-                          onChange={handleChange}
-                          className={inputClass}
-                        />
-                      </div>
-                    </div>
-                  </div>
-
-                  {/* Phone & Postal Code fields in the same row */}
-                  <div className="grid grid-cols-2 gap-2">
-                    {/* Phone field */}
-                    <div className={rowClass}>
-                      <label id="frm-phone-label" htmlFor="phone" className={`text-[11px] uppercase ${activeLanding === 'leapmotor' ? 'font-sans' : 'font-mono'} tracking-wider block mb-0.5 truncate ${activeLanding === 'leapmotor' ? 'font-semibold text-white' : 'text-white font-extrabold'}`}>
-                        Teléfono *
-                      </label>
-                      <div className="relative">
-                        <Phone className="absolute left-3 top-3 w-4 h-4 text-slate-300" />
-                        <input
-                          id="phone"
-                          type="tel"
-                          name="phone"
-                          required
-                          placeholder="10 dígitos"
-                          value={formData.phone}
-                          onChange={handleChange}
-                          className={inputClass}
-                        />
-                      </div>
-                    </div>
-
-                    {/* Postal Code field */}
-                    <div className={rowClass}>
-                      <label id="frm-postalcode-label" htmlFor="postalCode" className={`text-[11px] uppercase ${activeLanding === 'leapmotor' ? 'font-sans' : 'font-mono'} tracking-wider block mb-0.5 truncate ${activeLanding === 'leapmotor' ? 'font-semibold text-white' : 'text-white font-extrabold'}`} title="Tu Código Postal *">
-                        Tu Código Postal *
-                      </label>
-                      <div className="relative">
-                        <MapPin className="absolute left-3 top-3 w-4 h-4 text-slate-300" />
-                        <input
-                          id="postalCode"
-                          type="text"
-                          name="postalCode"
-                          required
-                          maxLength={5}
-                          placeholder="Ej. 06000"
-                          value={formData.postalCode}
-                          onChange={(e) => {
-                             const cleaned = e.target.value.replace(/[^0-9]/g, '');
-                             setFormData(prev => ({ ...prev, postalCode: cleaned }));
-                          }}
-                          className={inputClass}
-                        />
-                      </div>
-                    </div>
-                  </div>
-
-                  {/* Mail field */}
-                  <div className={rowClass}>
-                    <label id="frm-email-label" htmlFor="email" className={`text-[11px] uppercase ${activeLanding === 'leapmotor' ? 'font-sans' : 'font-mono'} tracking-wider block mb-0.5 ${activeLanding === 'leapmotor' ? 'font-semibold text-white' : 'text-white font-extrabold'}`}>
-                      Correo Electrónico *
-                    </label>
-                    <div className="relative">
-                      <Mail className="absolute left-3 top-3 w-4 h-4 text-slate-300" />
-                      <input
-                        id="email"
-                        type="email"
-                        name="email"
-                        required
-                        placeholder="tu@correo.com"
-                        value={formData.email}
-                        onChange={handleChange}
-                        className={inputClass}
-                      />
-                    </div>
-                  </div>
-
-                  {/* Models dropdown list tailored by Selected Brand */}
-                  {activeLanding !== 'leapmotor' && (
-                    <div className={rowClass}>
-                      <label id="frm-model-label" className={`text-[11px] uppercase ${activeLanding === 'leapmotor' ? 'font-sans' : 'font-mono'} tracking-wider block mb-0.5 ${activeLanding === 'leapmotor' ? 'font-semibold text-white' : 'text-white font-extrabold'}`}>
-                        Modelo Seleccionado *
-                      </label>
-                      
-                      {(activeLanding === 'jeep' || activeLanding === 'multimarca') ? (
-                        /* Custom visually rich selection trigger */
+                  {activeLanding === 'jeep' ? (
+                    <>
+                      {/* Rearranged full-width stacked layout for Jeep Cherokee */}
+                      <div className={rowClass}>
+                        <label id="frm-name-label" htmlFor="name" className="text-[11px] uppercase font-mono tracking-wider block mb-0.5 text-white font-extrabold">
+                          Nombre *
+                        </label>
                         <div className="relative">
-                          <Car className="absolute left-3.5 top-3 w-4 h-4 text-slate-300 pointer-events-none" />
-                          <button
-                            type="button"
-                            id="model-modal-trigger-btn"
-                            disabled={activeLanding === 'jeep'}
-                            style={{ backgroundColor: '#deff01' }}
-                            onClick={() => {
-                              if (activeLanding === 'jeep') return;
-                              // Ensure formData of interest is initialized correctly of the active brand if empty
-                              if (!formData.modelOfInterest || !activeModelsList.includes(formData.modelOfInterest)) {
-                                setFormData(prev => ({ ...prev, modelOfInterest: activeModelsList[0] }));
-                              }
-                              setShowModelModal(true);
-                            }}
-                            className={`w-full text-left bg-[#0a0f18] text-slate-950 border border-white/25 rounded-xl pl-11 pr-7 py-2.5 text-xs outline-none transition uppercase ${activeLanding === 'leapmotor' ? 'font-sans' : 'font-mono'} font-bold flex items-center justify-between disabled:opacity-75 disabled:cursor-not-allowed`}
-                          >
-                            <span className="truncate text-slate-950">
-                              {selectedBrand} {formData.modelOfInterest || activeModelsList[0]}
-                            </span>
-                            {activeLanding !== 'jeep' && <ChevronDown className="w-3.5 h-3.5 text-slate-950 shrink-0" />}
-                          </button>
-                        </div>
-                      ) : (
-                        /* Standard selection select block for single leapmotor landing */
-                        <div className="relative">
-                          <Car className="absolute left-3.5 top-3 w-4 h-4 text-slate-300" />
-                          <select
-                            id="modelOfInterest"
-                            name="modelOfInterest"
+                          <User className="absolute left-3 top-3 w-4 h-4 text-slate-300" />
+                          <input
+                            id="name"
+                            type="text"
+                            name="name"
                             required
-                            disabled={selectedBrand === 'Leapmotor'}
-                            value={formData.modelOfInterest}
+                            placeholder="Tu nombre"
+                            value={formData.name}
                             onChange={handleChange}
-                            className={`w-full text-white rounded-xl pl-11 pr-7 py-2.5 text-base md:text-xs outline-none appearance-none transition uppercase ${activeLanding === 'leapmotor' ? 'font-sans' : 'font-mono'} disabled:opacity-85 disabled:cursor-not-allowed ${
-                              activeLanding === 'leapmotor'
-                                ? 'bg-[#2D2926] border border-[#deff01] focus:border-[#deff01] font-semibold'
-                                : 'bg-[#0a0f18] border border-white/25 focus:border-indigo-400 font-bold'
-                            }`}
-                          >
-                            {activeModelsList.map(m => (
-                              <option key={m} value={m} className="bg-slate-900 text-white">
-                                {selectedBrand} {m}
-                              </option>
-                            ))}
-                          </select>
-                          {selectedBrand !== 'Leapmotor' && (
-                            <ChevronDown className="absolute right-3 top-3.5 w-4 h-4 text-slate-300 pointer-events-none" />
+                            className={inputClass}
+                          />
+                        </div>
+                      </div>
+
+                      <div className={rowClass}>
+                        <label id="frm-lastname-label" htmlFor="lastName" className="text-[11px] uppercase font-mono tracking-wider block mb-0.5 text-white font-extrabold">
+                          Apellido *
+                        </label>
+                        <div className="relative">
+                          <User className="absolute left-3 top-3 w-4 h-4 text-slate-300" />
+                          <input
+                            id="lastName"
+                            type="text"
+                            name="lastName"
+                            required
+                            placeholder="Tu apellido"
+                            value={formData.lastName}
+                            onChange={handleChange}
+                            className={inputClass}
+                          />
+                        </div>
+                      </div>
+
+                      <div className={rowClass}>
+                        <label id="frm-email-label" htmlFor="email" className="text-[11px] uppercase font-mono tracking-wider block mb-0.5 text-white font-extrabold">
+                          Correo Electrónico *
+                        </label>
+                        <div className="relative">
+                          <Mail className="absolute left-3 top-3 w-4 h-4 text-slate-300" />
+                          <input
+                            id="email"
+                            type="email"
+                            name="email"
+                            required
+                            placeholder="tu@correo.com"
+                            value={formData.email}
+                            onChange={handleChange}
+                            className={inputClass}
+                          />
+                        </div>
+                      </div>
+
+                      <div className={rowClass}>
+                        <label id="frm-phone-label" htmlFor="phone" className="text-[11px] uppercase font-mono tracking-wider block mb-0.5 text-white font-extrabold">
+                          Teléfono *
+                        </label>
+                        <div className="relative">
+                          <Phone className="absolute left-3 top-3 w-4 h-4 text-slate-300" />
+                          <input
+                            id="phone"
+                            type="tel"
+                            name="phone"
+                            required
+                            placeholder="10 dígitos"
+                            value={formData.phone}
+                            onChange={handleChange}
+                            className={inputClass}
+                          />
+                        </div>
+                      </div>
+
+                      <div className={rowClass}>
+                        <label id="frm-postalcode-label" htmlFor="postalCode" className="text-[11px] uppercase font-mono tracking-wider block mb-0.5 text-white font-extrabold" title="Tu Código Postal *">
+                          Tu Código Postal *
+                        </label>
+                        <div className="relative">
+                          <MapPin className="absolute left-3 top-3 w-4 h-4 text-slate-300" />
+                          <input
+                            id="postalCode"
+                            type="text"
+                            name="postalCode"
+                            required
+                            maxLength={5}
+                            placeholder="Ej. 06000"
+                            value={formData.postalCode}
+                            onChange={(e) => {
+                               const cleaned = e.target.value.replace(/[^0-9]/g, '');
+                               setFormData(prev => ({ ...prev, postalCode: cleaned }));
+                            }}
+                            className={inputClass}
+                          />
+                        </div>
+                      </div>
+                    </>
+                  ) : (
+                    <>
+                      {/* Name and Last Name in elegant side-by-side layout */}
+                      <div className="grid grid-cols-2 gap-3">
+                        <div className={rowClass}>
+                          <label id="frm-name-label" htmlFor="name" className={`text-[11px] uppercase ${activeLanding === 'leapmotor' ? 'font-sans' : 'font-mono'} tracking-wider block mb-0.5 ${activeLanding === 'leapmotor' ? 'font-semibold text-white' : 'text-white font-extrabold'}`}>
+                            Nombre *
+                          </label>
+                          <div className="relative">
+                            <User className="absolute left-3 top-3 w-4 h-4 text-slate-300" />
+                            <input
+                              id="name"
+                              type="text"
+                              name="name"
+                              required
+                              placeholder="Tu nombre"
+                              value={formData.name}
+                              onChange={handleChange}
+                              className={inputClass}
+                            />
+                          </div>
+                        </div>
+
+                        <div className={rowClass}>
+                          <label id="frm-lastname-label" htmlFor="lastName" className={`text-[11px] uppercase ${activeLanding === 'leapmotor' ? 'font-sans' : 'font-mono'} tracking-wider block mb-0.5 ${activeLanding === 'leapmotor' ? 'font-semibold text-white' : 'text-white font-extrabold'}`}>
+                            Apellido *
+                          </label>
+                          <div className="relative">
+                            <User className="absolute left-3 top-3 w-4 h-4 text-slate-300" />
+                            <input
+                              id="lastName"
+                              type="text"
+                              name="lastName"
+                              required
+                              placeholder="Tu apellido"
+                              value={formData.lastName}
+                              onChange={handleChange}
+                              className={inputClass}
+                            />
+                          </div>
+                        </div>
+                      </div>
+
+                      {/* Phone & Postal Code fields in the same row */}
+                      <div className="grid grid-cols-2 gap-2">
+                        {/* Phone field */}
+                        <div className={rowClass}>
+                          <label id="frm-phone-label" htmlFor="phone" className={`text-[11px] uppercase ${activeLanding === 'leapmotor' ? 'font-sans' : 'font-mono'} tracking-wider block mb-0.5 truncate ${activeLanding === 'leapmotor' ? 'font-semibold text-white' : 'text-white font-extrabold'}`}>
+                            Teléfono *
+                          </label>
+                          <div className="relative">
+                            <Phone className="absolute left-3 top-3 w-4 h-4 text-slate-300" />
+                            <input
+                              id="phone"
+                              type="tel"
+                              name="phone"
+                              required
+                              placeholder="10 dígitos"
+                              value={formData.phone}
+                              onChange={handleChange}
+                              className={inputClass}
+                            />
+                          </div>
+                        </div>
+
+                        {/* Postal Code field */}
+                        <div className={rowClass}>
+                          <label id="frm-postalcode-label" htmlFor="postalCode" className={`text-[11px] uppercase ${activeLanding === 'leapmotor' ? 'font-sans' : 'font-mono'} tracking-wider block mb-0.5 truncate ${activeLanding === 'leapmotor' ? 'font-semibold text-white' : 'text-white font-extrabold'}`} title="Tu Código Postal *">
+                            Tu Código Postal *
+                          </label>
+                          <div className="relative">
+                            <MapPin className="absolute left-3 top-3 w-4 h-4 text-slate-300" />
+                            <input
+                              id="postalCode"
+                              type="text"
+                              name="postalCode"
+                              required
+                              maxLength={5}
+                              placeholder="Ej. 06000"
+                              value={formData.postalCode}
+                              onChange={(e) => {
+                                 const cleaned = e.target.value.replace(/[^0-9]/g, '');
+                                 setFormData(prev => ({ ...prev, postalCode: cleaned }));
+                              }}
+                              className={inputClass}
+                            />
+                          </div>
+                        </div>
+                      </div>
+
+                      {/* Mail field */}
+                      <div className={rowClass}>
+                        <label id="frm-email-label" htmlFor="email" className={`text-[11px] uppercase ${activeLanding === 'leapmotor' ? 'font-sans' : 'font-mono'} tracking-wider block mb-0.5 ${activeLanding === 'leapmotor' ? 'font-semibold text-white' : 'text-white font-extrabold'}`}>
+                          Correo Electrónico *
+                        </label>
+                        <div className="relative">
+                          <Mail className="absolute left-3 top-3 w-4 h-4 text-slate-300" />
+                          <input
+                            id="email"
+                            type="email"
+                            name="email"
+                            required
+                            placeholder="tu@correo.com"
+                            value={formData.email}
+                            onChange={handleChange}
+                            className={inputClass}
+                          />
+                        </div>
+                      </div>
+
+                      {/* Models dropdown list tailored by Selected Brand */}
+                      {activeLanding !== 'leapmotor' && activeLanding !== 'jeep' && (
+                        <div className={rowClass}>
+                          <label id="frm-model-label" className={`text-[11px] uppercase ${activeLanding === 'leapmotor' ? 'font-sans' : 'font-mono'} tracking-wider block mb-0.5 ${activeLanding === 'leapmotor' ? 'font-semibold text-white' : 'text-white font-extrabold'}`}>
+                            Modelo Seleccionado *
+                          </label>
+                          
+                          {(activeLanding === 'jeep' || activeLanding === 'multimarca') ? (
+                            /* Custom visually rich selection trigger */
+                            <div className="relative">
+                              <Car className="absolute left-3.5 top-3 w-4 h-4 text-slate-300 pointer-events-none" />
+                              <button
+                                type="button"
+                                id="model-modal-trigger-btn"
+                                disabled={activeLanding === 'jeep'}
+                                style={{ backgroundColor: '#deff01' }}
+                                onClick={() => {
+                                  if (activeLanding === 'jeep') return;
+                                  // Ensure formData of interest is initialized correctly of the active brand if empty
+                                  if (!formData.modelOfInterest || !activeModelsList.includes(formData.modelOfInterest)) {
+                                    setFormData(prev => ({ ...prev, modelOfInterest: activeModelsList[0] }));
+                                  }
+                                  setShowModelModal(true);
+                                }}
+                                className={`w-full text-left bg-[#0a0f18] text-slate-950 border border-white/25 rounded-xl pl-11 pr-7 py-2.5 text-xs outline-none transition uppercase ${activeLanding === 'leapmotor' ? 'font-sans' : 'font-mono'} font-bold flex items-center justify-between disabled:opacity-75 disabled:cursor-not-allowed`}
+                              >
+                                <span className="truncate text-slate-950">
+                                  {selectedBrand} {formData.modelOfInterest || activeModelsList[0]}
+                                </span>
+                                {activeLanding !== 'jeep' && <ChevronDown className="w-3.5 h-3.5 text-slate-950 shrink-0" />}
+                              </button>
+                            </div>
+                          ) : (
+                            /* Standard selection select block for single leapmotor landing */
+                            <div className="relative">
+                              <Car className="absolute left-3.5 top-3 w-4 h-4 text-slate-400" />
+                              <select
+                                id="modelOfInterest"
+                                name="modelOfInterest"
+                                required
+                                disabled={selectedBrand === 'Leapmotor'}
+                                value={formData.modelOfInterest}
+                                onChange={handleChange}
+                                className={`w-full text-white rounded-xl pl-11 pr-7 py-2.5 text-base md:text-xs outline-none appearance-none transition uppercase ${activeLanding === 'leapmotor' ? 'font-sans' : 'font-mono'} disabled:opacity-85 disabled:cursor-not-allowed ${
+                                  activeLanding === 'leapmotor'
+                                    ? 'bg-[#2D2926] border border-[#deff01] focus:border-[#deff01] font-semibold'
+                                    : 'bg-[#0a0f18] border border-white/25 focus:border-indigo-400 font-bold'
+                                }`}
+                              >
+                                {activeModelsList.map(m => (
+                                  <option key={m} value={m} className="bg-slate-900 text-white">
+                                    {selectedBrand} {m}
+                                  </option>
+                                ))}
+                              </select>
+                              {selectedBrand !== 'Leapmotor' && (
+                                <ChevronDown className="absolute right-3 top-3.5 w-4 h-4 text-slate-300 pointer-events-none" />
+                              )}
+                            </div>
                           )}
                         </div>
                       )}
-                    </div>
+                    </>
                   )}
 
                   {/* Estado y Distribuidor / State and Distributor cascading selectors */}
@@ -2052,7 +2163,9 @@ export default function LeadForm({ c10ImgUrl, t03ImgUrl, b10ImgUrl }: LeadFormPr
                             className={`w-full text-white rounded-xl pl-11 pr-7 py-2.5 text-base md:text-xs outline-none appearance-none transition uppercase ${activeLanding === 'leapmotor' ? 'font-sans' : 'font-mono'} ${
                               activeLanding === 'leapmotor'
                                 ? 'bg-[#2D2926] border border-[#deff01] focus:border-[#deff01] font-semibold'
-                                : 'bg-[#0a0f18] border border-white/25 focus:border-indigo-400 font-bold'
+                                : (activeLanding === 'jeep'
+                                   ? 'bg-[#0d1411] border border-[#424D07] focus:border-[#424D07] font-semibold'
+                                   : 'bg-[#0a0f18] border border-white/25 focus:border-indigo-400 font-bold')
                             }`}
                           >
                             {availableStates.map(st => (
@@ -2084,7 +2197,9 @@ export default function LeadForm({ c10ImgUrl, t03ImgUrl, b10ImgUrl }: LeadFormPr
                             className={`w-full text-white rounded-xl pl-11 pr-7 py-2.5 text-base md:text-xs outline-none appearance-none transition uppercase ${activeLanding === 'leapmotor' ? 'font-sans' : 'font-mono'} ${
                               activeLanding === 'leapmotor'
                                 ? 'bg-[#2D2926] border border-[#deff01] focus:border-[#deff01] font-semibold'
-                                : 'bg-[#0a0f18] border border-white/25 focus:border-indigo-400 font-bold'
+                                : (activeLanding === 'jeep'
+                                   ? 'bg-[#0d1411] border border-[#424D07] focus:border-[#424D07] font-semibold'
+                                   : 'bg-[#0a0f18] border border-white/25 focus:border-indigo-400 font-bold')
                             }`}
                           >
                             {loadingDbDistributors ? (
