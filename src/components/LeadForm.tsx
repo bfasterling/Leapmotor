@@ -64,7 +64,7 @@ import { BRAND_MODELS_DB } from '../data/brandModelsDb';
 import LEAPMOTOR_TUNNEL_BG from '../assets/images/leapmotor_b10_tunnel_bg_1780692970544.png';
 import LEAPMOTOR_LOGO_IMG from '../assets/images/regenerated_image_1780979872662.png';
 import LEAPMOTOR_LOGO_NEW_IMG from '../assets/images/leapmotor_outline_white_1780977081063.png';
-import JEEP_LOGO_IMG from '../assets/images/regenerated_image_1780715177952.jpg';
+import JEEP_LOGO_IMG from '../assets/images/regenerated_image_1781121932966.png';
 import JEEP_HEADER_LOGO_IMG from '../assets/images/jeep_logo_new_1780714816380.png';
 import FIAT_LOGO_IMG from '../assets/images/regenerated_image_1780715561130.jpg';
 import DODGE_LOGO_BG_IMG from '../assets/images/regenerated_image_1780970482939.png';
@@ -1282,16 +1282,16 @@ export default function LeadForm({ c10ImgUrl, t03ImgUrl, b10ImgUrl }: LeadFormPr
 
   // Dynamic input styling based on active branding (Leapmotor Pantone 2427C #035F1D and Highlight #009100)
   const rowClass = activeLanding === 'leapmotor'
-    ? 'space-y-1 bg-[#035F1D]/10 p-2.5 rounded-xl border border-[#009100]/25 hover:border-[#deff01]/40 hover:bg-[#035F1D]/15 transition-all duration-350'
+    ? 'space-y-1 bg-[#035F1D]/10 p-2 sm:p-2.5 rounded-xl border border-[#009100]/25 hover:border-[#deff01]/40 hover:bg-[#035F1D]/15 transition-all duration-350'
     : (activeLanding === 'jeep'
-       ? 'space-y-1 bg-slate-950/40 p-2.5 rounded-xl border border-[#424D07] hover:border-[#424D07]/80 transition-all duration-350 shadow-inner'
-       : 'space-y-1 bg-slate-900/60 p-2.5 rounded-xl border border-white/15 hover:border-white/20 transition-all duration-350');
+       ? 'space-y-1 bg-slate-950/40 p-2 sm:p-2.5 rounded-xl border border-[#424D07] hover:border-[#424D07]/80 transition-all duration-350 shadow-inner'
+       : 'space-y-1 bg-slate-900/60 p-2 sm:p-2.5 rounded-xl border border-white/15 hover:border-white/20 transition-all duration-350');
 
   const inputClass = activeLanding === 'leapmotor'
-    ? 'w-full bg-[#2D2926] border border-[#deff01] focus:border-[#deff01] focus:ring-1 focus:ring-[#deff01]/40 rounded-xl pl-9 pr-3 py-2.5 text-base md:text-xs text-slate-100 placeholder-slate-500 outline-none transition font-semibold font-sans'
+    ? 'w-full bg-[#2D2926] border border-[#deff01] focus:border-[#deff01] focus:ring-1 focus:ring-[#deff01]/40 rounded-xl pl-9 pr-3 py-2 sm:py-2.5 text-base md:text-xs text-slate-100 placeholder-slate-500 outline-none transition font-semibold font-sans'
     : (activeLanding === 'jeep'
-       ? 'w-full bg-[#0d1411] border border-[#424D07] focus:border-[#424D07] focus:ring-1 focus:ring-[#424D07]/40 rounded-xl pl-9 pr-3 py-2.5 text-base md:text-xs text-white placeholder-slate-400 outline-none transition font-semibold'
-       : 'w-full bg-[#0a0f18] border border-white/25 focus:border-indigo-400 focus:ring-1 focus:ring-indigo-400/40 rounded-xl pl-9 pr-3 py-2.5 text-base md:text-xs text-white placeholder-slate-400 outline-none transition font-semibold');
+       ? 'w-full bg-[#0d1411] border border-[#424D07] focus:border-[#424D07] focus:ring-1 focus:ring-[#424D07]/40 rounded-xl pl-9 pr-3 py-2 sm:py-2.5 text-base md:text-xs text-white placeholder-slate-400 outline-none transition font-semibold'
+       : 'w-full bg-[#0a0f18] border border-white/25 focus:border-indigo-400 focus:ring-1 focus:ring-indigo-400/40 rounded-xl pl-9 pr-3 py-2 sm:py-2.5 text-base md:text-xs text-white placeholder-slate-400 outline-none transition font-semibold');
 
   return (
     <div 
@@ -1595,13 +1595,13 @@ export default function LeadForm({ c10ImgUrl, t03ImgUrl, b10ImgUrl }: LeadFormPr
                                   setSelectedSubBrand(brand);
                                 }}
                                 style={{ height: '92.5px', backgroundColor: '#000000' }}
-                                className="group relative overflow-hidden rounded-2xl border border-white/10 bg-black hover:bg-zinc-900 hover:border-white/20 w-full flex items-center justify-center select-none transition-all duration-300 transform active:scale-[0.99] shadow-lg shadow-black/20"
+                                className="relative overflow-hidden rounded-2xl border border-white/10 bg-black w-full flex items-center justify-center select-none shadow-lg shadow-black/20 cursor-pointer"
                               >
                                 <img 
                                   src={LEAPMOTOR_LOGO_NEW_IMG} 
                                   alt="Leapmotor"
                                   referrerPolicy="no-referrer"
-                                  className="w-auto max-w-[85%] max-h-[50%] object-contain pointer-events-none transition-transform duration-300 group-hover:scale-[1.05] p-0.5"
+                                  className="w-auto max-w-[85%] max-h-[50%] object-contain pointer-events-none p-0.5"
                                   style={{ mixBlendMode: 'normal' }}
                                 />
                               </button>
@@ -1616,13 +1616,13 @@ export default function LeadForm({ c10ImgUrl, t03ImgUrl, b10ImgUrl }: LeadFormPr
                                   setSelectedSubBrand(brand);
                                 }}
                                 style={{ backgroundColor: '#000000' }}
-                                className="group relative overflow-hidden rounded-2xl border border-white/10 bg-black hover:bg-zinc-900 hover:border-white/20 h-20 sm:h-24 w-full flex items-center justify-center select-none transition-all duration-300 transform active:scale-[0.99] shadow-lg shadow-black/20"
+                                className="relative overflow-hidden rounded-2xl border border-white/10 bg-black h-20 sm:h-24 w-full flex items-center justify-center select-none shadow-lg shadow-black/20 cursor-pointer"
                               >
                                 <img 
                                   src={JEEP_LOGO_IMG} 
                                   alt="Jeep"
                                   referrerPolicy="no-referrer"
-                                  className="w-full h-full object-contain pointer-events-none transition-transform duration-300 scale-[1.5] group-hover:scale-[1.58] p-1"
+                                  className="w-full h-full object-contain pointer-events-none scale-[1.5] p-1"
                                 />
                               </button>
                             );
@@ -1636,13 +1636,13 @@ export default function LeadForm({ c10ImgUrl, t03ImgUrl, b10ImgUrl }: LeadFormPr
                                   setSelectedSubBrand(brand);
                                 }}
                                 style={{ backgroundColor: '#000000' }}
-                                className="group relative overflow-hidden rounded-2xl border border-white/10 bg-black hover:bg-zinc-900 hover:border-white/20 h-20 sm:h-24 w-full flex items-center justify-center select-none transition-all duration-300 transform active:scale-[0.99] shadow-lg shadow-black/20"
+                                className="relative overflow-hidden rounded-2xl border border-white/10 bg-black h-20 sm:h-24 w-full flex items-center justify-center select-none shadow-lg shadow-black/20 cursor-pointer"
                               >
                                 <img 
                                   src={FIAT_LOGO_IMG} 
                                   alt="Fiat"
                                   referrerPolicy="no-referrer"
-                                  className="w-full h-full object-contain pointer-events-none transition-transform duration-300 group-hover:scale-[1.05] p-3 sm:p-3.5"
+                                  className="w-full h-full object-contain pointer-events-none p-3 sm:p-3.5"
                                 />
                               </button>
                             );
@@ -1656,13 +1656,13 @@ export default function LeadForm({ c10ImgUrl, t03ImgUrl, b10ImgUrl }: LeadFormPr
                                   setSelectedSubBrand(brand);
                                 }}
                                 style={{ backgroundColor: '#000000' }}
-                                className="group relative overflow-hidden rounded-2xl border border-white/10 bg-black hover:bg-zinc-900 hover:border-white/20 h-20 sm:h-24 w-full flex items-center justify-center select-none transition-all duration-300 transform active:scale-[0.99] shadow-lg shadow-black/20"
+                                className="relative overflow-hidden rounded-2xl border border-white/10 bg-black h-20 sm:h-24 w-full flex items-center justify-center select-none shadow-lg shadow-black/20 cursor-pointer"
                               >
                                 <img 
                                   src={DODGE_LOGO_IMG} 
                                   alt="Dodge"
                                   referrerPolicy="no-referrer"
-                                  className="w-full h-full object-contain pointer-events-none transition-transform duration-300 scale-[1.15] group-hover:scale-[1.22] p-2"
+                                  className="w-full h-full object-contain pointer-events-none scale-[1.15] p-2"
                                 />
                               </button>
                             );
@@ -1676,13 +1676,13 @@ export default function LeadForm({ c10ImgUrl, t03ImgUrl, b10ImgUrl }: LeadFormPr
                                   setSelectedSubBrand(brand);
                                 }}
                                 style={{ backgroundColor: '#000000' }}
-                                className="group relative overflow-hidden rounded-2xl border border-white/10 bg-black hover:bg-zinc-900 hover:border-white/20 h-20 sm:h-24 w-full flex items-center justify-center select-none transition-all duration-300 transform active:scale-[0.99] shadow-lg shadow-black/20"
+                                className="relative overflow-hidden rounded-2xl border border-white/10 bg-black h-20 sm:h-24 w-full flex items-center justify-center select-none shadow-lg shadow-black/20 cursor-pointer"
                               >
                                 <img 
                                   src={PEUGEOT_LOGO_IMG} 
                                   alt="Peugeot"
                                   referrerPolicy="no-referrer"
-                                  className="w-full h-full object-contain pointer-events-none transition-transform duration-300 scale-[1.48] group-hover:scale-[1.55] p-1"
+                                  className="w-full h-full object-contain pointer-events-none scale-[1.48] p-1"
                                 />
                               </button>
                             );
@@ -1695,14 +1695,14 @@ export default function LeadForm({ c10ImgUrl, t03ImgUrl, b10ImgUrl }: LeadFormPr
                                   handleBrandSelect(brand);
                                   setSelectedSubBrand(brand);
                                 }}
-                                style={{ backgroundColor: '#040404' }}
-                                className="group relative overflow-hidden rounded-2xl border border-white/10 bg-[#040404] hover:bg-zinc-900 hover:border-white/20 h-20 sm:h-24 w-full flex items-center justify-center select-none transition-all duration-300 transform active:scale-[0.99] shadow-lg shadow-black/20"
+                                style={{ backgroundColor: '#000000' }}
+                                className="relative overflow-hidden rounded-2xl border border-white/10 bg-black h-20 sm:h-24 w-full flex items-center justify-center select-none shadow-lg shadow-black/20 cursor-pointer"
                               >
                                 <img 
                                   src={RAM_LOGO_IMG} 
                                   alt="Ram"
                                   referrerPolicy="no-referrer"
-                                  className="w-full h-full object-contain pointer-events-none transition-transform duration-300 group-hover:scale-[1.25] p-1.5 sm:p-2 scale-[1.2]"
+                                  className="w-full h-full object-contain pointer-events-none scale-[1.2] p-1.5 sm:p-2"
                                 />
                               </button>
                             );
@@ -1854,8 +1854,8 @@ export default function LeadForm({ c10ImgUrl, t03ImgUrl, b10ImgUrl }: LeadFormPr
               animate={{ opacity: 1, x: 0 }}
               exit={{ opacity: 0, x: -20 }}
               transition={{ duration: 0.35 }}
-              className="px-6 py-4 flex flex-col gap-3 flex-1 min-h-0 relative z-10 overflow-y-auto custom-scrollbar touch-pan-y"
-              style={{ paddingTop: '6px', paddingBottom: '6px', scrollbarWidth: 'thin' }}
+              className="px-4 sm:px-6 py-3 sm:py-4 flex flex-col gap-2 sm:gap-3 flex-1 min-h-0 relative z-10 overflow-y-auto custom-scrollbar"
+              style={{ paddingTop: '4px', paddingBottom: '4px', scrollbarWidth: 'thin' }}
             >
               <div>
                 {/* Back Link */}
@@ -2058,7 +2058,7 @@ export default function LeadForm({ c10ImgUrl, t03ImgUrl, b10ImgUrl }: LeadFormPr
                         {/* Postal Code field */}
                         <div className={rowClass}>
                           <label id="frm-postalcode-label" htmlFor="postalCode" className={`text-[11px] uppercase ${activeLanding === 'leapmotor' ? 'font-sans' : 'font-mono'} tracking-wider block mb-0.5 truncate ${activeLanding === 'leapmotor' ? 'font-semibold text-white' : 'text-white font-extrabold'}`} title="Tu Código Postal *">
-                            Tu Código Postal *
+                            {activeLanding === 'multimarca' ? 'C.P. *' : 'Tu Código Postal *'}
                           </label>
                           <div className="relative">
                             <MapPin className="absolute left-3 top-3 w-4 h-4 text-slate-300" />
@@ -2083,7 +2083,7 @@ export default function LeadForm({ c10ImgUrl, t03ImgUrl, b10ImgUrl }: LeadFormPr
                       {/* Mail field */}
                       <div className={rowClass}>
                         <label id="frm-email-label" htmlFor="email" className={`text-[11px] uppercase ${activeLanding === 'leapmotor' ? 'font-sans' : 'font-mono'} tracking-wider block mb-0.5 ${activeLanding === 'leapmotor' ? 'font-semibold text-white' : 'text-white font-extrabold'}`}>
-                          Correo Electrónico *
+                          {activeLanding === 'multimarca' ? 'Correo *' : 'Correo Electrónico *'}
                         </label>
                         <div className="relative">
                           <Mail className="absolute left-3 top-3 w-4 h-4 text-slate-300" />
@@ -2104,7 +2104,7 @@ export default function LeadForm({ c10ImgUrl, t03ImgUrl, b10ImgUrl }: LeadFormPr
                       {activeLanding !== 'leapmotor' && activeLanding !== 'jeep' && (
                         <div className={rowClass}>
                           <label id="frm-model-label" className={`text-[11px] uppercase ${activeLanding === 'leapmotor' ? 'font-sans' : 'font-mono'} tracking-wider block mb-0.5 ${activeLanding === 'leapmotor' ? 'font-semibold text-white' : 'text-white font-extrabold'}`}>
-                            Modelo Seleccionado *
+                            {activeLanding === 'multimarca' ? 'Modelo *' : 'Modelo Seleccionado *'}
                           </label>
                           
                           {(activeLanding === 'jeep' || activeLanding === 'multimarca') ? (
@@ -2208,7 +2208,7 @@ export default function LeadForm({ c10ImgUrl, t03ImgUrl, b10ImgUrl }: LeadFormPr
                       {/* Distribuidor de Preferencia selector */}
                       <div className={rowClass}>
                         <label id="frm-distributor-label" htmlFor="distributor" className={`text-[11px] uppercase ${activeLanding === 'leapmotor' ? 'font-sans' : 'font-mono'} tracking-wider block mb-0.5 ${activeLanding === 'leapmotor' ? 'font-semibold text-white' : 'text-white font-extrabold'}`}>
-                          Distribuidor de Preferencia * {loadingDbDistributors && <span className="text-emerald-400 font-bold animate-pulse text-[9px] lowercase">(consultando BD...)</span>}
+                          {activeLanding === 'multimarca' ? 'Distribuidor *' : 'Distribuidor de Preferencia *'} {loadingDbDistributors && <span className="text-emerald-400 font-bold animate-pulse text-[9px] lowercase">(consultando BD...)</span>}
                         </label>
                         <div className="relative">
                           <Settings className="absolute left-3.5 top-3.5 w-4 h-4 text-slate-300 pointer-events-none z-10" />
