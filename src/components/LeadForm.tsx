@@ -79,7 +79,7 @@ import JEEP_GRAND_WAGONEER_IMG from '../assets/images/jeep_grand_wagoneer_178044
 import JEEP_JT_IMG from '../assets/images/jeep_jt_1780440462196.png';
 import JEEP_RENEGADE_IMG from '../assets/images/jeep_renegade_1780440473660.png';
 import STELLANTIS_IMG from '../assets/images/stellantis_multibrand_1780407983016.png';
-import STELLANTIS_HEADER_LOGO_TRANSPARENT_IMG from '../assets/images/regenerated_image_1781104822022.jpg';
+import STELLANTIS_HEADER_LOGO_TRANSPARENT_IMG from '../assets/images/regenerated_image_1781144678940.png';
 import CARPA_MAP_IMG from '../assets/images/stellantis_carpa_map_1780431196502.png';
 import MAP_800X800_IMG from '../assets/images/mapa-800x800.jpg';
 
@@ -89,6 +89,30 @@ import PEUGEOT_LANDING_BG_26 from '../assets/images/peugeot_landing_2026_1780767
 import JEEP_LANDING_BG_26 from '../assets/images/jeep_landing_2026_1780767759797.png';
 import FIAT_LANDING_BG_26 from '../assets/images/fiat_landing_2026_1780767772093.png';
 import DODGE_LANDING_BG_26 from '../assets/images/dodge_landing_2026_1780767783850.png';
+import MULTIMARCA_REGENERATED_JEEP_BG from '../assets/images/regenerated_image_1781147422783.jpg';
+
+// Independent logo assets decoupled specifically for the Multimarca experience to prevent cascading overrides
+const MULTIMARCA_LEAPMOTOR_LOGO = LEAPMOTOR_LOGO_NEW_IMG;
+const MULTIMARCA_JEEP_LOGO = JEEP_LOGO_IMG;
+const MULTIMARCA_FIAT_LOGO = FIAT_LOGO_IMG;
+const MULTIMARCA_DODGE_LOGO = DODGE_LOGO_IMG;
+const MULTIMARCA_PEUGEOT_LOGO = PEUGEOT_LOGO_IMG;
+const MULTIMARCA_RAM_LOGO = RAM_LOGO_IMG;
+
+// Decoupled brand sub-page top logo assets for the multimarca brand pages
+const BRAND_PAGE_TOP_LEAPMOTOR_LOGO = LEAPMOTOR_LOGO_IMG;
+const BRAND_PAGE_TOP_JEEP_LOGO = JEEP_LOGO_IMG;
+const BRAND_PAGE_TOP_FIAT_LOGO = FIAT_LOGO_IMG;
+const BRAND_PAGE_TOP_DODGE_LOGO = DODGE_LOGO_IMG;
+const BRAND_PAGE_TOP_PEUGEOT_LOGO = PEUGEOT_LOGO_IMG;
+const BRAND_PAGE_TOP_RAM_LOGO = RAM_LOGO_IMG;
+
+// Decoupled background/hero images for the multimarca brand pages to ensure independent workability
+const MULTIMARCA_JEEP_BG = MULTIMARCA_REGENERATED_JEEP_BG;
+const MULTIMARCA_FIAT_BG = FIAT_LANDING_BG_26;
+const MULTIMARCA_DODGE_BG = DODGE_LANDING_BG_26;
+const MULTIMARCA_PEUGEOT_BG = PEUGEOT_LANDING_BG_26;
+const MULTIMARCA_RAM_BG = RAM_LANDING_BG_26;
 
 const MEX_STATES = [
   'Aguascalientes',
@@ -234,11 +258,11 @@ const SUB_BRAND_DETAILS: Record<string, {
     name: 'Jeep',
     modelName: 'Wrangler',
     tagline: 'Solo hay uno',
-    bgImage: JEEP_LANDING_BG_26,
-    pantoneHex: '#7d9267',
-    accentBg: 'from-[#7d9267]/90 via-[#7d9267]/35 to-[#050706]/10',
-    btnBg: 'bg-[#7d9267] hover:bg-[#8da374]',
-    btnBorder: 'border-[#7d9267]/30',
+    bgImage: MULTIMARCA_JEEP_BG,
+    pantoneHex: '#ffffff',
+    accentBg: 'from-[#ffffff]/90 via-[#ffffff]/35 to-[#050706]/10',
+    btnBg: 'bg-[#487f70] hover:bg-[#396559]',
+    btnBorder: 'border-[#487f70]/30',
     highlights: [
       { title: 'Poder de Tracción 4x4', desc: 'Capacidad de vadeo y control de tracción legendarios en cualquier superficie.' },
       { title: 'Refinamiento Premium', desc: 'Asientos de piel premium y espacios amplios con acabados de alta calidad.' },
@@ -249,7 +273,7 @@ const SUB_BRAND_DETAILS: Record<string, {
     name: 'Fiat',
     modelName: 'Pulse Abarth',
     tagline: 'Llenos de vida',
-    bgImage: FIAT_LANDING_BG_26,
+    bgImage: MULTIMARCA_FIAT_BG,
     pantoneHex: '#ffffff',
     accentBg: 'from-[#ffffff]/90 via-[#ffffff]/35 to-[#ffffff]/10',
     btnBg: 'bg-[#222222] hover:bg-[#333333]',
@@ -264,7 +288,7 @@ const SUB_BRAND_DETAILS: Record<string, {
     name: 'Dodge',
     modelName: 'Attitude',
     tagline: 'ADN de potencia y rebeldía',
-    bgImage: DODGE_LANDING_BG_26,
+    bgImage: MULTIMARCA_DODGE_BG,
     pantoneHex: '#000000',
     accentBg: 'from-[#000000]/85 via-[#000000]/25 to-[#000000]/10',
     btnBg: 'bg-[#1a1a1a] hover:bg-[#333333]',
@@ -279,7 +303,7 @@ const SUB_BRAND_DETAILS: Record<string, {
     name: 'Peugeot',
     modelName: '3008',
     tagline: 'Súbete y entenderás lo extraordinario',
-    bgImage: PEUGEOT_LANDING_BG_26,
+    bgImage: MULTIMARCA_PEUGEOT_BG,
     pantoneHex: '#ffffff',
     accentBg: 'from-[#ffffff]/90 via-[#ffffff]/25 to-[#ffffff]/10',
     btnBg: 'bg-[#222222] hover:bg-[#333333]',
@@ -294,7 +318,7 @@ const SUB_BRAND_DETAILS: Record<string, {
     name: 'RAM',
     modelName: 'RAM 1500',
     tagline: 'A todo. Con todo',
-    bgImage: RAM_LANDING_BG_26,
+    bgImage: MULTIMARCA_RAM_BG,
     pantoneHex: '#000000',
     accentBg: 'from-[#000000]/95 via-[#000000]/35 to-[#000000]/10',
     btnBg: 'bg-[#1a1a1a] hover:bg-[#333333]',
@@ -314,6 +338,89 @@ interface LeadFormProps {
 }
 
 export default function LeadForm({ c10ImgUrl, t03ImgUrl, b10ImgUrl }: LeadFormProps) {
+  const getMultimarcaSuccessTheme = (brandName: string) => {
+    const b = (brandName || '').toLowerCase();
+    switch (b) {
+      case 'jeep':
+        return {
+          bg: '#FFFFFF',
+          btnBg: '#487F70',
+          btnText: '#FFFFFF',
+          textColor: '#1e293b',
+          subtextColor: '#475569',
+          img: JEEP_IMG,
+          isLight: true,
+          logoBg: '#487F70'
+        };
+      case 'fiat':
+        return {
+          bg: '#EE395E',
+          btnBg: '#FFFFFF',
+          btnText: '#EE395E',
+          textColor: '#FFFFFF',
+          subtextColor: '#FFE4E6',
+          img: MULTIMARCA_FIAT_BG,
+          isLight: false,
+          logoBg: '#FFFFFF'
+        };
+      case 'peugeot':
+        return {
+          bg: '#FFFFFF',
+          btnBg: '#0074E8',
+          btnText: '#FFFFFF',
+          textColor: '#1e293b',
+          subtextColor: '#475569',
+          img: MULTIMARCA_PEUGEOT_BG,
+          isLight: true,
+          logoBg: '#0074E8'
+        };
+      case 'dodge':
+        return {
+          bg: '#000000',
+          btnBg: '#D50000',
+          btnText: '#FFFFFF',
+          textColor: '#FFFFFF',
+          subtextColor: '#94a3b8',
+          img: MULTIMARCA_DODGE_BG,
+          isLight: false,
+          logoBg: '#D50000'
+        };
+      case 'ram':
+        return {
+          bg: '#000000',
+          btnBg: '#DD4E3C',
+          btnText: '#FFFFFF',
+          textColor: '#FFFFFF',
+          subtextColor: '#94a3b8',
+          img: MULTIMARCA_RAM_BG,
+          isLight: false,
+          logoBg: '#DD4E3C'
+        };
+      case 'leapmotor':
+        return {
+          bg: '#000000',
+          btnBg: '#DEFF01',
+          btnText: '#000000',
+          textColor: '#FFFFFF',
+          subtextColor: '#94a3b8',
+          img: b10ImgUrl || 'https://images.unsplash.com/photo-1617788138017-80ad40651399?w=600&q=80',
+          isLight: false,
+          logoBg: '#DEFF01'
+        };
+      default:
+        return {
+          bg: '#05070a',
+          btnBg: '#FF415A',
+          btnText: '#FFFFFF',
+          textColor: '#FFFFFF',
+          subtextColor: '#94a3b8',
+          img: STELLANTIS_IMG,
+          isLight: false,
+          logoBg: '#FF415A'
+        };
+    }
+  };
+
   // Experience selector: 'leapmotor' | 'jeep' | 'multimarca'
   const [activeLanding, setActiveLanding] = useState<'leapmotor' | 'jeep' | 'multimarca'>(() => {
     if (typeof window !== 'undefined') {
@@ -546,7 +653,8 @@ export default function LeadForm({ c10ImgUrl, t03ImgUrl, b10ImgUrl }: LeadFormPr
               src={JEEP_LOGO_IMG} 
               alt="Jeep"
               referrerPolicy="no-referrer"
-              className={`w-full ${isLarge ? 'max-w-[400px] sm:max-w-[490px] h-30 sm:h-36' : 'max-w-[105px] sm:max-w-[125px] h-6.5 sm:h-7.5'} object-contain transition-all duration-300`} 
+              className={`w-full ${isLarge ? 'max-w-[400px] sm:max-w-[490px]' : 'max-w-[105px] sm:max-w-[125px] h-6.5 sm:h-7.5'} object-contain transition-all duration-300`} 
+              style={isLarge ? { height: '84px' } : undefined}
             />
           </div>
         );
@@ -600,6 +708,84 @@ export default function LeadForm({ c10ImgUrl, t03ImgUrl, b10ImgUrl }: LeadFormPr
               alt="Peugeot"
               referrerPolicy="no-referrer"
               className={`w-full ${isLarge ? 'max-w-[400px] sm:max-w-[490px] h-28 sm:h-32' : 'max-w-[105px] sm:max-w-[125px] h-6.5 sm:h-7.5'} object-contain transition-all duration-300`} 
+            />
+          </div>
+        );
+      default:
+        return <span className="font-black text-xs">{brandName}</span>;
+    }
+  };
+
+  // Renders independent top logos for brand sub-pages (decoupled from selectors and rest of application)
+  const renderBrandPageTopLogo = (brandName: string) => {
+    switch (brandName) {
+      case 'Leapmotor':
+        return (
+          <div className="flex flex-col items-center justify-center w-full px-0.5" id="top-brand-logo-leapmotor">
+            <img 
+              src={BRAND_PAGE_TOP_LEAPMOTOR_LOGO} 
+              alt="Leapmotor"
+              referrerPolicy="no-referrer"
+              className="w-full max-w-[400px] sm:max-w-[490px] h-13 sm:h-16 object-contain transition-all duration-300"
+              style={{ mixBlendMode: 'normal' }}
+            />
+          </div>
+        );
+      case 'Jeep':
+        return (
+          <div className="flex flex-col items-center justify-center w-full px-0.5" id="top-brand-logo-jeep" style={{ height: '164px', marginTop: '-24px', marginBottom: '-37px' }}>
+            <svg 
+              role="img" 
+              viewBox="0 0 24 24" 
+              className="w-full max-w-[800px] sm:max-w-[980px] fill-black transition-all duration-300 pointer-events-none" 
+              style={{ height: '168px' }}
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path d="M4.1651 7.1687v5.2011c0 .6762-.444 1.0777-1.1628 1.0777-.7185 0-1.0992-.5283-1.0992-1.0992v-.9299H0v.9514c0 .972.296 2.7068 3.0235 2.7068 2.7272 0 3.1082-1.8614 3.1082-2.7488V7.1687Zm4.9177 2.1562c-1.7973 0-2.6003 1.6485-2.6003 3.0657 0 1.4168.9094 2.7912 2.7695 2.7912 1.6285.021 2.707-1.0361 2.707-1.8187h-1.7977s-.2113.5078-.8458.5078c-.6343 0-.9934-.3596-.9934-1.2265h3.6576c0-2.7277-1.3526-3.3195-2.897-3.3195zm5.8471 0c-1.7968 0-2.6007 1.6485-2.6007 3.0657 0 1.4168.9094 2.7912 2.7705 2.7912 1.628.021 2.7067-1.0361 2.7067-1.8187h-1.7978s-.2116.5078-.8454.5078c-.6348 0-.9942-.3596-.9942-1.2265h3.6574c0-2.7277-1.3523-3.3195-2.8965-3.3195zm6.7435.0635c-.9132 0-1.3186.4962-1.3401.522-.1283.1538-.2875.3165-.2875-.0782v-.2959h-1.8193v7.295h1.8398V14.822c0-.148.1478-.126.2543 0 .1063.1277.5711.4443 1.3752.4443C23.155 15.2663 24 13.9978 24 12.264c0-2.2415-1.4162-2.8757-2.3266-2.8756Zm-12.401 1.1203c.6766 0 .972.5073.972 1.0365H8.3843c0-.5718.2327-1.0365.8882-1.0365zm5.8468 0c.6767 0 .9724.5073.9724 1.0365H14.231c0-.5718.2332-1.0365.8883-1.0365zm5.9204.296c.9318 0 1.1.7189 1.1 1.4593 0 .74-.1272 1.7124-1.0141 1.7124-.8884 0-1.1212-.5709-1.1017-1.6486.022-1.0788.4441-1.523 1.0158-1.523zm2.2813 4.5664a.5855.5855 0 0 0-.5856.5857c0 .3233.2617.5856.5856.5856.3218 0 .585-.2623.585-.5856 0-.3233-.2632-.5857-.585-.5857zm0 .062a.524.524 0 0 1 .5236.5237c0 .2884-.2346.5246-.5236.5246a.5258.5258 0 0 1-.525-.5246c0-.289.2352-.5236.525-.5236zm-.2108.2024v.6208h.0725v-.2689h.1764l.1159.269h.0806l-.1216-.2873c.0386-.0133.0514-.0227.072-.0447.0266-.0287.0434-.0739.0434-.115 0-.1034-.0796-.174-.195-.174zm.0705.0676h.1722c.072 0 .1177.041.1177.1045 0 .072-.0485.1168-.1278.1168h-.1621z" />
+            </svg>
+          </div>
+        );
+      case 'Ram':
+        return (
+          <div className="flex flex-col items-center justify-center w-full px-0.5" id="top-brand-logo-ram">
+            <img 
+              src={BRAND_PAGE_TOP_RAM_LOGO} 
+              alt="Ram"
+              referrerPolicy="no-referrer"
+              className="w-full max-w-[400px] sm:max-w-[490px] h-24 sm:h-28 object-contain transition-all duration-300" 
+            />
+          </div>
+        );
+      case 'Dodge':
+        return (
+          <div className="flex flex-col items-center justify-center w-full px-0.5" id="top-brand-logo-dodge">
+            <img 
+              src={BRAND_PAGE_TOP_DODGE_LOGO} 
+              alt="Dodge"
+              referrerPolicy="no-referrer"
+              className="w-full max-w-[180px] sm:max-w-[220px] h-12 sm:h-14 object-contain transition-all duration-300" 
+            />
+          </div>
+        );
+      case 'Fiat':
+        return (
+          <div className="flex flex-col items-center justify-center w-full px-0.5" id="top-brand-logo-fiat">
+            <img 
+              src={BRAND_PAGE_TOP_FIAT_LOGO} 
+              alt="Fiat"
+              referrerPolicy="no-referrer"
+              className="w-full max-w-[400px] sm:max-w-[490px] h-26 sm:h-30 object-contain transition-all duration-300" 
+            />
+          </div>
+        );
+      case 'Peugeot':
+        return (
+          <div className="flex flex-col items-center justify-center w-full px-0.5" id="top-brand-logo-peugeot">
+            <img 
+              src={BRAND_PAGE_TOP_PEUGEOT_LOGO} 
+              alt="Peugeot"
+              referrerPolicy="no-referrer"
+              className="w-full max-w-[400px] sm:max-w-[490px] h-28 sm:h-32 object-contain transition-all duration-300" 
             />
           </div>
         );
@@ -1324,34 +1510,40 @@ export default function LeadForm({ c10ImgUrl, t03ImgUrl, b10ImgUrl }: LeadFormPr
   const currentBrandDetails = activeMultimarcaBrandKey ? SUB_BRAND_DETAILS[activeMultimarcaBrandKey] : null;
   const subBrandBgColor = currentBrandDetails ? currentBrandDetails.pantoneHex : undefined;
 
-  const isLightBg = activeLanding === 'multimarca' && subBrandBgColor === '#ffffff';
+  const isLightBg = activeLanding === 'multimarca' && (subBrandBgColor === '#ffffff' || !selectedSubBrand || !subBrandBgColor);
 
   const labelTextClass = `text-[11px] uppercase ${activeLanding === 'leapmotor' ? 'font-sans' : 'font-mono'} tracking-wider block mb-0.5 truncate ${
     activeLanding === 'leapmotor' ? 'font-semibold' : 'font-extrabold'
   } ${isLightBg ? 'text-slate-800' : 'text-white'}`;
 
-  // Dynamic input styling based on active branding (Leapmotor Pantone 2427C #035F1D and Highlight #009100)
-  const rowClass = isLightBg
-    ? 'space-y-1 bg-slate-100 p-2 sm:p-2.5 rounded-xl border border-slate-200 hover:border-slate-300 transition-all duration-350'
-    : (activeLanding === 'leapmotor'
-       ? 'space-y-1 bg-[#035F1D]/10 p-2 sm:p-2.5 rounded-xl border border-[#009100]/25 hover:border-[#deff01]/40 hover:bg-[#035F1D]/15 transition-all duration-350'
-       : (activeLanding === 'jeep'
-          ? 'space-y-1 bg-slate-950/40 p-2 sm:p-2.5 rounded-xl border border-[#424D07] hover:border-[#424D07]/80 transition-all duration-350 shadow-inner'
-          : 'space-y-1 bg-slate-900/60 p-2 sm:p-2.5 rounded-xl border border-white/15 hover:border-white/20 transition-all duration-350'));
+  const isJeepPage = selectedSubBrand === 'Jeep' || (activeMultimarcaBrandKey === 'Jeep');
 
-  const inputClass = isLightBg
-    ? 'w-full bg-white border border-slate-300 focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500/40 rounded-xl pl-9 pr-3 py-2 sm:py-2.5 text-base md:text-sm text-slate-900 placeholder-slate-400 outline-none transition font-semibold'
-    : (activeLanding === 'leapmotor'
-       ? 'w-full bg-[#2D2926] border border-[#deff01] focus:border-[#deff01] focus:ring-1 focus:ring-[#deff01]/40 rounded-xl pl-9 pr-3 py-2 sm:py-2.5 text-base md:text-xs text-slate-100 placeholder-slate-500 outline-none transition font-semibold font-sans'
-       : (activeLanding === 'jeep'
-          ? 'w-full bg-[#0d1411] border border-[#424D07] focus:border-[#424D07] focus:ring-1 focus:ring-[#424D07]/40 rounded-xl pl-9 pr-3 py-2 sm:py-2.5 text-base md:text-xs text-white placeholder-slate-400 outline-none transition font-semibold'
-          : 'w-full bg-[#0a0f18] border border-white/25 focus:border-indigo-400 focus:ring-1 focus:ring-indigo-400/40 rounded-xl pl-9 pr-3 py-2 sm:py-2.5 text-base md:text-xs text-white placeholder-slate-400 outline-none transition font-semibold'));
+  // Dynamic input styling based on active branding
+  const rowClass = isJeepPage
+    ? 'space-y-1 bg-white p-2 sm:p-2.5 rounded-xl border border-[#487f70] transition-all duration-350'
+    : (isLightBg
+      ? 'space-y-1 bg-slate-100 p-2 sm:p-2.5 rounded-xl border border-slate-200 hover:border-slate-300 transition-all duration-350'
+      : (activeLanding === 'leapmotor'
+         ? 'space-y-1 bg-[#035F1D]/10 p-2 sm:p-2.5 rounded-xl border border-[#009100]/25 hover:border-[#deff01]/40 hover:bg-[#035F1D]/15 transition-all duration-350'
+         : (activeLanding === 'jeep'
+            ? 'space-y-1 bg-slate-950/40 p-2 sm:p-2.5 rounded-xl border border-[#424D07] hover:border-[#424D07]/80 transition-all duration-350 shadow-inner'
+            : 'space-y-1 bg-slate-900/60 p-2 sm:p-2.5 rounded-xl border border-white/15 hover:border-white/20 transition-all duration-350')));
+
+  const inputClass = isJeepPage
+    ? 'w-full bg-white border border-[#487f70] focus:border-[#487f70] focus:ring-1 focus:ring-[#487f70]/40 rounded-xl pl-9 pr-3 py-2 sm:py-2.5 text-base md:text-sm text-slate-900 placeholder-slate-400 outline-none transition font-semibold'
+    : (isLightBg
+      ? 'w-full bg-white border border-slate-300 focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500/40 rounded-xl pl-9 pr-3 py-2 sm:py-2.5 text-base md:text-sm text-slate-900 placeholder-slate-400 outline-none transition font-semibold'
+      : (activeLanding === 'leapmotor'
+         ? 'w-full bg-[#2D2926] border border-[#deff01] focus:border-[#deff01] focus:ring-1 focus:ring-[#deff01]/40 rounded-xl pl-9 pr-3 py-2 sm:py-2.5 text-base md:text-xs text-slate-100 placeholder-slate-500 outline-none transition font-semibold font-sans'
+         : (activeLanding === 'jeep'
+            ? 'w-full bg-[#0d1411] border border-[#424D07] focus:border-[#424D07] focus:ring-1 focus:ring-[#424D07]/40 rounded-xl pl-9 pr-3 py-2 sm:py-2.5 text-base md:text-xs text-white placeholder-slate-400 outline-none transition font-semibold'
+            : 'w-full bg-[#0a0f18] border border-white/25 focus:border-indigo-400 focus:ring-1 focus:ring-indigo-400/40 rounded-xl pl-9 pr-3 py-2 sm:py-2.5 text-base md:text-xs text-white placeholder-slate-400 outline-none transition font-semibold')));
 
   return (
     <div 
       className="w-full text-slate-100 flex flex-col justify-start items-center min-h-screen transition-all duration-500" 
       id="landing-page-view"
-      style={activeLanding === 'multimarca' ? { backgroundColor: subBrandBgColor || '#243782' } : undefined}
+      style={activeLanding === 'multimarca' ? { backgroundColor: subBrandBgColor || '#ffffff' } : undefined}
     >
       
       {/* Outer Mobile Mock Wrapper with Pantone 2427C and Highlight R0 G145 B0 theme */}
@@ -1361,14 +1553,14 @@ export default function LeadForm({ c10ImgUrl, t03ImgUrl, b10ImgUrl }: LeadFormPr
           backgroundSize: 'cover',
           backgroundPosition: 'center',
         } : (activeLanding === 'multimarca' ? {
-          backgroundColor: subBrandBgColor || '#243782'
+          backgroundColor: subBrandBgColor || '#ffffff'
         } : undefined)}
         className={`w-full max-w-md mx-auto h-[100dvh] sm:h-auto sm:min-h-[82vh] border-0 sm:border rounded-none sm:rounded-[40px] shadow-2xl relative overflow-hidden flex flex-col justify-between mt-0 sm:mt-1 mb-0 sm:mb-6 transition-all duration-500 ${
           activeLanding === 'leapmotor'
             ? 'bg-black border-[#009100]/40 shadow-[0_0_35px_rgba(0,145,0,0.25)]'
             : (activeLanding === 'jeep'
                ? 'bg-[#050807] border-[#22372B]/60 shadow-[0_0_35px_rgba(34,55,43,0.35)]'
-               : (activeLanding === 'multimarca' ? `${subBrandBgColor ? 'border-white/10' : 'bg-[#243782] border-white/10 shadow-[0_0_35px_rgba(36,55,130,0.25)]'}` : 'bg-[#05070a] border-white/10'))
+               : (activeLanding === 'multimarca' ? `${subBrandBgColor ? 'border-white/10' : 'bg-white border-black/5 shadow-[0_0_35px_rgba(0,0,0,0.06)] font-sans'}` : 'bg-[#05070a] border-white/10'))
         }`}
       >
         
@@ -1394,9 +1586,9 @@ export default function LeadForm({ c10ImgUrl, t03ImgUrl, b10ImgUrl }: LeadFormPr
           } : { 
             paddingBottom: '0px',
             height: '120px',
-            backgroundColor: activeLanding === 'multimarca' ? (subBrandBgColor || '#103586') : undefined
+            backgroundColor: activeLanding === 'multimarca' ? (subBrandBgColor || '#ffffff') : undefined
           })}
-          className={`px-6 ${activeLanding === 'multimarca' && selectedSubBrand !== null ? 'hidden' : (activeLanding === 'leapmotor' ? 'py-1 border-b border-white/5 relative z-10' : (activeLanding === 'multimarca' ? `py-4 ${subBrandBgColor ? '' : 'bg-[#103586]'} border-b border-white/5 relative z-10` : 'py-4 bg-[#05070a]/90 border-b border-white/5 relative z-10'))} flex ${activeLanding === 'multimarca' || activeLanding === 'leapmotor' || activeLanding === 'jeep' ? 'justify-center' : 'justify-between'} items-center ${activeLanding === 'leapmotor' ? '' : 'backdrop-blur-md'} sticky top-0 z-25`}
+          className={`px-6 ${activeLanding === 'multimarca' && selectedSubBrand !== null ? 'hidden' : (activeLanding === 'leapmotor' ? 'py-1 border-b border-white/5 relative z-10' : (activeLanding === 'multimarca' ? `py-4 ${subBrandBgColor ? '' : 'bg-white'} border-b border-black/5 relative z-10` : 'py-4 bg-[#05070a]/90 border-b border-white/5 relative z-10'))} flex ${activeLanding === 'multimarca' || activeLanding === 'leapmotor' || activeLanding === 'jeep' ? 'justify-center' : 'justify-between'} items-center ${activeLanding === 'leapmotor' ? '' : 'backdrop-blur-md'} sticky top-0 z-25`}
         >
           {activeLanding === 'leapmotor' && (
             <div style={{ height: '102px' }} className="flex items-center justify-center w-full max-w-full py-3 sm:py-5">
@@ -1458,13 +1650,13 @@ export default function LeadForm({ c10ImgUrl, t03ImgUrl, b10ImgUrl }: LeadFormPr
                 paddingTop: '0px', 
                 marginLeft: '0px', 
                 marginTop: '0px',
-                backgroundColor: activeLanding === 'multimarca' ? (subBrandBgColor || '#103586') : (activeLanding === 'jeep' ? '#ffffff' : undefined)
+                backgroundColor: activeLanding === 'multimarca' ? (subBrandBgColor || '#ffffff') : (activeLanding === 'jeep' ? '#ffffff' : undefined)
               }}
               initial={{ opacity: 0, scale: 0.98 }}
               animate={{ opacity: 1, scale: 1 }}
               exit={{ opacity: 0, scale: 0.98 }}
               transition={{ duration: 0.3 }}
-              className={`px-6 ${activeLanding === 'leapmotor' ? 'pt-2 pb-5 relative z-10 flex flex-col justify-between h-full' : (activeLanding === 'multimarca' ? `py-4 gap-4 relative z-10 flex flex-col justify-start ${subBrandBgColor ? '' : 'bg-[#103586]'}` : (activeLanding === 'jeep' ? 'py-4 gap-4 relative z-10 flex flex-col justify-start bg-[#ffffff]' : 'py-4 gap-4 relative z-10 flex flex-col justify-start'))} flex-1`}
+              className={`px-6 ${activeLanding === 'leapmotor' ? 'pt-2 pb-5 relative z-10 flex flex-col justify-between h-full' : (activeLanding === 'multimarca' ? `py-4 gap-4 relative z-10 flex flex-col justify-start ${subBrandBgColor ? '' : 'bg-white'}` : (activeLanding === 'jeep' ? 'py-4 gap-4 relative z-10 flex flex-col justify-start bg-[#ffffff]' : 'py-4 gap-4 relative z-10 flex flex-col justify-start'))} flex-1`}
             >
               {/* LEAPMOTOR LANDING VIEW - Professional Presentation Deck Layout */}
               {activeLanding === 'leapmotor' && (
@@ -1594,16 +1786,16 @@ export default function LeadForm({ c10ImgUrl, t03ImgUrl, b10ImgUrl }: LeadFormPr
                   <div className="grid grid-cols-2 gap-2 pt-1">
                     <button
                       onClick={() => launchFormWithRequest('cotizacion', 'Jeep Cherokee')}
-                      style={{ backgroundColor: '#7d9267' }}
-                      className="text-white hover:bg-[#8da376] font-extrabold py-3.5 px-4 rounded-xl text-[10px] uppercase tracking-wider flex items-center justify-center gap-1.5 transition-all duration-300 active:scale-95 shadow-md shadow-[#7d9267]/25 col-span-1"
+                      style={{ backgroundColor: '#487f70' }}
+                      className="text-white hover:bg-[#396559] font-extrabold py-3.5 px-4 rounded-xl text-[10px] uppercase tracking-wider flex items-center justify-center gap-1.5 transition-all duration-300 active:scale-95 shadow-md shadow-[#487f70]/25 col-span-1"
                     >
                       <FileText className="w-3.5 h-3.5 text-slate-100" />
                       <span>Cotización</span>
                     </button>
                     <button
                       onClick={() => launchFormWithRequest('prueba', 'Jeep Cherokee')}
-                      style={{ backgroundColor: '#7d9267' }}
-                      className="text-white hover:bg-[#8da376] font-extrabold py-3.5 px-4 rounded-xl text-[10px] uppercase tracking-wider flex items-center justify-center gap-1.5 transition-all duration-300 active:scale-95 col-span-1"
+                      style={{ backgroundColor: '#487f70' }}
+                      className="text-white hover:bg-[#396559] font-extrabold py-3.5 px-4 rounded-xl text-[10px] uppercase tracking-wider flex items-center justify-center gap-1.5 transition-all duration-300 active:scale-95 col-span-1"
                     >
                       <Key className="w-3.5 h-3.5 text-white" style={{ borderColor: '#ffffff' }} />
                       <span>Prueba de Manejo</span>
@@ -1631,7 +1823,7 @@ export default function LeadForm({ c10ImgUrl, t03ImgUrl, b10ImgUrl }: LeadFormPr
                       <div className="text-center py-2">
                         <h1 
                           style={{ fontSize: '14px', lineHeight: '30px' }}
-                          className="font-bold tracking-[0.16em] text-white uppercase font-encode"
+                          className="font-bold tracking-[0.16em] text-slate-900 uppercase font-encode"
                         >
                           ELIGE LA MARCA DE TU INTERÉS
                         </h1>
@@ -1639,7 +1831,7 @@ export default function LeadForm({ c10ImgUrl, t03ImgUrl, b10ImgUrl }: LeadFormPr
 
                       {/* Stacked Brand boxes (All identical size, stacked vertically, centering the brand logos) */}
                       <div className="flex flex-col gap-1.5 pt-1">
-                        {['Leapmotor', 'Jeep', 'Fiat', 'Dodge', 'Peugeot', 'Ram'].map((brand) => {
+                        {['Jeep', 'Ram', 'Dodge', 'Fiat', 'Peugeot', 'Leapmotor'].map((brand) => {
                           if (brand === 'Leapmotor') {
                             return (
                               <button
@@ -1648,11 +1840,11 @@ export default function LeadForm({ c10ImgUrl, t03ImgUrl, b10ImgUrl }: LeadFormPr
                                   handleBrandSelect(brand);
                                   setSelectedSubBrand(brand);
                                 }}
-                                style={{ height: '92.5px', backgroundColor: '#000000' }}
-                                className="relative overflow-hidden rounded-2xl border border-white/10 bg-black w-full flex items-center justify-center select-none shadow-lg shadow-black/20 cursor-pointer"
+                                style={{ height: '92.5px', backgroundColor: 'rgba(0, 0, 0, 0.7)' }}
+                                className="relative overflow-hidden rounded-2xl border border-black/5 bg-black/70 w-full flex items-center justify-center select-none shadow-lg shadow-black/5 hover:bg-black/80 transition-all duration-300 cursor-pointer"
                               >
                                 <img 
-                                  src={LEAPMOTOR_LOGO_NEW_IMG} 
+                                  src={MULTIMARCA_LEAPMOTOR_LOGO} 
                                   alt="Leapmotor"
                                   referrerPolicy="no-referrer"
                                   className="w-auto max-w-[85%] max-h-[50%] object-contain pointer-events-none p-0.5"
@@ -1669,14 +1861,14 @@ export default function LeadForm({ c10ImgUrl, t03ImgUrl, b10ImgUrl }: LeadFormPr
                                   handleBrandSelect(brand);
                                   setSelectedSubBrand(brand);
                                 }}
-                                style={{ backgroundColor: '#000000' }}
-                                className="relative overflow-hidden rounded-2xl border border-white/10 bg-black h-20 sm:h-24 w-full flex items-center justify-center select-none shadow-lg shadow-black/20 cursor-pointer"
+                                style={{ backgroundColor: 'rgba(0, 0, 0, 0.7)', paddingTop: '0px', marginTop: '0px' }}
+                                className="relative overflow-hidden rounded-2xl border border-black/5 bg-black/70 h-20 sm:h-24 w-full flex items-center justify-center select-none shadow-lg shadow-black/5 hover:bg-black/80 transition-all duration-300 cursor-pointer pt-0 mt-0"
                               >
                                 <img 
-                                  src={JEEP_LOGO_IMG} 
+                                  src={MULTIMARCA_JEEP_LOGO} 
                                   alt="Jeep"
                                   referrerPolicy="no-referrer"
-                                  className="w-full h-full object-contain pointer-events-none scale-[1.5] p-1"
+                                  className="w-full h-full object-contain pointer-events-none p-3.5 sm:p-4.5 transition-transform duration-300"
                                 />
                               </button>
                             );
@@ -1689,11 +1881,11 @@ export default function LeadForm({ c10ImgUrl, t03ImgUrl, b10ImgUrl }: LeadFormPr
                                   handleBrandSelect(brand);
                                   setSelectedSubBrand(brand);
                                 }}
-                                style={{ backgroundColor: '#000000' }}
-                                className="relative overflow-hidden rounded-2xl border border-white/10 bg-black h-20 sm:h-24 w-full flex items-center justify-center select-none shadow-lg shadow-black/20 cursor-pointer"
+                                style={{ backgroundColor: 'rgba(0, 0, 0, 0.7)' }}
+                                className="relative overflow-hidden rounded-2xl border border-black/5 bg-black/70 h-20 sm:h-24 w-full flex items-center justify-center select-none shadow-lg shadow-black/5 hover:bg-black/80 transition-all duration-300 cursor-pointer"
                               >
                                 <img 
-                                  src={FIAT_LOGO_IMG} 
+                                  src={MULTIMARCA_FIAT_LOGO} 
                                   alt="Fiat"
                                   referrerPolicy="no-referrer"
                                   className="w-full h-full object-contain pointer-events-none p-3 sm:p-3.5"
@@ -1709,11 +1901,11 @@ export default function LeadForm({ c10ImgUrl, t03ImgUrl, b10ImgUrl }: LeadFormPr
                                   handleBrandSelect(brand);
                                   setSelectedSubBrand(brand);
                                 }}
-                                style={{ backgroundColor: '#000000' }}
-                                className="relative overflow-hidden rounded-2xl border border-white/10 bg-black h-20 sm:h-24 w-full flex items-center justify-center select-none shadow-lg shadow-black/20 cursor-pointer"
+                                style={{ backgroundColor: 'rgba(0, 0, 0, 0.7)' }}
+                                className="relative overflow-hidden rounded-2xl border border-black/5 bg-black/70 h-20 sm:h-24 w-full flex items-center justify-center select-none shadow-lg shadow-black/5 hover:bg-black/80 transition-all duration-300 cursor-pointer"
                               >
                                 <img 
-                                  src={DODGE_LOGO_IMG} 
+                                  src={MULTIMARCA_DODGE_LOGO} 
                                   alt="Dodge"
                                   referrerPolicy="no-referrer"
                                   className="w-full h-full object-contain pointer-events-none scale-[1.15] p-2"
@@ -1729,11 +1921,11 @@ export default function LeadForm({ c10ImgUrl, t03ImgUrl, b10ImgUrl }: LeadFormPr
                                   handleBrandSelect(brand);
                                   setSelectedSubBrand(brand);
                                 }}
-                                style={{ backgroundColor: '#000000' }}
-                                className="relative overflow-hidden rounded-2xl border border-white/10 bg-black h-20 sm:h-24 w-full flex items-center justify-center select-none shadow-lg shadow-black/20 cursor-pointer"
+                                style={{ backgroundColor: 'rgba(0, 0, 0, 0.7)' }}
+                                className="relative overflow-hidden rounded-2xl border border-black/5 bg-black/70 h-20 sm:h-24 w-full flex items-center justify-center select-none shadow-lg shadow-black/5 hover:bg-black/80 transition-all duration-300 cursor-pointer"
                               >
                                 <img 
-                                  src={PEUGEOT_LOGO_IMG} 
+                                  src={MULTIMARCA_PEUGEOT_LOGO} 
                                   alt="Peugeot"
                                   referrerPolicy="no-referrer"
                                   className="w-full h-full object-contain pointer-events-none scale-[1.48] p-1"
@@ -1749,11 +1941,11 @@ export default function LeadForm({ c10ImgUrl, t03ImgUrl, b10ImgUrl }: LeadFormPr
                                   handleBrandSelect(brand);
                                   setSelectedSubBrand(brand);
                                 }}
-                                style={{ backgroundColor: '#000000' }}
-                                className="relative overflow-hidden rounded-2xl border border-white/10 bg-black h-20 sm:h-24 w-full flex items-center justify-center select-none shadow-lg shadow-black/20 cursor-pointer"
+                                style={{ backgroundColor: 'rgba(0, 0, 0, 0.7)' }}
+                                className="relative overflow-hidden rounded-2xl border border-black/5 bg-black/70 h-20 sm:h-24 w-full flex items-center justify-center select-none shadow-lg shadow-black/5 hover:bg-black/80 transition-all duration-300 cursor-pointer"
                               >
                                 <img 
-                                  src={RAM_LOGO_IMG} 
+                                  src={MULTIMARCA_RAM_LOGO} 
                                   alt="Ram"
                                   referrerPolicy="no-referrer"
                                   className="w-full h-full object-contain pointer-events-none scale-[1.2] p-1.5 sm:p-2"
@@ -1761,27 +1953,7 @@ export default function LeadForm({ c10ImgUrl, t03ImgUrl, b10ImgUrl }: LeadFormPr
                               </button>
                             );
                           }
-                          return (
-                            <button
-                              key={brand}
-                              onClick={() => {
-                                handleBrandSelect(brand);
-                                setSelectedSubBrand(brand);
-                              }}
-                              style={{ backgroundColor: '#000000' }}
-                              className={`group relative overflow-hidden rounded-2xl border border-white/10 bg-black hover:bg-zinc-900 hover:border-white/20 h-20 sm:h-24 w-full flex items-center justify-center select-none transition-all duration-300 transform active:scale-[0.99] shadow-lg shadow-black/20`}
-                            >
-                              {/* Centralized Brand Logo */}
-                              <div className="z-10 flex items-center justify-center w-full px-8 pointer-events-none transition-transform duration-300 group-hover:scale-[1.02]">
-                                {renderBrandLogo(brand, true, true)}
-                              </div>
-                              
-                              {/* Right arrow interactive indicator */}
-                              <div className="absolute right-4 top-1/2 -translate-y-1/2 w-8 h-8 rounded-full bg-white/5 border border-white/10 flex items-center justify-center text-slate-300 opacity-60 group-hover:opacity-100 group-hover:bg-white/10 group-hover:text-white transition-all duration-300 shrink-0">
-                                <ArrowRight className="w-4 h-4" />
-                              </div>
-                            </button>
-                          );
+                          return null;
                         })}
                       </div>
                     </>
@@ -1807,26 +1979,33 @@ export default function LeadForm({ c10ImgUrl, t03ImgUrl, b10ImgUrl }: LeadFormPr
                           <div className="flex items-center justify-start pt-5 px-4 z-10 w-full mb-1">
                             <button
                               onClick={() => setSelectedSubBrand(null)}
-                              className={`flex items-center gap-2 px-4 py-2.5 rounded-full border text-sm font-bold tracking-wider transition duration-300 active:scale-[0.98] shadow-sm ${
-                                isLightBg 
-                                  ? 'bg-black/5 hover:bg-black/10 border-black/10 text-slate-800 hover:text-slate-950 font-black' 
-                                  : 'bg-white/5 hover:bg-white/10 border-white/10 text-slate-200 hover:text-white'
+                              style={selectedSubBrand === 'Jeep' ? { backgroundColor: 'transparent', borderColor: 'transparent', boxShadow: 'none' } : undefined}
+                              className={`flex items-center gap-2 px-4 py-2.5 rounded-full text-sm font-bold tracking-wider transition duration-300 active:scale-[0.98] ${
+                                selectedSubBrand === 'Jeep'
+                                  ? 'text-slate-800'
+                                  : (isLightBg 
+                                    ? 'bg-black/5 hover:bg-black/10 border border-black/10 text-slate-800 hover:text-slate-950 font-black shadow-sm' 
+                                    : 'bg-white/5 hover:bg-white/10 border border-white/10 text-slate-200 hover:text-white shadow-sm')
                               }`}
                               aria-label="Regresar"
                             >
-                              <ArrowLeft className={`w-5 h-5 ${isLightBg ? 'text-indigo-600' : 'text-indigo-400'}`} />
-                              <span>Regresar</span>
+                              <ArrowLeft className={`w-5 h-5 ${
+                                selectedSubBrand === 'Jeep' 
+                                  ? 'text-white' 
+                                  : (isLightBg ? 'text-indigo-600' : 'text-indigo-400')
+                              }`} />
+                              <span className={selectedSubBrand === 'Jeep' ? 'text-slate-900 font-extrabold' : ''}>Regresar</span>
                             </button>
                           </div>
 
                           {/* Brand Logo right above the car photo */}
                           <div className="z-10 px-5 flex flex-col items-center justify-center [&_img]:max-h-36 [&_img]:w-auto [&_img]:object-contain w-full">
-                            <div className="w-full max-w-[280px] flex items-center justify-center">
-                              {renderBrandLogo(selectedSubBrand, true, true)}
+                            <div className={`w-full ${selectedSubBrand === 'Jeep' ? 'max-w-[560px]' : 'max-w-[280px]'} flex items-center justify-center`}>
+                              {renderBrandPageTopLogo(selectedSubBrand)}
                             </div>
-                            {/* Brand tagline of selected brand in clean white text */}
-                            <div className="mt-3">
-                              <p className="text-white text-sm sm:text-base font-extrabold tracking-wide uppercase px-5 py-2.5 rounded-2xl bg-black/55 backdrop-blur-md text-center inline-block max-w-[90%] mx-auto shadow-lg border border-white/10">
+                            {/* Brand tagline of selected brand in clean black/white text with no box/border/background */}
+                            <div className="mt-3 text-center">
+                              <p className={`${isLightBg ? 'text-slate-900' : 'text-white'} text-sm sm:text-base font-extrabold tracking-widest uppercase text-center inline-block max-w-[90%] mx-auto whitespace-nowrap`}>
                                 {brandDetail.tagline}
                               </p>
                             </div>
@@ -1847,7 +2026,9 @@ export default function LeadForm({ c10ImgUrl, t03ImgUrl, b10ImgUrl }: LeadFormPr
 
                           {/* ¿Qué deseas hacer? prompt */}
                           <div className="px-5 z-10 w-full text-center">
-                            <h3 className="text-sm sm:text-base font-bold text-white tracking-widest uppercase font-encode text-slate-300">
+                            <h3 className={`text-sm sm:text-base font-bold tracking-widest uppercase font-encode ${
+                              isLightBg ? 'text-slate-800' : 'text-slate-300 text-white'
+                            }`}>
                               ¿Qué deseas hacer?
                             </h3>
                           </div>
@@ -1857,7 +2038,12 @@ export default function LeadForm({ c10ImgUrl, t03ImgUrl, b10ImgUrl }: LeadFormPr
                             {/* COTIZA */}
                             <button
                               onClick={() => launchFormWithRequest('cotizacion', BRAND_MODELS[selectedSubBrand]?.[0])}
-                              className="group w-full p-4 rounded-2xl bg-[#1b1c1e]/60 hover:bg-[#25272a]/75 border border-white/5 hover:border-white/15 flex items-center gap-4 text-left transition-all duration-300 shadow-md transform active:scale-[0.99]"
+                              style={selectedSubBrand === 'Jeep' ? { backgroundColor: '#487f70' } : undefined}
+                              className={`group w-full p-4 rounded-2xl border flex items-center gap-4 text-left transition-all duration-300 shadow-md transform active:scale-[0.99] ${
+                                selectedSubBrand === 'Jeep'
+                                  ? 'border-[#487f70]/20 hover:opacity-95 hover:shadow-lg hover:shadow-[#487f70]/15'
+                                  : 'bg-[#1b1c1e]/60 hover:bg-[#25272a]/75 border-white/5 hover:border-white/15'
+                              }`}
                             >
                               {/* White outlined badge represent request for quotation */}
                               <div className="w-11 h-11 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center shrink-0 transition-colors duration-300 group-hover:bg-white/10">
@@ -1868,19 +2054,24 @@ export default function LeadForm({ c10ImgUrl, t03ImgUrl, b10ImgUrl }: LeadFormPr
                                 <span className="font-bold text-xs sm:text-sm text-white tracking-wider uppercase font-encode">
                                   COTIZA
                                 </span>
-                                <span className="text-[10px] sm:text-[11px] text-slate-400 font-medium">
+                                <span className={`text-[10px] sm:text-[11px] font-medium ${selectedSubBrand === 'Jeep' ? 'text-slate-100' : 'text-slate-400'}`}>
                                   Recibe una cotización personalizada
                                 </span>
                               </div>
                               
-                              <ChevronRight className="w-4 h-4 text-slate-500 group-hover:text-slate-300 group-hover:translate-x-0.5 transition-all duration-300 shrink-0 ml-auto" />
+                              <ChevronRight className={`w-4 h-4 group-hover:translate-x-0.5 transition-all duration-300 shrink-0 ml-auto ${selectedSubBrand === 'Jeep' ? 'text-white' : 'text-slate-500 group-hover:text-slate-300'}`} />
                             </button>
 
                             {/* PRUEBA DE MANEJO */}
                             {selectedSubBrand !== 'Leapmotor' && (
                               <button
                                 onClick={() => launchFormWithRequest('prueba', BRAND_MODELS[selectedSubBrand]?.[0])}
-                                className="group w-full p-4 rounded-2xl bg-[#1b1c1e]/60 hover:bg-[#25272a]/75 border border-white/5 hover:border-white/15 flex items-center gap-4 text-left transition-all duration-300 shadow-md transform active:scale-[0.99]"
+                                style={selectedSubBrand === 'Jeep' ? { backgroundColor: '#487f70' } : undefined}
+                                className={`group w-full p-4 rounded-2xl border flex items-center gap-4 text-left transition-all duration-300 shadow-md transform active:scale-[0.99] ${
+                                  selectedSubBrand === 'Jeep'
+                                    ? 'border-[#487f70]/20 hover:opacity-95 hover:shadow-lg hover:shadow-[#487f70]/15'
+                                    : 'bg-[#1b1c1e]/60 hover:bg-[#25272a]/75 border-white/5 hover:border-white/15'
+                                }`}
                               >
                                 {/* White/Silver outlined badge for Calendar */}
                                 <div className="w-11 h-11 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center shrink-0 transition-colors duration-300 group-hover:bg-white/10">
@@ -1891,12 +2082,12 @@ export default function LeadForm({ c10ImgUrl, t03ImgUrl, b10ImgUrl }: LeadFormPr
                                   <span className="font-bold text-xs sm:text-sm text-white tracking-wider uppercase font-encode">
                                     PRUEBA DE MANEJO
                                   </span>
-                                  <span className="text-[10px] sm:text-[11px] text-slate-400 font-medium">
+                                  <span className={`text-[10px] sm:text-[11px] font-medium ${selectedSubBrand === 'Jeep' ? 'text-slate-100' : 'text-slate-400'}`}>
                                     Agenda tu prueba de manejo
                                   </span>
                                 </div>
                                 
-                                <ChevronRight className="w-4 h-4 text-slate-500 group-hover:text-slate-300 group-hover:translate-x-0.5 transition-all duration-300 shrink-0 ml-auto" />
+                                <ChevronRight className={`w-4 h-4 group-hover:translate-x-0.5 transition-all duration-300 shrink-0 ml-auto ${selectedSubBrand === 'Jeep' ? 'text-white' : 'text-slate-500 group-hover:text-slate-300'}`} />
                               </button>
                             )}
                           </div>
@@ -1923,20 +2114,23 @@ export default function LeadForm({ c10ImgUrl, t03ImgUrl, b10ImgUrl }: LeadFormPr
                 paddingTop: '4px', 
                 paddingBottom: '4px', 
                 scrollbarWidth: 'thin',
-                backgroundColor: activeLanding === 'multimarca' ? (subBrandBgColor || '#103586') : undefined
+                backgroundColor: activeLanding === 'multimarca' ? (subBrandBgColor || '#ffffff') : undefined
               }}
             >
               <div>
                 {/* Back Link */}
                 <button 
                   onClick={() => setFormActive(false)}
+                  style={isJeepPage ? { backgroundColor: 'transparent', borderColor: 'transparent', boxShadow: 'none' } : undefined}
                   className={`flex items-center gap-1.5 text-xs font-semibold ${activeLanding === 'leapmotor' ? 'font-sans' : 'font-mono'} mb-4 transition px-2 py-1.5 rounded ${
-                    isLightBg
-                      ? 'text-slate-800 hover:text-slate-950 bg-black/5 border border-black/10'
-                      : 'text-white hover:text-slate-200 bg-white/10'
+                    isJeepPage
+                      ? 'text-slate-800'
+                      : (isLightBg
+                        ? 'text-slate-800 hover:text-slate-950 bg-black/5 border border-black/10'
+                        : 'text-white hover:text-slate-200 bg-white/10')
                   }`}
                 >
-                  <ArrowLeft className="w-3.5 h-3.5" />
+                  <ArrowLeft className={`w-3.5 h-3.5 ${isJeepPage ? 'text-white' : ''}`} />
                   <span>{(activeLanding === 'leapmotor' || activeLanding === 'jeep') ? 'Regresar' : 'Volver a la Landing'}</span>
                 </button>
 
@@ -2192,7 +2386,7 @@ export default function LeadForm({ c10ImgUrl, t03ImgUrl, b10ImgUrl }: LeadFormPr
                                 type="button"
                                 id="model-modal-trigger-btn"
                                 disabled={activeLanding === 'jeep'}
-                                style={{ backgroundColor: '#deff01' }}
+                                style={isJeepPage ? { backgroundColor: '#487f70' } : { backgroundColor: '#deff01' }}
                                 onClick={() => {
                                   if (activeLanding === 'jeep') return;
                                   // Ensure formData of interest is initialized correctly of the active brand if empty
@@ -2201,12 +2395,16 @@ export default function LeadForm({ c10ImgUrl, t03ImgUrl, b10ImgUrl }: LeadFormPr
                                   }
                                   setShowModelModal(true);
                                 }}
-                                className={`w-full text-left bg-[#0a0f18] text-slate-950 border border-white/25 rounded-xl pl-11 pr-7 py-2.5 text-xs outline-none transition uppercase ${activeLanding === 'leapmotor' ? 'font-sans' : 'font-mono'} font-bold flex items-center justify-between disabled:opacity-75 disabled:cursor-not-allowed`}
+                                className={`w-full text-left rounded-xl pl-11 pr-7 py-2.5 text-xs outline-none transition uppercase ${activeLanding === 'leapmotor' ? 'font-sans' : 'font-mono'} font-bold flex items-center justify-between disabled:opacity-75 disabled:cursor-not-allowed ${
+                                  isJeepPage
+                                    ? 'bg-[#487f70] text-white border border-[#487f70]'
+                                    : 'bg-[#deff01] text-slate-950 border border-white/25'
+                                }`}
                               >
-                                <span className="truncate text-slate-950">
+                                <span className={isJeepPage ? 'truncate text-white' : 'truncate text-slate-950'}>
                                   {selectedBrand} {formData.modelOfInterest || activeModelsList[0]}
                                 </span>
-                                {activeLanding !== 'jeep' && <ChevronDown className="w-3.5 h-3.5 text-slate-950 shrink-0" />}
+                                {activeLanding !== 'jeep' && <ChevronDown className={`w-3.5 h-3.5 shrink-0 ${isJeepPage ? 'text-white' : 'text-slate-950'}`} />}
                               </button>
                             </div>
                           ) : (
@@ -2253,7 +2451,7 @@ export default function LeadForm({ c10ImgUrl, t03ImgUrl, b10ImgUrl }: LeadFormPr
                           Estado *
                         </label>
                         <div className="relative">
-                          <MapPin className={`absolute left-3.5 top-3.5 w-4 h-4 pointer-events-none z-10 ${isLightBg ? 'text-slate-500' : 'text-slate-300'}`} />
+                          <MapPin className={`absolute left-3.5 top-3.5 w-4 h-4 pointer-events-none z-10 ${isLightBg || isJeepPage ? 'text-slate-500' : 'text-slate-300'}`} />
                           <select
                             id="state"
                             name="state"
@@ -2266,23 +2464,25 @@ export default function LeadForm({ c10ImgUrl, t03ImgUrl, b10ImgUrl }: LeadFormPr
                                 state: stateValue
                               }));
                             }}
-                            className={`w-full rounded-xl pl-11 pr-7 py-2.5 text-base md:text-xs outline-none appearance-none transition uppercase ${activeLanding === 'leapmotor' ? 'font-sans' : 'font-mono'} ${
-                              isLightBg
-                                ? 'bg-white border border-slate-300 text-slate-900 focus:border-indigo-500 font-bold'
-                                : (activeLanding === 'leapmotor'
-                                   ? 'bg-[#2D2926] border border-[#deff01] focus:border-[#deff01] text-white font-semibold'
-                                   : (activeLanding === 'jeep'
-                                      ? 'bg-[#0d1411] border border-[#424D07] focus:border-[#424D07] text-white font-semibold'
-                                      : 'bg-[#0a0f18] border border-white/25 focus:border-indigo-400 text-white font-bold'))
+                            className={`w-full rounded-xl pl-11 pr-7 py-2.5 text-base md:text-sm outline-none appearance-none transition uppercase ${activeLanding === 'leapmotor' ? 'font-sans' : 'font-mono'} ${
+                              isJeepPage
+                                ? 'bg-white border border-[#487f70] text-slate-900 focus:border-[#487f70] font-bold'
+                                : (isLightBg
+                                  ? 'bg-white border border-slate-300 text-slate-900 focus:border-indigo-500 font-bold'
+                                  : (activeLanding === 'leapmotor'
+                                     ? 'bg-[#2D2926] border border-[#deff01] focus:border-[#deff01] text-white font-semibold'
+                                     : (activeLanding === 'jeep'
+                                        ? 'bg-[#0d1411] border border-[#424D07] focus:border-[#424D07] text-white font-semibold'
+                                        : 'bg-[#0a0f18] border border-white/25 focus:border-indigo-400 text-white font-bold')))
                             }`}
                           >
                             {availableStates.map(st => (
-                              <option key={st} value={st} className={isLightBg ? "bg-white text-slate-900" : "bg-slate-900 text-white"}>
+                              <option key={st} value={st} className={isLightBg || isJeepPage ? "bg-white text-slate-900" : "bg-slate-900 text-white"}>
                                 {st}
                               </option>
                             ))}
                           </select>
-                          <ChevronDown className={`absolute right-3 top-3.5 w-4 h-4 pointer-events-none ${isLightBg ? 'text-slate-500' : 'text-slate-300'}`} />
+                          <ChevronDown className={`absolute right-3 top-3.5 w-4 h-4 pointer-events-none ${isLightBg || isJeepPage ? 'text-slate-500' : 'text-slate-300'}`} />
                         </div>
                       </div>
 
@@ -2292,7 +2492,7 @@ export default function LeadForm({ c10ImgUrl, t03ImgUrl, b10ImgUrl }: LeadFormPr
                           {activeLanding === 'multimarca' ? 'Distribuidor *' : 'Distribuidor de Preferencia *'} {loadingDbDistributors && <span className="text-emerald-400 font-bold animate-pulse text-[9px] lowercase">(consultando BD...)</span>}
                         </label>
                         <div className="relative">
-                          <Settings className={`absolute left-3.5 top-3.5 w-4 h-4 pointer-events-none z-10 ${isLightBg ? 'text-slate-500' : 'text-slate-300'}`} />
+                          <Settings className={`absolute left-3.5 top-3.5 w-4 h-4 pointer-events-none z-10 ${isLightBg || isJeepPage ? 'text-slate-500' : 'text-slate-300'}`} />
                           <select
                             id="distributor"
                             name="distributor"
@@ -2302,29 +2502,31 @@ export default function LeadForm({ c10ImgUrl, t03ImgUrl, b10ImgUrl }: LeadFormPr
                               const dealerValue = e.target.value;
                               setFormData(prev => ({ ...prev, distributor: dealerValue }));
                             }}
-                            className={`w-full rounded-xl pl-11 pr-7 py-2.5 text-base md:text-xs outline-none appearance-none transition uppercase ${activeLanding === 'leapmotor' ? 'font-sans' : 'font-mono'} ${
-                              isLightBg
-                                ? 'bg-white border border-slate-300 text-slate-900 focus:border-indigo-500 font-bold'
-                                : (activeLanding === 'leapmotor'
-                                   ? 'bg-[#2D2926] border border-[#deff01] focus:border-[#deff01] text-white font-semibold'
-                                   : (activeLanding === 'jeep'
-                                      ? 'bg-[#0d1411] border border-[#424D07] focus:border-[#424D07] text-white font-semibold'
-                                      : 'bg-[#0a0f18] border border-white/25 focus:border-indigo-400 text-white font-bold'))
+                            className={`w-full rounded-xl pl-11 pr-7 py-2.5 text-base md:text-sm outline-none appearance-none transition uppercase ${activeLanding === 'leapmotor' ? 'font-sans' : 'font-mono'} ${
+                              isJeepPage
+                                ? 'bg-white border border-[#487f70] text-slate-900 focus:border-[#487f70] font-bold'
+                                : (isLightBg
+                                  ? 'bg-white border border-slate-300 text-slate-900 focus:border-indigo-500 font-bold'
+                                  : (activeLanding === 'leapmotor'
+                                     ? 'bg-[#2D2926] border border-[#deff01] focus:border-[#deff01] text-white font-semibold'
+                                     : (activeLanding === 'jeep'
+                                        ? 'bg-[#0d1411] border border-[#424D07] focus:border-[#424D07] text-white font-semibold'
+                                        : 'bg-[#0a0f18] border border-white/25 focus:border-indigo-400 text-white font-bold')))
                             }`}
                           >
                             {loadingDbDistributors ? (
-                              <option className={isLightBg ? "bg-white text-slate-400" : "bg-slate-900 text-slate-400"}>Cargando distribuidores de la BD...</option>
+                              <option className={isLightBg || isJeepPage ? "bg-white text-slate-400" : "bg-slate-900 text-slate-400"}>Cargando distribuidores de la BD...</option>
                             ) : dbDistributors.length === 0 ? (
-                              <option className={isLightBg ? "bg-white text-slate-400" : "bg-slate-900 text-slate-400"}>Sin distribuidores registrados</option>
+                              <option className={isLightBg || isJeepPage ? "bg-white text-slate-400" : "bg-slate-900 text-slate-400"}>Sin distribuidores registrados</option>
                             ) : (
                               dbDistributors.map((d, idx) => (
-                                <option key={(d.disId || d.id || idx) + '-' + d.name} value={d.name} className={isLightBg ? "bg-white text-slate-900" : "bg-slate-900 text-white"}>
+                                <option key={(d.disId || d.id || idx) + '-' + d.name} value={d.name} className={isLightBg || isJeepPage ? "bg-white text-slate-900" : "bg-slate-900 text-white"}>
                                   {d.name}
                                 </option>
                               ))
                             )}
                           </select>
-                          <ChevronDown className={`absolute right-3 top-3.5 w-4 h-4 pointer-events-none ${isLightBg ? 'text-slate-500' : 'text-slate-300'}`} />
+                          <ChevronDown className={`absolute right-3 top-3.5 w-4 h-4 pointer-events-none ${isLightBg || isJeepPage ? 'text-slate-500' : 'text-slate-300'}`} />
                         </div>
                       </div>
                     </div>
@@ -2398,21 +2600,23 @@ export default function LeadForm({ c10ImgUrl, t03ImgUrl, b10ImgUrl }: LeadFormPr
                     id="privacyActiveCheckbox"
                     checked={privacyAccepted}
                     onChange={(e) => setPrivacyAccepted(e.target.checked)}
-                    className={`w-4.5 h-4.5 rounded text-indigo-500 focus:ring-indigo-500/50 focus:ring-offset-slate-950 mt-0.5 shrink-0 accent-indigo-500 cursor-pointer ${
-                      isLightBg 
-                        ? 'border-slate-300 bg-slate-100' 
-                        : 'border-white/20 bg-black/40'
+                    className={`w-4.5 h-4.5 rounded mt-0.5 shrink-0 cursor-pointer ${
+                      isJeepPage
+                        ? 'border-[#487f70] bg-white accent-[#487f70]'
+                        : (isLightBg 
+                          ? 'border-slate-300 bg-slate-100 text-indigo-500 focus:ring-indigo-500/50 focus:ring-offset-slate-950 accent-indigo-500' 
+                          : 'border-white/20 bg-black/40 text-indigo-500 focus:ring-indigo-500/50 focus:ring-offset-slate-950 accent-indigo-500')
                     }`}
                   />
                   <label htmlFor="privacyActiveCheckbox" className={`text-[10px] sm:text-[11px] uppercase tracking-wider cursor-pointer leading-relaxed ${
-                    isLightBg ? 'font-bold text-slate-800' : (activeLanding === 'leapmotor' ? 'font-semibold text-white' : 'font-bold text-white')
+                    isLightBg || isJeepPage ? 'font-bold text-slate-800' : (activeLanding === 'leapmotor' ? 'font-semibold text-white' : 'font-bold text-white')
                   }`}>
                     HE LEÍDO Y ACEPTO EL{' '}
                     <button
                       type="button"
                       onClick={() => setShowPrivacyText(!showPrivacyText)}
                       className={`underline hover:opacity-80 transition-colors uppercase ${
-                        isLightBg ? 'text-indigo-600 font-extrabold' : 'text-white font-black'
+                        isJeepPage ? 'text-[#487f70] font-extrabold' : (isLightBg ? 'text-indigo-600 font-extrabold' : 'text-white font-black')
                       }`}
                     >
                       AVISO DE PRIVACIDAD
@@ -2427,17 +2631,19 @@ export default function LeadForm({ c10ImgUrl, t03ImgUrl, b10ImgUrl }: LeadFormPr
                   type="button"
                   onClick={handleSubmit}
                   disabled={loading || !privacyAccepted}
-                  style={activeLanding === 'leapmotor' ? {
+                  style={isJeepPage ? { backgroundColor: '#487f70' } : (activeLanding === 'leapmotor' ? {
                     borderColor: '#deff01',
                     backgroundColor: '#deff01',
                     color: '#000000',
                     fontSize: '14px',
                     borderWidth: '1px'
-                  } : undefined}
+                  } : undefined)}
                   className={`w-full active:scale-[0.98] disabled:opacity-40 disabled:cursor-not-allowed disabled:pointer-events-none py-4 px-6 rounded-2xl text-[11px] uppercase tracking-widest flex items-center justify-center gap-1.5 transition-all duration-300 shadow-xl ${
-                    isLightBg
-                      ? 'bg-slate-950 hover:bg-slate-900 text-white font-black'
-                      : (`${theme.btnBg} ${activeLanding === 'leapmotor' ? 'text-slate-950 font-black' : 'text-white font-bold'}`)
+                    isJeepPage
+                      ? 'text-white font-black hover:opacity-95'
+                      : (isLightBg
+                        ? 'bg-slate-950 hover:bg-slate-900 text-white font-black'
+                        : (`${theme.btnBg} ${activeLanding === 'leapmotor' ? 'text-slate-950 font-black' : 'text-white font-bold'}`))
                   }`}
                 >
                   {loading ? (
@@ -2457,217 +2663,273 @@ export default function LeadForm({ c10ImgUrl, t03ImgUrl, b10ImgUrl }: LeadFormPr
           )}
 
           {/* STEP 3: SUCCESS BLOCK */}
-          {success && (
-            <motion.div
-              key="success-sheet"
-              initial={{ opacity: 0, scale: 0.95 }}
-              animate={{ opacity: 1, scale: 1 }}
-              exit={{ opacity: 0 }}
-              className="px-6 py-4 flex flex-col gap-3 flex-1 text-center relative z-10"
-              style={{ 
-                paddingTop: '6px', 
-                paddingBottom: '6px',
-                backgroundColor: activeLanding === 'multimarca' ? (subBrandBgColor || '#103586') : undefined
-              }}
-            >
-              <div className="space-y-3 my-1">
-                
-                {/* Circle Alert */}
-                <div className="relative inline-flex items-center justify-center my-1">
-                  <div className={`absolute inset-0 w-14 h-14 ${
-                    activeLanding === 'leapmotor'
-                      ? 'bg-[#deff01]/10'
-                      : (formData.requestType === 'prueba' ? 'bg-indigo-500/10' : 'bg-emerald-500/10')
-                  } rounded-full blur-md animate-ping`} />
-                  {activeLanding === 'leapmotor' ? (
-                    <div 
-                      style={{ backgroundColor: '#deff01' }}
-                      className="w-14 h-14 rounded-full flex items-center justify-center shadow-[0_0_15px_rgba(222,255,1,0.35)]"
-                    >
-                      <Check className="w-7 h-7 text-black stroke-[3.5]" />
-                    </div>
-                  ) : (
-                    <div className="w-14 h-14 rounded-full bg-slate-900 border border-white/10 flex items-center justify-center">
-                      <CheckCircle className={`w-8 h-8 ${formData.requestType === 'prueba' ? 'text-indigo-400' : 'text-emerald-400'}`} />
-                    </div>
-                  )}
-                </div>
+          {success && (() => {
+            const userName = formData.name ? formData.name.trim().split(' ')[0] : 'Cliente';
+            const mTheme = getMultimarcaSuccessTheme(selectedBrand);
+            const isThemeLight = activeLanding === 'multimarca' ? mTheme.isLight : isLightBg;
 
-                <div className="space-y-1">
-                  <h3 className={`text-2xl font-light leading-tight ${isLightBg ? 'text-slate-900 font-bold' : 'text-white'}`}>
-                    ¡Gracias, <span 
-                      style={activeLanding === 'leapmotor' || selectedBrand === 'Leapmotor' ? { color: '#deff01', background: 'none', WebkitTextFillColor: 'initial', WebkitBackgroundClip: 'initial' } : undefined}
-                      className={activeLanding === 'leapmotor' || selectedBrand === 'Leapmotor' ? "font-extrabold" : `font-extrabold text-transparent bg-clip-text bg-gradient-to-r ${theme.successGradient}`}
-                    >
-                      {formData.name.split(' ')[0]}
-                    </span>!
-                  </h3>
-                  {activeLanding !== 'leapmotor' && selectedBrand !== 'Leapmotor' && (
-                    <p 
-                      className={`text-sm font-bold ${isLightBg ? 'text-slate-800' : 'text-white'}`}
-                    >
-                      Tu solicitud ha sido registrada en el sistema.
-                    </p>
-                  )}
-                </div>
-
-                {currentLeadData && (currentLeadData.status === 'attending' || currentLeadData.status === 'attended' || currentLeadData.status === 'lost') && currentLeadData.advisorId && !currentLeadData.advisorName?.includes('Sin Asignar') ? (
-                  <div 
-                    style={activeLanding === 'leapmotor' ? { borderColor: '#deff01', backgroundColor: 'rgba(222,255,1,0.08)' } : undefined}
-                    className={`p-4 rounded-xl max-w-xs mx-auto text-center border transition-all duration-300 ${
-                      isLightBg
-                        ? 'bg-slate-50 border-slate-200 text-slate-800 shadow-[0_4px_15px_rgba(0,0,0,0.05)]'
-                        : (activeLanding === 'leapmotor'
-                           ? 'border-[#deff01] shadow-[0_0_15px_rgba(222,255,1,0.1)]'
-                           : (activeLanding === 'jeep'
-                              ? 'bg-emerald-950/20 border-emerald-500/30 text-emerald-400 shadow-[0_0_15px_rgba(16,185,129,0.1)]'
-                              : 'bg-indigo-950/20 border-indigo-500/30 text-indigo-400 shadow-[0_0_15px_rgba(99,102,241,0.1)]'))
-                    }`}
-                  >
-                    {currentLeadData.status === 'attended' || currentLeadData.status === 'lost' ? (
-                      <>
-                        <div className="flex justify-center items-center gap-2 mb-1.5 animate-pulse">
-                          <strong 
-                            style={activeLanding === 'leapmotor' ? { color: '#deff01' } : undefined}
-                            className={`text-[10px] font-mono font-black tracking-widest uppercase ${
-                              isLightBg
-                                ? 'text-indigo-600'
-                                : (activeLanding === 'leapmotor' ? '' : (activeLanding === 'jeep' ? 'text-emerald-400' : 'text-indigo-400'))
-                            }`}
-                          >
-                            ✓ ATENCIÓN FINALIZADA
-                          </strong>
-                        </div>
-                        <p className={`text-xs font-semibold leading-relaxed ${isLightBg ? 'text-slate-800' : 'text-white'}`}>
-                          La atención ha concluido. ¡Muchas gracias por tu visita!
-                        </p>
-                        <p className={`text-[10px] mt-2 font-mono ${isLightBg ? 'text-slate-500' : 'text-slate-400'}`}>
-                          Redireccionando al inicio...
-                        </p>
-                      </>
+            return (
+              <motion.div
+                key="success-sheet"
+                initial={{ opacity: 0, scale: 0.95 }}
+                animate={{ opacity: 1, scale: 1 }}
+                exit={{ opacity: 0 }}
+                className="px-6 py-4 flex flex-col gap-3 flex-1 text-center relative z-10"
+                style={{ 
+                  paddingTop: '6px', 
+                  paddingBottom: '6px',
+                  backgroundColor: activeLanding === 'multimarca' ? mTheme.bg : undefined
+                }}
+              >
+                <div className="space-y-4 my-1">
+                  
+                  {/* Circle Alert */}
+                  <div className="relative inline-flex items-center justify-center my-1">
+                    <div className={`absolute inset-0 w-14 h-14 ${
+                      activeLanding === 'leapmotor'
+                        ? 'bg-[#deff01]/10'
+                        : (activeLanding === 'multimarca'
+                           ? ''
+                           : (formData.requestType === 'prueba' ? 'bg-indigo-500/10' : 'bg-emerald-500/10'))
+                    } rounded-full blur-md animate-ping`} />
+                    {activeLanding === 'multimarca' ? (
+                      <div 
+                        style={{ backgroundColor: mTheme.btnBg }}
+                        className="w-14 h-14 rounded-full flex items-center justify-center shadow-md shadow-black/10"
+                      >
+                        <Check className="w-7 h-7 stroke-[3.5]" style={{ color: mTheme.btnText }} />
+                      </div>
+                    ) : activeLanding === 'leapmotor' ? (
+                      <div 
+                        style={{ backgroundColor: '#deff01' }}
+                        className="w-14 h-14 rounded-full flex items-center justify-center shadow-[0_0_15px_rgba(222,255,1,0.35)]"
+                      >
+                        <Check className="w-7 h-7 text-black stroke-[3.5]" />
+                      </div>
                     ) : (
-                      <>
-                        <div className="flex justify-center items-center gap-2 mb-1.5">
-                          <span className="relative flex h-2 w-2">
-                            <span className={`animate-ping absolute inline-flex h-full w-full rounded-full opacity-75 ${activeLanding === 'leapmotor' ? 'bg-[#deff01]' : (activeLanding === 'jeep' ? 'bg-emerald-400' : 'bg-indigo-400')}`}></span>
-                            <span className={`relative inline-flex rounded-full h-2 w-2 ${activeLanding === 'leapmotor' ? 'bg-[#deff01]' : (activeLanding === 'jeep' ? 'bg-emerald-500' : 'bg-indigo-500')}`}></span>
-                          </span>
-                          <strong 
-                            style={activeLanding === 'leapmotor' ? { color: '#deff01' } : undefined}
-                            className={`text-[10px] font-mono font-black tracking-widest uppercase ${
-                              isLightBg
-                                ? 'text-indigo-600'
-                                : (activeLanding === 'leapmotor' ? '' : (activeLanding === 'jeep' ? 'text-emerald-400' : 'text-indigo-400'))
-                            }`}
-                          >
-                            Atención en Curso
-                          </strong>
-                        </div>
-                        <p className={`text-xs font-semibold leading-relaxed ${isLightBg ? 'text-slate-800 font-bold' : 'text-white'}`}>
-                          Gracias, te está atendiendo :
-                        </p>
-                        <p 
-                          style={activeLanding === 'leapmotor' ? { color: '#deff01' } : undefined}
-                          className={`text-base font-black uppercase tracking-tight mt-1 truncate ${
-                            isLightBg
-                              ? 'text-slate-900 font-extrabold'
-                              : (activeLanding === 'leapmotor' ? '' : (activeLanding === 'jeep' ? 'text-emerald-400' : 'text-indigo-400'))
-                          }`}
-                        >
-                          {currentLeadData.advisorName}
-                        </p>
-                      </>
+                      <div className="w-14 h-14 rounded-full bg-slate-900 border border-white/10 flex items-center justify-center">
+                        <CheckCircle className={`w-8 h-8 ${formData.requestType === 'prueba' ? 'text-indigo-400' : 'text-emerald-400'}`} />
+                      </div>
                     )}
                   </div>
-                ) : (
-                  formData.requestType === 'prueba' ? (
-                    <div className={`p-3 border rounded-2xl max-w-xs mx-auto text-left font-mono text-[11px] leading-relaxed ${
-                      isLightBg 
-                        ? 'bg-slate-50 border-slate-200 text-slate-800' 
-                        : 'bg-slate-900 border-indigo-500/20 text-slate-100'
-                    }`}>
-                      <div className={`font-bold block uppercase mb-1 flex items-center gap-1 ${isLightBg ? 'text-indigo-600' : 'text-indigo-400'}`}>
-                        <Key className="w-3.5 h-3.5" /> TEST DRIVE RESERVADO OK
-                      </div>
-                      <span>Gracias por agendar tu prueba de manejo, a la brevedad un asesor te contactará para confirmar tu cita.</span>
+
+                  {activeLanding === 'multimarca' ? (
+                    <div className="space-y-2 py-1 px-1">
+                      <h3 
+                        style={{ color: mTheme.textColor }}
+                        className="text-2xl font-black tracking-tight leading-tight uppercase font-sans"
+                      >
+                        ¡Gracias, {userName}!
+                      </h3>
+                      <p 
+                        style={{ color: mTheme.textColor }}
+                        className="text-xs sm:text-sm font-semibold tracking-wide leading-relaxed font-sans max-w-xs mx-auto opacity-90"
+                      >
+                        {formData.requestType === 'prueba' ? (
+                          `Gracias, ${userName} Tu prueba de manejo ha sido registrada. Te contactará un asesor para confirmarla.`
+                        ) : (
+                          `Gracias ${userName} , Tu cotización ha sido solicitada. Serás contactado por un asesor.`
+                        )}
+                      </p>
                     </div>
                   ) : (
-                    <p 
-                      style={
-                        isLightBg
-                          ? undefined
-                          : ((formData.requestType === 'cotizacion' && (selectedBrand === 'Leapmotor' || activeLanding === 'leapmotor'))
-                             ? { color: '#deff01' }
-                             : (activeLanding === 'leapmotor' ? { color: '#deff01' } : undefined))
-                      }
-                      className={`text-xs font-mono tracking-wide ${
-                        isLightBg
-                          ? 'text-indigo-600 font-extrabold'
-                          : ((formData.requestType === 'cotizacion' && (selectedBrand === 'Leapmotor' || activeLanding === 'leapmotor'))
-                            ? 'text-white font-bold'
-                            : (activeLanding === 'leapmotor' ? 'text-white font-bold' : 'text-emerald-400 font-bold'))
-                      }`}
-                    >
-                      {formData.requestType === 'cotizacion' && (selectedBrand === 'Leapmotor' || activeLanding === 'leapmotor')
-                        ? (activeLanding === 'leapmotor'
-                            ? "Aproximadamente en dos minutos un asesor te atenderá."
-                            : "Gracias por solicitar una cotización, en breve un asesor se pondrá en contacto."
-                          )
-                        : (activeLanding === 'leapmotor' 
-                            ? "Aproximadamente en dos minutos un asesor te atenderá."
-                            : "Un asesor especializado ha recibido tu alerta. Contacto en menos de 2 Minutos."
-                          )
-                      }
-                    </p>
-                  )
-                )}
+                    <>
+                      <div className="space-y-1">
+                        <h3 className={`text-2xl font-light leading-tight ${isThemeLight ? 'text-slate-900 font-bold' : 'text-white'}`}>
+                          ¡Gracias, <span 
+                            style={activeLanding === 'leapmotor' || selectedBrand === 'Leapmotor' ? { color: '#deff01', background: 'none', WebkitTextFillColor: 'initial', WebkitBackgroundClip: 'initial' } : undefined}
+                            className={activeLanding === 'leapmotor' || selectedBrand === 'Leapmotor' ? "font-extrabold" : `font-extrabold text-transparent bg-clip-text bg-gradient-to-r ${theme.successGradient}`}
+                          >
+                            {formData.name.split(' ')[0]}
+                          </span>!
+                        </h3>
+                        {activeLanding !== 'leapmotor' && selectedBrand !== 'Leapmotor' && (
+                          <p 
+                            className={`text-sm font-bold ${isThemeLight ? 'text-slate-800' : 'text-white'}`}
+                          >
+                            Tu solicitud ha sido registrada en el sistema.
+                          </p>
+                        )}
+                      </div>
 
-                {/* Show brand graphic mockup preview with dynamic branding border & shadow */}
-                <div className={`relative aspect-video max-w-xs mx-auto rounded-xl border select-none bg-slate-900/40 my-2 overflow-hidden shadow-lg transition-all duration-300 ${
-                  selectedBrand === 'Leapmotor'
-                    ? 'border-[#009100]/40 shadow-[0_0_20px_rgba(0,145,0,0.25)]'
-                    : (selectedBrand === 'Jeep'
-                       ? 'border-emerald-500/30 shadow-[0_0_15px_rgba(16,185,129,0.15)]'
-                       : 'border-indigo-500/30 shadow-[0_0_15px_rgba(99,102,241,0.2)]')
-                }`}>
-                  <img 
-                    src={selectedBrand === 'Jeep' ? JEEP_IMG : (selectedBrand === 'Leapmotor' ? b10ImgUrl : STELLANTIS_IMG)} 
-                    alt={selectedBrand}
-                    referrerPolicy="no-referrer"
-                    className={`w-full h-full object-cover ${(selectedBrand === 'Leapmotor' || selectedBrand === 'Jeep') ? '' : 'brightness-[1.25] contrast-[1.08] saturate-[1.1]'}`}
-                  />
-                  <div className="absolute inset-x-0 bottom-2 text-[10px] font-bold tracking-[0.2em] uppercase text-white/90">
-                    {selectedBrand} {formData.modelOfInterest}
+                      {currentLeadData && (currentLeadData.status === 'attending' || currentLeadData.status === 'attended' || currentLeadData.status === 'lost') && currentLeadData.advisorId && !currentLeadData.advisorName?.includes('Sin Asignar') ? (
+                        <div 
+                          style={activeLanding === 'leapmotor' ? { borderColor: '#deff01', backgroundColor: 'rgba(222,255,1,0.08)' } : undefined}
+                          className={`p-4 rounded-xl max-w-xs mx-auto text-center border transition-all duration-300 ${
+                            isThemeLight
+                              ? 'bg-slate-50 border-slate-200 text-slate-800 shadow-[0_4px_15px_rgba(0,0,0,0.05)]'
+                              : (activeLanding === 'leapmotor'
+                                 ? 'border-[#deff01] shadow-[0_0_15px_rgba(222,255,1,0.1)]'
+                                 : (activeLanding === 'jeep'
+                                    ? 'bg-emerald-950/20 border-emerald-500/30 text-emerald-400 shadow-[0_0_15px_rgba(16,185,129,0.1)]'
+                                    : 'bg-indigo-950/20 border-indigo-500/30 text-indigo-400 shadow-[0_0_15px_rgba(99,102,241,0.1)]'))
+                          }`}
+                        >
+                          {currentLeadData.status === 'attended' || currentLeadData.status === 'lost' ? (
+                            <>
+                              <div className="flex justify-center items-center gap-2 mb-1.5 animate-pulse">
+                                <strong 
+                                  style={activeLanding === 'leapmotor' ? { color: '#deff01' } : undefined}
+                                  className={`text-[10px] font-mono font-black tracking-widest uppercase ${
+                                    isThemeLight
+                                      ? 'text-indigo-600'
+                                      : (activeLanding === 'leapmotor' ? '' : (activeLanding === 'jeep' ? 'text-emerald-400' : 'text-indigo-400'))
+                                  }`}
+                                >
+                                  ✓ ATENCIÓN FINALIZADA
+                                </strong>
+                              </div>
+                              <p className={`text-xs font-semibold leading-relaxed ${isThemeLight ? 'text-slate-800' : 'text-white'}`}>
+                                La atención ha concluido. ¡Muchas gracias por tu visita!
+                              </p>
+                              <p className={`text-[10px] mt-2 font-mono ${isThemeLight ? 'text-slate-500' : 'text-slate-400'}`}>
+                                Redireccionando al inicio...
+                              </p>
+                            </>
+                          ) : (
+                            <>
+                              <div className="flex justify-center items-center gap-2 mb-1.5">
+                                <span className="relative flex h-2 w-2">
+                                  <span className={`animate-ping absolute inline-flex h-full w-full rounded-full opacity-75 ${activeLanding === 'leapmotor' ? 'bg-[#deff01]' : (activeLanding === 'jeep' ? 'bg-emerald-400' : 'bg-indigo-400')}`}></span>
+                                  <span className={`relative inline-flex rounded-full h-2 w-2 ${activeLanding === 'leapmotor' ? 'bg-[#deff01]' : (activeLanding === 'jeep' ? 'bg-emerald-500' : 'bg-indigo-500')}`}></span>
+                                </span>
+                                <strong 
+                                  style={activeLanding === 'leapmotor' ? { color: '#deff01' } : undefined}
+                                  className={`text-[10px] font-mono font-black tracking-widest uppercase ${
+                                    isThemeLight
+                                      ? 'text-indigo-600'
+                                      : (activeLanding === 'leapmotor' ? '' : (activeLanding === 'jeep' ? 'text-emerald-400' : 'text-indigo-400'))
+                                  }`}
+                                >
+                                  Atención en Curso
+                                </strong>
+                              </div>
+                              <p className={`text-xs font-semibold leading-relaxed ${isThemeLight ? 'text-slate-800 font-bold' : 'text-white'}`}>
+                                Gracias, te está atendiendo :
+                              </p>
+                              <p 
+                                style={activeLanding === 'leapmotor' ? { color: '#deff01' } : undefined}
+                                className={`text-base font-black uppercase tracking-tight mt-1 truncate ${
+                                  isThemeLight
+                                    ? 'text-slate-900 font-extrabold'
+                                    : (activeLanding === 'leapmotor' ? '' : (activeLanding === 'jeep' ? 'text-emerald-400' : 'text-indigo-400'))
+                                }`}
+                              >
+                                {currentLeadData.advisorName}
+                              </p>
+                            </>
+                          )}
+                        </div>
+                      ) : (
+                        formData.requestType === 'prueba' ? (
+                          <div className={`p-3 border rounded-2xl max-w-xs mx-auto text-left font-mono text-[11px] leading-relaxed ${
+                            isThemeLight 
+                              ? 'bg-slate-50 border-slate-200 text-slate-800' 
+                              : 'bg-slate-900 border-indigo-500/20 text-slate-100'
+                          }`}>
+                            <div className={`font-bold block uppercase mb-1 flex items-center gap-1 ${isThemeLight ? 'text-indigo-600' : 'text-indigo-400'}`}>
+                              <Key className="w-3.5 h-3.5" /> TEST DRIVE RESERVADO OK
+                            </div>
+                            <span>Gracias por agendar tu prueba de manejo, a la brevedad un asesor te contactará para confirmar tu cita.</span>
+                          </div>
+                        ) : (
+                          <p 
+                            style={
+                              isThemeLight
+                                ? undefined
+                                : ((formData.requestType === 'cotizacion' && (selectedBrand === 'Leapmotor' || activeLanding === 'leapmotor'))
+                                   ? { color: '#deff01' }
+                                   : (activeLanding === 'leapmotor' ? { color: '#deff01' } : undefined))
+                            }
+                            className={`text-xs font-mono tracking-wide ${
+                              isThemeLight
+                                ? 'text-indigo-600 font-extrabold'
+                                : ((formData.requestType === 'cotizacion' && (selectedBrand === 'Leapmotor' || activeLanding === 'leapmotor'))
+                                  ? 'text-white font-bold'
+                                  : (activeLanding === 'leapmotor' ? 'text-white font-bold' : 'text-emerald-400 font-bold'))
+                            }`}
+                          >
+                            {formData.requestType === 'cotizacion' && (selectedBrand === 'Leapmotor' || activeLanding === 'leapmotor')
+                              ? (activeLanding === 'leapmotor'
+                                  ? "Aproximadamente en dos minutos un asesor te atenderá."
+                                  : "Gracias por solicitar una cotización, en breve un asesor se pondrá en contacto."
+                                )
+                              : (activeLanding === 'leapmotor' 
+                                  ? "Aproximadamente en dos minutos un asesor te atenderá."
+                                  : "Un asesor especializado ha recibido tu alerta. Contacto en menos de 2 Minutos."
+                                )
+                            }
+                          </p>
+                        )
+                      )}
+                    </>
+                  )}
+
+                  {/* Show brand graphic mockup preview with dynamic branding border & shadow */}
+                  <div 
+                    className="relative aspect-video max-w-xs mx-auto rounded-xl border select-none bg-slate-900/40 my-2 overflow-hidden shadow-lg transition-all duration-300"
+                    style={{
+                      borderColor: activeLanding === 'multimarca'
+                        ? (mTheme.isLight ? 'rgba(0, 0, 0, 0.1)' : 'rgba(255, 255, 255, 0.15)')
+                        : (selectedBrand === 'Leapmotor' ? 'rgba(0,145,0,0.4)' : (selectedBrand === 'Jeep' ? 'rgba(16,185,129,0.3)' : 'rgba(99,102,241,0.3)'))
+                    }}
+                  >
+                    <img 
+                      src={activeLanding === 'multimarca' ? mTheme.img : (selectedBrand === 'Jeep' ? JEEP_IMG : (selectedBrand === 'Leapmotor' ? b10ImgUrl : STELLANTIS_IMG))} 
+                      alt={selectedBrand}
+                      referrerPolicy="no-referrer"
+                      className={`w-full h-full object-cover ${(selectedBrand === 'Leapmotor' || selectedBrand === 'Jeep' || activeLanding === 'multimarca') ? '' : 'brightness-[1.25] contrast-[1.08] saturate-[1.1]'}`}
+                    />
+                    <div className="absolute inset-x-0 bottom-2 text-[10px] font-bold tracking-[0.2em] uppercase text-white/90">
+                      {selectedBrand} {formData.modelOfInterest}
+                    </div>
                   </div>
                 </div>
-              </div>
 
-              {/* Utility resets */}
-              <div className="space-y-2 pt-1 pb-1">
-                <button
-                  onClick={() => {
-                    setSuccess(false);
-                    setFormActive(false);
-                    setFormData(getInitialFormData(activeLanding, selectedBrand));
-                    setRegisteredLeadId('');
-                    setCurrentLeadData(null);
-                  }}
-                  style={activeLanding === 'leapmotor' || selectedBrand === 'Leapmotor' ? {
-                    backgroundColor: '#deff01',
-                    color: '#000000',
-                    borderColor: '#deff01'
-                  } : undefined}
-                  className={`w-full ${
-                    activeLanding === 'leapmotor' || selectedBrand === 'Leapmotor'
-                      ? 'text-black font-extrabold hover:opacity-90'
-                      : 'bg-white/5 hover:bg-white/10 text-slate-300 border border-white/10'
-                  } px-6 py-3 rounded-xl text-[10px] font-bold tracking-wider uppercase transition font-mono`}
-                >
-                  {activeLanding === 'leapmotor' || selectedBrand === 'Leapmotor' ? 'CERRAR' : 'Nuevo Registro de Prueba'}
-                </button>
-              </div>
-            </motion.div>
-          )}
+                {/* Utility resets */}
+                <div className="space-y-2 pt-1 pb-1">
+                  <button
+                    onClick={() => {
+                      setSuccess(false);
+                      setFormActive(false);
+                      if (activeLanding === 'multimarca') {
+                        setSelectedSubBrand(null); // Back to multi-brand selections landing grid!
+                      }
+                      setFormData(getInitialFormData(activeLanding, selectedBrand));
+                      setRegisteredLeadId('');
+                      setCurrentLeadData(null);
+                    }}
+                    style={
+                      activeLanding === 'multimarca'
+                        ? {
+                            backgroundColor: mTheme.btnBg,
+                            color: mTheme.btnText,
+                            borderColor: mTheme.btnBg
+                          }
+                        : (activeLanding === 'leapmotor' || selectedBrand === 'Leapmotor'
+                          ? {
+                              backgroundColor: '#deff01',
+                              color: '#000000',
+                              borderColor: '#deff01'
+                            }
+                          : undefined)
+                    }
+                    className={`w-full px-6 py-3.5 rounded-xl text-[11px] font-extrabold tracking-widest uppercase transition-all duration-300 transform active:scale-[0.98] font-mono shadow-md ${
+                      activeLanding === 'multimarca'
+                        ? 'hover:brightness-105'
+                        : (activeLanding === 'leapmotor' || selectedBrand === 'Leapmotor'
+                          ? 'text-black font-extrabold hover:opacity-90'
+                          : 'bg-white/5 hover:bg-white/10 text-slate-300 border border-white/10')
+                    }`}
+                  >
+                    {activeLanding === 'multimarca' 
+                      ? 'Cerrar' 
+                      : (activeLanding === 'leapmotor' || selectedBrand === 'Leapmotor' ? 'CERRAR' : 'Nuevo Registro de Prueba')}
+                  </button>
+                </div>
+              </motion.div>
+            );
+          })()}
 
         </AnimatePresence>
 
