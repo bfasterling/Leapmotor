@@ -2739,8 +2739,8 @@ export default function LeadForm({ c10ImgUrl, t03ImgUrl, b10ImgUrl }: LeadFormPr
 
                    {/* Test drive preferred date steps */}
                   {formData.requestType === 'prueba' && (
-                    <div className="space-y-1">
-                      <label id="frm-date-label" htmlFor="testDriveDate" className={`text-[10px] uppercase font-mono tracking-wider ${isFiatPage ? 'text-white font-extrabold' : isPeugeotPage ? 'text-[#0074E8]' : (isRamPage ? 'text-[#DD4E3C]' : (isDodgePage ? 'text-[#D50000]' : isLeapmotorPage ? 'text-[#DEFF01]' : 'text-amber-400'))} font-bold block flex items-center gap-1`}>
+                    <div className="space-y-1 w-full max-w-full overflow-hidden">
+                      <label id="frm-date-label" htmlFor="testDriveDate" className={`text-[10px] uppercase font-mono tracking-wider ${activeLanding === 'jeep' ? 'text-emerald-400 font-extrabold' : (isFiatPage ? 'text-white font-extrabold' : isPeugeotPage ? 'text-[#0074E8]' : (isRamPage ? 'text-[#DD4E3C]' : (isDodgePage ? 'text-[#D50000]' : isLeapmotorPage ? 'text-[#DEFF01]' : 'text-amber-400')))} font-bold block flex items-center gap-1`}>
                         <Calendar className="w-3.5 h-3.5" /> Selecciona la Fecha para tu Prueba *
                       </label>
                       <input
@@ -2751,19 +2751,29 @@ export default function LeadForm({ c10ImgUrl, t03ImgUrl, b10ImgUrl }: LeadFormPr
                         min={new Date().toISOString().split('T')[0]}
                         value={formData.testDriveDate}
                         onChange={handleChange}
-                        className={`w-full border rounded-xl px-4 py-2.5 text-base md:text-sm outline-none transition font-bold font-mono ${
-                          isFiatPage
-                            ? 'bg-white border-[#EE395E] text-[#EE395E] focus:border-[#EE395E]'
-                            : isPeugeotPage
-                              ? 'bg-white border-[#0074E8] text-slate-900 focus:border-[#0074E8]'
-                              : isLeapmotorPage
-                                ? 'bg-black border-[#DEFF01] text-white focus:border-[#DEFF01]'
-                              : isRamPage 
-                                ? 'bg-white/5 border-[#DD4E3C] focus:border-[#DD4E3C] text-white' 
-                                : (isDodgePage 
-                                  ? 'bg-white/5 border-[#D50000] focus:border-[#D50000] text-white' 
-                                  : 'bg-white/5 border-amber-500/30 focus:border-amber-500 text-white')
+                        className={`w-full max-w-full box-border border rounded-xl px-4 py-2.5 text-base md:text-sm outline-none transition font-bold font-mono ${
+                          activeLanding === 'jeep'
+                            ? 'bg-[#0d1411] border-[#424D07] focus:border-[#424D07] text-white [&::-webkit-calendar-picker-indicator]:invert [&::-webkit-calendar-picker-indicator]:opacity-100'
+                            : isFiatPage
+                              ? 'bg-white border-[#EE395E] text-[#EE395E] focus:border-[#EE395E]'
+                              : isPeugeotPage
+                                ? 'bg-white border-[#0074E8] text-slate-900 focus:border-[#0074E8]'
+                                : isLeapmotorPage
+                                  ? 'bg-black border-[#DEFF01] text-white focus:border-[#DEFF01]'
+                                : isRamPage 
+                                  ? 'bg-white/5 border-[#DD4E3C] focus:border-[#DD4E3C] text-white' 
+                                  : (isDodgePage 
+                                    ? 'bg-white/5 border-[#D50000] focus:border-[#D50000] text-white' 
+                                    : 'bg-white/5 border-amber-500/30 focus:border-amber-500 text-white')
                         }`}
+                        style={
+                          activeLanding === 'jeep'
+                            ? {
+                                maxWidth: '100%',
+                                boxSizing: 'border-box',
+                              }
+                            : undefined
+                        }
                       />
                     </div>
                   )}
@@ -2897,7 +2907,9 @@ export default function LeadForm({ c10ImgUrl, t03ImgUrl, b10ImgUrl }: LeadFormPr
                     <span>
                       {activeLanding === 'leapmotor' 
                         ? (formData.requestType === 'cotizacion' ? 'SOLICITAR COTIZACIÓN' : 'SOLICITAR ATENCIÓN INMEDIATA')
-                        : (formData.requestType === 'cotizacion' ? 'Registrar Cotización' : 'Registrar para ser atendido personalmente')}
+                        : (activeLanding === 'jeep'
+                          ? (formData.requestType === 'cotizacion' ? 'Registrar Cotización' : 'Regístrate para solicitar prueba de manejo')
+                          : (formData.requestType === 'cotizacion' ? 'Registrar Cotización' : 'Registrar para ser atendido personalmente'))}
                     </span>
                   )}
                 </button>
@@ -2931,9 +2943,11 @@ export default function LeadForm({ c10ImgUrl, t03ImgUrl, b10ImgUrl }: LeadFormPr
                     <div className={`absolute inset-0 w-14 h-14 ${
                       activeLanding === 'leapmotor'
                         ? 'bg-[#deff01]/10'
-                        : (activeLanding === 'multimarca'
-                           ? ''
-                           : (formData.requestType === 'prueba' ? 'bg-indigo-500/10' : 'bg-emerald-500/10'))
+                        : (activeLanding === 'jeep'
+                           ? 'bg-[#487F70]/20'
+                           : (activeLanding === 'multimarca'
+                              ? ''
+                              : (formData.requestType === 'prueba' ? 'bg-indigo-500/10' : 'bg-emerald-500/10')))
                     } rounded-full blur-md animate-ping`} />
                     {activeLanding === 'multimarca' ? (
                       <div 
@@ -2948,6 +2962,13 @@ export default function LeadForm({ c10ImgUrl, t03ImgUrl, b10ImgUrl }: LeadFormPr
                         className="w-14 h-14 rounded-full flex items-center justify-center shadow-[0_0_15px_rgba(222,255,1,0.35)]"
                       >
                         <Check className="w-7 h-7 text-black stroke-[3.5]" />
+                      </div>
+                    ) : activeLanding === 'jeep' ? (
+                      <div 
+                        style={{ backgroundColor: '#487F70' }}
+                        className="w-14 h-14 rounded-full flex items-center justify-center shadow-[0_0_15px_rgba(72,127,112,0.35)]"
+                      >
+                        <Check className="w-7 h-7 text-white stroke-[3.5]" />
                       </div>
                     ) : (
                       <div className="w-14 h-14 rounded-full bg-slate-900 border border-white/10 flex items-center justify-center">
@@ -2978,17 +2999,29 @@ export default function LeadForm({ c10ImgUrl, t03ImgUrl, b10ImgUrl }: LeadFormPr
                   ) : (
                     <>
                       <div className="space-y-1">
-                        <h3 className={`text-2xl font-light leading-tight ${isThemeLight ? 'text-slate-900 font-bold' : 'text-white'}`}>
+                        <h3 className={`text-2xl font-light leading-tight ${activeLanding === 'jeep' ? 'text-white font-extrabold' : (isThemeLight ? 'text-slate-900 font-bold' : 'text-white')}`}>
                           ¡Gracias, <span 
-                            style={activeLanding === 'leapmotor' || selectedBrand === 'Leapmotor' ? { color: '#deff01', background: 'none', WebkitTextFillColor: 'initial', WebkitBackgroundClip: 'initial' } : undefined}
-                            className={activeLanding === 'leapmotor' || selectedBrand === 'Leapmotor' ? "font-extrabold" : `font-extrabold text-transparent bg-clip-text bg-gradient-to-r ${theme.successGradient}`}
+                            style={
+                              activeLanding === 'leapmotor' || selectedBrand === 'Leapmotor' 
+                                ? { color: '#deff01', background: 'none', WebkitTextFillColor: 'initial', WebkitBackgroundClip: 'initial' } 
+                                : (activeLanding === 'jeep'
+                                  ? { color: '#487F70', background: 'none', WebkitTextFillColor: 'initial', WebkitBackgroundClip: 'initial' }
+                                  : undefined)
+                            }
+                            className={
+                              activeLanding === 'leapmotor' || selectedBrand === 'Leapmotor' 
+                                ? "font-extrabold" 
+                                : (activeLanding === 'jeep'
+                                  ? "font-extrabold text-[#487F70]"
+                                  : `font-extrabold text-[#487F70]`)
+                            }
                           >
                             {formData.name.split(' ')[0]}
                           </span>!
                         </h3>
                         {activeLanding !== 'leapmotor' && selectedBrand !== 'Leapmotor' && (
                           <p 
-                            className={`text-sm font-bold ${isThemeLight ? 'text-slate-800' : 'text-white'}`}
+                            className={`text-sm font-bold ${activeLanding === 'jeep' ? 'text-slate-300' : (isThemeLight ? 'text-slate-800' : 'text-white')}`}
                           >
                             Tu solicitud ha sido registrada en el sistema.
                           </p>
@@ -3064,7 +3097,7 @@ export default function LeadForm({ c10ImgUrl, t03ImgUrl, b10ImgUrl }: LeadFormPr
                           )}
                         </div>
                       ) : (
-                        formData.requestType === 'prueba' ? (
+                        (formData.requestType === 'prueba' && activeLanding !== 'jeep') ? (
                           <div className={`p-3 border rounded-2xl max-w-xs mx-auto text-left font-mono text-[11px] leading-relaxed ${
                             isThemeLight 
                               ? 'bg-slate-50 border-slate-200 text-slate-800' 
@@ -3078,29 +3111,39 @@ export default function LeadForm({ c10ImgUrl, t03ImgUrl, b10ImgUrl }: LeadFormPr
                         ) : (
                           <p 
                             style={
-                              isThemeLight
-                                ? undefined
-                                : ((formData.requestType === 'cotizacion' && (selectedBrand === 'Leapmotor' || activeLanding === 'leapmotor'))
-                                   ? { color: '#deff01' }
-                                   : (activeLanding === 'leapmotor' ? { color: '#deff01' } : undefined))
+                              activeLanding === 'jeep'
+                                ? { color: '#487F70' }
+                                : (isThemeLight
+                                  ? undefined
+                                  : ((formData.requestType === 'cotizacion' && (selectedBrand === 'Leapmotor' || activeLanding === 'leapmotor'))
+                                     ? { color: '#deff01' }
+                                     : (activeLanding === 'leapmotor' ? { color: '#deff01' } : undefined)))
                             }
                             className={`text-xs font-mono tracking-wide ${
-                              isThemeLight
-                                ? 'text-indigo-600 font-extrabold'
-                                : ((formData.requestType === 'cotizacion' && (selectedBrand === 'Leapmotor' || activeLanding === 'leapmotor'))
-                                  ? 'text-white font-bold'
-                                  : (activeLanding === 'leapmotor' ? 'text-white font-bold' : 'text-emerald-400 font-bold'))
+                              activeLanding === 'jeep'
+                                ? 'text-[#487F70] font-black'
+                                : (isThemeLight
+                                  ? 'text-indigo-600 font-extrabold'
+                                  : ((formData.requestType === 'cotizacion' && (selectedBrand === 'Leapmotor' || activeLanding === 'leapmotor'))
+                                    ? 'text-white font-bold'
+                                    : (activeLanding === 'leapmotor' ? 'text-white font-bold' : 'text-emerald-400 font-bold')))
                             }`}
                           >
-                            {formData.requestType === 'cotizacion' && (selectedBrand === 'Leapmotor' || activeLanding === 'leapmotor')
-                              ? (activeLanding === 'leapmotor'
-                                  ? "Aproximadamente en dos minutos un asesor te atenderá."
+                            {activeLanding === 'jeep'
+                              ? (formData.requestType === 'prueba'
+                                  ? "Gracias por registrar tu prueba de manejo, en breve un asesor se pondrá en contacto para confirmar tu cita."
                                   : "Gracias por solicitar una cotización, en breve un asesor se pondrá en contacto."
                                 )
-                              : (activeLanding === 'leapmotor' 
-                                  ? "Aproximadamente en dos minutos un asesor te atenderá."
-                                  : "Un asesor especializado ha recibido tu alerta. Contacto en menos de 2 Minutos."
-                                )
+                              : (formData.requestType === 'cotizacion' && (selectedBrand === 'Leapmotor' || activeLanding === 'leapmotor')
+                                ? (activeLanding === 'leapmotor'
+                                    ? "Aproximadamente en dos minutos un asesor te atenderá."
+                                    : "Gracias por solicitar una cotización, en breve un asesor se pondrá en contacto."
+                                  )
+                                : (activeLanding === 'leapmotor' 
+                                    ? "Aproximadamente en dos minutos un asesor te atenderá."
+                                    : "Un asesor especializado ha recibido tu alerta. Contacto en menos de 2 Minutos."
+                                  )
+                              )
                             }
                           </p>
                         )
@@ -3114,7 +3157,7 @@ export default function LeadForm({ c10ImgUrl, t03ImgUrl, b10ImgUrl }: LeadFormPr
                     style={{
                       borderColor: activeLanding === 'multimarca'
                         ? (mTheme.isLight ? 'rgba(0, 0, 0, 0.1)' : 'rgba(255, 255, 255, 0.15)')
-                        : (selectedBrand === 'Leapmotor' ? 'rgba(0,145,0,0.4)' : (selectedBrand === 'Jeep' ? 'rgba(16,185,129,0.3)' : 'rgba(99,102,241,0.3)'))
+                        : (selectedBrand === 'Leapmotor' ? 'rgba(0,145,0,0.4)' : (selectedBrand === 'Jeep' ? 'rgba(72,127,112,0.3)' : 'rgba(99,102,241,0.3)'))
                     }}
                   >
                     <img 
@@ -3124,7 +3167,9 @@ export default function LeadForm({ c10ImgUrl, t03ImgUrl, b10ImgUrl }: LeadFormPr
                       className={`w-full h-full object-cover ${(selectedBrand === 'Leapmotor' || selectedBrand === 'Jeep' || activeLanding === 'multimarca') ? '' : 'brightness-[1.25] contrast-[1.08] saturate-[1.1]'}`}
                     />
                     <div className="absolute inset-x-0 bottom-2 text-[10px] font-bold tracking-[0.2em] uppercase text-white/90">
-                      {selectedBrand} {formData.modelOfInterest}
+                      {selectedBrand === 'Jeep' && formData.modelOfInterest.toLowerCase().includes('jeep')
+                        ? formData.modelOfInterest
+                        : `${selectedBrand} ${formData.modelOfInterest}`}
                     </div>
                   </div>
                 </div>
@@ -3155,17 +3200,25 @@ export default function LeadForm({ c10ImgUrl, t03ImgUrl, b10ImgUrl }: LeadFormPr
                               color: '#000000',
                               borderColor: '#deff01'
                             }
-                          : undefined)
+                          : (activeLanding === 'jeep'
+                            ? {
+                                backgroundColor: '#487F70',
+                                color: '#FFFFFF',
+                                borderColor: '#487F70'
+                              }
+                            : undefined))
                     }
                     className={`w-full px-6 py-3.5 rounded-xl text-[11px] font-extrabold tracking-widest uppercase transition-all duration-300 transform active:scale-[0.98] font-mono shadow-md ${
                       activeLanding === 'multimarca'
                         ? 'hover:brightness-105'
                         : (activeLanding === 'leapmotor' || selectedBrand === 'Leapmotor'
                           ? 'text-black font-extrabold hover:opacity-90'
-                          : 'bg-white/5 hover:bg-white/10 text-slate-300 border border-white/10')
+                          : (activeLanding === 'jeep'
+                            ? 'hover:brightness-105 text-white font-extrabold'
+                            : 'bg-white/5 hover:bg-white/10 text-slate-300 border border-white/10'))
                     }`}
                   >
-                    {activeLanding === 'multimarca' 
+                    {activeLanding === 'multimarca' || activeLanding === 'jeep'
                       ? 'CERRAR' 
                       : (activeLanding === 'leapmotor' || selectedBrand === 'Leapmotor' ? 'CERRAR' : 'Nuevo Registro de Prueba')}
                   </button>
