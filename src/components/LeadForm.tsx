@@ -51,7 +51,9 @@ import {
   Route,
   Star,
   Wrench,
-  UserCheck
+  UserCheck,
+  Mountain,
+  Gauge
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import LeapmotorLogo from './LeapmotorLogo';
@@ -1796,27 +1798,27 @@ export default function LeadForm({ c10ImgUrl, t03ImgUrl, b10ImgUrl }: LeadFormPr
                         style={{ borderColor: '#7d9267' }} 
                         className="w-11 h-11 rounded-full bg-transparent border flex items-center justify-center text-[#7d9267] shadow-inner"
                       >
-                        <Compass className="w-6 h-6 text-[#7d9267]" style={{ borderColor: '#7d9267' }} />
+                        <Mountain className="w-6 h-6 text-[#7d9267]" style={{ borderColor: '#7d9267' }} />
                       </div>
-                      <span style={{ color: '#000000' }} className="text-[10px] sm:text-[11px] font-extrabold uppercase font-sans tracking-wide">Terrain 4x4</span>
+                      <span style={{ color: '#000000' }} className="text-[10px] sm:text-[11px] font-extrabold uppercase font-sans tracking-wide">4x4</span>
                     </div>
                     <div className="flex flex-col items-center gap-2">
                       <div 
                         style={{ borderColor: '#7d9267' }} 
                         className="w-11 h-11 rounded-full bg-transparent border flex items-center justify-center text-[#7d9267] shadow-inner"
                       >
-                        <Zap className="w-6 h-6 text-[#7d9267]" style={{ borderColor: '#7d9267' }} />
+                        <BatteryCharging className="w-6 h-6 text-[#7d9267]" style={{ borderColor: '#7d9267' }} />
                       </div>
-                      <span style={{ color: '#000000' }} className="text-[10px] sm:text-[11px] font-extrabold uppercase font-sans tracking-wide">Hemi-Hybrid</span>
+                      <span style={{ color: '#000000' }} className="text-[10px] sm:text-[11px] font-extrabold uppercase font-sans tracking-wide">ADN Híbrido</span>
                     </div>
                     <div className="flex flex-col items-center gap-2">
                       <div 
                         style={{ borderColor: '#7d9267' }} 
                         className="w-11 h-11 rounded-full bg-transparent border flex items-center justify-center text-[#7d9267] shadow-inner"
                       >
-                        <Award className="w-6 h-6 text-[#7d9267]" style={{ borderColor: '#7d9267' }} />
+                        <Gauge className="w-6 h-6 text-[#7d9267]" style={{ borderColor: '#7d9267' }} />
                       </div>
-                      <span style={{ color: '#000000' }} className="text-[10px] sm:text-[11px] font-extrabold uppercase font-sans tracking-wide">Trail Rated</span>
+                      <span style={{ color: '#000000' }} className="text-[10px] sm:text-[11px] font-extrabold uppercase font-sans tracking-wide">Grán Capacidad</span>
                     </div>
                   </div>
 
@@ -3251,20 +3253,55 @@ export default function LeadForm({ c10ImgUrl, t03ImgUrl, b10ImgUrl }: LeadFormPr
             >
               {/* Map Canvas body */}
               <div className="p-4 flex flex-col items-center gap-3">
-                <div className="relative aspect-square w-full rounded-2xl overflow-hidden border border-amber-500/30 shadow-[0_0_20px_rgba(245,158,11,0.2)]">
-                  <img 
-                    src={MAP_800X800_IMG} 
-                    alt="Mapa Carpa Stellantis"
-                    referrerPolicy="no-referrer"
-                    className="w-full h-full object-cover"
-                  />
-                </div>
+                {activeLanding === 'jeep' ? (
+                  <>
+                    {/* 1) Jeep logo white with transparency */}
+                    <div className="flex justify-center w-full mt-1 mb-1">
+                      <svg 
+                        role="img" 
+                        viewBox="0 0 24 24" 
+                        className="w-[320px] h-[120px] fill-white opacity-70 transition-all duration-300 pointer-events-none" 
+                        xmlns="http://www.w3.org/2000/svg"
+                      >
+                        <path d="M4.1651 7.1687v5.2011c0 .6762-.444 1.0777-1.1628 1.0777-.7185 0-1.0992-.5283-1.0992-1.0992v-.9299H0v.9514c0 .972.296 2.7068 3.0235 2.7068 2.7272 0 3.1082-1.8614 3.1082-2.7488V7.1687Zm4.9177 2.1562c-1.7973 0-2.6003 1.6485-2.6003 3.0657 0 1.4168.9094 2.7912 2.7695 2.7912 1.6285.021 2.707-1.0361 2.707-1.8187h-1.7977s-.2113.5078-.8458.5078c-.6343 0-.9934-.3596-.9934-1.2265h3.6576c0-2.7277-1.3526-3.3195-2.897-3.3195zm5.8471 0c-1.7968 0-2.6007 1.6485-2.6007 3.0657 0 1.4168.9094 2.7912 2.7705 2.7912 1.628.021 2.7067-1.0361 2.7067-1.8187h-1.7978s-.2116.5078-.8454.5078c-.6348 0-.9942-.3596-.9942-1.2265h3.6574c0-2.7277-1.3523-3.3195-2.8965-3.3195zm6.7435.0635c-.9132 0-1.3186.4962-1.3401.522-.1283.1538-.2875.3165-.2875-.0782v-.2959h-1.8193v7.295h1.8398V14.822c0-.148.1478-.126.2543 0 .1063.1277.5711.4443 1.3752.4443C23.155 15.2663 24 13.9978 24 12.264c0-2.2415-1.4162-2.8757-2.3266-2.8756Zm-12.401 1.1203c.6766 0 .972.5073.972 1.0365H8.3843c0-.5718.2327-1.0365.8882-1.0365zm5.8468 0c.6767 0 .9724.5073.9724 1.0365H14.231c0-.5718.2332-1.0365.8883-1.0365zm5.9204.296c.9318 0 1.1.7189 1.1 1.4593 0 .74-.1272 1.7124-1.0141 1.7124-.8884 0-1.1212-.5709-1.1017-1.6486.022-1.0788.4441-1.523 1.0158-1.523zm2.2813 4.5664a.5855.5855 0 0 0-.5856.5857c0 .3233.2617.5856.5856.5856.3218 0 .585-.2623.585-.5856 0-.3233-.2632-.5857-.585-.5857zm0 .062a.524.524 0 0 1 .5236.5237c0 .2884-.2346.5246-.5236.5246a.5258.5258 0 0 1-.525-.5246c0-.289.2352-.5236.525-.5236zm-.2108.2024v.6208h.0725v-.2689h.1764l.1159.269h.0806l-.1216-.2873c.0386-.0133.0514-.0227.072-.0447.0266-.0287.0434-.0739.0434-.115 0-.1034-.0796-.174-.195-.174zm.0705.0676h.1722c.072 0 .1177.041.1177.1045 0 .072-.0485.1168-.1278.1168h-.1621z" />
+                      </svg>
+                    </div>
 
-                <div className="bg-slate-950/60 p-3 rounded-2xl border border-white/5 text-center">
-                  <p className="text-[14px] sm:text-[15px] text-slate-200 leading-relaxed font-sans font-semibold">
-                    Te esperamos en el hospitality zone de Leapmotor, para que seas atendido por uno de nuestros asesores.
-                  </p>
-                </div>
+                    {/* text "Te esperamos ..." immediately below */}
+                    <div className="bg-slate-950/40 p-3 rounded-2xl border border-white/5 text-center w-full mb-1">
+                      <p className="text-[14px] sm:text-[15px] text-slate-200 leading-relaxed font-sans font-semibold">
+                        Te esperamos en el hospitality de Jeep, para que seas atendido por uno de nuestros asesores.
+                      </p>
+                    </div>
+
+                    {/* map below */}
+                    <div className="relative aspect-square w-full rounded-2xl overflow-hidden border border-[#487F70]/40 shadow-[0_0_20px_rgba(72,127,112,0.3)]">
+                      <img 
+                        src={MAP_800X800_IMG} 
+                        alt="Mapa Carpa Stellantis"
+                        referrerPolicy="no-referrer"
+                        className="w-full h-full object-cover"
+                      />
+                    </div>
+                  </>
+                ) : (
+                  <>
+                    <div className="relative aspect-square w-full rounded-2xl overflow-hidden border border-amber-500/30 shadow-[0_0_20px_rgba(245,158,11,0.2)]">
+                      <img 
+                        src={MAP_800X800_IMG} 
+                        alt="Mapa Carpa Stellantis"
+                        referrerPolicy="no-referrer"
+                        className="w-full h-full object-cover"
+                      />
+                    </div>
+
+                    <div className="bg-slate-950/60 p-3 rounded-2xl border border-white/5 text-center">
+                      <p className="text-[14px] sm:text-[15px] text-slate-200 leading-relaxed font-sans font-semibold">
+                        Te esperamos en el hospitality zone de Leapmotor, para que seas atendido por uno de nuestros asesores.
+                      </p>
+                    </div>
+                  </>
+                )}
               </div>
 
               {/* Action footer */}
@@ -3272,9 +3309,14 @@ export default function LeadForm({ c10ImgUrl, t03ImgUrl, b10ImgUrl }: LeadFormPr
                 <button
                   type="button"
                   onClick={() => setShowStellantisMap(false)}
-                  className="w-full bg-[#22372B] hover:bg-[#15231b] text-white font-extrabold py-3 rounded-xl text-xs uppercase tracking-wider transition-all duration-300 shadow-md shadow-[#22372B]/20"
+                  style={activeLanding === 'jeep' ? { backgroundColor: '#487F70' } : undefined}
+                  className={`w-full text-white font-extrabold py-3 rounded-xl text-xs uppercase tracking-wider transition-all duration-300 shadow-md ${
+                    activeLanding === 'jeep' 
+                      ? 'bg-[#487F70] hover:bg-[#3d6b5e] shadow-[#487F70]/20' 
+                      : 'bg-[#22372B] hover:bg-[#15231b] shadow-[#22372B]/20'
+                  }`}
                 >
-                  Entendido, volver
+                  {activeLanding === 'jeep' ? 'REGRESAR' : 'Entendido, volver'}
                 </button>
               </div>
             </motion.div>
