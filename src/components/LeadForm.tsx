@@ -500,7 +500,7 @@ export default function LeadForm({ c10ImgUrl, t03ImgUrl, b10ImgUrl }: LeadFormPr
       }
     }
 
-    const defaultModel = initialLanding === 'jeep' ? 'Jeep Cherokee' : 'B10';
+    const defaultModel = initialLanding === 'jeep' ? 'Cherokee' : 'B10';
     const defaultDistributor = initialLanding === 'jeep' ? 'Autokasa Viaducto' : 'Leapmotor Santa Fe';
 
     return {
@@ -822,7 +822,7 @@ export default function LeadForm({ c10ImgUrl, t03ImgUrl, b10ImgUrl }: LeadFormPr
       setFormData(prev => ({ ...prev, modelOfInterest: 'B10' }));
     } else if (target === 'jeep') {
       setSelectedBrand('Jeep');
-      setFormData(prev => ({ ...prev, modelOfInterest: 'Jeep Cherokee' }));
+      setFormData(prev => ({ ...prev, modelOfInterest: 'Cherokee' }));
     } else if (target === 'multimarca') {
       setSelectedBrand('Leapmotor');
       setFormData(prev => ({ ...prev, modelOfInterest: 'B10' }));
@@ -1224,7 +1224,7 @@ export default function LeadForm({ c10ImgUrl, t03ImgUrl, b10ImgUrl }: LeadFormPr
       postalCode: '',
       state: defaultState,
       distributor: defaultDistributor,
-      modelOfInterest: presetModel || (landing === 'leapmotor' ? 'B10' : (brand === 'Jeep' ? 'Jeep Cherokee' : BRAND_MODELS[brand]?.[0] || 'Jeep Cherokee')),
+      modelOfInterest: presetModel || (landing === 'leapmotor' ? 'B10' : (brand === 'Jeep' ? 'Cherokee' : BRAND_MODELS[brand]?.[0] || 'Cherokee')),
       contactMethod: 'whatsapp',
       testDriveDate: '',
       requestType: reqType
@@ -1823,7 +1823,7 @@ export default function LeadForm({ c10ImgUrl, t03ImgUrl, b10ImgUrl }: LeadFormPr
                   {/* Three CTA buttons including personalized maps */}
                   <div className="grid grid-cols-2 gap-2 pt-1">
                     <button
-                      onClick={() => launchFormWithRequest('cotizacion', 'Jeep Cherokee')}
+                      onClick={() => launchFormWithRequest('cotizacion', 'Cherokee')}
                       style={{ backgroundColor: '#487f70' }}
                       className="text-white hover:bg-[#396559] font-extrabold py-3.5 px-4 rounded-xl text-[10px] uppercase tracking-wider flex items-center justify-center gap-1.5 transition-all duration-300 active:scale-95 shadow-md shadow-[#487f70]/25 col-span-1"
                     >
@@ -1831,7 +1831,7 @@ export default function LeadForm({ c10ImgUrl, t03ImgUrl, b10ImgUrl }: LeadFormPr
                       <span>Cotización</span>
                     </button>
                     <button
-                      onClick={() => launchFormWithRequest('prueba', 'Jeep Cherokee')}
+                      onClick={() => launchFormWithRequest('prueba', 'Cherokee')}
                       style={{ backgroundColor: '#487f70' }}
                       className="text-white hover:bg-[#396559] font-extrabold py-3.5 px-4 rounded-xl text-[10px] uppercase tracking-wider flex items-center justify-center gap-1.5 transition-all duration-300 active:scale-95 col-span-1"
                     >
