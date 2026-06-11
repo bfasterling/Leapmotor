@@ -69,7 +69,7 @@ import JEEP_HEADER_LOGO_IMG from '../assets/images/jeep_logo_new_1780714816380.p
 import FIAT_LOGO_IMG from '../assets/images/regenerated_image_1780715561130.jpg';
 import DODGE_LOGO_BG_IMG from '../assets/images/regenerated_image_1780970482939.png';
 import DODGE_LOGO_IMG from '../assets/images/regenerated_image_1781124802310.jpg';
-import PEUGEOT_LOGO_IMG from '../assets/images/peugeot_logo_new_1780716886504.png';
+import PEUGEOT_LOGO_IMG from '../assets/images/peugeot_subpage_logo_new.png';
 import RAM_LOGO_IMG from '../assets/images/ram_logo_new_1780717149923.png';
 import JEEP_IMG from '../assets/images/regenerated_image_1781067758543.jpg';
 import JEEP_COMMANDER_IMG from '../assets/images/jeep_commander_1780440413653.png';
@@ -120,10 +120,11 @@ const BRAND_PAGE_TOP_RAM_LOGO = RAM_LOGO_IMG;
 // Decoupled background/hero images for the multimarca brand pages to ensure independent workability
 import DODGE_SUBPAGE_BG_NEW from '../assets/images/regenerated_image_1781157409037.jpg';
 import FIAT_SUBPAGE_BG_NEW from '../assets/images/regenerated_image_1781159053736.jpg';
+import PEUGEOT_SUBPAGE_BG_NEW from '../assets/images/regenerated_image_1781160996776.jpg';
 const MULTIMARCA_JEEP_BG = MULTIMARCA_REGENERATED_JEEP_BG;
 const MULTIMARCA_FIAT_BG = FIAT_SUBPAGE_BG_NEW;
 const MULTIMARCA_DODGE_BG = DODGE_SUBPAGE_BG_NEW;
-const MULTIMARCA_PEUGEOT_BG = PEUGEOT_LANDING_BG_26;
+const MULTIMARCA_PEUGEOT_BG = PEUGEOT_SUBPAGE_BG_NEW;
 const MULTIMARCA_RAM_BG = MULTIMARCA_RAM_BG_NEW;
 
 const MEX_STATES = [
@@ -1532,45 +1533,55 @@ export default function LeadForm({ c10ImgUrl, t03ImgUrl, b10ImgUrl }: LeadFormPr
   const isRamPage = selectedSubBrand?.toLowerCase() === 'ram' || activeMultimarcaBrandKey?.toLowerCase() === 'ram';
   const isDodgePage = selectedSubBrand?.toLowerCase() === 'dodge' || activeMultimarcaBrandKey?.toLowerCase() === 'dodge';
   const isFiatPage = selectedSubBrand?.toLowerCase() === 'fiat' || activeMultimarcaBrandKey?.toLowerCase() === 'fiat';
+  const isPeugeotPage = selectedSubBrand?.toLowerCase() === 'peugeot' || activeMultimarcaBrandKey?.toLowerCase() === 'peugeot';
+  const isLeapmotorPage = selectedSubBrand?.toLowerCase() === 'leapmotor' || activeMultimarcaBrandKey?.toLowerCase() === 'leapmotor' || activeLanding === 'leapmotor';
 
   // Dynamic input styling based on active branding
   const rowClass = isFiatPage
     ? 'space-y-1 bg-transparent p-1 transition-all duration-350'
-    : (isRamPage
-      ? 'space-y-1 bg-slate-900/60 p-2 sm:p-2.5 rounded-xl border border-[#DD4E3C] hover:border-[#DD4E3C]/80 transition-all duration-350 shadow-inner'
-      : (isDodgePage
-        ? 'space-y-1 bg-slate-900/60 p-2 sm:p-2.5 rounded-xl border border-[#D50000] hover:border-[#D50000]/80 transition-all duration-350 shadow-inner'
-        : (isJeepPage
-          ? 'space-y-1 bg-white p-2 sm:p-2.5 rounded-xl border border-[#487f70] transition-all duration-350'
-          : (isLightBg
-            ? 'space-y-1 bg-slate-100 p-2 sm:p-2.5 rounded-xl border border-slate-200 hover:border-slate-300 transition-all duration-350'
-            : (activeLanding === 'leapmotor'
-               ? 'space-y-1 bg-[#035F1D]/10 p-2 sm:p-2.5 rounded-xl border border-[#009100]/25 hover:border-[#deff01]/40 hover:bg-[#035F1D]/15 transition-all duration-350'
-               : (activeLanding === 'jeep'
+    : isPeugeotPage
+      ? 'space-y-1 bg-transparent p-1 transition-all duration-350'
+      : isLeapmotorPage
+        ? 'space-y-1 bg-transparent p-1 transition-all duration-350'
+      : isRamPage
+        ? 'space-y-1 bg-slate-900/60 p-2 sm:p-2.5 rounded-xl border border-[#DD4E3C] hover:border-[#DD4E3C]/80 transition-all duration-350 shadow-inner'
+        : isDodgePage
+          ? 'space-y-1 bg-slate-900/60 p-2 sm:p-2.5 rounded-xl border border-[#D50000] hover:border-[#D50000]/80 transition-all duration-350 shadow-inner'
+          : isJeepPage
+            ? 'space-y-1 bg-white p-2 sm:p-2.5 rounded-xl border border-[#487f70] transition-all duration-350'
+            : isLightBg
+              ? 'space-y-1 bg-slate-100 p-2 sm:p-2.5 rounded-xl border border-slate-200 hover:border-slate-300 transition-all duration-350'
+              : activeLanding === 'leapmotor'
+                ? 'space-y-1 bg-[#035F1D]/10 p-2 sm:p-2.5 rounded-xl border border-[#009100]/25 hover:border-[#deff01]/40 hover:bg-[#035F1D]/15 transition-all duration-350'
+                : activeLanding === 'jeep'
                   ? 'space-y-1 bg-slate-950/40 p-2 sm:p-2.5 rounded-xl border border-[#424D07] hover:border-[#424D07]/80 transition-all duration-350 shadow-inner'
-                  : 'space-y-1 bg-slate-900/60 p-2 sm:p-2.5 rounded-xl border border-white/15 hover:border-white/20 transition-all duration-350'))))));
+                  : 'space-y-1 bg-slate-900/60 p-2 sm:p-2.5 rounded-xl border border-white/15 hover:border-white/20 transition-all duration-350';
 
   const inputClass = isFiatPage
     ? 'w-full bg-white border border-[#EE395E] focus:border-[#EE395E] focus:ring-1 focus:ring-[#EE395E]/30 rounded-xl pl-9 pr-3 py-2 sm:py-2.5 text-base md:text-xs text-slate-900 placeholder-[#EE395E]/50 outline-none transition font-semibold shadow-sm'
-    : (isRamPage
-      ? 'w-full bg-[#0a0f18] border border-[#DD4E3C] focus:border-[#DD4E3C] focus:ring-1 focus:ring-[#DD4E3C]/40 rounded-xl pl-9 pr-3 py-2 sm:py-2.5 text-base md:text-xs text-white placeholder-slate-400 outline-none transition font-semibold'
-      : (isDodgePage
-        ? 'w-full bg-[#0a0f18] border border-[#D50000] focus:border-[#D50000] focus:ring-1 focus:ring-[#D50000]/40 rounded-xl pl-9 pr-3 py-2 sm:py-2.5 text-base md:text-xs text-white placeholder-slate-400 outline-none transition font-semibold'
-        : (isJeepPage
-          ? 'w-full bg-white border border-[#487f70] focus:border-[#487f70] focus:ring-1 focus:ring-[#487f70]/40 rounded-xl pl-9 pr-3 py-2 sm:py-2.5 text-base md:text-sm text-slate-900 placeholder-slate-400 outline-none transition font-semibold'
-          : (isLightBg
-            ? 'w-full bg-white border border-slate-300 focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500/40 rounded-xl pl-9 pr-3 py-2 sm:py-2.5 text-base md:text-sm text-slate-900 placeholder-slate-400 outline-none transition font-semibold'
-            : (activeLanding === 'leapmotor'
-               ? 'w-full bg-[#2D2926] border border-[#deff01] focus:border-[#deff01] focus:ring-1 focus:ring-[#deff01]/40 rounded-xl pl-9 pr-3 py-2 sm:py-2.5 text-base md:text-xs text-slate-100 placeholder-slate-500 outline-none transition font-semibold font-sans'
-               : (activeLanding === 'jeep'
-                  ? 'w-full bg-[#0d1411] border border-[#424D07] focus:border-[#424D07] focus:ring-1 focus:ring-[#424D07]/40 rounded-xl pl-9 pr-3 py-2 sm:py-2.5 text-base md:text-xs text-white placeholder-slate-400 outline-none transition font-semibold'
-                  : 'w-full bg-[#0a0f18] border border-white/25 focus:border-indigo-400 focus:ring-1 focus:ring-indigo-400/40 rounded-xl pl-9 pr-3 py-2 sm:py-2.5 text-base md:text-xs text-white placeholder-slate-400 outline-none transition font-semibold'))))));
+    : isPeugeotPage
+      ? 'w-full bg-white border border-[#0074E8] focus:border-[#0074E8] focus:ring-1 focus:ring-[#0074E8]/30 rounded-xl pl-9 pr-3 py-2 sm:py-2.5 text-base md:text-xs text-slate-900 placeholder-[#0074E8]/50 outline-none transition font-semibold shadow-sm'
+      : isLeapmotorPage
+        ? 'w-full bg-[#000000] border border-[#DEFF01] focus:border-[#DEFF01] focus:ring-1 focus:ring-[#DEFF01]/30 rounded-xl pl-9 pr-3 py-2 sm:py-2.5 text-base md:text-xs text-white placeholder-slate-400 outline-none transition font-semibold font-sans shadow-sm'
+      : isRamPage
+        ? 'w-full bg-[#0a0f18] border border-[#DD4E3C] focus:border-[#DD4E3C] focus:ring-1 focus:ring-[#DD4E3C]/40 rounded-xl pl-9 pr-3 py-2 sm:py-2.5 text-base md:text-xs text-white placeholder-slate-400 outline-none transition font-semibold'
+        : isDodgePage
+          ? 'w-full bg-[#0a0f18] border border-[#D50000] focus:border-[#D50000] focus:ring-1 focus:ring-[#D50000]/40 rounded-xl pl-9 pr-3 py-2 sm:py-2.5 text-base md:text-xs text-white placeholder-slate-400 outline-none transition font-semibold'
+          : isJeepPage
+            ? 'w-full bg-white border border-[#487f70] focus:border-[#487f70] focus:ring-1 focus:ring-[#487f70]/40 rounded-xl pl-9 pr-3 py-2 sm:py-2.5 text-base md:text-sm text-slate-900 placeholder-slate-400 outline-none transition font-semibold'
+            : isLightBg
+              ? 'w-full bg-white border border-slate-300 focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500/40 rounded-xl pl-9 pr-3 py-2 sm:py-2.5 text-base md:text-sm text-slate-900 placeholder-slate-400 outline-none transition font-semibold'
+              : activeLanding === 'leapmotor'
+                 ? 'w-full bg-[#2D2926] border border-[#deff01] focus:border-[#deff01] focus:ring-1 focus:ring-[#deff01]/40 rounded-xl pl-9 pr-3 py-2 sm:py-2.5 text-base md:text-xs text-slate-100 placeholder-slate-500 outline-none transition font-semibold font-sans'
+                 : activeLanding === 'jeep'
+                    ? 'w-full bg-[#0d1411] border border-[#424D07] focus:border-[#424D07] focus:ring-1 focus:ring-[#424D07]/40 rounded-xl pl-9 pr-3 py-2 sm:py-2.5 text-base md:text-xs text-white placeholder-slate-400 outline-none transition font-semibold'
+                    : 'w-full bg-[#0a0f18] border border-white/25 focus:border-indigo-400 focus:ring-1 focus:ring-indigo-400/40 rounded-xl pl-9 pr-3 py-2 sm:py-2.5 text-base md:text-xs text-white placeholder-slate-400 outline-none transition font-semibold';
 
   return (
     <div 
       className="w-full text-slate-100 flex flex-col justify-start items-center min-h-screen transition-all duration-500" 
       id="landing-page-view"
-      style={isRamPage || isDodgePage ? { backgroundColor: '#000000' } : (isFiatPage ? { backgroundColor: '#EE395E' } : (activeLanding === 'multimarca' ? { backgroundColor: subBrandBgColor || '#ffffff' } : undefined))}
+      style={isPeugeotPage ? { backgroundColor: '#FFFFFF' } : (isRamPage || isDodgePage ? { backgroundColor: '#000000' } : (isFiatPage ? { backgroundColor: '#EE395E' } : (activeLanding === 'multimarca' ? { backgroundColor: subBrandBgColor || '#ffffff' } : undefined)))}
     >
       
       {/* Outer Mobile Mock Wrapper with Pantone 2427C and Highlight R0 G145 B0 theme */}
@@ -1580,7 +1591,7 @@ export default function LeadForm({ c10ImgUrl, t03ImgUrl, b10ImgUrl }: LeadFormPr
           backgroundSize: 'cover',
           backgroundPosition: 'center',
         } : (activeLanding === 'multimarca' ? {
-          backgroundColor: isFiatPage ? '#EE395E' : (subBrandBgColor || '#ffffff')
+          backgroundColor: isPeugeotPage ? '#FFFFFF' : (isFiatPage ? '#EE395E' : (subBrandBgColor || '#ffffff'))
         } : undefined)}
         className={`w-full max-w-md mx-auto h-[100dvh] sm:h-auto sm:min-h-[82vh] border-0 sm:border rounded-none sm:rounded-[40px] shadow-2xl relative overflow-hidden flex flex-col justify-between mt-0 sm:mt-1 mb-0 sm:mb-6 transition-all duration-500 ${
           activeLanding === 'leapmotor'
@@ -2009,22 +2020,38 @@ export default function LeadForm({ c10ImgUrl, t03ImgUrl, b10ImgUrl }: LeadFormPr
                             <button
                               id={`back-button-${selectedSubBrand?.toLowerCase()}`}
                               onClick={() => setSelectedSubBrand(null)}
-                              style={selectedSubBrand === 'Jeep' || selectedSubBrand === 'Fiat' ? { backgroundColor: 'transparent', borderColor: 'transparent', boxShadow: 'none' } : undefined}
+                              style={
+                                selectedSubBrand === 'Jeep' || selectedSubBrand === 'Fiat'
+                                  ? { backgroundColor: 'transparent', borderColor: 'transparent', boxShadow: 'none' }
+                                  : selectedSubBrand === 'Peugeot'
+                                    ? { backgroundColor: '#0074E8', borderColor: '#0074E8', color: '#ffffff' }
+                                    : selectedSubBrand === 'Leapmotor'
+                                      ? { backgroundColor: '#DEFF01', borderColor: '#DEFF01', color: '#000000' }
+                                      : undefined
+                              }
                               className={`flex items-center gap-2 px-4 py-2.5 rounded-full text-sm font-bold tracking-wider transition duration-300 active:scale-[0.98] ${
                                 selectedSubBrand === 'Jeep' || selectedSubBrand === 'Fiat'
                                   ? 'text-white'
-                                  : (isLightBg 
-                                    ? 'bg-black/5 hover:bg-black/10 border border-black/10 text-slate-800 hover:text-slate-950 font-black shadow-sm' 
-                                    : 'bg-white/5 hover:bg-white/10 border border-white/10 text-slate-200 hover:text-white shadow-sm')
+                                  : selectedSubBrand === 'Peugeot'
+                                    ? 'text-white hover:opacity-95 shadow-md font-bold'
+                                    : selectedSubBrand === 'Leapmotor'
+                                      ? 'text-slate-950 hover:opacity-95 shadow-md font-bold'
+                                      : (isLightBg 
+                                        ? 'bg-black/5 hover:bg-black/10 border border-black/10 text-slate-800 hover:text-slate-950 font-black shadow-sm' 
+                                        : 'bg-white/5 hover:bg-white/10 border border-white/10 text-slate-200 hover:text-white shadow-sm')
                               }`}
                               aria-label="Regresar"
                             >
                               <ArrowLeft className={`w-5 h-5 ${
                                 selectedSubBrand === 'Jeep' || selectedSubBrand === 'Fiat'
                                   ? 'text-white' 
-                                  : (isLightBg ? 'text-indigo-600' : 'text-indigo-400')
+                                  : selectedSubBrand === 'Peugeot'
+                                    ? 'text-white'
+                                    : selectedSubBrand === 'Leapmotor'
+                                      ? 'text-slate-950'
+                                      : (isLightBg ? 'text-indigo-600' : 'text-indigo-400')
                               }`} />
-                              <span className={selectedSubBrand === 'Jeep' || selectedSubBrand === 'Fiat' ? 'text-white font-extrabold' : ''}>Regresar</span>
+                              <span className={selectedSubBrand === 'Jeep' || selectedSubBrand === 'Fiat' || selectedSubBrand === 'Peugeot' ? 'text-white font-extrabold' : selectedSubBrand === 'Leapmotor' ? 'text-slate-950 font-extrabold' : ''}>Regresar</span>
                             </button>
                           </div>
 
@@ -2033,9 +2060,9 @@ export default function LeadForm({ c10ImgUrl, t03ImgUrl, b10ImgUrl }: LeadFormPr
                             <div className={`w-full ${selectedSubBrand === 'Jeep' ? 'max-w-[560px]' : 'max-w-[280px]'} flex items-center justify-center`}>
                               {renderBrandPageTopLogo(selectedSubBrand)}
                             </div>
-                            {/* Brand tagline of selected brand in clean black/white text with no box/border/background */}
-                            <div className="mt-3 text-center w-full">
-                              <p className={`${isLightBg ? 'text-slate-900' : 'text-white'} text-sm sm:text-base font-extrabold tracking-widest uppercase text-center block w-full whitespace-nowrap`}>
+                            {/* Brand tagline of selected brand in clean text, strictly single-line */}
+                            <div className="mt-3 text-center w-full overflow-hidden">
+                              <p className={`${isLightBg ? 'text-slate-900' : 'text-white'} ${(selectedSubBrand === 'Peugeot' || selectedSubBrand === 'Leapmotor') ? 'text-[11px] xs:text-xs sm:text-sm md:text-base' : 'text-sm sm:text-base'} font-extrabold tracking-widest uppercase text-center block w-full whitespace-nowrap`}>
                                 {brandDetail.tagline}
                               </p>
                             </div>
@@ -2078,7 +2105,11 @@ export default function LeadForm({ c10ImgUrl, t03ImgUrl, b10ImgUrl }: LeadFormPr
                                       ? { backgroundColor: '#DD4E3C' }
                                       : selectedSubBrand === 'Fiat'
                                         ? { backgroundColor: '#FFFFFF' }
-                                        : undefined
+                                        : selectedSubBrand === 'Peugeot'
+                                          ? { backgroundColor: '#0074E8' }
+                                        : selectedSubBrand === 'Leapmotor'
+                                          ? { backgroundColor: '#DEFF01' }
+                                          : undefined
                               }
                               className={`group w-full p-4 rounded-2xl border flex items-center gap-4 text-left transition-all duration-300 shadow-md transform active:scale-[0.99] ${
                                 selectedSubBrand === 'Jeep'
@@ -2089,7 +2120,11 @@ export default function LeadForm({ c10ImgUrl, t03ImgUrl, b10ImgUrl }: LeadFormPr
                                       ? 'border-[#DD4E3C]/20 hover:opacity-95 hover:shadow-lg'
                                       : selectedSubBrand === 'Fiat'
                                         ? 'border-[#EE395E]/10 hover:shadow-lg font-bold'
-                                        : 'bg-[#1b1c1e]/60 hover:bg-[#25272a]/75 border-white/5 hover:border-white/15'
+                                        : selectedSubBrand === 'Peugeot'
+                                          ? 'border-[#0074E8]/20 hover:opacity-95 hover:shadow-lg text-white font-bold'
+                                        : selectedSubBrand === 'Leapmotor'
+                                          ? 'border-[#DEFF01]/25 hover:opacity-95 hover:shadow-lg text-slate-950 font-bold'
+                                          : 'bg-[#1b1c1e]/60 hover:bg-[#25272a]/75 border-white/5 hover:border-white/15'
                               }`}
                             >
                               {/* White outlined badge represent request for quotation */}
@@ -2101,81 +2136,95 @@ export default function LeadForm({ c10ImgUrl, t03ImgUrl, b10ImgUrl }: LeadFormPr
                                       ? { borderColor: 'rgba(255, 255, 255, 0.4)' } 
                                       : selectedSubBrand === 'Fiat'
                                         ? { borderColor: '#EE395E', backgroundColor: 'rgba(238, 57, 94, 0.08)' }
-                                        : undefined
+                                        : selectedSubBrand === 'Peugeot'
+                                          ? { borderColor: 'rgba(255, 255, 255, 0.35)', backgroundColor: 'rgba(255, 255, 255, 0.12)' }
+                                        : selectedSubBrand === 'Leapmotor'
+                                          ? { borderColor: 'rgba(0, 0, 0, 0.25)', backgroundColor: 'rgba(0, 0, 0, 0.08)' }
+                                          : undefined
                                 }
                                 className="w-11 h-11 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center shrink-0 transition-colors duration-300 group-hover:bg-white/10"
                               >
-                                <FileText className={`w-5 h-5 ${selectedSubBrand === 'Fiat' ? 'text-[#EE395E]' : 'text-white'}`} />
+                                <FileText className={`w-5 h-5 ${selectedSubBrand === 'Fiat' ? 'text-[#EE395E]' : selectedSubBrand === 'Leapmotor' ? 'text-slate-950' : 'text-white'}`} />
                               </div>
                               
                               <div className="flex flex-col">
-                                <span className={`font-bold text-xs sm:text-sm tracking-wider uppercase font-encode ${selectedSubBrand === 'Fiat' ? 'text-[#EE395E]' : 'text-white'}`}>
+                                <span className={`font-bold text-xs sm:text-sm tracking-wider uppercase font-encode ${selectedSubBrand === 'Fiat' ? 'text-[#EE395E]' : selectedSubBrand === 'Leapmotor' ? 'text-slate-950' : 'text-white'}`}>
                                   COTIZA
                                 </span>
-                                <span className={`text-[10px] sm:text-[11px] font-medium ${(selectedSubBrand === 'Jeep' || selectedSubBrand === 'Dodge' || selectedSubBrand === 'Ram') ? 'text-white' : (selectedSubBrand === 'Fiat' ? 'text-slate-600 font-semibold' : 'text-slate-400')}`}>
+                                <span className={`text-[10px] sm:text-[11px] font-medium ${(selectedSubBrand === 'Jeep' || selectedSubBrand === 'Dodge' || selectedSubBrand === 'Ram' || selectedSubBrand === 'Peugeot') ? 'text-white' : (selectedSubBrand === 'Fiat' ? 'text-slate-600 font-semibold' : selectedSubBrand === 'Leapmotor' ? 'text-slate-800 font-bold' : 'text-slate-400')}`}>
                                   Recibe una cotización personalizada
                                 </span>
                               </div>
                               
-                              <ChevronRight className={`w-4 h-4 group-hover:translate-x-0.5 transition-all duration-300 shrink-0 ml-auto ${(selectedSubBrand === 'Jeep' || selectedSubBrand === 'Dodge' || selectedSubBrand === 'Ram') ? 'text-white' : (selectedSubBrand === 'Fiat' ? 'text-[#EE395E]' : 'text-slate-500 group-hover:text-slate-300')}`} />
+                              <ChevronRight className={`w-4 h-4 group-hover:translate-x-0.5 transition-all duration-300 shrink-0 ml-auto ${(selectedSubBrand === 'Jeep' || selectedSubBrand === 'Dodge' || selectedSubBrand === 'Ram' || selectedSubBrand === 'Peugeot') ? 'text-white' : (selectedSubBrand === 'Fiat' ? 'text-[#EE395E]' : selectedSubBrand === 'Leapmotor' ? 'text-slate-950' : 'text-slate-500 group-hover:text-slate-300')}`} />
                             </button>
 
                             {/* PRUEBA DE MANEJO */}
-                            {selectedSubBrand !== 'Leapmotor' && (
-                              <button
-                                id={`prueba-button-${selectedSubBrand?.toLowerCase()}`}
-                                onClick={() => launchFormWithRequest('prueba', BRAND_MODELS[selectedSubBrand]?.[0])}
-                                style={
-                                  selectedSubBrand === 'Jeep'
-                                    ? { backgroundColor: '#487f70' }
-                                    : selectedSubBrand === 'Dodge'
+                            <button
+                              id={`prueba-button-${selectedSubBrand?.toLowerCase()}`}
+                              onClick={() => launchFormWithRequest('prueba', BRAND_MODELS[selectedSubBrand]?.[0])}
+                              style={
+                                selectedSubBrand === 'Jeep'
+                                  ? { backgroundColor: '#487f70' }
+                                  : selectedSubBrand === 'Dodge'
+                                    ? { backgroundColor: '#DD4E3C' }
+                                    : selectedSubBrand === 'Ram'
                                       ? { backgroundColor: '#DD4E3C' }
-                                      : selectedSubBrand === 'Ram'
-                                        ? { backgroundColor: '#DD4E3C' }
-                                        : selectedSubBrand === 'Fiat'
-                                          ? { backgroundColor: '#FFFFFF' }
+                                      : selectedSubBrand === 'Fiat'
+                                        ? { backgroundColor: '#FFFFFF' }
+                                        : selectedSubBrand === 'Peugeot'
+                                          ? { backgroundColor: '#0074E8' }
+                                        : selectedSubBrand === 'Leapmotor'
+                                          ? { backgroundColor: '#DEFF01' }
+                                          : undefined
+                              }
+                              className={`group w-full p-4 rounded-2xl border flex items-center gap-4 text-left transition-all duration-300 shadow-md transform active:scale-[0.99] ${
+                                selectedSubBrand === 'Jeep'
+                                  ? 'border-[#487f70]/20 hover:opacity-95 hover:shadow-lg hover:shadow-[#487f70]/15'
+                                  : selectedSubBrand === 'Dodge'
+                                    ? 'border-[#DD4E3C]/20 hover:opacity-95 hover:shadow-lg'
+                                    : selectedSubBrand === 'Ram'
+                                      ? 'border-[#DD4E3C]/20 hover:opacity-95 hover:shadow-lg'
+                                      : selectedSubBrand === 'Fiat'
+                                        ? 'border-[#EE395E]/10 hover:shadow-lg font-bold'
+                                        : selectedSubBrand === 'Peugeot'
+                                          ? 'border-[#0074E8]/20 hover:opacity-95 hover:shadow-lg text-white font-bold'
+                                        : selectedSubBrand === 'Leapmotor'
+                                          ? 'border-[#DEFF01]/25 hover:opacity-95 hover:shadow-lg text-slate-950 font-bold'
+                                          : 'bg-[#1b1c1e]/60 hover:bg-[#25272a]/75 border-white/5 hover:border-white/15'
+                              }`}
+                            >
+                              {/* White/Silver outlined badge for Calendar */}
+                              <div 
+                                style={
+                                  selectedSubBrand === 'Dodge' 
+                                    ? { backgroundColor: '#DD4E3C', borderColor: '#ffffff' } 
+                                    : selectedSubBrand === 'Ram' 
+                                      ? { backgroundColor: '#DD4E3C', borderColor: 'rgba(255, 255, 255, 0.4)' } 
+                                      : selectedSubBrand === 'Fiat'
+                                        ? { borderColor: '#EE395E', backgroundColor: 'rgba(238, 57, 94, 0.08)' }
+                                        : selectedSubBrand === 'Peugeot'
+                                          ? { borderColor: 'rgba(255, 255, 255, 0.35)', backgroundColor: 'rgba(255, 255, 255, 0.12)' }
+                                        : selectedSubBrand === 'Leapmotor'
+                                          ? { borderColor: 'rgba(0, 0, 0, 0.25)', backgroundColor: 'rgba(0, 0, 0, 0.08)' }
                                           : undefined
                                 }
-                                className={`group w-full p-4 rounded-2xl border flex items-center gap-4 text-left transition-all duration-300 shadow-md transform active:scale-[0.99] ${
-                                  selectedSubBrand === 'Jeep'
-                                    ? 'border-[#487f70]/20 hover:opacity-95 hover:shadow-lg hover:shadow-[#487f70]/15'
-                                    : selectedSubBrand === 'Dodge'
-                                      ? 'border-[#DD4E3C]/20 hover:opacity-95 hover:shadow-lg'
-                                      : selectedSubBrand === 'Ram'
-                                        ? 'border-[#DD4E3C]/20 hover:opacity-95 hover:shadow-lg'
-                                        : selectedSubBrand === 'Fiat'
-                                          ? 'border-[#EE395E]/10 hover:shadow-lg font-bold'
-                                          : 'bg-[#1b1c1e]/60 hover:bg-[#25272a]/75 border-white/5 hover:border-white/15'
-                                }`}
+                                className="w-11 h-11 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center shrink-0 transition-colors duration-300 group-hover:bg-white/10"
                               >
-                                {/* White/Silver outlined badge for Calendar */}
-                                <div 
-                                  style={
-                                    selectedSubBrand === 'Dodge' 
-                                      ? { backgroundColor: '#DD4E3C', borderColor: '#ffffff' } 
-                                      : selectedSubBrand === 'Ram' 
-                                        ? { backgroundColor: '#DD4E3C', borderColor: 'rgba(255, 255, 255, 0.4)' } 
-                                        : selectedSubBrand === 'Fiat'
-                                          ? { borderColor: '#EE395E', backgroundColor: 'rgba(238, 57, 94, 0.08)' }
-                                          : undefined
-                                  }
-                                  className="w-11 h-11 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center shrink-0 transition-colors duration-300 group-hover:bg-white/10"
-                                >
-                                  <Calendar className={`w-5 h-5 ${selectedSubBrand === 'Fiat' ? 'text-[#EE395E]' : 'text-white'} animate-pulse-slow`} />
-                                </div>
-                                
-                                <div className="flex flex-col">
-                                  <span className={`font-bold text-xs sm:text-sm tracking-wider uppercase font-encode ${selectedSubBrand === 'Fiat' ? 'text-[#EE395E]' : 'text-white'}`}>
-                                    PRUEBA DE MANEJO
-                                  </span>
-                                  <span className={`text-[10px] sm:text-[11px] font-medium ${(selectedSubBrand === 'Jeep' || selectedSubBrand === 'Dodge' || selectedSubBrand === 'Ram') ? 'text-white' : (selectedSubBrand === 'Fiat' ? 'text-slate-600 font-semibold' : 'text-slate-400')}`}>
-                                    Agenda tu prueba de manejo
-                                  </span>
-                                </div>
-                                
-                                <ChevronRight className={`w-4 h-4 group-hover:translate-x-0.5 transition-all duration-300 shrink-0 ml-auto ${(selectedSubBrand === 'Jeep' || selectedSubBrand === 'Dodge' || selectedSubBrand === 'Ram') ? 'text-white' : (selectedSubBrand === 'Fiat' ? 'text-[#EE395E]' : 'text-slate-500 group-hover:text-slate-300')}`} />
-                              </button>
-                            )}
+                                <Calendar className={`w-5 h-5 ${selectedSubBrand === 'Fiat' ? 'text-[#EE395E]' : selectedSubBrand === 'Leapmotor' ? 'text-slate-950' : 'text-white'} animate-pulse-slow`} />
+                              </div>
+                              
+                              <div className="flex flex-col">
+                                <span className={`font-bold text-xs sm:text-sm tracking-wider uppercase font-encode ${selectedSubBrand === 'Fiat' ? 'text-[#EE395E]' : selectedSubBrand === 'Leapmotor' ? 'text-slate-950' : 'text-white'}`}>
+                                  PRUEBA DE MANEJO
+                                </span>
+                                <span className={`text-[10px] sm:text-[11px] font-medium ${(selectedSubBrand === 'Jeep' || selectedSubBrand === 'Dodge' || selectedSubBrand === 'Ram' || selectedSubBrand === 'Peugeot') ? 'text-white' : (selectedSubBrand === 'Fiat' ? 'text-slate-600 font-semibold' : selectedSubBrand === 'Leapmotor' ? 'text-slate-800 font-bold' : 'text-slate-400')}`}>
+                                  Agenda tu prueba de manejo
+                                </span>
+                              </div>
+                              
+                              <ChevronRight className={`w-4 h-4 group-hover:translate-x-0.5 transition-all duration-300 shrink-0 ml-auto ${(selectedSubBrand === 'Jeep' || selectedSubBrand === 'Dodge' || selectedSubBrand === 'Ram' || selectedSubBrand === 'Peugeot') ? 'text-white' : (selectedSubBrand === 'Fiat' ? 'text-[#EE395E]' : selectedSubBrand === 'Leapmotor' ? 'text-slate-950' : 'text-slate-500 group-hover:text-slate-300')}`} />
+                            </button>
                           </div>
                         </div>
                       );
@@ -2200,32 +2249,34 @@ export default function LeadForm({ c10ImgUrl, t03ImgUrl, b10ImgUrl }: LeadFormPr
                 paddingTop: '4px', 
                 paddingBottom: '4px', 
                 scrollbarWidth: 'thin',
-                backgroundColor: isFiatPage ? '#EE395E' : (isRamPage || isDodgePage ? '#000000' : (activeLanding === 'multimarca' ? (subBrandBgColor || '#ffffff') : undefined))
+                backgroundColor: isLeapmotorPage ? '#000000' : (isPeugeotPage ? '#FFFFFF' : (isFiatPage ? '#EE395E' : (isRamPage || isDodgePage ? '#000000' : (activeLanding === 'multimarca' ? (subBrandBgColor || '#ffffff') : undefined))))
               }}
             >
               <div>
                 {/* Back Link */}
                 <button 
                   onClick={() => setFormActive(false)}
-                  style={isJeepPage ? { backgroundColor: 'transparent', borderColor: 'transparent', boxShadow: 'none' } : undefined}
-                  className={`flex items-center gap-1.5 text-xs font-semibold ${activeLanding === 'leapmotor' ? 'font-sans' : 'font-mono'} mb-4 transition px-2 py-1.5 rounded ${
+                  style={isJeepPage ? { backgroundColor: 'transparent', borderColor: 'transparent', boxShadow: 'none' } : (isLeapmotorPage ? { backgroundColor: '#DEFF01', borderColor: '#DEFF01', color: '#000000' } : undefined)}
+                  className={`flex items-center gap-1.5 text-xs font-semibold ${activeLanding === 'leapmotor' || isLeapmotorPage ? 'font-sans' : 'font-mono'} mb-4 transition px-2 py-1.5 rounded ${
                     isJeepPage
                       ? 'text-slate-800'
-                      : (isLightBg
-                        ? 'text-slate-800 hover:text-slate-950 bg-black/5 border border-black/10'
-                        : 'text-white hover:text-slate-200 bg-white/10')
+                      : isLeapmotorPage
+                        ? 'text-slate-950 font-bold hover:opacity-95'
+                        : (isLightBg
+                          ? 'text-slate-800 hover:text-slate-950 bg-black/5 border border-black/10'
+                          : 'text-white hover:text-slate-200 bg-white/10')
                   }`}
                 >
-                  <ArrowLeft className={`w-3.5 h-3.5 ${isJeepPage ? 'text-white' : ''}`} />
-                  <span>{(activeLanding === 'leapmotor' || activeLanding === 'jeep') ? 'Regresar' : 'Volver a la Landing'}</span>
+                  <ArrowLeft className={`w-3.5 h-3.5 ${isJeepPage ? 'text-white' : (isLeapmotorPage ? 'text-slate-950 stroke-[3]' : '')}`} />
+                  <span>{(activeLanding === 'leapmotor' || activeLanding === 'jeep' || isLeapmotorPage) ? 'Regresar' : 'Volver a la Landing'}</span>
                 </button>
 
-                <h2 className={`text-xl tracking-wide mb-1 uppercase font-sans ${activeLanding === 'leapmotor' ? 'font-semibold' : 'font-black'} ${
+                <h2 className={`text-xl tracking-wide mb-1 uppercase font-sans ${activeLanding === 'leapmotor' || isLeapmotorPage ? 'font-extrabold' : 'font-black'} ${
                   isLightBg ? 'text-slate-900' : 'text-white'
                 }`}>
                   DÉJANOS TUS DATOS
                 </h2>
-                {activeLanding !== 'leapmotor' && activeLanding !== 'jeep' && !isRamPage && !isDodgePage && !isFiatPage && (
+                {activeLanding !== 'leapmotor' && activeLanding !== 'jeep' && !isRamPage && !isDodgePage && !isFiatPage && !isPeugeotPage && !isLeapmotorPage && (
                   <span className={`text-[11px] font-bold font-mono block mb-4 uppercase ${
                     isLightBg ? 'text-slate-700' : 'text-white'
                   }`}>
@@ -2356,7 +2407,7 @@ export default function LeadForm({ c10ImgUrl, t03ImgUrl, b10ImgUrl }: LeadFormPr
                             Nombre *
                           </label>
                           <div className="relative">
-                            <User className={`absolute left-3 top-3 w-4 h-4 ${isFiatPage ? 'text-[#EE395E]' : (isLightBg ? 'text-slate-400' : 'text-slate-300')}`} />
+                            <User className={`absolute left-3 top-3 w-4 h-4 ${isFiatPage ? 'text-[#EE395E]' : isPeugeotPage ? 'text-[#0074E8]' : isLeapmotorPage ? 'text-[#DEFF01]' : (isLightBg ? 'text-slate-400' : 'text-slate-300')}`} />
                             <input
                               id="name"
                               type="text"
@@ -2375,7 +2426,7 @@ export default function LeadForm({ c10ImgUrl, t03ImgUrl, b10ImgUrl }: LeadFormPr
                             Apellido *
                           </label>
                           <div className="relative">
-                            <User className={`absolute left-3 top-3 w-4 h-4 ${isFiatPage ? 'text-[#EE395E]' : (isLightBg ? 'text-slate-400' : 'text-slate-300')}`} />
+                            <User className={`absolute left-3 top-3 w-4 h-4 ${isFiatPage ? 'text-[#EE395E]' : isPeugeotPage ? 'text-[#0074E8]' : isLeapmotorPage ? 'text-[#DEFF01]' : (isLightBg ? 'text-slate-400' : 'text-slate-300')}`} />
                             <input
                               id="lastName"
                               type="text"
@@ -2398,7 +2449,7 @@ export default function LeadForm({ c10ImgUrl, t03ImgUrl, b10ImgUrl }: LeadFormPr
                             Teléfono *
                           </label>
                           <div className="relative">
-                            <Phone className={`absolute left-3 top-3 w-4 h-4 ${isFiatPage ? 'text-[#EE395E]' : (isLightBg ? 'text-slate-400' : 'text-slate-300')}`} />
+                            <Phone className={`absolute left-3 top-3 w-4 h-4 ${isFiatPage ? 'text-[#EE395E]' : isPeugeotPage ? 'text-[#0074E8]' : isLeapmotorPage ? 'text-[#DEFF01]' : (isLightBg ? 'text-slate-400' : 'text-slate-300')}`} />
                             <input
                               id="phone"
                               type="tel"
@@ -2418,7 +2469,7 @@ export default function LeadForm({ c10ImgUrl, t03ImgUrl, b10ImgUrl }: LeadFormPr
                             {activeLanding === 'multimarca' ? 'C.P. *' : 'Tu Código Postal *'}
                           </label>
                           <div className="relative">
-                            <MapPin className={`absolute left-3 top-3 w-4 h-4 ${isFiatPage ? 'text-[#EE395E]' : (isLightBg ? 'text-slate-400' : 'text-slate-300')}`} />
+                            <MapPin className={`absolute left-3 top-3 w-4 h-4 ${isFiatPage ? 'text-[#EE395E]' : isPeugeotPage ? 'text-[#0074E8]' : isLeapmotorPage ? 'text-[#DEFF01]' : (isLightBg ? 'text-slate-400' : 'text-slate-300')}`} />
                             <input
                               id="postalCode"
                               type="text"
@@ -2443,16 +2494,16 @@ export default function LeadForm({ c10ImgUrl, t03ImgUrl, b10ImgUrl }: LeadFormPr
                           {activeLanding === 'multimarca' ? 'Correo *' : 'Correo Electrónico *'}
                         </label>
                         <div className="relative">
-                          <Mail className={`absolute left-3 top-3 w-4 h-4 ${isFiatPage ? 'text-[#EE395E]' : (isLightBg ? 'text-slate-400' : 'text-slate-300')}`} />
+                          <Mail className={`absolute left-3 top-3 w-4 h-4 ${isFiatPage ? 'text-[#EE395E]' : isPeugeotPage ? 'text-[#0074E8]' : isLeapmotorPage ? 'text-[#DEFF01]' : (isLightBg ? 'text-slate-400' : 'text-slate-300')}`} />
                           <input
                             id="email"
-                            type="email"
-                            name="email"
-                            required
-                            placeholder="tu@correo.com"
-                            value={formData.email}
-                            onChange={handleChange}
-                            className={inputClass}
+                             type="email"
+                             name="email"
+                             required
+                             placeholder="tu@correo.com"
+                             value={formData.email}
+                             onChange={handleChange}
+                             className={inputClass}
                           />
                         </div>
                       </div>
@@ -2467,7 +2518,7 @@ export default function LeadForm({ c10ImgUrl, t03ImgUrl, b10ImgUrl }: LeadFormPr
                           {(activeLanding === 'jeep' || activeLanding === 'multimarca') ? (
                             /* Custom visually rich selection trigger */
                             <div className="relative">
-                              <Car className={`absolute left-3.5 top-3.5 w-4 h-4 pointer-events-none z-10 ${isFiatPage ? 'text-[#EE395E]' : (isLightBg ? 'text-slate-500' : 'text-slate-300')}`} />
+                              <Car className={`absolute left-3.5 top-3.5 w-4 h-4 pointer-events-none z-10 ${isFiatPage ? 'text-[#EE395E]' : isPeugeotPage ? 'text-[#0074E8]' : isLeapmotorPage ? 'text-slate-950' : (isLightBg ? 'text-slate-500' : 'text-slate-300')}`} />
                               <button
                                 type="button"
                                 id="model-modal-trigger-btn"
@@ -2475,13 +2526,17 @@ export default function LeadForm({ c10ImgUrl, t03ImgUrl, b10ImgUrl }: LeadFormPr
                                 style={
                                   isFiatPage
                                     ? { backgroundColor: '#FFFFFF', color: '#EE395E', borderColor: '#EE395E' }
-                                    : isRamPage
-                                      ? { backgroundColor: '#DD4E3C', color: '#ffffff', borderColor: '#DD4E3C' }
-                                      : isDodgePage
-                                        ? { backgroundColor: '#D50000', color: '#ffffff', borderColor: '#D50000' }
-                                        : isJeepPage
-                                          ? { backgroundColor: '#487f70' }
-                                          : { backgroundColor: '#deff01' }
+                                    : isPeugeotPage
+                                      ? { backgroundColor: '#0074E8', color: '#ffffff', borderColor: '#0074E8' }
+                                      : isRamPage
+                                        ? { backgroundColor: '#DD4E3C', color: '#ffffff', borderColor: '#DD4E3C' }
+                                        : isDodgePage
+                                          ? { backgroundColor: '#D50000', color: '#ffffff', borderColor: '#D50000' }
+                                          : isJeepPage
+                                            ? { backgroundColor: '#487f70' }
+                                            : isLeapmotorPage
+                                              ? { backgroundColor: '#DEFF01', color: '#000000', borderColor: '#DEFF01' }
+                                              : { backgroundColor: '#deff01' }
                                 }
                                 onClick={() => {
                                   if (activeLanding === 'jeep') return;
@@ -2491,20 +2546,24 @@ export default function LeadForm({ c10ImgUrl, t03ImgUrl, b10ImgUrl }: LeadFormPr
                                   }
                                   setShowModelModal(true);
                                 }}
-                                className={`w-full text-left rounded-xl pl-11 pr-7 py-2.5 text-xs outline-none transition uppercase ${activeLanding === 'leapmotor' ? 'font-sans' : 'font-mono'} font-bold flex items-center justify-between disabled:opacity-75 disabled:cursor-not-allowed ${
+                                className={`w-full text-left rounded-xl pl-11 pr-7 py-2.5 text-xs outline-none transition uppercase ${activeLanding === 'leapmotor' || isLeapmotorPage ? 'font-sans' : 'font-mono'} font-bold flex items-center justify-between disabled:opacity-75 disabled:cursor-not-allowed ${
                                   isFiatPage
                                     ? 'text-[#EE395E] border border-[#EE395E] bg-white'
-                                    : isRamPage || isDodgePage
-                                      ? 'text-white border'
-                                      : (isJeepPage
-                                        ? 'bg-[#487f70] text-white border border-[#487f70]'
-                                        : 'bg-[#deff01] text-slate-950 border border-white/25')
+                                    : isPeugeotPage
+                                      ? 'text-white border border-[#0074E8]'
+                                      : isRamPage || isDodgePage
+                                        ? 'text-white border'
+                                        : isJeepPage
+                                          ? 'bg-[#487f70] text-white border border-[#487f70]'
+                                          : isLeapmotorPage
+                                            ? 'text-slate-950 border border-[#DEFF01] bg-[#DEFF01]'
+                                            : 'bg-[#deff01] text-slate-950 border border-white/25'
                                 }`}
                               >
-                                <span className={isFiatPage ? 'truncate text-[#EE395E]' : (isRamPage || isDodgePage ? 'truncate text-white' : (isJeepPage ? 'truncate text-white' : 'truncate text-slate-950'))}>
+                                <span className={isFiatPage ? 'truncate text-[#EE395E]' : isPeugeotPage ? 'truncate text-white' : (isRamPage || isDodgePage ? 'truncate text-white' : (isJeepPage ? 'truncate text-white' : isLeapmotorPage ? 'truncate text-slate-950' : 'truncate text-slate-950'))}>
                                   {selectedBrand} {formData.modelOfInterest || activeModelsList[0]}
                                 </span>
-                                {activeLanding !== 'jeep' && <ChevronDown className={`w-3.5 h-3.5 shrink-0 ${isFiatPage ? 'text-[#EE395E]' : (isRamPage || isDodgePage ? 'text-white' : (isJeepPage ? 'text-white' : 'text-slate-950'))}`} />}
+                                {activeLanding !== 'jeep' && <ChevronDown className={`w-3.5 h-3.5 shrink-0 ${isFiatPage ? 'text-[#EE395E]' : isPeugeotPage ? 'text-white' : (isRamPage || isDodgePage ? 'text-white' : (isJeepPage ? 'text-white' : isLeapmotorPage ? 'text-slate-950' : 'text-slate-950'))}`} />}
                               </button>
                             </div>
                           ) : (
@@ -2551,7 +2610,7 @@ export default function LeadForm({ c10ImgUrl, t03ImgUrl, b10ImgUrl }: LeadFormPr
                           Estado *
                         </label>
                         <div className="relative">
-                          <MapPin className={`absolute left-3.5 top-3.5 w-4 h-4 pointer-events-none z-10 ${isFiatPage ? 'text-[#EE395E]' : (isLightBg || isJeepPage ? 'text-slate-500' : (isRamPage || isDodgePage ? 'text-white' : 'text-slate-300'))}`} />
+                          <MapPin className={`absolute left-3.5 top-3.5 w-4 h-4 pointer-events-none z-10 ${isFiatPage ? 'text-[#EE395E]' : isPeugeotPage ? 'text-[#0074E8]' : isLeapmotorPage ? 'text-slate-950' : (isLightBg || isJeepPage ? 'text-slate-500' : (isRamPage || isDodgePage ? 'text-white' : 'text-slate-300'))}`} />
                           <select
                             id="state"
                             name="state"
@@ -2564,32 +2623,34 @@ export default function LeadForm({ c10ImgUrl, t03ImgUrl, b10ImgUrl }: LeadFormPr
                                 state: stateValue
                               }));
                             }}
-                            style={isFiatPage ? { backgroundColor: '#FFFFFF', color: '#EE395E', borderColor: '#EE395E' } : (isRamPage ? { backgroundColor: '#DD4E3C', color: '#ffffff', borderColor: '#DD4E3C' } : (isDodgePage ? { backgroundColor: '#D50000', color: '#ffffff', borderColor: '#D50000' } : undefined))}
-                            className={`w-full rounded-xl pl-11 pr-7 py-2.5 text-base md:text-sm outline-none appearance-none transition uppercase ${activeLanding === 'leapmotor' ? 'font-sans' : 'font-mono'} ${
+                            style={isFiatPage ? { backgroundColor: '#FFFFFF', color: '#EE395E', borderColor: '#EE395E' } : isPeugeotPage ? { backgroundColor: '#0074E8', color: '#ffffff', borderColor: '#0074E8' } : (isRamPage ? { backgroundColor: '#DD4E3C', color: '#ffffff', borderColor: '#DD4E3C' } : (isDodgePage ? { backgroundColor: '#D50000', color: '#ffffff', borderColor: '#D50000' } : (isLeapmotorPage ? { backgroundColor: '#DEFF01', color: '#000000', borderColor: '#DEFF01' } : undefined)))}
+                            className={`w-full rounded-xl pl-11 pr-7 py-2.5 text-base md:text-sm outline-none appearance-none transition uppercase ${activeLanding === 'leapmotor' || isLeapmotorPage ? 'font-sans font-bold text-slate-950 bg-[#DEFF01]' : 'font-mono'} ${
                               isFiatPage
                                 ? 'bg-white border border-[#EE395E] text-[#EE395E] focus:border-[#EE395E] font-black'
-                                : isJeepPage
-                                  ? 'bg-white border border-[#487f70] text-slate-900 focus:border-[#487f70] font-bold'
-                                  : (isLightBg
-                                    ? 'bg-white border border-slate-300 text-slate-900 focus:border-indigo-500 font-bold'
-                                    : (activeLanding === 'leapmotor'
-                                       ? 'bg-[#2D2926] border border-[#deff01] focus:border-[#deff01] text-white font-semibold'
-                                       : (activeLanding === 'jeep'
-                                          ? 'bg-[#0d1411] border border-[#424D07] focus:border-[#424D07] text-white font-semibold'
-                                          : (isRamPage
-                                            ? 'border border-[#DD4E3C] text-white font-bold'
-                                            : (isDodgePage
-                                              ? 'border border-[#D50000] text-white font-bold'
-                                              : 'bg-[#0a0f18] border border-white/25 focus:border-indigo-400 text-white font-bold')))))
+                                : isPeugeotPage
+                                  ? 'bg-[#0074E8] text-white border border-[#0074E8] font-bold'
+                                  : isJeepPage
+                                    ? 'bg-white border border-[#487f70] text-slate-900 focus:border-[#487f70] font-bold'
+                                    : (isLightBg
+                                      ? 'bg-white border border-slate-300 text-slate-900 focus:border-indigo-500 font-bold'
+                                      : (activeLanding === 'leapmotor' || isLeapmotorPage
+                                         ? 'bg-[#DEFF01] border border-[#DEFF01] focus:border-[#DEFF01] text-slate-950 font-bold'
+                                         : (activeLanding === 'jeep'
+                                            ? 'bg-[#0d1411] border border-[#424D07] focus:border-[#424D07] text-white font-semibold'
+                                            : (isRamPage
+                                              ? 'border border-[#DD4E3C] text-white font-bold'
+                                              : (isDodgePage
+                                                ? 'border border-[#D50000] text-white font-bold'
+                                                : 'bg-[#0a0f18] border border-white/25 focus:border-indigo-400 text-white font-bold')))))
                             }`}
                           >
                             {availableStates.map(st => (
-                              <option key={st} value={st} className={isLightBg || isJeepPage || isFiatPage ? "bg-white text-slate-900" : "bg-slate-900 text-white"}>
+                              <option key={st} value={st} className={isLightBg || isJeepPage || isFiatPage || isPeugeotPage ? "bg-white text-slate-900 focus:bg-[#0074E8]" : "bg-slate-900 text-white"}>
                                 {st}
                               </option>
                             ))}
                           </select>
-                          <ChevronDown className={`absolute right-3 top-3.5 w-4 h-4 pointer-events-none ${isFiatPage ? 'text-[#EE395E]' : (isLightBg || isJeepPage ? 'text-slate-500' : (isRamPage || isDodgePage ? 'text-white' : 'text-slate-300'))}`} />
+                          <ChevronDown className={`absolute right-3 top-3.5 w-4 h-4 pointer-events-none ${isFiatPage ? 'text-[#EE395E]' : isPeugeotPage ? 'text-white' : (isLightBg || isJeepPage ? 'text-slate-500' : (isRamPage || isDodgePage ? 'text-white' : (isLeapmotorPage ? 'text-slate-950' : 'text-slate-300')))}`} />
                         </div>
                       </div>
 
@@ -2599,7 +2660,7 @@ export default function LeadForm({ c10ImgUrl, t03ImgUrl, b10ImgUrl }: LeadFormPr
                           {activeLanding === 'multimarca' ? 'Distribuidor *' : 'Distribuidor de Preferencia *'} {loadingDbDistributors && <span className="text-emerald-400 font-bold animate-pulse text-[9px] lowercase">(consultando BD...)</span>}
                         </label>
                         <div className="relative">
-                          <Settings className={`absolute left-3.5 top-3.5 w-4 h-4 pointer-events-none z-10 ${isFiatPage ? 'text-[#EE395E]' : (isLightBg || isJeepPage ? 'text-slate-500' : (isRamPage || isDodgePage ? 'text-white' : 'text-slate-300'))}`} />
+                          <Settings className={`absolute left-3.5 top-3.5 w-4 h-4 pointer-events-none z-10 ${isFiatPage ? 'text-[#EE395E]' : isPeugeotPage ? 'text-[#0074E8]' : isLeapmotorPage ? 'text-slate-950' : (isLightBg || isJeepPage ? 'text-slate-500' : (isRamPage || isDodgePage ? 'text-white' : 'text-slate-300'))}`} />
                           <select
                             id="distributor"
                             name="distributor"
@@ -2609,38 +2670,40 @@ export default function LeadForm({ c10ImgUrl, t03ImgUrl, b10ImgUrl }: LeadFormPr
                               const dealerValue = e.target.value;
                               setFormData(prev => ({ ...prev, distributor: dealerValue }));
                             }}
-                            style={isFiatPage ? { backgroundColor: '#FFFFFF', color: '#EE395E', borderColor: '#EE395E' } : (isRamPage ? { backgroundColor: '#DD4E3C', color: '#ffffff', borderColor: '#DD4E3C' } : (isDodgePage ? { backgroundColor: '#D50000', color: '#ffffff', borderColor: '#D50000' } : undefined))}
-                            className={`w-full rounded-xl pl-11 pr-7 py-2.5 text-base md:text-sm outline-none appearance-none transition uppercase ${activeLanding === 'leapmotor' ? 'font-sans' : 'font-mono'} ${
+                            style={isFiatPage ? { backgroundColor: '#FFFFFF', color: '#EE395E', borderColor: '#EE395E' } : isPeugeotPage ? { backgroundColor: '#0074E8', color: '#ffffff', borderColor: '#0074E8' } : (isRamPage ? { backgroundColor: '#DD4E3C', color: '#ffffff', borderColor: '#DD4E3C' } : (isDodgePage ? { backgroundColor: '#D50000', color: '#ffffff', borderColor: '#D50000' } : (isLeapmotorPage ? { backgroundColor: '#DEFF01', color: '#000000', borderColor: '#DEFF01' } : undefined)))}
+                            className={`w-full rounded-xl pl-11 pr-7 py-2.5 text-base md:text-sm outline-none appearance-none transition uppercase ${activeLanding === 'leapmotor' || isLeapmotorPage ? 'font-sans font-bold text-slate-950 bg-[#DEFF01]' : 'font-mono'} ${
                               isFiatPage
                                 ? 'bg-white border border-[#EE395E] text-[#EE395E] focus:border-[#EE395E] font-black'
-                                : isJeepPage
-                                  ? 'bg-white border border-[#487f70] text-slate-900 focus:border-[#487f70] font-bold'
-                                  : (isLightBg
-                                    ? 'bg-white border border-slate-300 text-slate-900 focus:border-indigo-500 font-bold'
-                                    : (activeLanding === 'leapmotor'
-                                       ? 'bg-[#2D2926] border border-[#deff01] focus:border-[#deff01] text-white font-semibold'
-                                       : (activeLanding === 'jeep'
-                                          ? 'bg-[#0d1411] border border-[#424D07] focus:border-[#424D07] text-white font-semibold'
-                                          : (isRamPage
-                                            ? 'border border-[#DD4E3C] text-white font-bold'
-                                            : (isDodgePage
-                                              ? 'border border-[#D50000] text-white font-bold'
-                                              : 'bg-[#0a0f18] border border-white/25 focus:border-indigo-400 text-white font-bold')))))
+                                : isPeugeotPage
+                                  ? 'bg-[#0074E8] text-white border border-[#0074E8] font-bold'
+                                  : isJeepPage
+                                    ? 'bg-white border border-[#487f70] text-slate-900 focus:border-[#487f70] font-bold'
+                                    : (isLightBg
+                                      ? 'bg-white border border-slate-300 text-slate-900 focus:border-indigo-500 font-bold'
+                                      : (activeLanding === 'leapmotor' || isLeapmotorPage
+                                         ? 'bg-[#DEFF01] border border-[#DEFF01] focus:border-[#DEFF01] text-slate-950 font-bold'
+                                         : (activeLanding === 'jeep'
+                                            ? 'bg-[#0d1411] border border-[#424D07] focus:border-[#424D07] text-white font-semibold'
+                                            : (isRamPage
+                                              ? 'border border-[#DD4E3C] text-white font-bold'
+                                              : (isDodgePage
+                                                ? 'border border-[#D50000] text-white font-bold'
+                                                : 'bg-[#0a0f18] border border-white/25 focus:border-indigo-400 text-white font-bold')))))
                             }`}
                           >
                             {loadingDbDistributors ? (
-                              <option className={isLightBg || isJeepPage || isFiatPage ? "bg-white text-slate-400" : "bg-slate-900 text-slate-400"}>Cargando distribuidores de la BD...</option>
+                              <option className={isLightBg || isJeepPage || isFiatPage || isPeugeotPage ? "bg-white text-slate-400" : "bg-slate-900 text-slate-400"}>Cargando distribuidores de la BD...</option>
                             ) : dbDistributors.length === 0 ? (
-                              <option className={isLightBg || isJeepPage || isFiatPage ? "bg-white text-slate-400" : "bg-slate-900 text-slate-400"}>Sin distribuidores registrados</option>
+                              <option className={isLightBg || isJeepPage || isFiatPage || isPeugeotPage ? "bg-white text-slate-400" : "bg-slate-900 text-slate-400"}>Sin distribuidores registrados</option>
                             ) : (
                               dbDistributors.map((d, idx) => (
-                                <option key={(d.disId || d.id || idx) + '-' + d.name} value={d.name} className={isLightBg || isJeepPage || isFiatPage ? "bg-white text-slate-900 font-semibold" : "bg-slate-900 text-white font-semibold"}>
+                                <option key={(d.disId || d.id || idx) + '-' + d.name} value={d.name} className={isLightBg || isJeepPage || isFiatPage || isPeugeotPage ? "bg-white text-slate-900 font-semibold focus:bg-[#0074E8]" : "bg-slate-900 text-white font-semibold"}>
                                   {d.name}
                                 </option>
                               ))
                             )}
                           </select>
-                          <ChevronDown className={`absolute right-3 top-3.5 w-4 h-4 pointer-events-none ${isFiatPage ? 'text-[#EE395E]' : (isLightBg || isJeepPage ? 'text-slate-500' : (isRamPage || isDodgePage ? 'text-white' : 'text-slate-300'))}`} />
+                          <ChevronDown className={`absolute right-3 top-3.5 w-4 h-4 pointer-events-none ${isFiatPage ? 'text-[#EE395E]' : isPeugeotPage ? 'text-white' : (isLightBg || isJeepPage ? 'text-slate-500' : (isRamPage || isDodgePage ? 'text-white' : (isLeapmotorPage ? 'text-slate-950' : 'text-slate-300')))}`} />
                         </div>
                       </div>
                     </div>
@@ -2649,7 +2712,7 @@ export default function LeadForm({ c10ImgUrl, t03ImgUrl, b10ImgUrl }: LeadFormPr
                    {/* Test drive preferred date steps */}
                   {formData.requestType === 'prueba' && (
                     <div className="space-y-1">
-                      <label id="frm-date-label" htmlFor="testDriveDate" className={`text-[10px] uppercase font-mono tracking-wider ${isFiatPage ? 'text-white font-extrabold' : (isRamPage ? 'text-[#DD4E3C]' : (isDodgePage ? 'text-[#D50000]' : 'text-amber-400'))} font-bold block flex items-center gap-1`}>
+                      <label id="frm-date-label" htmlFor="testDriveDate" className={`text-[10px] uppercase font-mono tracking-wider ${isFiatPage ? 'text-white font-extrabold' : isPeugeotPage ? 'text-[#0074E8]' : (isRamPage ? 'text-[#DD4E3C]' : (isDodgePage ? 'text-[#D50000]' : isLeapmotorPage ? 'text-[#DEFF01]' : 'text-amber-400'))} font-bold block flex items-center gap-1`}>
                         <Calendar className="w-3.5 h-3.5" /> Selecciona la Fecha para tu Prueba *
                       </label>
                       <input
@@ -2663,11 +2726,15 @@ export default function LeadForm({ c10ImgUrl, t03ImgUrl, b10ImgUrl }: LeadFormPr
                         className={`w-full border rounded-xl px-4 py-2.5 text-base md:text-sm outline-none transition font-bold font-mono ${
                           isFiatPage
                             ? 'bg-white border-[#EE395E] text-[#EE395E] focus:border-[#EE395E]'
-                            : isRamPage 
-                              ? 'bg-white/5 border-[#DD4E3C] focus:border-[#DD4E3C] text-white' 
-                              : (isDodgePage 
-                                ? 'bg-white/5 border-[#D50000] focus:border-[#D50000] text-white' 
-                                : 'bg-white/5 border-amber-500/30 focus:border-amber-500 text-white')
+                            : isPeugeotPage
+                              ? 'bg-white border-[#0074E8] text-slate-900 focus:border-[#0074E8]'
+                              : isLeapmotorPage
+                                ? 'bg-black border-[#DEFF01] text-white focus:border-[#DEFF01]'
+                              : isRamPage 
+                                ? 'bg-white/5 border-[#DD4E3C] focus:border-[#DD4E3C] text-white' 
+                                : (isDodgePage 
+                                  ? 'bg-white/5 border-[#D50000] focus:border-[#D50000] text-white' 
+                                  : 'bg-white/5 border-amber-500/30 focus:border-amber-500 text-white')
                         }`}
                       />
                     </div>
@@ -2725,25 +2792,29 @@ export default function LeadForm({ c10ImgUrl, t03ImgUrl, b10ImgUrl }: LeadFormPr
                     className={`w-4.5 h-4.5 rounded mt-0.5 shrink-0 cursor-pointer ${
                       isFiatPage
                         ? 'border-white bg-white accent-[#EE395E] text-[#EE395E] focus:ring-0'
-                        : isJeepPage
-                          ? 'border-[#487f70] bg-white accent-[#487f70]'
-                          : (isLightBg 
-                            ? 'border-slate-300 bg-slate-100 text-indigo-500 focus:ring-indigo-500/50 focus:ring-offset-slate-950 accent-indigo-500' 
-                            : 'border-white/20 bg-black/40 text-indigo-500 focus:ring-indigo-500/50 focus:ring-offset-slate-950 accent-indigo-500')
+                        : isPeugeotPage
+                          ? 'border-[#0074E8] bg-white accent-[#0074E8] text-[#0074E8]'
+                          : isJeepPage
+                            ? 'border-[#487f70] bg-white accent-[#487f70]'
+                            : isLeapmotorPage
+                              ? 'border-[#DEFF01] bg-black accent-[#DEFF01] text-black focus:ring-0'
+                            : (isLightBg 
+                              ? 'border-slate-300 bg-slate-100 text-indigo-500 focus:ring-indigo-500/50 focus:ring-offset-slate-950 accent-indigo-500' 
+                              : 'border-white/20 bg-black/40 text-indigo-500 focus:ring-indigo-500/50 focus:ring-offset-slate-950 accent-indigo-500')
                     }`}
                   />
                   <label htmlFor="privacyActiveCheckbox" className={`text-[10px] sm:text-[11px] uppercase tracking-wider cursor-pointer leading-relaxed ${
-                    isLightBg || isJeepPage ? 'font-bold text-slate-800' : (activeLanding === 'leapmotor' ? 'font-semibold text-white' : 'font-bold text-white')
+                    isLightBg || isJeepPage || isPeugeotPage ? 'font-bold text-slate-800' : (activeLanding === 'leapmotor' || isLeapmotorPage ? 'font-semibold text-white' : 'font-bold text-white')
                   }`}>
                     HE LEÍDO Y ACEPTO EL{' '}
                     <button
                       type="button"
                       onClick={() => setShowPrivacyText(!showPrivacyText)}
                       className={`underline hover:opacity-80 transition-colors uppercase ${
-                        isJeepPage ? 'text-[#487f70] font-extrabold' : (isLightBg ? 'text-indigo-600 font-extrabold' : 'text-white font-black')
+                        isJeepPage ? 'text-[#487f70] font-extrabold' : isPeugeotPage ? 'text-[#0074E8] font-extrabold' : isLeapmotorPage ? 'text-[#DEFF01] font-extrabold' : (isLightBg ? 'text-indigo-600 font-extrabold' : 'text-white font-black')
                       }`}
                     >
-                      AVISO DE PRIVACIDAD
+                       AVISO DE PRIVACIDAD
                     </button>
                   </label>
                 </div>
@@ -2758,13 +2829,15 @@ export default function LeadForm({ c10ImgUrl, t03ImgUrl, b10ImgUrl }: LeadFormPr
                   style={
                     isFiatPage
                       ? { backgroundColor: '#FFFFFF', color: '#EE395E' }
+                      : isPeugeotPage
+                        ? { backgroundColor: '#0074E8', color: '#ffffff' }
                       : isRamPage
                         ? { backgroundColor: '#DD4E3C', color: '#ffffff' }
                         : isDodgePage
                           ? { backgroundColor: '#D50000', color: '#ffffff' }
                           : isJeepPage
                             ? { backgroundColor: '#487f70' }
-                            : (activeLanding === 'leapmotor'
+                            : (activeLanding === 'leapmotor' || isLeapmotorPage
                                ? {
                                    borderColor: '#deff01',
                                    backgroundColor: '#deff01',
@@ -2777,13 +2850,15 @@ export default function LeadForm({ c10ImgUrl, t03ImgUrl, b10ImgUrl }: LeadFormPr
                   className={`w-full active:scale-[0.98] disabled:opacity-40 disabled:cursor-not-allowed disabled:pointer-events-none py-4 px-6 rounded-2xl text-[11px] uppercase tracking-widest flex items-center justify-center gap-1.5 transition-all duration-300 shadow-xl ${
                     isFiatPage
                       ? 'font-black hover:opacity-95'
-                      : isRamPage || isDodgePage
+                      : isPeugeotPage
                         ? 'text-white font-black hover:opacity-95'
-                        : isJeepPage
+                        : isRamPage || isDodgePage
                           ? 'text-white font-black hover:opacity-95'
-                          : (isLightBg
-                            ? 'bg-slate-950 hover:bg-slate-900 text-white font-black'
-                            : (`${theme.btnBg} ${activeLanding === 'leapmotor' ? 'text-slate-950 font-black' : 'text-white font-bold'}`))
+                          : isJeepPage
+                            ? 'text-white font-black hover:opacity-95'
+                            : (isLightBg
+                              ? 'bg-slate-950 hover:bg-slate-900 text-white font-black'
+                              : (`${theme.btnBg} ${activeLanding === 'leapmotor' || isLeapmotorPage ? 'text-slate-950 font-black' : 'text-white font-bold'}`))
                   }`}
                 >
                   {loading ? (
