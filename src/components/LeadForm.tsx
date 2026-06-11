@@ -2021,37 +2021,43 @@ export default function LeadForm({ c10ImgUrl, t03ImgUrl, b10ImgUrl }: LeadFormPr
                               id={`back-button-${selectedSubBrand?.toLowerCase()}`}
                               onClick={() => setSelectedSubBrand(null)}
                               style={
-                                selectedSubBrand === 'Jeep' || selectedSubBrand === 'Fiat'
-                                  ? { backgroundColor: 'transparent', borderColor: 'transparent', boxShadow: 'none' }
-                                  : selectedSubBrand === 'Peugeot'
-                                    ? { backgroundColor: '#0074E8', borderColor: '#0074E8', color: '#ffffff' }
-                                    : selectedSubBrand === 'Leapmotor'
-                                      ? { backgroundColor: '#DEFF01', borderColor: '#DEFF01', color: '#000000' }
-                                      : undefined
+                                selectedSubBrand === 'Jeep'
+                                  ? { backgroundColor: '#487f70', borderColor: '#487f70', color: '#ffffff' }
+                                  : selectedSubBrand === 'Fiat'
+                                    ? { backgroundColor: '#EE395E', borderColor: '#EE395E', color: '#ffffff' }
+                                    : selectedSubBrand === 'Peugeot'
+                                      ? { backgroundColor: '#0074E8', borderColor: '#0074E8', color: '#ffffff' }
+                                      : selectedSubBrand === 'Dodge'
+                                        ? { backgroundColor: '#D50000', borderColor: '#D50000', color: '#ffffff' }
+                                        : selectedSubBrand === 'Ram'
+                                          ? { backgroundColor: '#DD4E3C', borderColor: '#DD4E3C', color: '#ffffff' }
+                                          : selectedSubBrand === 'Leapmotor'
+                                            ? { backgroundColor: '#DEFF01', borderColor: '#DEFF01', color: '#000000' }
+                                            : undefined
                               }
-                              className={`flex items-center gap-2 px-4 py-2.5 rounded-full text-sm font-bold tracking-wider transition duration-300 active:scale-[0.98] ${
-                                selectedSubBrand === 'Jeep' || selectedSubBrand === 'Fiat'
-                                  ? 'text-white'
-                                  : selectedSubBrand === 'Peugeot'
-                                    ? 'text-white hover:opacity-95 shadow-md font-bold'
-                                    : selectedSubBrand === 'Leapmotor'
-                                      ? 'text-slate-950 hover:opacity-95 shadow-md font-bold'
-                                      : (isLightBg 
-                                        ? 'bg-black/5 hover:bg-black/10 border border-black/10 text-slate-800 hover:text-slate-950 font-black shadow-sm' 
-                                        : 'bg-white/5 hover:bg-white/10 border border-white/10 text-slate-200 hover:text-white shadow-sm')
+                              className={`flex items-center gap-2 px-4 py-2 rounded-full text-xs font-bold uppercase tracking-wider transition duration-300 active:scale-[0.98] shadow-md border ${
+                                selectedSubBrand === 'Leapmotor'
+                                  ? 'text-slate-950 border-[#DEFF01]'
+                                  : selectedSubBrand === 'Jeep'
+                                    ? 'text-white border-[#487f70]'
+                                    : selectedSubBrand === 'Fiat'
+                                      ? 'text-white border-[#EE395E]'
+                                      : selectedSubBrand === 'Peugeot'
+                                        ? 'text-white border-[#0074E8]'
+                                        : selectedSubBrand === 'Dodge'
+                                          ? 'text-white border-[#D50000]'
+                                          : selectedSubBrand === 'Ram'
+                                            ? 'text-white border-[#DD4E3C]'
+                                            : (isLightBg 
+                                              ? 'bg-black/5 hover:bg-black/10 border border-black/10 text-slate-800 hover:text-slate-950' 
+                                              : 'bg-white/5 hover:bg-white/10 border border-white/10 text-slate-200 hover:text-white')
                               }`}
                               aria-label="Regresar"
                             >
-                              <ArrowLeft className={`w-5 h-5 ${
-                                selectedSubBrand === 'Jeep' || selectedSubBrand === 'Fiat'
-                                  ? 'text-white' 
-                                  : selectedSubBrand === 'Peugeot'
-                                    ? 'text-white'
-                                    : selectedSubBrand === 'Leapmotor'
-                                      ? 'text-slate-950'
-                                      : (isLightBg ? 'text-indigo-600' : 'text-indigo-400')
+                              <ArrowLeft className={`w-3.5 h-3.5 shrink-0 ${
+                                selectedSubBrand === 'Leapmotor' ? 'text-slate-950 stroke-[2.5]' : 'text-white'
                               }`} />
-                              <span className={selectedSubBrand === 'Jeep' || selectedSubBrand === 'Fiat' || selectedSubBrand === 'Peugeot' ? 'text-white font-extrabold' : selectedSubBrand === 'Leapmotor' ? 'text-slate-950 font-extrabold' : ''}>Regresar</span>
+                              <span className={selectedSubBrand === 'Leapmotor' ? 'text-slate-950 font-extrabold' : 'text-white font-extrabold'}>Regresar</span>
                             </button>
                           </div>
 
@@ -2256,19 +2262,41 @@ export default function LeadForm({ c10ImgUrl, t03ImgUrl, b10ImgUrl }: LeadFormPr
                 {/* Back Link */}
                 <button 
                   onClick={() => setFormActive(false)}
-                  style={isJeepPage ? { backgroundColor: 'transparent', borderColor: 'transparent', boxShadow: 'none' } : (isLeapmotorPage ? { backgroundColor: '#DEFF01', borderColor: '#DEFF01', color: '#000000' } : undefined)}
-                  className={`flex items-center gap-1.5 text-xs font-semibold ${activeLanding === 'leapmotor' || isLeapmotorPage ? 'font-sans' : 'font-mono'} mb-4 transition px-2 py-1.5 rounded ${
+                  style={
                     isJeepPage
-                      ? 'text-slate-800'
-                      : isLeapmotorPage
-                        ? 'text-slate-950 font-bold hover:opacity-95'
-                        : (isLightBg
-                          ? 'text-slate-800 hover:text-slate-950 bg-black/5 border border-black/10'
-                          : 'text-white hover:text-slate-200 bg-white/10')
+                      ? { backgroundColor: '#487f70', borderColor: '#487f70', color: '#ffffff' }
+                      : isFiatPage
+                        ? { backgroundColor: '#EE395E', borderColor: '#EE395E', color: '#ffffff' }
+                        : isPeugeotPage
+                          ? { backgroundColor: '#0074E8', borderColor: '#0074E8', color: '#ffffff' }
+                          : isDodgePage
+                            ? { backgroundColor: '#D50000', borderColor: '#D50000', color: '#ffffff' }
+                            : isRamPage
+                              ? { backgroundColor: '#DD4E3C', borderColor: '#DD4E3C', color: '#ffffff' }
+                              : isLeapmotorPage
+                                ? { backgroundColor: '#DEFF01', borderColor: '#DEFF01', color: '#000000' }
+                                : undefined
+                  }
+                  className={`flex items-center gap-1.5 text-xs font-bold uppercase tracking-wider mb-4 transition px-3 py-1.5 rounded-full border shadow-md active:scale-[0.98] ${
+                    isLeapmotorPage
+                      ? 'text-slate-950 border-[#DEFF01]'
+                      : isJeepPage
+                        ? 'text-white border-[#487f70]'
+                        : isFiatPage
+                          ? 'text-white border-[#EE395E]'
+                          : isPeugeotPage
+                            ? 'text-white border-[#0074E8]'
+                            : isDodgePage
+                              ? 'text-white border-[#D50000]'
+                              : isRamPage
+                                ? 'text-white border-[#DD4E3C]'
+                                : (isLightBg
+                                  ? 'text-slate-800 border-black/10 bg-black/5 hover:bg-black/10'
+                                  : 'text-white border-white/10 bg-white/10 hover:bg-white/20')
                   }`}
                 >
-                  <ArrowLeft className={`w-3.5 h-3.5 ${isJeepPage ? 'text-white' : (isLeapmotorPage ? 'text-slate-950 stroke-[3]' : '')}`} />
-                  <span>{(activeLanding === 'leapmotor' || activeLanding === 'jeep' || isLeapmotorPage) ? 'Regresar' : 'Volver a la Landing'}</span>
+                  <ArrowLeft className={`w-3.5 h-3.5 shrink-0 ${isLeapmotorPage ? 'text-slate-950 stroke-[2.5]' : 'text-white'}`} />
+                  <span>Regresar</span>
                 </button>
 
                 <h2 className={`text-xl tracking-wide mb-1 uppercase font-sans ${activeLanding === 'leapmotor' || isLeapmotorPage ? 'font-extrabold' : 'font-black'} ${
@@ -2891,8 +2919,8 @@ export default function LeadForm({ c10ImgUrl, t03ImgUrl, b10ImgUrl }: LeadFormPr
                 exit={{ opacity: 0 }}
                 className="px-6 py-4 flex flex-col gap-3 flex-1 text-center relative z-10"
                 style={{ 
-                  paddingTop: '6px', 
-                  paddingBottom: '6px',
+                  paddingTop: activeLanding === 'multimarca' ? '48px' : '6px', 
+                  paddingBottom: activeLanding === 'multimarca' ? '32px' : '6px',
                   backgroundColor: activeLanding === 'multimarca' ? mTheme.bg : undefined
                 }}
               >
@@ -3138,7 +3166,7 @@ export default function LeadForm({ c10ImgUrl, t03ImgUrl, b10ImgUrl }: LeadFormPr
                     }`}
                   >
                     {activeLanding === 'multimarca' 
-                      ? 'Cerrar' 
+                      ? 'CERRAR' 
                       : (activeLanding === 'leapmotor' || selectedBrand === 'Leapmotor' ? 'CERRAR' : 'Nuevo Registro de Prueba')}
                   </button>
                 </div>
