@@ -92,12 +92,19 @@ import DODGE_LANDING_BG_26 from '../assets/images/dodge_landing_2026_17807677838
 import MULTIMARCA_REGENERATED_JEEP_BG from '../assets/images/regenerated_image_1781147422783.jpg';
 
 // Independent logo assets decoupled specifically for the Multimarca experience to prevent cascading overrides
-const MULTIMARCA_LEAPMOTOR_LOGO = LEAPMOTOR_LOGO_NEW_IMG;
-const MULTIMARCA_JEEP_LOGO = JEEP_LOGO_IMG;
-const MULTIMARCA_FIAT_LOGO = FIAT_LOGO_IMG;
-const MULTIMARCA_DODGE_LOGO = DODGE_LOGO_IMG;
-const MULTIMARCA_PEUGEOT_LOGO = PEUGEOT_LOGO_IMG;
-const MULTIMARCA_RAM_LOGO = RAM_LOGO_IMG;
+import MULTIMARCA_BUTTON_LEAPMOTOR_LOGO from '../assets/images/leapmotor_outline_white_1780977081063.png';
+import MULTIMARCA_BUTTON_JEEP_LOGO from '../assets/images/regenerated_image_1781121932966.png';
+import MULTIMARCA_BUTTON_FIAT_LOGO from '../assets/images/regenerated_image_1781152936359.png';
+import MULTIMARCA_BUTTON_DODGE_LOGO from '../assets/images/regenerated_image_1781152935486.png';
+import MULTIMARCA_BUTTON_PEUGEOT_LOGO from '../assets/images/peugeot_logo_new_1780716886504.png';
+import MULTIMARCA_BUTTON_RAM_LOGO from '../assets/images/ram_logo_new_1780717149923.png';
+
+const MULTIMARCA_LEAPMOTOR_LOGO = MULTIMARCA_BUTTON_LEAPMOTOR_LOGO;
+const MULTIMARCA_JEEP_LOGO = MULTIMARCA_BUTTON_JEEP_LOGO;
+const MULTIMARCA_FIAT_LOGO = MULTIMARCA_BUTTON_FIAT_LOGO;
+const MULTIMARCA_DODGE_LOGO = MULTIMARCA_BUTTON_DODGE_LOGO;
+const MULTIMARCA_PEUGEOT_LOGO = MULTIMARCA_BUTTON_PEUGEOT_LOGO;
+const MULTIMARCA_RAM_LOGO = MULTIMARCA_BUTTON_RAM_LOGO;
 
 // Decoupled brand sub-page top logo assets for the multimarca brand pages
 const BRAND_PAGE_TOP_LEAPMOTOR_LOGO = LEAPMOTOR_LOGO_IMG;
@@ -1840,15 +1847,14 @@ export default function LeadForm({ c10ImgUrl, t03ImgUrl, b10ImgUrl }: LeadFormPr
                                   handleBrandSelect(brand);
                                   setSelectedSubBrand(brand);
                                 }}
-                                style={{ height: '92.5px', backgroundColor: 'rgba(0, 0, 0, 0.7)' }}
-                                className="relative overflow-hidden rounded-2xl border border-black/5 bg-black/70 w-full flex items-center justify-center select-none shadow-lg shadow-black/5 hover:bg-black/80 transition-all duration-300 cursor-pointer"
+                                style={{ backgroundColor: 'rgba(0, 0, 0, 0.7)' }}
+                                className="group relative overflow-hidden rounded-2xl border border-black/5 bg-black/70 h-20 sm:h-24 w-full flex items-center justify-center select-none shadow-lg shadow-black/5 hover:bg-black/80 transition-all duration-300 cursor-pointer"
                               >
                                 <img 
                                   src={MULTIMARCA_LEAPMOTOR_LOGO} 
                                   alt="Leapmotor"
                                   referrerPolicy="no-referrer"
-                                  className="w-auto max-w-[85%] max-h-[50%] object-contain pointer-events-none p-0.5"
-                                  style={{ mixBlendMode: 'normal' }}
+                                  className="max-h-[40%] max-w-[75%] object-contain pointer-events-none transition-transform duration-300 group-hover:scale-[1.03]"
                                 />
                               </button>
                             );
@@ -1861,14 +1867,14 @@ export default function LeadForm({ c10ImgUrl, t03ImgUrl, b10ImgUrl }: LeadFormPr
                                   handleBrandSelect(brand);
                                   setSelectedSubBrand(brand);
                                 }}
-                                style={{ backgroundColor: 'rgba(0, 0, 0, 0.7)', paddingTop: '0px', marginTop: '0px' }}
-                                className="relative overflow-hidden rounded-2xl border border-black/5 bg-black/70 h-20 sm:h-24 w-full flex items-center justify-center select-none shadow-lg shadow-black/5 hover:bg-black/80 transition-all duration-300 cursor-pointer pt-0 mt-0"
+                                style={{ backgroundColor: 'rgba(0, 0, 0, 0.7)' }}
+                                className="group relative overflow-hidden rounded-2xl border border-black/5 bg-black/70 h-20 sm:h-24 w-full flex items-center justify-center select-none shadow-lg shadow-black/5 hover:bg-black/80 transition-all duration-300 cursor-pointer"
                               >
                                 <img 
                                   src={MULTIMARCA_JEEP_LOGO} 
                                   alt="Jeep"
                                   referrerPolicy="no-referrer"
-                                  className="w-full h-full object-contain pointer-events-none p-3.5 sm:p-4.5 transition-transform duration-300"
+                                  className="max-h-[35%] max-w-[65%] object-contain pointer-events-none transition-transform duration-300 group-hover:scale-[1.03]"
                                 />
                               </button>
                             );
@@ -1882,13 +1888,13 @@ export default function LeadForm({ c10ImgUrl, t03ImgUrl, b10ImgUrl }: LeadFormPr
                                   setSelectedSubBrand(brand);
                                 }}
                                 style={{ backgroundColor: 'rgba(0, 0, 0, 0.7)' }}
-                                className="relative overflow-hidden rounded-2xl border border-black/5 bg-black/70 h-20 sm:h-24 w-full flex items-center justify-center select-none shadow-lg shadow-black/5 hover:bg-black/80 transition-all duration-300 cursor-pointer"
+                                className="group relative overflow-hidden rounded-2xl border border-black/5 bg-black/70 h-20 sm:h-24 w-full flex items-center justify-center select-none shadow-lg shadow-black/5 hover:bg-black/80 transition-all duration-300 cursor-pointer"
                               >
                                 <img 
                                   src={MULTIMARCA_FIAT_LOGO} 
                                   alt="Fiat"
                                   referrerPolicy="no-referrer"
-                                  className="w-full h-full object-contain pointer-events-none p-3 sm:p-3.5"
+                                  className="max-h-[60%] max-w-[60%] object-contain pointer-events-none transition-transform duration-300 group-hover:scale-[1.03]"
                                 />
                               </button>
                             );
@@ -1902,13 +1908,13 @@ export default function LeadForm({ c10ImgUrl, t03ImgUrl, b10ImgUrl }: LeadFormPr
                                   setSelectedSubBrand(brand);
                                 }}
                                 style={{ backgroundColor: 'rgba(0, 0, 0, 0.7)' }}
-                                className="relative overflow-hidden rounded-2xl border border-black/5 bg-black/70 h-20 sm:h-24 w-full flex items-center justify-center select-none shadow-lg shadow-black/5 hover:bg-black/80 transition-all duration-300 cursor-pointer"
+                                className="group relative overflow-hidden rounded-2xl border border-black/5 bg-black/70 h-20 sm:h-24 w-full flex items-center justify-center select-none shadow-lg shadow-black/5 hover:bg-black/80 transition-all duration-300 cursor-pointer"
                               >
                                 <img 
                                   src={MULTIMARCA_DODGE_LOGO} 
                                   alt="Dodge"
                                   referrerPolicy="no-referrer"
-                                  className="w-full h-full object-contain pointer-events-none scale-[1.15] p-2"
+                                  className="max-h-[45%] max-w-[70%] object-contain pointer-events-none transition-transform duration-300 group-hover:scale-[1.03]"
                                 />
                               </button>
                             );
@@ -1922,13 +1928,13 @@ export default function LeadForm({ c10ImgUrl, t03ImgUrl, b10ImgUrl }: LeadFormPr
                                   setSelectedSubBrand(brand);
                                 }}
                                 style={{ backgroundColor: 'rgba(0, 0, 0, 0.7)' }}
-                                className="relative overflow-hidden rounded-2xl border border-black/5 bg-black/70 h-20 sm:h-24 w-full flex items-center justify-center select-none shadow-lg shadow-black/5 hover:bg-black/80 transition-all duration-300 cursor-pointer"
+                                className="group relative overflow-hidden rounded-2xl border border-black/5 bg-black/70 h-20 sm:h-24 w-full flex items-center justify-center select-none shadow-lg shadow-black/5 hover:bg-black/80 transition-all duration-300 cursor-pointer"
                               >
                                 <img 
                                   src={MULTIMARCA_PEUGEOT_LOGO} 
                                   alt="Peugeot"
                                   referrerPolicy="no-referrer"
-                                  className="w-full h-full object-contain pointer-events-none scale-[1.48] p-1"
+                                  className="max-h-[65%] max-w-[65%] object-contain pointer-events-none transition-transform duration-300 group-hover:scale-[1.03]"
                                 />
                               </button>
                             );
@@ -1942,13 +1948,13 @@ export default function LeadForm({ c10ImgUrl, t03ImgUrl, b10ImgUrl }: LeadFormPr
                                   setSelectedSubBrand(brand);
                                 }}
                                 style={{ backgroundColor: 'rgba(0, 0, 0, 0.7)' }}
-                                className="relative overflow-hidden rounded-2xl border border-black/5 bg-black/70 h-20 sm:h-24 w-full flex items-center justify-center select-none shadow-lg shadow-black/5 hover:bg-black/80 transition-all duration-300 cursor-pointer"
+                                className="group relative overflow-hidden rounded-2xl border border-black/5 bg-black/70 h-20 sm:h-24 w-full flex items-center justify-center select-none shadow-lg shadow-black/5 hover:bg-black/80 transition-all duration-300 cursor-pointer"
                               >
                                 <img 
                                   src={MULTIMARCA_RAM_LOGO} 
                                   alt="Ram"
                                   referrerPolicy="no-referrer"
-                                  className="w-full h-full object-contain pointer-events-none scale-[1.2] p-1.5 sm:p-2"
+                                  className="max-h-[60%] max-w-[60%] object-contain pointer-events-none transition-transform duration-300 group-hover:scale-[1.03]"
                                 />
                               </button>
                             );
