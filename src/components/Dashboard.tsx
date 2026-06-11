@@ -482,15 +482,28 @@ export default function Dashboard() {
     }
 
     try {
-      const selectedDist = newAdvDistributor || (distributors[0]?.name || 'Leapmotor Santa Fe');
+      const selectedDist = newAdvDistributor || (distributors.find(d => (d.marca || '').toUpperCase() === 'LEAPMOTOR')?.name || distributors[0]?.name || 'Leapmotor Santa Fe');
       
+      let advCorpKey = '';
+      const matchedD = distributors.find(d => d.name === selectedDist);
+      if (matchedD) {
+        advCorpKey = matchedD.claveCorporativo || '';
+      } else {
+        const matchedLocal = ALL_DEALERS.find(d => d.name === selectedDist);
+        if (matchedLocal) {
+          advCorpKey = matchedLocal.corpKey || '';
+        }
+      }
+
       if (editingAdvisorId) {
         // Update existing advisor
         await updateDoc(doc(db, 'advisors', editingAdvisorId), {
           name: newAdvName.trim(),
           email: newAdvEmail.trim(),
           password: newAdvPassword.trim(),
-          distributor: selectedDist
+          distributor: selectedDist,
+          claveCorporativo: advCorpKey,
+          clavecorporativo: advCorpKey
         });
         setMgmtSuccess('Asesor comercial actualizado con éxito.');
         setEditingAdvisorId(null);
@@ -502,6 +515,8 @@ export default function Dashboard() {
           email: newAdvEmail.trim(),
           password: newAdvPassword.trim(),
           distributor: selectedDist,
+          claveCorporativo: advCorpKey,
+          clavecorporativo: advCorpKey,
           active: true,
           createdAt: new Date()
         });
@@ -2363,7 +2378,7 @@ export default function Dashboard() {
                     </div>
 
                     <div>
-                      <label className={`block text-[11px] font-extrabold font-mono uppercase mb-1.5 ${isDark ? 'text-white' : 'text-slate-700'}`}>Distribuidor Asociado (Todas las Marcas):</label>
+                      <label className={`block text-[11px] font-extrabold font-mono uppercase mb-1.5 ${isDark ? 'text-white' : 'text-slate-700'}`}>Distribuidor Asociado (Leapmotor):</label>
                       <select
                         value={newAdvDistributor}
                         onChange={(e) => setNewAdvDistributor(e.target.value)}
@@ -2371,14 +2386,16 @@ export default function Dashboard() {
                           isDark ? 'bg-slate-900 border-slate-800 text-white' : 'bg-white border-slate-200 text-slate-800'
                         }`}
                       >
-                        {distributors.length === 0 ? (
-                          <option value="">Seeding/Cargando distribuidores...</option>
+                        {distributors.filter(d => (d.marca || '').toUpperCase() === 'LEAPMOTOR').length === 0 ? (
+                          <option value="">Seeding/Cargando distribuidores Leapmotor...</option>
                         ) : (
-                          distributors.map((dist, idx) => (
-                            <option key={`${dist.id || idx}-${dist.marca || ''}-${idx}`} value={dist.name}>
-                              [{dist.marca || 'LEAPMOTOR'}] {dist.name} ({dist.estado || 'N/A'})
-                            </option>
-                          ))
+                          distributors
+                            .filter(d => (d.marca || '').toUpperCase() === 'LEAPMOTOR')
+                            .map((dist, idx) => (
+                              <option key={`${dist.id || idx}-${dist.marca || ''}-${idx}`} value={dist.name}>
+                                {dist.name} ({dist.estado || 'N/A'})
+                              </option>
+                            ))
                         )}
                       </select>
                     </div>

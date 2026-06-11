@@ -712,7 +712,7 @@ const compactDealers: string[][] = [
   ["LEAPMOTOR", "01L5360", "65041", "ESTADO DE MÉXICO", "Leapmotor Naucalpan", "leapmotornaucalpan.mx"],
   ["LEAPMOTOR", "01L5030", "65037", "MORELOS", "Leapmotor Cuernavaca", "leapmotorcuernavaca.mx"],
   ["LEAPMOTOR", "01L5420", "65041", "ESTADO DE MÉXICO", "Leapmotor Ecatepec", "leapmotorecatepec.mx"],
-  ["LEAPMOTOR", "01L5010", "65036", "CIUDAD DE MÉXICO", "Leapmotor Pedregal", "leapmotorqueretaro.mx"]
+  ["LEAPMOTOR", "01L5250", "65036", "CIUDAD DE MÉXICO", "Leapmotor Pedregal", "leapmotorpedregal.mx"]
 ];
 
 export const ALL_DEALERS: Dealer[] = compactDealers.map((d) => ({

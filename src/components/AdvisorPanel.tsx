@@ -383,21 +383,33 @@ export default function AdvisorPanel() {
 
       // Assign distributor associated to the advisor
       let disIdVal = '';
+      let leadClaveCorporativo = '';
       if (loggedInAdvisor.distributor) {
         payload.distributor = loggedInAdvisor.distributor;
 
         // Lookup disId based on distributor name
         const matchedDb = dbDistributors?.find(d => d.name === loggedInAdvisor.distributor);
-        if (matchedDb && (matchedDb.disId || matchedDb.id)) {
-          disIdVal = matchedDb.disId || matchedDb.id;
+        if (matchedDb) {
+          disIdVal = matchedDb.disId || matchedDb.id || '';
+          leadClaveCorporativo = matchedDb.claveCorporativo || '';
         } else {
           const matchedLocal = ALL_DEALERS.find(d => d.name === loggedInAdvisor.distributor);
           if (matchedLocal) {
-            disIdVal = matchedLocal.id;
+            disIdVal = matchedLocal.id || '';
+            leadClaveCorporativo = matchedLocal.corpKey || '';
           }
         }
+
+        if (!leadClaveCorporativo) {
+          leadClaveCorporativo = loggedInAdvisor.claveCorporativo || loggedInAdvisor.clavecorporativo || '';
+        }
+
         if (disIdVal) {
           payload.disId = disIdVal;
+        }
+        if (leadClaveCorporativo) {
+          payload.claveCorporativo = leadClaveCorporativo;
+          payload.clavecorporativo = leadClaveCorporativo;
         }
       }
 
@@ -410,7 +422,9 @@ export default function AdvisorPanel() {
         const updatedLead: Lead = {
           ...lead,
           distributor: loggedInAdvisor.distributor || lead.distributor,
-          disId: disIdVal || lead.disId
+          disId: disIdVal || lead.disId,
+          claveCorporativo: leadClaveCorporativo || lead.claveCorporativo,
+          clavecorporativo: leadClaveCorporativo || (lead as any).clavecorporativo
         };
         console.log(`[CRM Integration] Sending Leapmotor VIP lead ${leadId} to Stellantis CRM...`);
         // Call the rapid quotation API

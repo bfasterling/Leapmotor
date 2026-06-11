@@ -64,9 +64,15 @@ async function runLeadSync() {
           (lead.lastName && lead.lastName.toLowerCase().includes('test'));
 
         if (!isTestLead && lead.distributor && lead.distributor !== 'Sin Asignar (Pool Leapmotor)' && lead.distributor !== 'Sin Asignar (Sincronizando con Asesor)') {
-          const matchedLocal = ALL_DEALERS.find(d => d.name === lead.distributor);
-          if (matchedLocal && matchedLocal.corpKey) {
-            urlVal = matchedLocal.corpKey;
+          if (lead.claveCorporativo) {
+            urlVal = lead.claveCorporativo;
+          } else if (lead.clavecorporativo) {
+            urlVal = lead.clavecorporativo;
+          } else {
+            const matchedLocal = ALL_DEALERS.find(d => d.name === lead.distributor);
+            if (matchedLocal && matchedLocal.corpKey) {
+              urlVal = matchedLocal.corpKey;
+            }
           }
         }
 

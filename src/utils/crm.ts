@@ -23,25 +23,31 @@ export const sendLeapmotorLeadToCRM = async (lead: Lead): Promise<{
     let urlVal = "01L5000"; // Default billing/test key
 
     if (!isTestLead && lead.distributor && lead.distributor !== 'Sin Asignar (Pool Leapmotor)' && lead.distributor !== 'Sin Asignar (Sincronizando con Asesor)') {
-      try {
-        const distQuery = query(collection(db, 'distributors'), where('name', '==', lead.distributor));
-        const distSnap = await getDocs(distQuery);
-        if (!distSnap.empty) {
-          const docData = distSnap.docs[0].data();
-          if (docData && docData.claveCorporativo) {
-            urlVal = docData.claveCorporativo;
+      if (lead.claveCorporativo) {
+        urlVal = lead.claveCorporativo;
+      } else if (lead.clavecorporativo) {
+        urlVal = lead.clavecorporativo;
+      } else {
+        try {
+          const distQuery = query(collection(db, 'distributors'), where('name', '==', lead.distributor));
+          const distSnap = await getDocs(distQuery);
+          if (!distSnap.empty) {
+            const docData = distSnap.docs[0].data();
+            if (docData && docData.claveCorporativo) {
+              urlVal = docData.claveCorporativo;
+            }
+          } else {
+            const matchedLocal = ALL_DEALERS.find(d => d.name === lead.distributor);
+            if (matchedLocal && matchedLocal.corpKey) {
+              urlVal = matchedLocal.corpKey;
+            }
           }
-        } else {
+        } catch (err) {
+          console.error("Error looking up distributor corporate key:", err);
           const matchedLocal = ALL_DEALERS.find(d => d.name === lead.distributor);
           if (matchedLocal && matchedLocal.corpKey) {
             urlVal = matchedLocal.corpKey;
           }
-        }
-      } catch (err) {
-        console.error("Error looking up distributor corporate key:", err);
-        const matchedLocal = ALL_DEALERS.find(d => d.name === lead.distributor);
-        if (matchedLocal && matchedLocal.corpKey) {
-          urlVal = matchedLocal.corpKey;
         }
       }
     }

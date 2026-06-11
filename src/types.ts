@@ -43,6 +43,8 @@ export interface Lead {
   selectedBrand?: string;
   testDriveDate?: string;
   coordinatorNotes?: string;
+  claveCorporativo?: string;
+  clavecorporativo?: string;
   utm_source?: string;
   utm_medium?: string;
   utm_campaign?: string;

@@ -1178,17 +1178,24 @@ export default function LeadForm({ c10ImgUrl, t03ImgUrl, b10ImgUrl }: LeadFormPr
       }
 
       let disId = '';
+      let leadClaveCorporativo = '';
       if (chosenDistName && chosenDistName !== 'Sin Asignar (Sincronizando con Asesor)') {
         // Find inside allDbDistributors (which contains ALL distributors from the DB unfiltered)
         const matchedDb = allDbDistributors?.find(d => d.name === chosenDistName) || dbDistributors?.find(d => d.name === chosenDistName);
-        if (matchedDb && (matchedDb.disId || matchedDb.id)) {
-          disId = matchedDb.disId || matchedDb.id;
+        if (matchedDb) {
+          disId = matchedDb.disId || matchedDb.id || '';
+          leadClaveCorporativo = matchedDb.claveCorporativo || '';
         } else {
           const matchedLocal = ALL_DEALERS.find(d => d.name === chosenDistName);
           if (matchedLocal) {
-            disId = matchedLocal.id;
+            disId = matchedLocal.id || '';
+            leadClaveCorporativo = matchedLocal.corpKey || '';
           }
         }
+      }
+
+      if (!leadClaveCorporativo && minWaitingAdvisor) {
+        leadClaveCorporativo = minWaitingAdvisor.claveCorporativo || minWaitingAdvisor.clavecorporativo || '';
       }
 
       const payload = {
@@ -1200,6 +1207,8 @@ export default function LeadForm({ c10ImgUrl, t03ImgUrl, b10ImgUrl }: LeadFormPr
         state: formData.state,
         distributor: chosenDistName,
         disId: disId,
+        claveCorporativo: leadClaveCorporativo,
+        clavecorporativo: leadClaveCorporativo,
         modelOfInterest: formData.modelOfInterest,
         modelClaveGen: modelClaveGen,
         contactMethod: formData.contactMethod,
