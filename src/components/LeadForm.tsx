@@ -108,17 +108,19 @@ const MULTIMARCA_PEUGEOT_LOGO = MULTIMARCA_BUTTON_PEUGEOT_LOGO;
 const MULTIMARCA_RAM_LOGO = MULTIMARCA_BUTTON_RAM_LOGO;
 
 // Decoupled brand sub-page top logo assets for the multimarca brand pages
+import DODGE_SUBPAGE_LOGO_NEW from '../assets/images/regenerated_image_1781157409570.png';
 const BRAND_PAGE_TOP_LEAPMOTOR_LOGO = LEAPMOTOR_LOGO_IMG;
 const BRAND_PAGE_TOP_JEEP_LOGO = JEEP_LOGO_IMG;
 const BRAND_PAGE_TOP_FIAT_LOGO = FIAT_LOGO_IMG;
-const BRAND_PAGE_TOP_DODGE_LOGO = DODGE_LOGO_IMG;
+const BRAND_PAGE_TOP_DODGE_LOGO = DODGE_SUBPAGE_LOGO_NEW;
 const BRAND_PAGE_TOP_PEUGEOT_LOGO = PEUGEOT_LOGO_IMG;
 const BRAND_PAGE_TOP_RAM_LOGO = RAM_LOGO_IMG;
 
 // Decoupled background/hero images for the multimarca brand pages to ensure independent workability
+import DODGE_SUBPAGE_BG_NEW from '../assets/images/regenerated_image_1781157409037.jpg';
 const MULTIMARCA_JEEP_BG = MULTIMARCA_REGENERATED_JEEP_BG;
 const MULTIMARCA_FIAT_BG = FIAT_LANDING_BG_26;
-const MULTIMARCA_DODGE_BG = DODGE_LANDING_BG_26;
+const MULTIMARCA_DODGE_BG = DODGE_SUBPAGE_BG_NEW;
 const MULTIMARCA_PEUGEOT_BG = PEUGEOT_LANDING_BG_26;
 const MULTIMARCA_RAM_BG = MULTIMARCA_RAM_BG_NEW;
 
@@ -1525,33 +1527,43 @@ export default function LeadForm({ c10ImgUrl, t03ImgUrl, b10ImgUrl }: LeadFormPr
   } ${isLightBg ? 'text-slate-800' : 'text-white'}`;
 
   const isJeepPage = selectedSubBrand === 'Jeep' || (activeMultimarcaBrandKey === 'Jeep');
+  const isRamPage = selectedSubBrand?.toLowerCase() === 'ram' || activeMultimarcaBrandKey?.toLowerCase() === 'ram';
+  const isDodgePage = selectedSubBrand?.toLowerCase() === 'dodge' || activeMultimarcaBrandKey?.toLowerCase() === 'dodge';
 
   // Dynamic input styling based on active branding
-  const rowClass = isJeepPage
-    ? 'space-y-1 bg-white p-2 sm:p-2.5 rounded-xl border border-[#487f70] transition-all duration-350'
-    : (isLightBg
-      ? 'space-y-1 bg-slate-100 p-2 sm:p-2.5 rounded-xl border border-slate-200 hover:border-slate-300 transition-all duration-350'
-      : (activeLanding === 'leapmotor'
-         ? 'space-y-1 bg-[#035F1D]/10 p-2 sm:p-2.5 rounded-xl border border-[#009100]/25 hover:border-[#deff01]/40 hover:bg-[#035F1D]/15 transition-all duration-350'
-         : (activeLanding === 'jeep'
-            ? 'space-y-1 bg-slate-950/40 p-2 sm:p-2.5 rounded-xl border border-[#424D07] hover:border-[#424D07]/80 transition-all duration-350 shadow-inner'
-            : 'space-y-1 bg-slate-900/60 p-2 sm:p-2.5 rounded-xl border border-white/15 hover:border-white/20 transition-all duration-350')));
+  const rowClass = isRamPage
+    ? 'space-y-1 bg-slate-900/60 p-2 sm:p-2.5 rounded-xl border border-[#DD4E3C] hover:border-[#DD4E3C]/80 transition-all duration-350 shadow-inner'
+    : (isDodgePage
+      ? 'space-y-1 bg-slate-900/60 p-2 sm:p-2.5 rounded-xl border border-[#D50000] hover:border-[#D50000]/80 transition-all duration-350 shadow-inner'
+      : (isJeepPage
+        ? 'space-y-1 bg-white p-2 sm:p-2.5 rounded-xl border border-[#487f70] transition-all duration-350'
+        : (isLightBg
+          ? 'space-y-1 bg-slate-100 p-2 sm:p-2.5 rounded-xl border border-slate-200 hover:border-slate-300 transition-all duration-350'
+          : (activeLanding === 'leapmotor'
+             ? 'space-y-1 bg-[#035F1D]/10 p-2 sm:p-2.5 rounded-xl border border-[#009100]/25 hover:border-[#deff01]/40 hover:bg-[#035F1D]/15 transition-all duration-350'
+             : (activeLanding === 'jeep'
+                ? 'space-y-1 bg-slate-950/40 p-2 sm:p-2.5 rounded-xl border border-[#424D07] hover:border-[#424D07]/80 transition-all duration-350 shadow-inner'
+                : 'space-y-1 bg-slate-900/60 p-2 sm:p-2.5 rounded-xl border border-white/15 hover:border-white/20 transition-all duration-350')))));
 
-  const inputClass = isJeepPage
-    ? 'w-full bg-white border border-[#487f70] focus:border-[#487f70] focus:ring-1 focus:ring-[#487f70]/40 rounded-xl pl-9 pr-3 py-2 sm:py-2.5 text-base md:text-sm text-slate-900 placeholder-slate-400 outline-none transition font-semibold'
-    : (isLightBg
-      ? 'w-full bg-white border border-slate-300 focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500/40 rounded-xl pl-9 pr-3 py-2 sm:py-2.5 text-base md:text-sm text-slate-900 placeholder-slate-400 outline-none transition font-semibold'
-      : (activeLanding === 'leapmotor'
-         ? 'w-full bg-[#2D2926] border border-[#deff01] focus:border-[#deff01] focus:ring-1 focus:ring-[#deff01]/40 rounded-xl pl-9 pr-3 py-2 sm:py-2.5 text-base md:text-xs text-slate-100 placeholder-slate-500 outline-none transition font-semibold font-sans'
-         : (activeLanding === 'jeep'
-            ? 'w-full bg-[#0d1411] border border-[#424D07] focus:border-[#424D07] focus:ring-1 focus:ring-[#424D07]/40 rounded-xl pl-9 pr-3 py-2 sm:py-2.5 text-base md:text-xs text-white placeholder-slate-400 outline-none transition font-semibold'
-            : 'w-full bg-[#0a0f18] border border-white/25 focus:border-indigo-400 focus:ring-1 focus:ring-indigo-400/40 rounded-xl pl-9 pr-3 py-2 sm:py-2.5 text-base md:text-xs text-white placeholder-slate-400 outline-none transition font-semibold')));
+  const inputClass = isRamPage
+    ? 'w-full bg-[#0a0f18] border border-[#DD4E3C] focus:border-[#DD4E3C] focus:ring-1 focus:ring-[#DD4E3C]/40 rounded-xl pl-9 pr-3 py-2 sm:py-2.5 text-base md:text-xs text-white placeholder-slate-400 outline-none transition font-semibold'
+    : (isDodgePage
+      ? 'w-full bg-[#0a0f18] border border-[#D50000] focus:border-[#D50000] focus:ring-1 focus:ring-[#D50000]/40 rounded-xl pl-9 pr-3 py-2 sm:py-2.5 text-base md:text-xs text-white placeholder-slate-400 outline-none transition font-semibold'
+      : (isJeepPage
+        ? 'w-full bg-white border border-[#487f70] focus:border-[#487f70] focus:ring-1 focus:ring-[#487f70]/40 rounded-xl pl-9 pr-3 py-2 sm:py-2.5 text-base md:text-sm text-slate-900 placeholder-slate-400 outline-none transition font-semibold'
+        : (isLightBg
+          ? 'w-full bg-white border border-slate-300 focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500/40 rounded-xl pl-9 pr-3 py-2 sm:py-2.5 text-base md:text-sm text-slate-900 placeholder-slate-400 outline-none transition font-semibold'
+          : (activeLanding === 'leapmotor'
+             ? 'w-full bg-[#2D2926] border border-[#deff01] focus:border-[#deff01] focus:ring-1 focus:ring-[#deff01]/40 rounded-xl pl-9 pr-3 py-2 sm:py-2.5 text-base md:text-xs text-slate-100 placeholder-slate-500 outline-none transition font-semibold font-sans'
+             : (activeLanding === 'jeep'
+                ? 'w-full bg-[#0d1411] border border-[#424D07] focus:border-[#424D07] focus:ring-1 focus:ring-[#424D07]/40 rounded-xl pl-9 pr-3 py-2 sm:py-2.5 text-base md:text-xs text-white placeholder-slate-400 outline-none transition font-semibold'
+                : 'w-full bg-[#0a0f18] border border-white/25 focus:border-indigo-400 focus:ring-1 focus:ring-indigo-400/40 rounded-xl pl-9 pr-3 py-2 sm:py-2.5 text-base md:text-xs text-white placeholder-slate-400 outline-none transition font-semibold')))));
 
   return (
     <div 
       className="w-full text-slate-100 flex flex-col justify-start items-center min-h-screen transition-all duration-500" 
       id="landing-page-view"
-      style={activeLanding === 'multimarca' ? { backgroundColor: subBrandBgColor || '#ffffff' } : undefined}
+      style={isRamPage || isDodgePage ? { backgroundColor: '#000000' } : (activeLanding === 'multimarca' ? { backgroundColor: subBrandBgColor || '#ffffff' } : undefined)}
     >
       
       {/* Outer Mobile Mock Wrapper with Pantone 2427C and Highlight R0 G145 B0 theme */}
@@ -2169,7 +2181,7 @@ export default function LeadForm({ c10ImgUrl, t03ImgUrl, b10ImgUrl }: LeadFormPr
                 paddingTop: '4px', 
                 paddingBottom: '4px', 
                 scrollbarWidth: 'thin',
-                backgroundColor: activeLanding === 'multimarca' ? (subBrandBgColor || '#ffffff') : undefined
+                backgroundColor: isRamPage || isDodgePage ? '#000000' : (activeLanding === 'multimarca' ? (subBrandBgColor || '#ffffff') : undefined)
               }}
             >
               <div>
@@ -2194,7 +2206,7 @@ export default function LeadForm({ c10ImgUrl, t03ImgUrl, b10ImgUrl }: LeadFormPr
                 }`}>
                   DÉJANOS TUS DATOS
                 </h2>
-                {activeLanding !== 'leapmotor' && activeLanding !== 'jeep' && (
+                {activeLanding !== 'leapmotor' && activeLanding !== 'jeep' && !isRamPage && !isDodgePage && (
                   <span className={`text-[11px] font-bold font-mono block mb-4 uppercase ${
                     isLightBg ? 'text-slate-700' : 'text-white'
                   }`}>
@@ -2441,7 +2453,7 @@ export default function LeadForm({ c10ImgUrl, t03ImgUrl, b10ImgUrl }: LeadFormPr
                                 type="button"
                                 id="model-modal-trigger-btn"
                                 disabled={activeLanding === 'jeep'}
-                                style={isJeepPage ? { backgroundColor: '#487f70' } : { backgroundColor: '#deff01' }}
+                                style={isRamPage ? { backgroundColor: '#DD4E3C', color: '#ffffff', borderColor: '#DD4E3C' } : (isDodgePage ? { backgroundColor: '#D50000', color: '#ffffff', borderColor: '#D50000' } : (isJeepPage ? { backgroundColor: '#487f70' } : { backgroundColor: '#deff01' }))}
                                 onClick={() => {
                                   if (activeLanding === 'jeep') return;
                                   // Ensure formData of interest is initialized correctly of the active brand if empty
@@ -2451,15 +2463,17 @@ export default function LeadForm({ c10ImgUrl, t03ImgUrl, b10ImgUrl }: LeadFormPr
                                   setShowModelModal(true);
                                 }}
                                 className={`w-full text-left rounded-xl pl-11 pr-7 py-2.5 text-xs outline-none transition uppercase ${activeLanding === 'leapmotor' ? 'font-sans' : 'font-mono'} font-bold flex items-center justify-between disabled:opacity-75 disabled:cursor-not-allowed ${
-                                  isJeepPage
-                                    ? 'bg-[#487f70] text-white border border-[#487f70]'
-                                    : 'bg-[#deff01] text-slate-950 border border-white/25'
+                                  isRamPage || isDodgePage
+                                    ? 'text-white border'
+                                    : (isJeepPage
+                                      ? 'bg-[#487f70] text-white border border-[#487f70]'
+                                      : 'bg-[#deff01] text-slate-950 border border-white/25')
                                 }`}
                               >
-                                <span className={isJeepPage ? 'truncate text-white' : 'truncate text-slate-950'}>
+                                <span className={isRamPage || isDodgePage ? 'truncate text-white' : (isJeepPage ? 'truncate text-white' : 'truncate text-slate-950')}>
                                   {selectedBrand} {formData.modelOfInterest || activeModelsList[0]}
                                 </span>
-                                {activeLanding !== 'jeep' && <ChevronDown className={`w-3.5 h-3.5 shrink-0 ${isJeepPage ? 'text-white' : 'text-slate-950'}`} />}
+                                {activeLanding !== 'jeep' && <ChevronDown className={`w-3.5 h-3.5 shrink-0 ${isRamPage || isDodgePage ? 'text-white' : (isJeepPage ? 'text-white' : 'text-slate-950')}`} />}
                               </button>
                             </div>
                           ) : (
@@ -2506,7 +2520,7 @@ export default function LeadForm({ c10ImgUrl, t03ImgUrl, b10ImgUrl }: LeadFormPr
                           Estado *
                         </label>
                         <div className="relative">
-                          <MapPin className={`absolute left-3.5 top-3.5 w-4 h-4 pointer-events-none z-10 ${isLightBg || isJeepPage ? 'text-slate-500' : 'text-slate-300'}`} />
+                          <MapPin className={`absolute left-3.5 top-3.5 w-4 h-4 pointer-events-none z-10 ${isLightBg || isJeepPage ? 'text-slate-500' : (isRamPage || isDodgePage ? 'text-white' : 'text-slate-300')}`} />
                           <select
                             id="state"
                             name="state"
@@ -2519,6 +2533,7 @@ export default function LeadForm({ c10ImgUrl, t03ImgUrl, b10ImgUrl }: LeadFormPr
                                 state: stateValue
                               }));
                             }}
+                            style={isRamPage ? { backgroundColor: '#DD4E3C', color: '#ffffff', borderColor: '#DD4E3C' } : (isDodgePage ? { backgroundColor: '#D50000', color: '#ffffff', borderColor: '#D50000' } : undefined)}
                             className={`w-full rounded-xl pl-11 pr-7 py-2.5 text-base md:text-sm outline-none appearance-none transition uppercase ${activeLanding === 'leapmotor' ? 'font-sans' : 'font-mono'} ${
                               isJeepPage
                                 ? 'bg-white border border-[#487f70] text-slate-900 focus:border-[#487f70] font-bold'
@@ -2528,7 +2543,11 @@ export default function LeadForm({ c10ImgUrl, t03ImgUrl, b10ImgUrl }: LeadFormPr
                                      ? 'bg-[#2D2926] border border-[#deff01] focus:border-[#deff01] text-white font-semibold'
                                      : (activeLanding === 'jeep'
                                         ? 'bg-[#0d1411] border border-[#424D07] focus:border-[#424D07] text-white font-semibold'
-                                        : 'bg-[#0a0f18] border border-white/25 focus:border-indigo-400 text-white font-bold')))
+                                        : (isRamPage
+                                          ? 'border border-[#DD4E3C] text-white font-bold'
+                                          : (isDodgePage
+                                            ? 'border border-[#D50000] text-white font-bold'
+                                            : 'bg-[#0a0f18] border border-white/25 focus:border-indigo-400 text-white font-bold')))))
                             }`}
                           >
                             {availableStates.map(st => (
@@ -2537,7 +2556,7 @@ export default function LeadForm({ c10ImgUrl, t03ImgUrl, b10ImgUrl }: LeadFormPr
                               </option>
                             ))}
                           </select>
-                          <ChevronDown className={`absolute right-3 top-3.5 w-4 h-4 pointer-events-none ${isLightBg || isJeepPage ? 'text-slate-500' : 'text-slate-300'}`} />
+                          <ChevronDown className={`absolute right-3 top-3.5 w-4 h-4 pointer-events-none ${isLightBg || isJeepPage ? 'text-slate-500' : (isRamPage || isDodgePage ? 'text-white' : 'text-slate-300')}`} />
                         </div>
                       </div>
 
@@ -2547,7 +2566,7 @@ export default function LeadForm({ c10ImgUrl, t03ImgUrl, b10ImgUrl }: LeadFormPr
                           {activeLanding === 'multimarca' ? 'Distribuidor *' : 'Distribuidor de Preferencia *'} {loadingDbDistributors && <span className="text-emerald-400 font-bold animate-pulse text-[9px] lowercase">(consultando BD...)</span>}
                         </label>
                         <div className="relative">
-                          <Settings className={`absolute left-3.5 top-3.5 w-4 h-4 pointer-events-none z-10 ${isLightBg || isJeepPage ? 'text-slate-500' : 'text-slate-300'}`} />
+                          <Settings className={`absolute left-3.5 top-3.5 w-4 h-4 pointer-events-none z-10 ${isLightBg || isJeepPage ? 'text-slate-500' : (isRamPage || isDodgePage ? 'text-white' : 'text-slate-300')}`} />
                           <select
                             id="distributor"
                             name="distributor"
@@ -2557,6 +2576,7 @@ export default function LeadForm({ c10ImgUrl, t03ImgUrl, b10ImgUrl }: LeadFormPr
                               const dealerValue = e.target.value;
                               setFormData(prev => ({ ...prev, distributor: dealerValue }));
                             }}
+                            style={isRamPage ? { backgroundColor: '#DD4E3C', color: '#ffffff', borderColor: '#DD4E3C' } : (isDodgePage ? { backgroundColor: '#D50000', color: '#ffffff', borderColor: '#D50000' } : undefined)}
                             className={`w-full rounded-xl pl-11 pr-7 py-2.5 text-base md:text-sm outline-none appearance-none transition uppercase ${activeLanding === 'leapmotor' ? 'font-sans' : 'font-mono'} ${
                               isJeepPage
                                 ? 'bg-white border border-[#487f70] text-slate-900 focus:border-[#487f70] font-bold'
@@ -2566,7 +2586,11 @@ export default function LeadForm({ c10ImgUrl, t03ImgUrl, b10ImgUrl }: LeadFormPr
                                      ? 'bg-[#2D2926] border border-[#deff01] focus:border-[#deff01] text-white font-semibold'
                                      : (activeLanding === 'jeep'
                                         ? 'bg-[#0d1411] border border-[#424D07] focus:border-[#424D07] text-white font-semibold'
-                                        : 'bg-[#0a0f18] border border-white/25 focus:border-indigo-400 text-white font-bold')))
+                                        : (isRamPage
+                                          ? 'border border-[#DD4E3C] text-white font-bold'
+                                          : (isDodgePage
+                                            ? 'border border-[#D50000] text-white font-bold'
+                                            : 'bg-[#0a0f18] border border-white/25 focus:border-indigo-400 text-white font-bold')))))
                             }`}
                           >
                             {loadingDbDistributors ? (
@@ -2581,7 +2605,7 @@ export default function LeadForm({ c10ImgUrl, t03ImgUrl, b10ImgUrl }: LeadFormPr
                               ))
                             )}
                           </select>
-                          <ChevronDown className={`absolute right-3 top-3.5 w-4 h-4 pointer-events-none ${isLightBg || isJeepPage ? 'text-slate-500' : 'text-slate-300'}`} />
+                          <ChevronDown className={`absolute right-3 top-3.5 w-4 h-4 pointer-events-none ${isLightBg || isJeepPage ? 'text-slate-500' : (isRamPage || isDodgePage ? 'text-white' : 'text-slate-300')}`} />
                         </div>
                       </div>
                     </div>
@@ -2590,7 +2614,7 @@ export default function LeadForm({ c10ImgUrl, t03ImgUrl, b10ImgUrl }: LeadFormPr
                   {/* Test drive preferred date steps */}
                   {formData.requestType === 'prueba' && (
                     <div className="space-y-1">
-                      <label id="frm-date-label" htmlFor="testDriveDate" className="text-[10px] uppercase font-mono tracking-wider text-amber-400 font-bold block flex items-center gap-1">
+                      <label id="frm-date-label" htmlFor="testDriveDate" className={`text-[10px] uppercase font-mono tracking-wider ${isRamPage ? 'text-[#DD4E3C]' : (isDodgePage ? 'text-[#D50000]' : 'text-amber-400')} font-bold block flex items-center gap-1`}>
                         <Calendar className="w-3.5 h-3.5" /> Selecciona la Fecha para tu Prueba *
                       </label>
                       <input
@@ -2601,7 +2625,9 @@ export default function LeadForm({ c10ImgUrl, t03ImgUrl, b10ImgUrl }: LeadFormPr
                         min={new Date().toISOString().split('T')[0]}
                         value={formData.testDriveDate}
                         onChange={handleChange}
-                        className="w-full bg-white/5 border border-amber-500/30 focus:border-amber-500 rounded-xl px-4 py-2.5 text-base md:text-xs text-white outline-none transition font-bold font-mono"
+                        className={`w-full bg-white/5 border rounded-xl px-4 py-2.5 text-base md:text-xs text-white outline-none transition font-bold font-mono ${
+                          isRamPage ? 'border-[#DD4E3C] focus:border-[#DD4E3C]' : (isDodgePage ? 'border-[#D50000] focus:border-[#D50000]' : 'border-amber-500/30 focus:border-amber-500')
+                        }`}
                       />
                     </div>
                   )}
@@ -2686,19 +2712,21 @@ export default function LeadForm({ c10ImgUrl, t03ImgUrl, b10ImgUrl }: LeadFormPr
                   type="button"
                   onClick={handleSubmit}
                   disabled={loading || !privacyAccepted}
-                  style={isJeepPage ? { backgroundColor: '#487f70' } : (activeLanding === 'leapmotor' ? {
+                  style={isRamPage ? { backgroundColor: '#DD4E3C', color: '#ffffff' } : (isDodgePage ? { backgroundColor: '#D50000', color: '#ffffff' } : (isJeepPage ? { backgroundColor: '#487f70' } : (activeLanding === 'leapmotor' ? {
                     borderColor: '#deff01',
                     backgroundColor: '#deff01',
                     color: '#000000',
                     fontSize: '14px',
                     borderWidth: '1px'
-                  } : undefined)}
+                  } : undefined)))}
                   className={`w-full active:scale-[0.98] disabled:opacity-40 disabled:cursor-not-allowed disabled:pointer-events-none py-4 px-6 rounded-2xl text-[11px] uppercase tracking-widest flex items-center justify-center gap-1.5 transition-all duration-300 shadow-xl ${
-                    isJeepPage
+                    isRamPage || isDodgePage
                       ? 'text-white font-black hover:opacity-95'
-                      : (isLightBg
-                        ? 'bg-slate-950 hover:bg-slate-900 text-white font-black'
-                        : (`${theme.btnBg} ${activeLanding === 'leapmotor' ? 'text-slate-950 font-black' : 'text-white font-bold'}`))
+                      : isJeepPage
+                        ? 'text-white font-black hover:opacity-95'
+                        : (isLightBg
+                          ? 'bg-slate-950 hover:bg-slate-900 text-white font-black'
+                          : (`${theme.btnBg} ${activeLanding === 'leapmotor' ? 'text-slate-950 font-black' : 'text-white font-bold'}`))
                   }`}
                 >
                   {loading ? (
