@@ -90,6 +90,7 @@ import JEEP_LANDING_BG_26 from '../assets/images/jeep_landing_2026_1780767759797
 import FIAT_LANDING_BG_26 from '../assets/images/fiat_landing_2026_1780767772093.png';
 import DODGE_LANDING_BG_26 from '../assets/images/dodge_landing_2026_1780767783850.png';
 import MULTIMARCA_REGENERATED_JEEP_BG from '../assets/images/regenerated_image_1781147422783.jpg';
+import MULTIMARCA_RAM_BG_NEW from '../assets/images/regenerated_image_1781154956518.jpg';
 
 // Independent logo assets decoupled specifically for the Multimarca experience to prevent cascading overrides
 import MULTIMARCA_BUTTON_LEAPMOTOR_LOGO from '../assets/images/leapmotor_outline_white_1780977081063.png';
@@ -119,7 +120,7 @@ const MULTIMARCA_JEEP_BG = MULTIMARCA_REGENERATED_JEEP_BG;
 const MULTIMARCA_FIAT_BG = FIAT_LANDING_BG_26;
 const MULTIMARCA_DODGE_BG = DODGE_LANDING_BG_26;
 const MULTIMARCA_PEUGEOT_BG = PEUGEOT_LANDING_BG_26;
-const MULTIMARCA_RAM_BG = RAM_LANDING_BG_26;
+const MULTIMARCA_RAM_BG = MULTIMARCA_RAM_BG_NEW;
 
 const MEX_STATES = [
   'Aguascalientes',
@@ -1974,7 +1975,10 @@ export default function LeadForm({ c10ImgUrl, t03ImgUrl, b10ImgUrl }: LeadFormPr
                           : brandDetailSource.bgImage
                       };
                       return (
-                        <div className="relative flex flex-col w-full text-center pb-6 select-none overflow-hidden gap-5 items-center">
+                        <div 
+                          id={`subbrand-subpage-${selectedSubBrand?.toLowerCase()}`}
+                          className="relative flex flex-col w-full text-center pb-6 select-none overflow-hidden gap-5 items-center"
+                        >
                           {/* Ambient Brand Color Glow Dressing */}
                           <div 
                             className="absolute top-24 left-1/2 -translate-x-1/2 w-64 h-64 rounded-full blur-[110px] opacity-[0.18] pointer-events-none transition-all duration-700" 
@@ -1984,6 +1988,7 @@ export default function LeadForm({ c10ImgUrl, t03ImgUrl, b10ImgUrl }: LeadFormPr
                           {/* Premium mockup top navbar heading */}
                           <div className="flex items-center justify-start pt-5 px-4 z-10 w-full mb-1">
                             <button
+                              id={`back-button-${selectedSubBrand?.toLowerCase()}`}
                               onClick={() => setSelectedSubBrand(null)}
                               style={selectedSubBrand === 'Jeep' ? { backgroundColor: 'transparent', borderColor: 'transparent', boxShadow: 'none' } : undefined}
                               className={`flex items-center gap-2 px-4 py-2.5 rounded-full text-sm font-bold tracking-wider transition duration-300 active:scale-[0.98] ${
@@ -2043,16 +2048,38 @@ export default function LeadForm({ c10ImgUrl, t03ImgUrl, b10ImgUrl }: LeadFormPr
                           <div className="space-y-3 px-4 z-10 w-full max-w-[420px] mx-auto">
                             {/* COTIZA */}
                             <button
+                              id={`cotiza-button-${selectedSubBrand?.toLowerCase()}`}
                               onClick={() => launchFormWithRequest('cotizacion', BRAND_MODELS[selectedSubBrand]?.[0])}
-                              style={selectedSubBrand === 'Jeep' ? { backgroundColor: '#487f70' } : undefined}
+                              style={
+                                selectedSubBrand === 'Jeep'
+                                  ? { backgroundColor: '#487f70' }
+                                  : selectedSubBrand === 'Dodge'
+                                    ? { backgroundColor: '#DD4E3C' }
+                                    : selectedSubBrand === 'Ram'
+                                      ? { backgroundColor: '#DD4E3C' }
+                                      : undefined
+                              }
                               className={`group w-full p-4 rounded-2xl border flex items-center gap-4 text-left transition-all duration-300 shadow-md transform active:scale-[0.99] ${
                                 selectedSubBrand === 'Jeep'
                                   ? 'border-[#487f70]/20 hover:opacity-95 hover:shadow-lg hover:shadow-[#487f70]/15'
-                                  : 'bg-[#1b1c1e]/60 hover:bg-[#25272a]/75 border-white/5 hover:border-white/15'
+                                  : selectedSubBrand === 'Dodge'
+                                    ? 'border-[#DD4E3C]/20 hover:opacity-95 hover:shadow-lg'
+                                    : selectedSubBrand === 'Ram'
+                                      ? 'border-[#DD4E3C]/20 hover:opacity-95 hover:shadow-lg'
+                                      : 'bg-[#1b1c1e]/60 hover:bg-[#25272a]/75 border-white/5 hover:border-white/15'
                               }`}
                             >
                               {/* White outlined badge represent request for quotation */}
-                              <div className="w-11 h-11 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center shrink-0 transition-colors duration-300 group-hover:bg-white/10">
+                              <div 
+                                style={
+                                  selectedSubBrand === 'Dodge' 
+                                    ? { borderColor: '#ffffff' } 
+                                    : selectedSubBrand === 'Ram' 
+                                      ? { borderColor: 'rgba(255, 255, 255, 0.4)' } 
+                                      : undefined
+                                }
+                                className="w-11 h-11 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center shrink-0 transition-colors duration-300 group-hover:bg-white/10"
+                              >
                                 <FileText className="w-5 h-5 text-white" />
                               </div>
                               
@@ -2060,27 +2087,49 @@ export default function LeadForm({ c10ImgUrl, t03ImgUrl, b10ImgUrl }: LeadFormPr
                                 <span className="font-bold text-xs sm:text-sm text-white tracking-wider uppercase font-encode">
                                   COTIZA
                                 </span>
-                                <span className={`text-[10px] sm:text-[11px] font-medium ${selectedSubBrand === 'Jeep' ? 'text-slate-100' : 'text-slate-400'}`}>
+                                <span className={`text-[10px] sm:text-[11px] font-medium ${(selectedSubBrand === 'Jeep' || selectedSubBrand === 'Dodge' || selectedSubBrand === 'Ram') ? 'text-white' : 'text-slate-400'}`}>
                                   Recibe una cotización personalizada
                                 </span>
                               </div>
                               
-                              <ChevronRight className={`w-4 h-4 group-hover:translate-x-0.5 transition-all duration-300 shrink-0 ml-auto ${selectedSubBrand === 'Jeep' ? 'text-white' : 'text-slate-500 group-hover:text-slate-300'}`} />
+                              <ChevronRight className={`w-4 h-4 group-hover:translate-x-0.5 transition-all duration-300 shrink-0 ml-auto ${(selectedSubBrand === 'Jeep' || selectedSubBrand === 'Dodge' || selectedSubBrand === 'Ram') ? 'text-white' : 'text-slate-500 group-hover:text-slate-300'}`} />
                             </button>
 
                             {/* PRUEBA DE MANEJO */}
                             {selectedSubBrand !== 'Leapmotor' && (
                               <button
+                                id={`prueba-button-${selectedSubBrand?.toLowerCase()}`}
                                 onClick={() => launchFormWithRequest('prueba', BRAND_MODELS[selectedSubBrand]?.[0])}
-                                style={selectedSubBrand === 'Jeep' ? { backgroundColor: '#487f70' } : undefined}
+                                style={
+                                  selectedSubBrand === 'Jeep'
+                                    ? { backgroundColor: '#487f70' }
+                                    : selectedSubBrand === 'Dodge'
+                                      ? { backgroundColor: '#DD4E3C' }
+                                      : selectedSubBrand === 'Ram'
+                                        ? { backgroundColor: '#DD4E3C' }
+                                        : undefined
+                                }
                                 className={`group w-full p-4 rounded-2xl border flex items-center gap-4 text-left transition-all duration-300 shadow-md transform active:scale-[0.99] ${
                                   selectedSubBrand === 'Jeep'
                                     ? 'border-[#487f70]/20 hover:opacity-95 hover:shadow-lg hover:shadow-[#487f70]/15'
-                                    : 'bg-[#1b1c1e]/60 hover:bg-[#25272a]/75 border-white/5 hover:border-white/15'
+                                    : selectedSubBrand === 'Dodge'
+                                      ? 'border-[#DD4E3C]/20 hover:opacity-95 hover:shadow-lg'
+                                      : selectedSubBrand === 'Ram'
+                                        ? 'border-[#DD4E3C]/20 hover:opacity-95 hover:shadow-lg'
+                                        : 'bg-[#1b1c1e]/60 hover:bg-[#25272a]/75 border-white/5 hover:border-white/15'
                                 }`}
                               >
                                 {/* White/Silver outlined badge for Calendar */}
-                                <div className="w-11 h-11 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center shrink-0 transition-colors duration-300 group-hover:bg-white/10">
+                                <div 
+                                  style={
+                                    selectedSubBrand === 'Dodge' 
+                                      ? { backgroundColor: '#DD4E3C', borderColor: '#ffffff' } 
+                                      : selectedSubBrand === 'Ram' 
+                                        ? { backgroundColor: '#DD4E3C', borderColor: 'rgba(255, 255, 255, 0.4)' } 
+                                        : undefined
+                                  }
+                                  className="w-11 h-11 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center shrink-0 transition-colors duration-300 group-hover:bg-white/10"
+                                >
                                   <Calendar className="w-5 h-5 text-white animate-pulse-slow" />
                                 </div>
                                 
@@ -2088,12 +2137,12 @@ export default function LeadForm({ c10ImgUrl, t03ImgUrl, b10ImgUrl }: LeadFormPr
                                   <span className="font-bold text-xs sm:text-sm text-white tracking-wider uppercase font-encode">
                                     PRUEBA DE MANEJO
                                   </span>
-                                  <span className={`text-[10px] sm:text-[11px] font-medium ${selectedSubBrand === 'Jeep' ? 'text-slate-100' : 'text-slate-400'}`}>
+                                  <span className={`text-[10px] sm:text-[11px] font-medium ${(selectedSubBrand === 'Jeep' || selectedSubBrand === 'Dodge' || selectedSubBrand === 'Ram') ? 'text-white' : 'text-slate-400'}`}>
                                     Agenda tu prueba de manejo
                                   </span>
                                 </div>
                                 
-                                <ChevronRight className={`w-4 h-4 group-hover:translate-x-0.5 transition-all duration-300 shrink-0 ml-auto ${selectedSubBrand === 'Jeep' ? 'text-white' : 'text-slate-500 group-hover:text-slate-300'}`} />
+                                <ChevronRight className={`w-4 h-4 group-hover:translate-x-0.5 transition-all duration-300 shrink-0 ml-auto ${(selectedSubBrand === 'Jeep' || selectedSubBrand === 'Dodge' || selectedSubBrand === 'Ram') ? 'text-white' : 'text-slate-500 group-hover:text-slate-300'}`} />
                               </button>
                             )}
                           </div>
