@@ -2304,7 +2304,12 @@ export default function Dashboard() {
                             </td>
 
                             <td className="p-3">
-                              {(lead.requestType === 'cotizacion' || (lead.requestType === 'prueba' && lead.landing !== 'leapmotor')) ? (
+                              {lead.advisorName && lead.advisorName.toLowerCase().includes('capturado') ? (
+                                <div className="flex flex-col">
+                                  <span className="font-bold text-indigo-600">👤 {lead.advisorName}</span>
+                                  {lead.advisorId && <span className="font-mono text-[9px] text-slate-400">ID: {lead.advisorId}</span>}
+                                </div>
+                              ) : (lead.requestType === 'cotizacion' || (lead.requestType === 'prueba' && lead.landing !== 'leapmotor')) ? (
                                 <span className="font-bold font-mono text-[10px] text-emerald-400 uppercase flex items-center gap-1">
                                   🧾 {lead.requestType === 'cotizacion' ? 'Solo Cotización (CRM)' : 'Prueba de Manejo (CRM)'}
                                 </span>
