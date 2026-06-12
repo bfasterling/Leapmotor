@@ -56,6 +56,8 @@ import {
   LogOut
 } from 'lucide-react';
 import { motion } from 'motion/react';
+import { jsPDF } from 'jspdf';
+import autoTable from 'jspdf-autotable';
 
 // Pie chart colors matching Leapmotor theme
 const COLORS = ['#2563EB', '#06B6D4', '#F59E0B', '#EF4444'];
@@ -97,6 +99,13 @@ export default function Dashboard() {
       return false;
     }
   });
+  const [userRole, setUserRole] = useState<'soccerlm' | 'soccerfull' | null>(() => {
+    try {
+      return sessionStorage.getItem('dashboard_user_role') as 'soccerlm' | 'soccerfull' | null;
+    } catch (_) {
+      return null;
+    }
+  });
   const [passcode, setPasscode] = useState('');
   const [passcodeError, setPasscodeError] = useState('');
 
@@ -113,8 +122,10 @@ export default function Dashboard() {
   const handleSignOff = () => {
     try {
       sessionStorage.removeItem('dashboard_authenticated');
+      sessionStorage.removeItem('dashboard_user_role');
     } catch (_) {}
     setIsAuthenticated(false);
+    setUserRole(null);
     setPasscode('');
   };
 
@@ -142,6 +153,221 @@ export default function Dashboard() {
     const mm = String(today.getMonth() + 1).padStart(2, '0');
     const dd = String(today.getDate()).padStart(2, '0');
     return `${yyyy}-${mm}-${dd}`;
+  };
+
+  // Exportar leads filtrados actualizados a formato CSV compatible con Microsoft Excel (con BOM de UTF-8)
+  const handleExportToExcel = () => {
+    if (filteredCoordinatorLeads.length === 0) {
+      alert('No hay prospectos filtrados para exportar.');
+      return;
+    }
+
+    const headers = [
+      'Fecha de Registro',
+      'Nombre',
+      'Apellidos',
+      'Teléfono',
+      'Email',
+      'Estado / República',
+      'Distribuidor',
+      'Marca',
+      'Modelo de Interés',
+      'Tipo Solicitud',
+      'Landing Origen',
+      'Estatus',
+      'Asesor Asignado',
+      'Notas / Comentarios'
+    ];
+
+    const escapeCSV = (val: string): string => {
+      if (val === null || val === undefined) return '';
+      let str = String(val);
+      if (str.includes('"') || str.includes(',') || str.includes('\n') || str.includes('\r')) {
+        str = '"' + str.replace(/"/g, '""') + '"';
+      }
+      return str;
+    };
+
+    const csvRows = [headers.map(escapeCSV).join(',')];
+
+    filteredCoordinatorLeads.forEach(lead => {
+      let dateStr = '';
+      if (lead.createdAt) {
+        const dateObj = lead.createdAt.toDate ? lead.createdAt.toDate() : new Date(lead.createdAt);
+        dateStr = dateObj.toLocaleString('es-MX', { hour12: false });
+      }
+
+      let brandLabel = lead.selectedBrand || '';
+      if (!brandLabel) {
+        const land = (lead.landing || 'multimarca').toLowerCase();
+        if (land.includes('jeep')) brandLabel = 'Jeep';
+        else if (land.includes('leap')) brandLabel = 'Leapmotor';
+        else brandLabel = 'Multimarca';
+      }
+
+      let reqTypeLabel = 'Atención Asesor';
+      if (lead.requestType === 'cotizacion') reqTypeLabel = 'Cotización';
+      else if (lead.requestType === 'prueba') reqTypeLabel = 'Prueba de Manejo';
+
+      let statusLabel = 'En Espera';
+      if (lead.status === 'attending') statusLabel = 'En Atención';
+      else if (lead.status === 'attended') statusLabel = 'Atendido / OK';
+      else if (lead.status === 'lost') statusLabel = 'Descartado';
+
+      csvRows.push([
+        dateStr,
+        lead.name || '',
+        lead.lastName || '',
+        lead.phone || '',
+        lead.email || '',
+        lead.state || '',
+        lead.distributor || '',
+        brandLabel,
+        lead.modelOfInterest || '',
+        reqTypeLabel,
+        lead.landing || 'multimarca',
+        statusLabel,
+        lead.advisorName || 'Sin asignar',
+        lead.notes || lead.coordinatorNotes || ''
+      ].map(escapeCSV).join(','));
+    });
+
+    const csvContent = '\uFEFF' + csvRows.join('\r\n');
+    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.setAttribute('href', url);
+    link.setAttribute('download', `Reporte_Prospectos_${new Date().toISOString().split('T')[0]}.csv`);
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  };
+
+  // Exportar leads filtrados actualizados a formato PDF
+  const handleExportToPDF = () => {
+    if (filteredCoordinatorLeads.length === 0) {
+      alert('No hay prospectos filtrados para exportar.');
+      return;
+    }
+
+    // Landscape A4 size in points
+    const doc = new jsPDF('landscape', 'pt', 'a4');
+
+    // Solid deep dark headers matching brand
+    doc.setFillColor(34, 55, 43); // #22372B Match
+    doc.rect(0, 0, 842, 60, 'F');
+
+    // Title text inside banner
+    doc.setTextColor(255, 255, 255);
+    doc.setFont('helvetica', 'bold');
+    doc.setFontSize(14);
+    doc.text('REPORTE DE CONTROL DE PROSPECTOS - COORDINACIÓN', 40, 36);
+
+    // Metadata in header banner
+    doc.setFontSize(8.5);
+    doc.setFont('helvetica', 'normal');
+    doc.setTextColor(210, 210, 210);
+    const nowStr = new Date().toLocaleString('es-MX', { hour12: false });
+    doc.text(`Fecha Emisión: ${nowStr}   |   Registros Filtrados: ${filteredCoordinatorLeads.length}`, 550, 36);
+
+    const tableHeaders = [
+      'Fecha',
+      'Nombre Completo',
+      'Teléfono',
+      'Email',
+      'Estado',
+      'Distribuidor',
+      'Marca',
+      'Modelo',
+      'Solicitud',
+      'Estatus',
+      'Asesor'
+    ];
+
+    const tableRows = filteredCoordinatorLeads.map(lead => {
+      let dateStr = '';
+      if (lead.createdAt) {
+        const dateObj = lead.createdAt.toDate ? lead.createdAt.toDate() : new Date(lead.createdAt);
+        dateStr = dateObj.toLocaleDateString('es-MX', {
+          day: '2-digit',
+          month: '2-digit',
+          year: '2-digit',
+          hour: '2-digit',
+          minute: '2-digit'
+        });
+      }
+
+      let brandLabel = lead.selectedBrand || '';
+      if (!brandLabel) {
+        const land = (lead.landing || 'multimarca').toLowerCase();
+        if (land.includes('jeep')) brandLabel = 'Jeep';
+        else if (land.includes('leap')) brandLabel = 'Leapmotor';
+        else brandLabel = 'Multimarca';
+      }
+
+      let reqTypeLabel = 'Atención';
+      if (lead.requestType === 'cotizacion') reqTypeLabel = 'Cotización';
+      else if (lead.requestType === 'prueba') reqTypeLabel = 'Prueba';
+
+      let statusLabel = 'Espera';
+      if (lead.status === 'attending') statusLabel = 'Atención';
+      else if (lead.status === 'attended') statusLabel = 'Atendido';
+      else if (lead.status === 'lost') statusLabel = 'Descarte';
+
+      return [
+        dateStr,
+        `${lead.name || ''} ${lead.lastName || ''}`.trim().substring(0, 25),
+        lead.phone || '',
+        (lead.email || '').substring(0, 22),
+        lead.state || '',
+        (lead.distributor || '').replace('Leapmotor ', '').replace('Autokasa ', '').substring(0, 22),
+        brandLabel,
+        lead.modelOfInterest || '',
+        reqTypeLabel,
+        statusLabel,
+        (lead.advisorName || 'Sin asignar').substring(0, 15)
+      ];
+    });
+
+    try {
+      // @ts-ignore
+      autoTable(doc, {
+        head: [tableHeaders],
+        body: tableRows,
+        startY: 75,
+        theme: 'grid',
+        styles: {
+          fontSize: 7.5,
+          cellPadding: 4,
+          overflow: 'linebreak',
+          font: 'helvetica'
+        },
+        headStyles: {
+          fillColor: [34, 55, 43], // Slate matching Lead dashboard
+          textColor: [255, 255, 255],
+          fontStyle: 'bold'
+        },
+        columnStyles: {
+          0: { cellWidth: 70 }, // Fecha
+          1: { cellWidth: 85 }, // Nombre
+          2: { cellWidth: 55 }, // Telefono
+          3: { cellWidth: 85 }, // Email
+          4: { cellWidth: 60 }, // Estado
+          5: { cellWidth: 95 }, // Distribuidor
+          6: { cellWidth: 55 }, // Marca
+          7: { cellWidth: 55 }, // Modelo
+          8: { cellWidth: 50 }, // Solicitud
+          9: { cellWidth: 50 }, // Estatus
+          10: { cellWidth: 65 } // Asesor
+        },
+        margin: { left: 30, right: 30 }
+      });
+
+      doc.save(`Reporte_Prospectos_${new Date().toISOString().split('T')[0]}.pdf`);
+    } catch (error) {
+      console.error('Error generating PDF:', error);
+      alert('Hubo un error al generar el PDF. Por favor reintente.');
+    }
   };
 
   const [leads, setLeads] = useState<Lead[]>([]);
@@ -1099,10 +1325,13 @@ export default function Dashboard() {
   if (!isAuthenticated) {
     const handlePasscodeSubmit = (e: React.FormEvent) => {
       e.preventDefault();
-      if (passcode.trim() === 'soccerlm') {
+      const code = passcode.trim().toLowerCase();
+      if (code === 'soccerlm' || code === 'soccerfull') {
         try {
           sessionStorage.setItem('dashboard_authenticated', 'true');
+          sessionStorage.setItem('dashboard_user_role', code);
         } catch (_) {}
+        setUserRole(code as 'soccerlm' | 'soccerfull');
         setIsAuthenticated(true);
         setPasscodeError('');
       } else {
@@ -1580,30 +1809,36 @@ export default function Dashboard() {
             <Filter className="w-4 h-4" />
             Control de Prospectos
           </button>
-          <button
-            type="button"
-            onClick={() => setAdminTab('asesores')}
-            className={`pb-4 px-4 font-black text-xs sm:text-sm tracking-widest uppercase font-mono border-b-2 transition-all duration-300 flex items-center gap-2 cursor-pointer ${
-              adminTab === 'asesores'
-                ? 'border-emerald-500 text-emerald-400 font-extrabold'
-                : 'border-transparent text-slate-400 hover:text-slate-200'
-            }`}
-          >
-            <Users className="w-4 h-4" />
-            Control de Asesores
-          </button>
-          <button
-            type="button"
-            onClick={() => setAdminTab('distribuidores')}
-            className={`pb-4 px-4 font-black text-xs sm:text-sm tracking-widest uppercase font-mono border-b-2 transition-all duration-300 flex items-center gap-2 cursor-pointer ${
-              adminTab === 'distribuidores'
-                ? 'border-purple-500 text-purple-400 font-extrabold'
-                : 'border-transparent text-slate-400 hover:text-slate-200'
-            }`}
-          >
-            <Database className="w-4 h-4" />
-            Distribuidores ({distributors.length})
-          </button>
+          
+          {userRole !== 'soccerlm' && (
+            <button
+              type="button"
+              onClick={() => setAdminTab('asesores')}
+              className={`pb-4 px-4 font-black text-xs sm:text-sm tracking-widest uppercase font-mono border-b-2 transition-all duration-300 flex items-center gap-2 cursor-pointer ${
+                adminTab === 'asesores'
+                  ? 'border-emerald-500 text-emerald-400 font-extrabold'
+                  : 'border-transparent text-slate-400 hover:text-slate-200'
+              }`}
+            >
+              <Users className="w-4 h-4" />
+              Control de Asesores
+            </button>
+          )}
+
+          {userRole !== 'soccerlm' && (
+            <button
+              type="button"
+              onClick={() => setAdminTab('distribuidores')}
+              className={`pb-4 px-4 font-black text-xs sm:text-sm tracking-widest uppercase font-mono border-b-2 transition-all duration-300 flex items-center gap-2 cursor-pointer ${
+                adminTab === 'distribuidores'
+                  ? 'border-purple-500 text-purple-400 font-extrabold'
+                  : 'border-transparent text-slate-400 hover:text-slate-200'
+              }`}
+            >
+              <Database className="w-4 h-4" />
+              Distribuidores ({distributors.length})
+            </button>
+          )}
         </div>
 
         {/* Tab 1: Administración de Prospectos */}
@@ -1618,8 +1853,30 @@ export default function Dashboard() {
                   Filtre, busque, asigne o reasigne prospectos originarios de todas las campañas en tiempo real.
                 </p>
               </div>
-              <div className="flex items-center gap-2 bg-blue-500/15 text-blue-400 text-[11px] font-mono font-bold uppercase tracking-wider px-3 py-1.5 rounded-xl border border-blue-500/25">
-                Leads Filtrados: {filteredCoordinatorLeads.length}
+              <div className="flex flex-wrap items-center gap-2.5">
+                <div className="flex items-center gap-2 bg-blue-500/15 text-blue-400 text-[11px] font-mono font-bold uppercase tracking-wider px-3 py-1.5 rounded-xl border border-blue-500/25 shadow-sm">
+                  Leads Filtrados: {filteredCoordinatorLeads.length}
+                </div>
+                
+                {/* Botón Excel */}
+                <button
+                  onClick={handleExportToExcel}
+                  className="flex items-center gap-2 bg-[#22372B]/90 hover:bg-[#22372B] active:scale-95 text-white text-[11px] font-mono font-extrabold uppercase tracking-wider px-3.5 py-1.5 rounded-xl border border-emerald-500/20 cursor-pointer shadow-md transition-all duration-300"
+                  title="Exportar registros filtrados a formato compatible con Excel (.csv)"
+                >
+                  <FileSpreadsheet className="w-3.5 h-3.5 text-emerald-400 animate-pulse" />
+                  <span>Exportar a Excel</span>
+                </button>
+
+                {/* Botón PDF */}
+                <button
+                  onClick={handleExportToPDF}
+                  className="flex items-center gap-2 bg-[#1E293B]/90 hover:bg-[#1E293B] active:scale-95 text-white text-[11px] font-mono font-extrabold uppercase tracking-wider px-3.5 py-1.5 rounded-xl border border-rose-500/10 cursor-pointer shadow-md transition-all duration-300"
+                  title="Exportar todos los registros filtrados a formato PDF (.pdf)"
+                >
+                  <FileText className="w-3.5 h-3.5 text-rose-400" />
+                  <span>Exportar a PDF</span>
+                </button>
               </div>
             </div>
 
@@ -2319,7 +2576,7 @@ export default function Dashboard() {
         )}
 
         {/* Tab 2: Administración de Asesores */}
-        {adminTab === 'asesores' && (
+        {adminTab === 'asesores' && userRole !== 'soccerlm' && (
           <div className="space-y-6">
             <div>
               <h3 className={`text-sm font-black tracking-widest uppercase font-mono mb-1.5 flex items-center gap-2 ${titleColor}`}>
@@ -2537,7 +2794,7 @@ export default function Dashboard() {
         )}
 
         {/* Tab 3: Sincronización de Distribuidores */}
-        {adminTab === 'distribuidores' && (
+        {adminTab === 'distribuidores' && userRole !== 'soccerlm' && (
           <div className="space-y-6">
             <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
               <div>
