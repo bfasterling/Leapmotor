@@ -1160,7 +1160,20 @@ export default function Dashboard() {
            selBrandVal.includes('socer');
   };
 
+  // Helper to detect if lead is aztlan
+  const isLeadAztlan = (l: any) => {
+    const landingVal = (l.landing || '').toLowerCase();
+    const utmSourceVal = (l.utm_source || '').toLowerCase();
+    const selBrandVal = (l.selectedBrand || '').toLowerCase();
+    return landingVal === 'aztlan' || 
+           landingVal.includes('aztlan') || 
+           utmSourceVal === 'aztlan' || 
+           utmSourceVal.includes('aztlan') ||
+           selBrandVal.includes('aztlan');
+  };
+
   const getLeadLanding = (l: any) => {
+    if (isLeadAztlan(l)) return 'aztlan';
     if (isLeadSoccerhouse(l)) return 'soccerhouse';
     return l.landing || 'leapmotor';
   };
@@ -1170,12 +1183,14 @@ export default function Dashboard() {
   const jeepLandingCount = filteredLeads.filter(l => getLeadLanding(l) === 'jeep').length;
   const multimarcaLandingCount = filteredLeads.filter(l => getLeadLanding(l) === 'multimarca').length;
   const soccerhouseLandingCount = filteredLeads.filter(l => getLeadLanding(l) === 'soccerhouse').length;
+  const aztlanLandingCount = filteredLeads.filter(l => getLeadLanding(l) === 'aztlan').length;
 
   const landingChartData = [
     { name: 'Leapmotor', Leads: leapmotorLandingCount },
     { name: 'Jeep', Leads: jeepLandingCount },
     { name: 'Multimarca', Leads: multimarcaLandingCount },
-    { name: 'SoccerHouse', Leads: soccerhouseLandingCount }
+    { name: 'SoccerHouse', Leads: soccerhouseLandingCount },
+    { name: 'Aztlan', Leads: aztlanLandingCount }
   ];
 
   // Leads por Marca / Multimarca data calculation
@@ -1730,9 +1745,13 @@ export default function Dashboard() {
                     <span className="text-indigo-500 font-extrabold">● Multimarca</span>
                     <strong className={`font-black ${titleColor}`}>{multimarcaLandingCount}</strong>
                   </div>
-                  <div className={`flex justify-between font-semibold ${isDark ? 'border-white/5' : 'border-slate-100'}`}>
+                  <div className={`flex justify-between pb-1 border-b font-semibold ${isDark ? 'border-white/5' : 'border-slate-100'}`}>
                     <span className="text-amber-500 font-extrabold">● SoccerHouse</span>
                     <strong className={`font-black ${titleColor}`}>{soccerhouseLandingCount}</strong>
+                  </div>
+                  <div className={`flex justify-between font-semibold ${isDark ? 'border-white/5' : 'border-slate-100'}`}>
+                    <span className="text-violet-500 font-extrabold">● Aztlan</span>
+                    <strong className={`font-black ${titleColor}`}>{aztlanLandingCount}</strong>
                   </div>
                   <div className={`flex justify-between pt-1 border-t font-bold ${isDark ? 'border-white/10' : 'border-slate-200'}`}>
                     <span className={`font-bold ${titleColor}`}>Total Leads</span>
@@ -1966,6 +1985,12 @@ export default function Dashboard() {
                     <option value="soccerhouse_cotizacion">SoccerHouse - Cotización</option>
                     <option value="soccerhouse_prueba">SoccerHouse - Prueba de Manejo</option>
                     <option value="soccerhouse_asesor">SoccerHouse - Atención Asesor</option>
+                  </optgroup>
+                  <optgroup label="Aztlan">
+                    <option value="aztlan_all">Aztlan - Todos</option>
+                    <option value="aztlan_cotizacion">Aztlan - Cotización</option>
+                    <option value="aztlan_prueba">Aztlan - Prueba de Manejo</option>
+                    <option value="aztlan_asesor">Aztlan - Atención Asesor</option>
                   </optgroup>
                 </select>
               </div>
@@ -2224,6 +2249,9 @@ export default function Dashboard() {
                                   } else if (isSoccer) {
                                     landingLabel = 'SoccerHouse';
                                     badgeStyle = 'bg-amber-500/10 text-amber-400 border-amber-500/20';
+                                  } else if (isLeadAztlan(lead)) {
+                                    landingLabel = 'Aztlan';
+                                    badgeStyle = 'bg-violet-500/10 text-violet-400 border-violet-500/20';
                                   }
 
                                   return (

@@ -52,6 +52,7 @@ import {
   Star,
   Wrench,
   UserCheck,
+  LogOut,
   Mountain,
   Gauge
 } from 'lucide-react';
@@ -436,6 +437,97 @@ export default function LeadForm({ c10ImgUrl, t03ImgUrl, b10ImgUrl }: LeadFormPr
     }
   };
 
+  // Advisor Login Screen state for Aztlan domain
+  const [advisorName, setAdvisorName] = useState(() => {
+    if (typeof window !== 'undefined') {
+      return sessionStorage.getItem('aztlan_advisor_name') || '';
+    }
+    return '';
+  });
+  const [advisorState, setAdvisorState] = useState(() => {
+    if (typeof window !== 'undefined') {
+      return sessionStorage.getItem('aztlan_advisor_state') || '';
+    }
+    return '';
+  });
+  const [advisorDistributor, setAdvisorDistributor] = useState(() => {
+    if (typeof window !== 'undefined') {
+      return sessionStorage.getItem('aztlan_advisor_distributor') || '';
+    }
+    return '';
+  });
+  const [advisorSignedIn, setAdvisorSignedIn] = useState(() => {
+    if (typeof window !== 'undefined') {
+      return sessionStorage.getItem('aztlan_advisor_signed_in') === 'true';
+    }
+    return false;
+  });
+
+  const [loginNombre, setLoginNombre] = useState('');
+  const [loginApellido, setLoginApellido] = useState('');
+  const [loginEstado, setLoginEstado] = useState('');
+  const [loginDistribuidor, setLoginDistribuidor] = useState('');
+  const [loginError, setLoginError] = useState('');
+
+  const isAztlanDomain = typeof window !== 'undefined' && (
+    window.location.hostname.toLowerCase().includes('aztlan') ||
+    (window.location.search || '').toLowerCase().includes('aztlan') ||
+    localStorage.getItem('utm_source') === 'aztlan'
+  );
+
+  const isAdvisorModeTriggered = isAztlanDomain && typeof window !== 'undefined' && (
+    window.location.search.toLowerCase().includes('advisormode=true') ||
+    window.location.search.toLowerCase().includes('asesor=true')
+  );
+
+  const advisorAvailableStates = Array.from(new Set(ALL_DEALERS.map(d => d.state))).sort();
+  const advisorAvailableDistributors = ALL_DEALERS
+    .filter(d => d.state === loginEstado)
+    .filter((d, idx, arr) => arr.findIndex(x => x.name === d.name) === idx)
+    .sort((a, b) => a.name.localeCompare(b.name));
+
+  const handleAdvisorLoginSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!loginNombre.trim() || !loginApellido.trim() || !loginEstado || !loginDistribuidor) {
+      setLoginError('Por favor complete todos los campos obligatorios.');
+      return;
+    }
+    const fullName = `${loginNombre.trim()} ${loginApellido.trim()}`;
+    sessionStorage.setItem('aztlan_advisor_name', fullName);
+    sessionStorage.setItem('aztlan_advisor_state', loginEstado);
+    sessionStorage.setItem('aztlan_advisor_distributor', loginDistribuidor);
+    sessionStorage.setItem('aztlan_advisor_signed_in', 'true');
+
+    setAdvisorName(fullName);
+    setAdvisorState(loginEstado);
+    setAdvisorDistributor(loginDistribuidor);
+    setAdvisorSignedIn(true);
+    setLoginError('');
+
+    setFormData(prev => ({
+      ...prev,
+      state: loginEstado,
+      distributor: loginDistribuidor
+    }));
+  };
+
+  const handleAdvisorLogoff = () => {
+    sessionStorage.removeItem('aztlan_advisor_name');
+    sessionStorage.removeItem('aztlan_advisor_state');
+    sessionStorage.removeItem('aztlan_advisor_distributor');
+    sessionStorage.removeItem('aztlan_advisor_signed_in');
+
+    setAdvisorName('');
+    setAdvisorState('');
+    setAdvisorDistributor('');
+    setAdvisorSignedIn(false);
+
+    setLoginNombre('');
+    setLoginApellido('');
+    setLoginEstado('');
+    setLoginDistribuidor('');
+  };
+
   // Experience selector: 'leapmotor' | 'jeep' | 'multimarca'
   const [activeLanding, setActiveLanding] = useState<'leapmotor' | 'jeep' | 'multimarca'>(() => {
     if (typeof window !== 'undefined') {
@@ -450,9 +542,13 @@ export default function LeadForm({ c10ImgUrl, t03ImgUrl, b10ImgUrl }: LeadFormPr
       const isSoccerhouseHost = host.includes('soccer') || host.includes('socer');
       const isSoccerhouseQuery = window.location.search.toLowerCase().includes('soccer') || window.location.search.toLowerCase().includes('socer');
       
+      const isAztlanParam = landingParam && landingParam.toLowerCase().includes('aztlan');
+      const isAztlanHost = host.includes('aztlan');
+      const isAztlanQuery = window.location.search.toLowerCase().includes('aztlan');
+
       if (landingParam === 'jeep' || host.startsWith('jeep')) {
         return 'jeep';
-      } else if (landingParam === 'multimarca' || host.startsWith('multimarca') || host.startsWith('stellantis') || host.startsWith('soccerhouse') || isSoccerhouseParam || isSoccerhouseHost || isSoccerhouseQuery) {
+      } else if (landingParam === 'multimarca' || host.startsWith('multimarca') || host.startsWith('stellantis') || host.startsWith('soccerhouse') || isSoccerhouseParam || isSoccerhouseHost || isSoccerhouseQuery || isAztlanParam || isAztlanHost || isAztlanQuery) {
         return 'multimarca';
       } else if (landingParam === 'leapmotor' || host.startsWith('leapmotor')) {
         return 'leapmotor';
@@ -483,6 +579,9 @@ export default function LeadForm({ c10ImgUrl, t03ImgUrl, b10ImgUrl }: LeadFormPr
   // Form registration parameters
   const [formData, setFormData] = useState(() => {
     let initialLanding: 'leapmotor' | 'jeep' | 'multimarca' = 'leapmotor';
+    let defaultState = 'Ciudad de México (CDMX)';
+    let defaultDistributor = 'Leapmotor Santa Fe';
+
     if (typeof window !== 'undefined') {
       const host = window.location.hostname.toLowerCase();
       const searchParams = new URLSearchParams(window.location.search);
@@ -495,15 +594,28 @@ export default function LeadForm({ c10ImgUrl, t03ImgUrl, b10ImgUrl }: LeadFormPr
       const isSoccerhouseHost = host.includes('soccer') || host.includes('socer');
       const isSoccerhouseQuery = window.location.search.toLowerCase().includes('soccer') || window.location.search.toLowerCase().includes('socer');
       
+      const isAztlanParam = landingParam && landingParam.toLowerCase().includes('aztlan');
+      const isAztlanHost = host.includes('aztlan');
+      const isAztlanQuery = window.location.search.toLowerCase().includes('aztlan');
+
       if (landingParam === 'jeep' || host.startsWith('jeep')) {
         initialLanding = 'jeep';
-      } else if (landingParam === 'multimarca' || host.startsWith('multimarca') || host.startsWith('stellantis') || host.startsWith('soccerhouse') || isSoccerhouseParam || isSoccerhouseHost || isSoccerhouseQuery) {
+      } else if (landingParam === 'multimarca' || host.startsWith('multimarca') || host.startsWith('stellantis') || host.startsWith('soccerhouse') || isSoccerhouseParam || isSoccerhouseHost || isSoccerhouseQuery || isAztlanParam || isAztlanHost || isAztlanQuery) {
         initialLanding = 'multimarca';
+      }
+
+      const advState = sessionStorage.getItem('aztlan_advisor_state');
+      const advDist = sessionStorage.getItem('aztlan_advisor_distributor');
+      if (advState && advDist) {
+        defaultState = advState;
+        defaultDistributor = advDist;
+      } else if (initialLanding === 'jeep') {
+        defaultState = 'CIUDAD DE MÉXICO';
+        defaultDistributor = 'Autokasa Viaducto';
       }
     }
 
     const defaultModel = initialLanding === 'jeep' ? 'Cherokee' : 'B10';
-    const defaultDistributor = initialLanding === 'jeep' ? 'Autokasa Viaducto' : 'Leapmotor Santa Fe';
 
     return {
       name: '',
@@ -511,7 +623,7 @@ export default function LeadForm({ c10ImgUrl, t03ImgUrl, b10ImgUrl }: LeadFormPr
       email: '',
       phone: '',
       postalCode: '',
-      state: 'Ciudad de México (CDMX)',
+      state: defaultState,
       distributor: defaultDistributor,
       modelOfInterest: defaultModel,
       contactMethod: 'whatsapp',
@@ -540,9 +652,16 @@ export default function LeadForm({ c10ImgUrl, t03ImgUrl, b10ImgUrl }: LeadFormPr
         (searchParams.get('landing') || '').toLowerCase().includes('soccer') || 
         (searchParams.get('landing') || '').toLowerCase().includes('socer');
 
+      const isAztlan = 
+        host.includes('aztlan') || 
+        rawSearch.includes('aztlan') || 
+        (searchParams.get('landing') || '').toLowerCase().includes('aztlan');
+
       let utm_source = searchParams.get('utm_source') || localStorage.getItem('utm_source') || '';
       if (isSoccerhouse) {
         utm_source = 'soccerhouse';
+      } else if (isAztlan) {
+        utm_source = 'aztlan';
       }
 
       const utm_medium = searchParams.get('utm_medium') || localStorage.getItem('utm_medium') || '';
@@ -553,6 +672,7 @@ export default function LeadForm({ c10ImgUrl, t03ImgUrl, b10ImgUrl }: LeadFormPr
       // Persist in localStorage if found in URL for future sessions or navigations
       if (searchParams.get('utm_source')) localStorage.setItem('utm_source', searchParams.get('utm_source')!);
       else if (isSoccerhouse && utm_source === 'soccerhouse') localStorage.setItem('utm_source', 'soccerhouse');
+      else if (isAztlan && utm_source === 'aztlan') localStorage.setItem('utm_source', 'aztlan');
 
       if (searchParams.get('utm_medium')) localStorage.setItem('utm_medium', searchParams.get('utm_medium')!);
       if (searchParams.get('utm_campaign')) localStorage.setItem('utm_campaign', searchParams.get('utm_campaign')!);
@@ -1368,13 +1488,15 @@ export default function LeadForm({ c10ImgUrl, t03ImgUrl, b10ImgUrl }: LeadFormPr
       );
       const modelClaveGen = matchedModel ? matchedModel.claveGen : '';
 
-      let chosenDistName = activeLanding === 'leapmotor' && formData.requestType !== 'cotizacion' && formData.requestType !== 'prueba'
-        ? 'Sin Asignar (Sincronizando con Asesor)' 
-        : formData.distributor;
+      let chosenDistName = advisorSignedIn ? advisorDistributor : (
+        activeLanding === 'leapmotor' && formData.requestType !== 'cotizacion' && formData.requestType !== 'prueba'
+          ? 'Sin Asignar (Sincronizando con Asesor)' 
+          : formData.distributor
+      );
 
       // In case we are auto-assigning a VIP sales advisor at creation (needsAdvisorAssignment is true),
       // we must assign that advisor's distributor to the lead
-      if (needsAdvisorAssignment && minWaitingAdvisor?.distributor) {
+      if (needsAdvisorAssignment && minWaitingAdvisor?.distributor && !advisorSignedIn) {
         chosenDistName = minWaitingAdvisor.distributor;
       }
 
@@ -1395,7 +1517,7 @@ export default function LeadForm({ c10ImgUrl, t03ImgUrl, b10ImgUrl }: LeadFormPr
         }
       }
 
-      if (!leadClaveCorporativo && minWaitingAdvisor) {
+      if (!leadClaveCorporativo && minWaitingAdvisor && !advisorSignedIn) {
         leadClaveCorporativo = minWaitingAdvisor.claveCorporativo || minWaitingAdvisor.clavecorporativo || '';
       }
 
@@ -1415,15 +1537,21 @@ export default function LeadForm({ c10ImgUrl, t03ImgUrl, b10ImgUrl }: LeadFormPr
         contactMethod: formData.contactMethod,
         requestType: formData.requestType,
         status: LeadStatus.WAITING,
-        advisorId: activeLanding === 'leapmotor' 
-          ? "" 
-          : (formData.requestType === 'cotizacion' || formData.requestType === 'prueba' ? "" : (minWaitingAdvisor?.id || "")),
-        advisorName: activeLanding === 'leapmotor' 
-          ? (formData.requestType === 'cotizacion' ? "Sin Asignar (Solo Cotización)" : (formData.requestType === 'prueba' ? "Sin Asignar (Solo Prueba)" : "Sin Asignar (Pool Leapmotor)")) 
-          : (formData.requestType === 'cotizacion' ? "Sin Asignar (Solo Cotización)" : (formData.requestType === 'prueba' ? "Sin Asignar (Solo Prueba de Manejo)" : (minWaitingAdvisor?.name || "Sin Asignar"))),
+        advisorId: advisorSignedIn 
+          ? "aztlan-" + advisorName.replace(/\s+/g, '-').toLowerCase()
+          : (activeLanding === 'leapmotor' 
+            ? "" 
+            : (formData.requestType === 'cotizacion' || formData.requestType === 'prueba' ? "" : (minWaitingAdvisor?.id || ""))),
+        advisorName: advisorSignedIn 
+          ? advisorName 
+          : (activeLanding === 'leapmotor' 
+            ? (formData.requestType === 'cotizacion' ? "Sin Asignar (Solo Cotización)" : (formData.requestType === 'prueba' ? "Sin Asignar (Solo Prueba)" : "Sin Asignar (Pool Leapmotor)")) 
+            : (formData.requestType === 'cotizacion' ? "Sin Asignar (Solo Cotización)" : (formData.requestType === 'prueba' ? "Sin Asignar (Solo Prueba de Manejo)" : (minWaitingAdvisor?.name || "Sin Asignar")))),
         createdAt: serverTimestamp(),
         // New features parameters
-        landing: (utmParams.utm_source === 'soccerhouse' || (typeof window !== 'undefined' && (window.location.hostname.toLowerCase().includes('soccer') || window.location.hostname.toLowerCase().includes('socer') || (window.location.search || '').toLowerCase().includes('soccer') || (window.location.search || '').toLowerCase().includes('socer')))) ? 'soccerhouse' : activeLanding,
+        landing: (utmParams.utm_source === 'soccerhouse' || (typeof window !== 'undefined' && (window.location.hostname.toLowerCase().includes('soccer') || window.location.hostname.toLowerCase().includes('socer') || (window.location.search || '').toLowerCase().includes('soccer') || (window.location.search || '').toLowerCase().includes('socer')))) ? 'soccerhouse' : (
+          (utmParams.utm_source === 'aztlan' || (typeof window !== 'undefined' && (window.location.hostname.toLowerCase().includes('aztlan') || (window.location.search || '').toLowerCase().includes('aztlan')))) ? 'aztlan' : activeLanding
+        ),
         selectedBrand: activeBrand,
         testDriveDate: formData.requestType === 'prueba' ? formData.testDriveDate : null,
         // UTM parameters
@@ -1601,13 +1729,123 @@ export default function LeadForm({ c10ImgUrl, t03ImgUrl, b10ImgUrl }: LeadFormPr
         }`}
       >
         
-        {/* Subtle Decorative Auras tailored by theme */}
-        {activeLanding === 'leapmotor' ? null : (
+        {isAdvisorModeTriggered && !advisorSignedIn ? (
+          <div className="flex-1 flex flex-col justify-center items-center px-6 py-6 relative z-30 bg-[#0d1527] h-full text-white min-h-[75vh] min-w-full">
+            <div className="w-full max-w-sm space-y-6">
+              <div className="text-center space-y-2">
+                <div className="mx-auto w-14 h-14 bg-gradient-to-tr from-indigo-500 to-purple-600 rounded-2xl flex items-center justify-center shadow-lg shadow-indigo-500/20">
+                  <UserCheck className="w-7 h-7 text-white" />
+                </div>
+                <h1 className="text-xl font-black uppercase tracking-wider font-sans bg-clip-text text-transparent bg-gradient-to-r from-white via-slate-200 to-indigo-300">
+                  Registro de Asesor
+                </h1>
+                <p className="text-[10px] text-slate-400 font-mono tracking-wider uppercase">
+                  Aztlan Landing Multimarca
+                </p>
+              </div>
+
+              <form onSubmit={handleAdvisorLoginSubmit} className="space-y-4">
+                {loginError && (
+                  <div className="p-3 bg-red-950/40 border border-red-500/20 rounded-xl text-red-100 text-xs font-semibold font-mono uppercase text-center">
+                    {loginError}
+                  </div>
+                )}
+
+                <div className="space-y-1 bg-slate-900/65 p-2 rounded-xl border border-white/10 text-left">
+                  <label className="text-[10px] uppercase font-mono tracking-wider text-slate-400 font-bold block">
+                    Nombre *
+                  </label>
+                  <input
+                    type="text"
+                    required
+                    placeholder="Escribe tu nombre"
+                    value={loginNombre}
+                    onChange={(e) => setLoginNombre(e.target.value)}
+                    className="w-full bg-transparent text-sm text-white font-bold placeholder-slate-600 outline-none pt-0.5 border-none p-0 focus:ring-0"
+                  />
+                </div>
+
+                <div className="space-y-1 bg-slate-900/65 p-2 rounded-xl border border-white/10 text-left">
+                  <label className="text-[10px] uppercase font-mono tracking-wider text-slate-400 font-bold block">
+                    Apellido *
+                  </label>
+                  <input
+                    type="text"
+                    required
+                    placeholder="Escribe tu apellido"
+                    value={loginApellido}
+                    onChange={(e) => setLoginApellido(e.target.value)}
+                    className="w-full bg-transparent text-sm text-white font-bold placeholder-slate-600 outline-none pt-0.5 border-none p-0 focus:ring-0"
+                  />
+                </div>
+
+                <div className="space-y-1 bg-slate-900/65 p-2 rounded-xl border border-white/10 text-left">
+                  <label className="text-[10px] uppercase font-mono tracking-wider text-slate-400 font-bold block">
+                    Estado *
+                  </label>
+                  <select
+                    required
+                    value={loginEstado}
+                    onChange={(e) => {
+                      setLoginEstado(e.target.value);
+                      setLoginDistribuidor('');
+                    }}
+                    className="w-full bg-[#0d1527] text-xs text-white font-mono font-bold outline-none pt-0.5 border-none p-0 focus:ring-0 uppercase cursor-pointer"
+                  >
+                    <option value="">Selecciona Estado</option>
+                    {advisorAvailableStates.map(st => (
+                      <option key={st} value={st}>{st}</option>
+                    ))}
+                  </select>
+                </div>
+
+                <div className="space-y-1 bg-slate-900/65 p-2 rounded-xl border border-white/10 text-left">
+                  <label className="text-[10px] uppercase font-mono tracking-wider text-slate-400 font-bold block">
+                    Distribuidor *
+                  </label>
+                  <select
+                    required
+                    disabled={!loginEstado}
+                    value={loginDistribuidor}
+                    onChange={(e) => setLoginDistribuidor(e.target.value)}
+                    className="w-full bg-[#0d1527] text-xs text-white font-mono font-bold outline-none pt-0.5 border-none p-0 focus:ring-0 uppercase cursor-pointer disabled:opacity-50"
+                  >
+                    <option value="">{loginEstado ? 'Selecciona Distribuidor' : 'Primero selecciona un Estado'}</option>
+                    {advisorAvailableDistributors.map(d => (
+                      <option key={d.id} value={d.name}>{d.name}</option>
+                    ))}
+                  </select>
+                </div>
+
+                <button
+                  type="submit"
+                  className="w-full bg-gradient-to-r from-indigo-500 to-purple-600 hover:from-indigo-600 hover:to-purple-700 text-white font-black text-xs py-3 rounded-xl shadow-lg shadow-indigo-500/20 active:scale-95 transition-all duration-300 tracking-widest uppercase font-sans"
+                >
+                  Ingresar al Landing Multimarca
+                </button>
+              </form>
+            </div>
+          </div>
+        ) : (
           <>
-            <div className={`absolute top-20 left-12 w-60 h-60 ${activeLanding === 'jeep' ? 'bg-[#22372B]/20' : (activeLanding === 'multimarca' ? 'bg-indigo-600/5' : 'bg-blue-600/10')} blur-[80px] rounded-full pointer-events-none -translate-x-1/2`} />
-            <div className={`absolute bottom-20 right-12 w-60 h-60 ${activeLanding === 'jeep' ? 'bg-[#22372B]/10' : (activeLanding === 'multimarca' ? 'bg-purple-600/5' : 'bg-purple-600/10')} blur-[80px] rounded-full pointer-events-none translate-x-1/2`} />
-          </>
-        )}
+            {advisorSignedIn && (
+              <button
+                onClick={handleAdvisorLogoff}
+                className="absolute right-4 top-4 z-40 bg-red-600/90 hover:bg-red-700 text-white rounded-full px-2.5 py-1 text-[9px] font-mono tracking-wider font-extrabold flex items-center gap-1.5 transition duration-300 shadow-md uppercase active:scale-[0.98]"
+                title="Cerrar sesión de asesor"
+              >
+                <LogOut className="w-3 h-3" />
+                <span>Salir ({advisorName?.split(' ')[0]})</span>
+              </button>
+            )}
+
+            {/* Subtle Decorative Auras tailored by theme */}
+            {activeLanding === 'leapmotor' ? null : (
+              <>
+                <div className={`absolute top-20 left-12 w-60 h-60 ${activeLanding === 'jeep' ? 'bg-[#22372B]/20' : (activeLanding === 'multimarca' ? 'bg-indigo-600/5' : 'bg-blue-600/10')} blur-[80px] rounded-full pointer-events-none -translate-x-1/2`} />
+                <div className={`absolute bottom-20 right-12 w-60 h-60 ${activeLanding === 'jeep' ? 'bg-[#22372B]/10' : (activeLanding === 'multimarca' ? 'bg-purple-600/5' : 'bg-purple-600/10')} blur-[80px] rounded-full pointer-events-none translate-x-1/2`} />
+              </>
+            )}
 
         {/* Brand Header */}
         <div 
@@ -2015,7 +2253,7 @@ export default function LeadForm({ c10ImgUrl, t03ImgUrl, b10ImgUrl }: LeadFormPr
                           />
 
                           {/* Premium mockup top navbar heading */}
-                          <div className="flex items-center justify-start pt-5 px-4 z-10 w-full mb-1">
+                          <div className="flex items-center justify-between pt-5 px-4 z-10 w-full mb-1">
                             <button
                               id={`back-button-${selectedSubBrand?.toLowerCase()}`}
                               onClick={() => setSelectedSubBrand(null)}
@@ -2058,6 +2296,16 @@ export default function LeadForm({ c10ImgUrl, t03ImgUrl, b10ImgUrl }: LeadFormPr
                               }`} />
                               <span className={selectedSubBrand === 'Leapmotor' ? 'text-slate-950 font-extrabold' : 'text-white font-extrabold'}>Regresar</span>
                             </button>
+
+                            {advisorSignedIn && (
+                              <button
+                                onClick={handleAdvisorLogoff}
+                                className="flex items-center gap-1.5 px-3 py-2 rounded-full text-[9px] font-mono font-extrabold uppercase tracking-wider transition duration-300 active:scale-[0.98] shadow-md bg-red-600/90 text-white z-20"
+                              >
+                                <LogOut className="w-3 h-3" />
+                                <span>SALIR ({advisorName?.split(' ')[0]})</span>
+                              </button>
+                            )}
                           </div>
 
                           {/* Brand Logo right above the car photo */}
@@ -2258,45 +2506,57 @@ export default function LeadForm({ c10ImgUrl, t03ImgUrl, b10ImgUrl }: LeadFormPr
               }}
             >
               <div>
-                {/* Back Link */}
-                <button 
-                  onClick={() => setFormActive(false)}
-                  style={
-                    isJeepPage
-                      ? { backgroundColor: '#487f70', borderColor: '#487f70', color: '#ffffff' }
-                      : isFiatPage
-                        ? { backgroundColor: '#EE395E', borderColor: '#EE395E', color: '#ffffff' }
-                        : isPeugeotPage
-                          ? { backgroundColor: '#0074E8', borderColor: '#0074E8', color: '#ffffff' }
-                          : isDodgePage
-                            ? { backgroundColor: '#D50000', borderColor: '#D50000', color: '#ffffff' }
-                            : isRamPage
-                              ? { backgroundColor: '#DD4E3C', borderColor: '#DD4E3C', color: '#ffffff' }
-                              : isLeapmotorPage
-                                ? { backgroundColor: '#DEFF01', borderColor: '#DEFF01', color: '#000000' }
-                                : undefined
-                  }
-                  className={`flex items-center gap-1.5 text-xs font-bold uppercase tracking-wider mb-4 transition px-3 py-1.5 rounded-full border shadow-md active:scale-[0.98] ${
-                    isLeapmotorPage
-                      ? 'text-slate-950 border-[#DEFF01]'
-                      : isJeepPage
-                        ? 'text-white border-[#487f70]'
+                {/* Back Link Row */}
+                <div className="flex items-center justify-between mb-4 w-full">
+                  <button 
+                    onClick={() => setFormActive(false)}
+                    style={
+                      isJeepPage
+                        ? { backgroundColor: '#487f70', borderColor: '#487f70', color: '#ffffff' }
                         : isFiatPage
-                          ? 'text-white border-[#EE395E]'
+                          ? { backgroundColor: '#EE395E', borderColor: '#EE395E', color: '#ffffff' }
                           : isPeugeotPage
-                            ? 'text-white border-[#0074E8]'
+                            ? { backgroundColor: '#0074E8', borderColor: '#0074E8', color: '#ffffff' }
                             : isDodgePage
-                              ? 'text-white border-[#D50000]'
+                              ? { backgroundColor: '#D50000', borderColor: '#D50000', color: '#ffffff' }
                               : isRamPage
-                                ? 'text-white border-[#DD4E3C]'
-                                : (isLightBg
-                                  ? 'text-slate-800 border-black/10 bg-black/5 hover:bg-black/10'
-                                  : 'text-white border-white/10 bg-white/10 hover:bg-white/20')
-                  }`}
-                >
-                  <ArrowLeft className={`w-3.5 h-3.5 shrink-0 ${isLeapmotorPage ? 'text-slate-950 stroke-[2.5]' : 'text-white'}`} />
-                  <span>Regresar</span>
-                </button>
+                                ? { backgroundColor: '#DD4E3C', borderColor: '#DD4E3C', color: '#ffffff' }
+                                : isLeapmotorPage
+                                  ? { backgroundColor: '#DEFF01', borderColor: '#DEFF01', color: '#000000' }
+                                  : undefined
+                    }
+                    className={`flex items-center gap-1.5 text-xs font-bold uppercase tracking-wider transition px-3 py-1.5 rounded-full border shadow-md active:scale-[0.98] ${
+                      isLeapmotorPage
+                        ? 'text-slate-950 border-[#DEFF01]'
+                        : isJeepPage
+                          ? 'text-white border-[#487f70]'
+                          : isFiatPage
+                            ? 'text-white border-[#EE395E]'
+                            : isPeugeotPage
+                              ? 'text-white border-[#0074E8]'
+                              : isDodgePage
+                                ? 'text-white border-[#D50000]'
+                                : isRamPage
+                                  ? 'text-white border-[#DD4E3C]'
+                                  : (isLightBg
+                                    ? 'text-slate-800 border-black/10 bg-black/5 hover:bg-black/10'
+                                    : 'text-white border-white/10 bg-white/10 hover:bg-white/20')
+                    }`}
+                  >
+                    <ArrowLeft className={`w-3.5 h-3.5 shrink-0 ${isLeapmotorPage ? 'text-slate-950 stroke-[2.5]' : 'text-white'}`} />
+                    <span>Regresar</span>
+                  </button>
+
+                  {advisorSignedIn && (
+                    <button
+                      onClick={handleAdvisorLogoff}
+                      className="flex items-center gap-1.5 px-3 py-1.5 rounded-full text-[9px] font-mono font-extrabold uppercase tracking-wider transition duration-300 active:scale-[0.98] shadow-md bg-red-650 text-white z-20"
+                    >
+                      <LogOut className="w-3 h-3" />
+                      <span>SALIR ({advisorName?.split(' ')[0]})</span>
+                    </button>
+                  )}
+                </div>
 
                 <h2 className={`text-xl tracking-wide mb-1 uppercase font-sans ${activeLanding === 'leapmotor' || isLeapmotorPage ? 'font-extrabold' : 'font-black'} ${
                   isLightBg ? 'text-slate-900' : 'text-white'
@@ -3231,6 +3491,8 @@ export default function LeadForm({ c10ImgUrl, t03ImgUrl, b10ImgUrl }: LeadFormPr
         {/* Spacer */}
         <div className="py-2" />
 
+          </>
+        )}
       </div>
 
       {/* MODAL 1: EXPOSURE LOCATION CARPA MAP */}
