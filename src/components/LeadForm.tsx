@@ -530,7 +530,7 @@ export default function LeadForm({ c10ImgUrl, t03ImgUrl, b10ImgUrl }: LeadFormPr
     setLoginDistribuidor('');
 
     if (typeof window !== 'undefined') {
-      window.location.href = window.location.origin + window.location.pathname;
+      window.location.href = window.location.origin + window.location.pathname + '?asesor=true';
     }
   };
 
@@ -1552,7 +1552,7 @@ export default function LeadForm({ c10ImgUrl, t03ImgUrl, b10ImgUrl }: LeadFormPr
             ? "" 
             : (formData.requestType === 'cotizacion' || formData.requestType === 'prueba' ? "" : (minWaitingAdvisor?.id || ""))),
         advisorName: advisorSignedIn 
-          ? advisorName 
+          ? "Capturado directo asesor: " + advisorName 
           : (activeLanding === 'leapmotor' 
             ? (formData.requestType === 'cotizacion' ? "Sin Asignar (Solo Cotización)" : (formData.requestType === 'prueba' ? "Sin Asignar (Solo Prueba)" : "Sin Asignar (Pool Leapmotor)")) 
             : (formData.requestType === 'cotizacion' ? "Sin Asignar (Solo Cotización)" : (formData.requestType === 'prueba' ? "Sin Asignar (Solo Prueba de Manejo)" : (minWaitingAdvisor?.name || "Sin Asignar")))),
@@ -1739,29 +1739,27 @@ export default function LeadForm({ c10ImgUrl, t03ImgUrl, b10ImgUrl }: LeadFormPr
       >
         
         {isAdvisorModeTriggered && !advisorSignedIn ? (
-          <div className="flex-1 flex flex-col justify-center items-center px-6 py-6 relative z-30 bg-[#0d1527] h-full text-white min-h-[75vh] min-w-full">
+          <div className="flex-1 flex flex-col justify-center items-center px-6 py-6 relative z-30 bg-white h-full text-slate-800 min-h-[75vh] min-w-full">
             <div className="w-full max-w-sm space-y-6">
               <div className="text-center space-y-2">
-                <div className="mx-auto w-14 h-14 bg-gradient-to-tr from-indigo-500 to-purple-600 rounded-2xl flex items-center justify-center shadow-lg shadow-indigo-500/20">
-                  <UserCheck className="w-7 h-7 text-white" />
-                </div>
-                <h1 className="text-xl font-black uppercase tracking-wider font-sans bg-clip-text text-transparent bg-gradient-to-r from-white via-slate-200 to-indigo-300">
+                <img src={STELLANTIS_IMG} alt="Stellantis" className="mx-auto max-h-14 w-auto object-contain mb-4" />
+                <h1 className="text-lg font-black uppercase tracking-wider font-sans text-[#002A64]">
                   Registro de Asesor
                 </h1>
-                <p className="text-[10px] text-slate-400 font-mono tracking-wider uppercase">
+                <p className="text-[9px] text-slate-500 font-mono tracking-widest uppercase">
                   Aztlan Landing Multimarca
                 </p>
               </div>
 
               <form onSubmit={handleAdvisorLoginSubmit} className="space-y-4">
                 {loginError && (
-                  <div className="p-3 bg-red-950/40 border border-red-500/20 rounded-xl text-red-100 text-xs font-semibold font-mono uppercase text-center">
+                  <div className="p-3 bg-red-50 border border-red-200 rounded-xl text-red-700 text-xs font-semibold font-mono uppercase text-center">
                     {loginError}
                   </div>
                 )}
 
-                <div className="space-y-1 bg-slate-900/65 p-2 rounded-xl border border-white/10 text-left">
-                  <label className="text-[10px] uppercase font-mono tracking-wider text-slate-400 font-bold block">
+                <div className="space-y-1 bg-slate-50 p-2.5 rounded-xl border border-[#002A64]/40 focus-within:border-[#002A64] focus-within:ring-2 focus-within:ring-[#002A64]/10 transition-all text-left">
+                  <label className="text-[10px] uppercase font-mono tracking-wider text-[#002A64] font-bold block">
                     Nombre *
                   </label>
                   <input
@@ -1770,12 +1768,12 @@ export default function LeadForm({ c10ImgUrl, t03ImgUrl, b10ImgUrl }: LeadFormPr
                     placeholder="Escribe tu nombre"
                     value={loginNombre}
                     onChange={(e) => setLoginNombre(e.target.value)}
-                    className="w-full bg-transparent text-sm text-white font-bold placeholder-slate-600 outline-none pt-0.5 border-none p-0 focus:ring-0"
+                    className="w-full bg-transparent text-sm text-slate-900 font-bold placeholder-slate-400 outline-none pt-0.5 border-none p-0 focus:ring-0"
                   />
                 </div>
 
-                <div className="space-y-1 bg-slate-900/65 p-2 rounded-xl border border-white/10 text-left">
-                  <label className="text-[10px] uppercase font-mono tracking-wider text-slate-400 font-bold block">
+                <div className="space-y-1 bg-slate-50 p-2.5 rounded-xl border border-[#002A64]/40 focus-within:border-[#002A64] focus-within:ring-2 focus-within:ring-[#002A64]/10 transition-all text-left">
+                  <label className="text-[10px] uppercase font-mono tracking-wider text-[#002A64] font-bold block">
                     Apellido *
                   </label>
                   <input
@@ -1784,12 +1782,12 @@ export default function LeadForm({ c10ImgUrl, t03ImgUrl, b10ImgUrl }: LeadFormPr
                     placeholder="Escribe tu apellido"
                     value={loginApellido}
                     onChange={(e) => setLoginApellido(e.target.value)}
-                    className="w-full bg-transparent text-sm text-white font-bold placeholder-slate-600 outline-none pt-0.5 border-none p-0 focus:ring-0"
+                    className="w-full bg-transparent text-sm text-slate-900 font-bold placeholder-slate-400 outline-none pt-0.5 border-none p-0 focus:ring-0"
                   />
                 </div>
 
-                <div className="space-y-1 bg-slate-900/65 p-2 rounded-xl border border-white/10 text-left">
-                  <label className="text-[10px] uppercase font-mono tracking-wider text-slate-400 font-bold block">
+                <div className="space-y-1 bg-slate-50 p-2.5 rounded-xl border border-[#002A64]/40 focus-within:border-[#002A64] focus-within:ring-2 focus-within:ring-[#002A64]/10 transition-all text-left">
+                  <label className="text-[10px] uppercase font-mono tracking-wider text-[#002A64] font-bold block">
                     Estado *
                   </label>
                   <select
@@ -1799,17 +1797,17 @@ export default function LeadForm({ c10ImgUrl, t03ImgUrl, b10ImgUrl }: LeadFormPr
                       setLoginEstado(e.target.value);
                       setLoginDistribuidor('');
                     }}
-                    className="w-full bg-[#0d1527] text-xs text-white font-mono font-bold outline-none pt-0.5 border-none p-0 focus:ring-0 uppercase cursor-pointer"
+                    className="w-full bg-white text-xs text-slate-900 font-mono font-bold outline-none pt-0.5 border-none p-0 focus:ring-0 uppercase cursor-pointer"
                   >
-                    <option value="">Selecciona Estado</option>
+                    <option value="" className="text-slate-500">Selecciona Estado</option>
                     {advisorAvailableStates.map(st => (
-                      <option key={st} value={st}>{st}</option>
+                      <option key={st} value={st} className="text-slate-900 bg-white">{st}</option>
                     ))}
                   </select>
                 </div>
 
-                <div className="space-y-1 bg-slate-900/65 p-2 rounded-xl border border-white/10 text-left">
-                  <label className="text-[10px] uppercase font-mono tracking-wider text-slate-400 font-bold block">
+                <div className="space-y-1 bg-slate-50 p-2.5 rounded-xl border border-[#002A64]/40 focus-within:border-[#002A64] focus-within:ring-2 focus-within:ring-[#002A64]/10 transition-all text-left">
+                  <label className="text-[10px] uppercase font-mono tracking-wider text-[#002A64] font-bold block">
                     Distribuidor *
                   </label>
                   <select
@@ -1817,18 +1815,18 @@ export default function LeadForm({ c10ImgUrl, t03ImgUrl, b10ImgUrl }: LeadFormPr
                     disabled={!loginEstado}
                     value={loginDistribuidor}
                     onChange={(e) => setLoginDistribuidor(e.target.value)}
-                    className="w-full bg-[#0d1527] text-xs text-white font-mono font-bold outline-none pt-0.5 border-none p-0 focus:ring-0 uppercase cursor-pointer disabled:opacity-50"
+                    className="w-full bg-white text-xs text-slate-900 font-mono font-bold outline-none pt-0.5 border-none p-0 focus:ring-0 uppercase cursor-pointer disabled:opacity-50"
                   >
-                    <option value="">{loginEstado ? 'Selecciona Distribuidor' : 'Primero selecciona un Estado'}</option>
+                    <option value="" className="text-slate-500">{loginEstado ? 'Selecciona Distribuidor' : 'Primero selecciona un Estado'}</option>
                     {advisorAvailableDistributors.map(d => (
-                      <option key={d.id} value={d.name}>{d.name}</option>
+                      <option key={d.id} value={d.name} className="text-slate-900 bg-white">{d.name}</option>
                     ))}
                   </select>
                 </div>
 
                 <button
                   type="submit"
-                  className="w-full bg-gradient-to-r from-indigo-500 to-purple-600 hover:from-indigo-600 hover:to-purple-700 text-white font-black text-xs py-3 rounded-xl shadow-lg shadow-indigo-500/20 active:scale-95 transition-all duration-300 tracking-widest uppercase font-sans"
+                  className="w-full bg-[#002A64] hover:bg-[#001D47] text-white font-black text-xs py-3.5 rounded-xl shadow-lg active:scale-95 transition-all duration-300 tracking-widest uppercase font-sans cursor-pointer"
                 >
                   Ingresar al Landing Multimarca
                 </button>
@@ -2326,16 +2324,6 @@ export default function LeadForm({ c10ImgUrl, t03ImgUrl, b10ImgUrl }: LeadFormPr
                               }`} />
                               <span className={selectedSubBrand === 'Leapmotor' ? 'text-slate-950 font-extrabold' : 'text-white font-extrabold'}>Regresar</span>
                             </button>
-
-                            {advisorSignedIn && (
-                              <button
-                                onClick={handleAdvisorLogoff}
-                                className="flex items-center gap-1.5 px-3 py-2 rounded-full text-[9px] font-mono font-extrabold uppercase tracking-wider transition duration-300 active:scale-[0.98] shadow-md bg-red-600/90 text-white z-20"
-                              >
-                                <LogOut className="w-3 h-3" />
-                                <span>SALIR ({advisorName?.split(' ')[0]})</span>
-                              </button>
-                            )}
                           </div>
 
                           {/* Brand Logo right above the car photo */}
@@ -2576,16 +2564,6 @@ export default function LeadForm({ c10ImgUrl, t03ImgUrl, b10ImgUrl }: LeadFormPr
                     <ArrowLeft className={`w-3.5 h-3.5 shrink-0 ${isLeapmotorPage ? 'text-slate-950 stroke-[2.5]' : 'text-white'}`} />
                     <span>Regresar</span>
                   </button>
-
-                  {advisorSignedIn && (
-                    <button
-                      onClick={handleAdvisorLogoff}
-                      className="flex items-center gap-1.5 px-3 py-1.5 rounded-full text-[9px] font-mono font-extrabold uppercase tracking-wider transition duration-300 active:scale-[0.98] shadow-md bg-red-650 text-white z-20"
-                    >
-                      <LogOut className="w-3 h-3" />
-                      <span>SALIR ({advisorName?.split(' ')[0]})</span>
-                    </button>
-                  )}
                 </div>
 
                 <h2 className={`text-xl tracking-wide mb-1 uppercase font-sans ${activeLanding === 'leapmotor' || isLeapmotorPage ? 'font-extrabold' : 'font-black'} ${
