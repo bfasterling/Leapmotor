@@ -1464,9 +1464,6 @@ export default function LeadForm({ c10ImgUrl, t03ImgUrl, b10ImgUrl }: LeadFormPr
 
   // Get list of states from activeDealers
   let availableStates = Array.from(new Set(activeDealers.map(d => d.state))).sort();
-  if (activeLanding === 'leapmotor') {
-    availableStates = ['CIUDAD DE MÉXICO', 'ESTADO DE MÉXICO', 'MORELOS'];
-  }
 
   // Get dealers in the currently selected state, fully deduplicated by name to prevent duplication, and sorted alphabetically
   const stateDealers = activeDealers.filter(d => d.state === formData.state);
