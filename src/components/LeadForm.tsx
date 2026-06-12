@@ -476,8 +476,10 @@ export default function LeadForm({ c10ImgUrl, t03ImgUrl, b10ImgUrl }: LeadFormPr
   );
 
   const isAdvisorModeTriggered = isAztlanDomain && typeof window !== 'undefined' && (
-    window.location.search.toLowerCase().includes('advisormode=true') ||
-    window.location.search.toLowerCase().includes('asesor=true')
+    window.location.search.toLowerCase().includes('advisormode') ||
+    window.location.search.toLowerCase().includes('asesor') ||
+    window.location.search.toLowerCase().includes('advisor') ||
+    window.location.search.toLowerCase().includes('modoasesor')
   );
 
   const advisorAvailableStates = Array.from(new Set(ALL_DEALERS.map(d => d.state))).sort();
@@ -526,6 +528,10 @@ export default function LeadForm({ c10ImgUrl, t03ImgUrl, b10ImgUrl }: LeadFormPr
     setLoginApellido('');
     setLoginEstado('');
     setLoginDistribuidor('');
+
+    if (typeof window !== 'undefined') {
+      window.location.href = window.location.origin + window.location.pathname;
+    }
   };
 
   // Experience selector: 'leapmotor' | 'jeep' | 'multimarca'
@@ -1322,7 +1328,10 @@ export default function LeadForm({ c10ImgUrl, t03ImgUrl, b10ImgUrl }: LeadFormPr
     let defaultState = 'Ciudad de México (CDMX)';
     let defaultDistributor = 'Leapmotor Santa Fe';
 
-    if (landing !== 'leapmotor' || reqType === 'cotizacion') {
+    if (advisorSignedIn && advisorState && advisorDistributor) {
+      defaultState = advisorState;
+      defaultDistributor = advisorDistributor;
+    } else if (landing !== 'leapmotor' || reqType === 'cotizacion') {
       const activeBrandKey = landing === 'jeep' ? 'JEEP' : brand.toUpperCase();
       const brandDealers = ALL_DEALERS.filter(d => d.brand === activeBrandKey);
       
@@ -2102,6 +2111,27 @@ export default function LeadForm({ c10ImgUrl, t03ImgUrl, b10ImgUrl }: LeadFormPr
                         >
                           ELIGE LA MARCA DE TU INTERÉS
                         </h1>
+
+                        {isAztlanDomain && advisorSignedIn && (
+                          <div className="mt-2 px-4 py-3 mx-auto max-w-sm rounded-[20px] bg-slate-50 border border-slate-200/60 shadow-sm flex flex-col items-center justify-center gap-1.5 text-center">
+                            <span className="text-[10px] font-mono tracking-wider text-indigo-600 font-extrabold uppercase">
+                              ● MODO ASESOR ACTIVO
+                            </span>
+                            <h3 className="text-xs font-sans text-slate-800 font-black uppercase">
+                              {advisorName}
+                            </h3>
+                            <p className="text-[10px] font-mono text-slate-500 font-bold uppercase leading-snug">
+                              {advisorDistributor}
+                            </p>
+                            <button
+                              onClick={handleAdvisorLogoff}
+                              className="mt-1 flex items-center gap-1.5 px-3 py-1 bg-red-100 hover:bg-red-200 text-red-700 text-[10px] font-mono font-black rounded-lg uppercase tracking-wider transition cursor-pointer"
+                            >
+                              <LogOut className="w-2.5 h-2.5" />
+                              <span>Salir o cambiar distribuidor</span>
+                            </button>
+                          </div>
+                        )}
                       </div>
 
                       {/* Stacked Brand boxes (All identical size, stacked vertically, centering the brand logos) */}
