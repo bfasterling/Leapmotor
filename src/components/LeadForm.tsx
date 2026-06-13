@@ -3321,6 +3321,25 @@ export default function LeadForm({ c10ImgUrl, t03ImgUrl, b10ImgUrl }: LeadFormPr
                             </button>
                           </div>
                         )}
+                        {/* Download Catalog sheet for Leapmotor only */}
+                        {(activeLanding === 'leapmotor' || selectedBrand === 'Leapmotor') && (
+                          <div className="mt-3 max-w-xs mx-auto animate-fadeIn font-sans">
+                            <button
+                              onClick={() => {
+                                const link = document.createElement('a');
+                                link.href = '/Catologo_B10_Ultra_Hibrido_2027.pdf';
+                                link.setAttribute('download', 'Catologo_B10_Ultra_Hibrido_2027.pdf');
+                                document.body.appendChild(link);
+                                link.click();
+                                document.body.removeChild(link);
+                              }}
+                              className="w-full flex items-center justify-center gap-2 px-6 py-3 rounded-xl text-[11px] font-black tracking-widest uppercase transition-all duration-300 bg-[#deff01] hover:bg-[#c9e600] text-black shadow-md cursor-pointer transform active:scale-[0.98]"
+                            >
+                              <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="black" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-download"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" x2="12" y1="15" y2="3"/></svg>
+                              <span>Descargar Catálogo B10</span>
+                            </button>
+                          </div>
+                        )}
                       </div>
 
                       {currentLeadData && (currentLeadData.status === 'attending' || currentLeadData.status === 'attended' || currentLeadData.status === 'lost') && currentLeadData.advisorId && !currentLeadData.advisorName?.includes('Sin Asignar') ? (

@@ -29,6 +29,32 @@ app.get('/FT_JEEP-CHEROKEE-2026.pdf', (req, res) => {
   }
 });
 
+// Serve the LeapMotor catalogue PDF file directly
+app.get('/Catologo_B10_Ultra_Hibrido_2027.pdf', (req, res) => {
+  const filePath = path.join(process.cwd(), 'Catologo_B10_Ultra_Híbrido_ 2027.pdf');
+  if (fs.existsSync(filePath)) {
+    res.setHeader('Content-Type', 'application/pdf');
+    res.setHeader('Content-Disposition', 'attachment; filename="Catologo_B10_Ultra_Hibrido_2027.pdf"');
+    fs.createReadStream(filePath).pipe(res);
+  } else {
+    // Dynamic matching fallback to handle minor unicode normalization or space variations
+    try {
+      const files = fs.readdirSync(process.cwd());
+      const matchedFile = files.find(f => f.toLowerCase().includes('catologo') && f.toLowerCase().includes('b10') && f.endsWith('.pdf'));
+      if (matchedFile) {
+        const dynamicFilePath = path.join(process.cwd(), matchedFile);
+        res.setHeader('Content-Type', 'application/pdf');
+        res.setHeader('Content-Disposition', 'attachment; filename="Catologo_B10_Ultra_Hibrido_2027.pdf"');
+        fs.createReadStream(dynamicFilePath).pipe(res);
+      } else {
+        res.status(404).send('Catálogo LeapMotor no encontrado en el servidor');
+      }
+    } catch (e) {
+      res.status(404).send('Error al buscar catálogo en el servidor');
+    }
+  }
+});
+
 /**
  * Lead synchronization routine for both automatic cron and REST API requests
  */

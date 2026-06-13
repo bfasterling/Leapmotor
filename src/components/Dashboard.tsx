@@ -1413,8 +1413,8 @@ export default function Dashboard() {
 
             <button
               type="submit"
-              style={{ backgroundColor: '#7d9267' }}
-              className="w-full text-white hover:bg-[#8da376] font-extrabold py-3.5 rounded-xl text-xs uppercase tracking-wider flex items-center justify-center gap-2 transition-all duration-300 active:scale-95 shadow-md shadow-[#7d9267]/20"
+              style={{ backgroundColor: '#677392', color: '#ffffff' }}
+              className="w-full text-white hover:opacity-90 font-extrabold py-3.5 rounded-xl text-xs uppercase tracking-wider flex items-center justify-center gap-2 transition-all duration-300 active:scale-95 shadow-md shadow-[#677392]/20"
             >
               <Key className="w-4 h-4 text-white" />
               <span>Ingresar al Tablero</span>
