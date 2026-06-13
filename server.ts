@@ -19,7 +19,10 @@ app.use(express.urlencoded({ extended: true }));
 
 // Serve the technical spec sheet PDF file directly
 app.get('/FT_JEEP-CHEROKEE-2026.pdf', (req, res) => {
-  const filePath = path.join(process.cwd(), 'FT_JEEP-CHEROKEE-2026.pdf');
+  const filePathDist = path.join(process.cwd(), 'dist', 'FT_JEEP-CHEROKEE-2026.pdf');
+  const filePathRoot = path.join(process.cwd(), 'FT_JEEP-CHEROKEE-2026.pdf');
+  const filePath = fs.existsSync(filePathDist) ? filePathDist : filePathRoot;
+  
   if (fs.existsSync(filePath)) {
     res.setHeader('Content-Type', 'application/pdf');
     res.setHeader('Content-Disposition', 'attachment; filename="FT_JEEP-CHEROKEE-2026.pdf"');
@@ -31,8 +34,11 @@ app.get('/FT_JEEP-CHEROKEE-2026.pdf', (req, res) => {
 
 // Serve the LeapMotor catalogue PDF file directly
 app.get('/Catologo_B10_Ultra_Hibrido_2027.pdf', (req, res) => {
-  const filePath = path.join(process.cwd(), 'Catologo_B10_Ultra_Híbrido_ 2027.pdf');
-  if (fs.existsSync(filePath)) {
+  const filePathDist = path.join(process.cwd(), 'dist', 'Catologo_B10_Ultra_Hibrido_2027.pdf');
+  const filePathRoot = path.join(process.cwd(), 'Catologo_B10_Ultra_Híbrido_ 2027.pdf');
+  const filePath = fs.existsSync(filePathDist) ? filePathDist : (fs.existsSync(filePathRoot) ? filePathRoot : null);
+
+  if (filePath) {
     res.setHeader('Content-Type', 'application/pdf');
     res.setHeader('Content-Disposition', 'attachment; filename="Catologo_B10_Ultra_Hibrido_2027.pdf"');
     fs.createReadStream(filePath).pipe(res);
@@ -47,6 +53,18 @@ app.get('/Catologo_B10_Ultra_Hibrido_2027.pdf', (req, res) => {
         res.setHeader('Content-Disposition', 'attachment; filename="Catologo_B10_Ultra_Hibrido_2027.pdf"');
         fs.createReadStream(dynamicFilePath).pipe(res);
       } else {
+        const distDir = path.join(process.cwd(), 'dist');
+        if (fs.existsSync(distDir)) {
+          const distFiles = fs.readdirSync(distDir);
+          const matchedDistFile = distFiles.find(f => f.toLowerCase().includes('catologo') && f.toLowerCase().includes('b10') && f.endsWith('.pdf'));
+          if (matchedDistFile) {
+            const dynamicFilePath = path.join(distDir, matchedDistFile);
+            res.setHeader('Content-Type', 'application/pdf');
+            res.setHeader('Content-Disposition', 'attachment; filename="Catologo_B10_Ultra_Hibrido_2027.pdf"');
+            fs.createReadStream(dynamicFilePath).pipe(res);
+            return;
+          }
+        }
         res.status(404).send('Catálogo LeapMotor no encontrado en el servidor');
       }
     } catch (e) {
