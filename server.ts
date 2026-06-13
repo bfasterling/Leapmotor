@@ -17,6 +17,18 @@ const PORT = 3000;
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
+// Serve the technical spec sheet PDF file directly
+app.get('/FT_JEEP-CHEROKEE-2026.pdf', (req, res) => {
+  const filePath = path.join(process.cwd(), 'FT_JEEP-CHEROKEE-2026.pdf');
+  if (fs.existsSync(filePath)) {
+    res.setHeader('Content-Type', 'application/pdf');
+    res.setHeader('Content-Disposition', 'attachment; filename="FT_JEEP-CHEROKEE-2026.pdf"');
+    fs.createReadStream(filePath).pipe(res);
+  } else {
+    res.status(404).send('Ficha técnica no encontrada en el servidor');
+  }
+});
+
 /**
  * Lead synchronization routine for both automatic cron and REST API requests
  */

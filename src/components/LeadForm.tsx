@@ -471,8 +471,7 @@ export default function LeadForm({ c10ImgUrl, t03ImgUrl, b10ImgUrl }: LeadFormPr
 
   const isAztlanDomain = typeof window !== 'undefined' && (
     window.location.hostname.toLowerCase().includes('aztlan') ||
-    (window.location.search || '').toLowerCase().includes('aztlan') ||
-    localStorage.getItem('utm_source') === 'aztlan'
+    (window.location.search || '').toLowerCase().includes('aztlan')
   );
 
   const isAdvisorModeTriggered = isAztlanDomain && typeof window !== 'undefined' && (
@@ -1558,9 +1557,19 @@ export default function LeadForm({ c10ImgUrl, t03ImgUrl, b10ImgUrl }: LeadFormPr
             : (formData.requestType === 'cotizacion' ? "Sin Asignar (Solo Cotización)" : (formData.requestType === 'prueba' ? "Sin Asignar (Solo Prueba de Manejo)" : (minWaitingAdvisor?.name || "Sin Asignar")))),
         createdAt: serverTimestamp(),
         // New features parameters
-        landing: (utmParams.utm_source === 'soccerhouse' || (typeof window !== 'undefined' && (window.location.hostname.toLowerCase().includes('soccer') || window.location.hostname.toLowerCase().includes('socer') || (window.location.search || '').toLowerCase().includes('soccer') || (window.location.search || '').toLowerCase().includes('socer')))) ? 'soccerhouse' : (
-          (utmParams.utm_source === 'aztlan' || (typeof window !== 'undefined' && (window.location.hostname.toLowerCase().includes('aztlan') || (window.location.search || '').toLowerCase().includes('aztlan')))) ? 'aztlan' : activeLanding
-        ),
+        landing: (activeLanding === 'jeep' || activeLanding === 'leapmotor') ? activeLanding : (() => {
+          if (typeof window !== 'undefined') {
+            const host = window.location.hostname.toLowerCase();
+            const search = (window.location.search || '').toLowerCase();
+            if (host.includes('soccer') || host.includes('socer') || search.includes('soccer') || search.includes('socer')) {
+              return 'soccerhouse';
+            }
+            if (host.includes('aztlan') || search.includes('aztlan')) {
+              return 'aztlan';
+            }
+          }
+          return 'multimarca';
+        })(),
         selectedBrand: activeBrand,
         testDriveDate: formData.requestType === 'prueba' ? formData.testDriveDate : null,
         // UTM parameters
@@ -3292,6 +3301,25 @@ export default function LeadForm({ c10ImgUrl, t03ImgUrl, b10ImgUrl }: LeadFormPr
                           >
                             Tu solicitud ha sido registrada en el sistema.
                           </p>
+                        )}
+                        {/* Download Tech Specs sheet for Jeep Cherokee only */}
+                        {activeLanding === 'jeep' && (
+                          <div className="mt-3 max-w-xs mx-auto animate-fadeIn">
+                            <button
+                              onClick={() => {
+                                const link = document.createElement('a');
+                                link.href = '/FT_JEEP-CHEROKEE-2026.pdf';
+                                link.setAttribute('download', 'FT_JEEP-CHEROKEE-2026.pdf');
+                                document.body.appendChild(link);
+                                link.click();
+                                document.body.removeChild(link);
+                              }}
+                              className="w-full flex items-center justify-center gap-2 px-6 py-3 rounded-xl text-[11px] font-black tracking-widest uppercase transition-all duration-300 bg-white hover:bg-slate-100 text-[#487F70] border border-[#487F70]/20 shadow-md cursor-pointer transform active:scale-[0.98]"
+                            >
+                              <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-download"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" x2="12" y1="15" y2="3"/></svg>
+                              <span>Descargar Ficha Técnica</span>
+                            </button>
+                          </div>
                         )}
                       </div>
 
