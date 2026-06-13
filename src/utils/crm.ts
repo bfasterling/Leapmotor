@@ -108,7 +108,12 @@ export const sendLeapmotorLeadToCRM = async (lead: Lead): Promise<{
     }
 
     let commentsVal = lead.postalCode ? `C.P. ${lead.postalCode.trim()}` : "C.P. No Asignado";
-    if (lLanding === 'leapmotor' && lead.requestType === 'asesor' && lead.advisorName) {
+    const isLeapmotorBrand = lLanding === 'leapmotor' || (lead.selectedBrand && lead.selectedBrand.toLowerCase() === 'leapmotor');
+    const hasDesignatedAdvisor = lead.advisorName && 
+      lead.advisorName.trim() !== '' && 
+      !lead.advisorName.toLowerCase().includes('sin asignar');
+    
+    if (isLeapmotorBrand && lead.requestType === 'asesor' && hasDesignatedAdvisor) {
       commentsVal += ` Asesor : ${lead.advisorName.trim()}`;
     }
 

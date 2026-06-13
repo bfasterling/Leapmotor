@@ -173,7 +173,16 @@ async function runLeadSync() {
           vehiculo: {
             modelo: lead.modelOfInterest || "B10"
           },
-          comentarios: lead.postalCode ? `C.P. ${lead.postalCode.trim()}` : "C.P. No Asignado",
+          comentarios: (() => {
+            let comments = lead.postalCode ? `C.P. ${lead.postalCode.trim()}` : "C.P. No Asignado";
+            const hasDesignatedAdvisor = lead.advisorName && 
+              lead.advisorName.trim() !== '' && 
+              !lead.advisorName.toLowerCase().includes('sin asignar');
+            if (lead.requestType === 'asesor' && hasDesignatedAdvisor) {
+              comments += ` Asesor : ${lead.advisorName.trim()}`;
+            }
+            return comments;
+          })(),
           origen: origVal,
           conversacion: lead.requestType === 'cotizacion' 
             ? "Formulario de cotización de la landing Leapmotor (Cron)" 
