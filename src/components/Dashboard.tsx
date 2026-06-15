@@ -1106,6 +1106,7 @@ export default function Dashboard() {
   const leapmotorWaitingCountRealTime = leads.filter(l => (!l.landing || l.landing === 'leapmotor') && l.status === LeadStatus.WAITING && l.requestType !== 'cotizacion' && l.requestType !== 'prueba').length;
   const leapmotorAttendingCountRealTime = leads.filter(l => (!l.landing || l.landing === 'leapmotor') && l.status === LeadStatus.ATTENDING && l.requestType !== 'cotizacion' && l.requestType !== 'prueba').length;
   const leapmotorAttendedCountRealTime = leads.filter(l => (!l.landing || l.landing === 'leapmotor') && l.status === LeadStatus.ATTENDED && l.requestType !== 'cotizacion' && l.requestType !== 'prueba').length;
+  const leapmotorLostCountRealTime = leads.filter(l => (!l.landing || l.landing === 'leapmotor') && l.status === LeadStatus.LOST && l.requestType !== 'cotizacion' && l.requestType !== 'prueba').length;
 
   // Compute stats based on the selected date filters
   const totalLeads = filteredLeads.length;
@@ -1582,10 +1583,19 @@ export default function Dashboard() {
 
           {/* Card 3: Atendidos */}
           <div className={`${cardBg} p-5 rounded-2xl relative overflow-hidden flex items-center justify-between transition-all duration-300 border-l-4 border-l-emerald-500`}>
-            <div>
-              <span className="text-[11px] font-mono text-emerald-500 tracking-wider uppercase font-extrabold">LeapMotor Atendidos</span>
-              <div className={`text-3xl font-black mt-1.5 font-mono ${titleColor}`}>{leapmotorAttendedCountRealTime}</div>
-              <p className={`text-[11px] font-bold mt-1 ${mutedColor}`}>Finalizados exitosamente</p>
+            <div className="flex-1">
+              <span className="text-[11px] font-mono text-emerald-500 tracking-wider uppercase font-extrabold block">LeapMotor Atendidos</span>
+              <div className="flex items-center gap-5 mt-1.5">
+                <div>
+                  <div className={`text-3xl font-black font-mono ${titleColor}`}>{leapmotorAttendedCountRealTime}</div>
+                  <p className={`text-[11px] font-bold mt-0.5 ${isDark ? 'text-emerald-400' : 'text-emerald-700'}`}>Exitosos (OK)</p>
+                </div>
+                <div className={`h-8 w-px ${isDark ? 'bg-slate-800' : 'bg-slate-200'}`}></div>
+                <div>
+                  <div className="text-3xl font-black font-mono text-rose-500">{leapmotorLostCountRealTime}</div>
+                  <p className={`text-[11px] font-bold mt-0.5 ${isDark ? 'text-rose-400' : 'text-rose-700'}`}>No OK</p>
+                </div>
+              </div>
             </div>
             <div className={`p-3.5 rounded-xl ${isDark ? 'bg-emerald-500/20 text-emerald-400' : 'bg-emerald-50 text-emerald-700 border border-emerald-200'}`}>
               <CheckCircle className="w-5 h-5" />
