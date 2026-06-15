@@ -3266,9 +3266,9 @@ export default function LeadForm({ c10ImgUrl, t03ImgUrl, b10ImgUrl }: LeadFormPr
                         className="text-xs sm:text-sm font-semibold tracking-wide leading-relaxed font-sans max-w-xs mx-auto opacity-90"
                       >
                         {formData.requestType === 'prueba' ? (
-                          `Gracias, ${userName} Tu prueba de manejo ha sido registrada. Te contactará un asesor para confirmarla.`
+                          "Tu prueba de manejo ha sido registrada. Te contactará un asesor para confirmarla."
                         ) : (
-                          `Gracias ${userName} , Tu cotización ha sido solicitada. Serás contactado por un asesor.`
+                          "Tu cotización ha sido solicitada. Serás contactado por un asesor."
                         )}
                       </p>
                     </div>
@@ -3420,7 +3420,7 @@ export default function LeadForm({ c10ImgUrl, t03ImgUrl, b10ImgUrl }: LeadFormPr
                             <div className={`font-bold block uppercase mb-1 flex items-center gap-1 ${isThemeLight ? 'text-indigo-600' : 'text-indigo-400'}`}>
                               <Key className="w-3.5 h-3.5" /> TEST DRIVE RESERVADO OK
                             </div>
-                            <span>Gracias por agendar tu prueba de manejo, a la brevedad un asesor te contactará para confirmar tu cita.</span>
+                            <span>Tu prueba de manejo ha sido agendada con éxito. A la brevedad un asesor te contactará para confirmar tu cita.</span>
                           </div>
                         ) : (
                           <p 
