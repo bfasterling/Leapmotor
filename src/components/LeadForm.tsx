@@ -482,6 +482,20 @@ export default function LeadForm({ c10ImgUrl, t03ImgUrl, b10ImgUrl }: LeadFormPr
   );
 
   const advisorAvailableStates = Array.from(new Set(ALL_DEALERS.map(d => d.state))).sort();
+  const [aztlanDistributors, setAztlanDistributors] = useState<any[]>([]);
+  const [loadingAztlanDistributors, setLoadingAztlanDistributors] = useState(false);
+
+
+  const handleAztlanDealerChange = (value: string) => {
+    setLoginDistribuidor(value);
+    const matched = aztlanDistributors.find(d => d.name === value);
+    if (matched && (matched.estado || matched.state)) {
+      setLoginEstado(matched.estado || matched.state);
+    } else {
+      setLoginEstado('CIUDAD DE MÉXICO');
+    }
+  };
+
   const advisorAvailableDistributors = ALL_DEALERS
     .filter(d => d.state === loginEstado)
     .filter((d, idx, arr) => arr.findIndex(x => x.name === d.name) === idx)
@@ -529,7 +543,32 @@ export default function LeadForm({ c10ImgUrl, t03ImgUrl, b10ImgUrl }: LeadFormPr
     setLoginDistribuidor('');
 
     if (typeof window !== 'undefined') {
-      window.location.href = window.location.origin + window.location.pathname + '?asesor=true';
+      const searchParams = new URLSearchParams(window.location.search);
+      const paramsToKeep = ['landing', 'campaign', 'site', 'utm_source', 'utm_medium', 'utm_campaign', 'slug'];
+      const newParams = new URLSearchParams();
+      
+      searchParams.forEach((val, key) => {
+        if (
+          paramsToKeep.includes(key) || 
+          key.toLowerCase().includes('aztlan') || 
+          val.toLowerCase().includes('aztlan')
+        ) {
+          newParams.set(key, val);
+        }
+      });
+      
+      // Safety fallbacks to ensure we preserve the aztlan multimarca layout/domain context on landing redirects
+      const hasAztlanContext = Array.from(newParams.keys()).some(
+        k => k.toLowerCase().includes('aztlan') || (newParams.get(k) || '').toLowerCase().includes('aztlan')
+      );
+      if (!hasAztlanContext) {
+        newParams.set('landing', 'aztlan');
+      }
+
+      // Explicitly secure the asesor mode trigger param
+      newParams.set('asesor', 'true');
+
+      window.location.href = window.location.origin + window.location.pathname + '?' + newParams.toString();
     }
   };
 
@@ -561,6 +600,76 @@ export default function LeadForm({ c10ImgUrl, t03ImgUrl, b10ImgUrl }: LeadFormPr
     }
     return 'leapmotor';
   });
+
+  useEffect(() => {
+    let active = true;
+    const fetchAztlan = async () => {
+      setLoadingAztlanDistributors(true);
+      try {
+        console.log(`[Firebase Aztlan] Querying Aztlan distributors from Firestore 'aztlan_distributors' collection...`);
+        let snap = await getDocs(collection(db, 'aztlan_distributors'));
+        if (!active) return;
+
+        // Auto-seed Aztlan distributors if database collection is empty
+        if (snap.size === 0) {
+          console.warn(`[Firebase Aztlan] 'aztlan_distributors' collection was found empty. Auto-seeding default list...`);
+          const defaultList = [
+            { claveCorporativo: '01M1050', name: '01M1050 Kasa Naucalpan', estado: 'ESTADO DE MÉXICO' },
+            { claveCorporativo: '01M7680', name: '01M7680 BC Desértica Motors (La Villa)', estado: 'CIUDAD DE MÉXICO' },
+            { claveCorporativo: '01M7830', name: '01M7830 BC Desértica Motors (Anzures)', estado: 'CIUDAD DE MÉXICO' },
+            { claveCorporativo: '01M7840', name: '01M7840 Euro Surman (Santa Fe)', estado: 'CIUDAD DE MÉXICO' },
+            { claveCorporativo: '01M7060', name: '01M7060 Automundo', estado: 'CIUDAD DE MÉXICO' },
+            { claveCorporativo: '01M7070', name: '01M7070 Interlomas Mundo Automotriz', estado: 'ESTADO DE MÉXICO' },
+            { claveCorporativo: '01M7520', name: '01M7520 Automotores de México', estado: 'CIUDAD DE MÉXICO' }
+          ];
+
+          const batch = writeBatch(db);
+          defaultList.forEach(d => {
+            const docRef = doc(db, 'aztlan_distributors', d.claveCorporativo);
+            batch.set(docRef, {
+              claveCorporativo: d.claveCorporativo,
+              name: d.name,
+              estado: d.estado,
+              createdAt: new Date()
+            }, { merge: true });
+          });
+          await batch.commit();
+          console.log(`[Firebase Aztlan] Seeding completed.`);
+          
+          snap = await getDocs(collection(db, 'aztlan_distributors'));
+        }
+
+        const list: any[] = [];
+        snap.forEach(docSnap => {
+          list.push({ id: docSnap.id, ...docSnap.data() });
+        });
+
+        list.sort((a, b) => (a.name || '').localeCompare(b.name || ''));
+        console.log(`[Firebase Aztlan] Loaded ${list.length} distributors for Aztlan campaigns.`);
+        setAztlanDistributors(list);
+
+      } catch (err) {
+        console.warn("[Firebase Aztlan] Error loading Aztlan distributors, falling back to local presets:", err);
+        const fallbackList = [
+          { claveCorporativo: '01M1050', name: '01M1050 Kasa Naucalpan', estado: 'ESTADO DE MÉXICO' },
+          { claveCorporativo: '01M7680', name: '01M7680 BC Desértica Motors (La Villa)', estado: 'CIUDAD DE MÉXICO' },
+          { claveCorporativo: '01M7830', name: '01M7830 BC Desértica Motors (Anzures)', estado: 'CIUDAD DE MÉXICO' },
+          { claveCorporativo: '01M7840', name: '01M7840 Euro Surman (Santa Fe)', estado: 'CIUDAD DE MÉXICO' },
+          { claveCorporativo: '01M7060', name: '01M7060 Automundo', estado: 'CIUDAD DE MÉXICO' },
+          { claveCorporativo: '01M7070', name: '01M7070 Interlomas Mundo Automotriz', estado: 'ESTADO DE MÉXICO' },
+          { claveCorporativo: '01M7520', name: '01M7520 Automotores de México', estado: 'CIUDAD DE MÉXICO' }
+        ];
+        if (active) {
+          setAztlanDistributors(fallbackList);
+        }
+      } finally {
+        if (active) setLoadingAztlanDistributors(false);
+      }
+    };
+
+    fetchAztlan();
+    return () => { active = false; };
+  }, []);
   
   // Multimarca active brand
   const [selectedBrand, setSelectedBrand] = useState<string>(() => {
@@ -1134,6 +1243,15 @@ export default function LeadForm({ c10ImgUrl, t03ImgUrl, b10ImgUrl }: LeadFormPr
 
   // Update selected state automatically based on landing selection or brand selection
   useEffect(() => {
+    if (advisorSignedIn && advisorState && advisorDistributor) {
+      setFormData(prev => ({
+        ...prev,
+        state: advisorState,
+        distributor: advisorDistributor
+      }));
+      return;
+    }
+
     if (activeLanding === 'leapmotor' && formData.requestType !== 'cotizacion') {
       setFormData(prev => ({
         ...prev,
@@ -1161,6 +1279,26 @@ export default function LeadForm({ c10ImgUrl, t03ImgUrl, b10ImgUrl }: LeadFormPr
   // Query database dynamically for distributors matching the selected brand + selected state
   useEffect(() => {
     const activeBrandKey = activeLanding === 'jeep' ? 'JEEP' : selectedBrand.toUpperCase();
+
+    if (advisorSignedIn && advisorDistributor && advisorState) {
+      setDbDistributors([{
+        name: advisorDistributor,
+        estado: advisorState.toUpperCase(),
+        marca: activeBrandKey,
+        claveCorporativo: advisorDistributor.split(' ')[0],
+        disId: 'advisor-locked'
+      }]);
+      if (formData.state !== advisorState || formData.distributor !== advisorDistributor) {
+        setFormData(prev => ({
+          ...prev,
+          state: advisorState,
+          distributor: advisorDistributor
+        }));
+      }
+      setLoadingDbDistributors(false);
+      return;
+    }
+
     const currentState = formData.state?.trim().toUpperCase();
 
     if (!currentState) {
@@ -1511,16 +1649,38 @@ export default function LeadForm({ c10ImgUrl, t03ImgUrl, b10ImgUrl }: LeadFormPr
       let disId = '';
       let leadClaveCorporativo = '';
       if (chosenDistName && chosenDistName !== 'Sin Asignar (Sincronizando con Asesor)') {
+        const codeToken = chosenDistName.split(' ')[0];
+        const isCodeToken = /01M\d+/.test(codeToken);
+
         // Find inside allDbDistributors (which contains ALL distributors from the DB unfiltered)
-        const matchedDb = allDbDistributors?.find(d => d.name === chosenDistName) || dbDistributors?.find(d => d.name === chosenDistName);
+        const matchedDb = allDbDistributors?.find(d => 
+          d.name === chosenDistName || 
+          (isCodeToken && (d.claveCorporativo === codeToken || d.clavecorporativo === codeToken))
+        ) || dbDistributors?.find(d => 
+          d.name === chosenDistName || 
+          (isCodeToken && (d.claveCorporativo === codeToken || d.clavecorporativo === codeToken))
+        );
+
         if (matchedDb) {
           disId = matchedDb.disId || matchedDb.id || '';
-          leadClaveCorporativo = matchedDb.claveCorporativo || '';
+          leadClaveCorporativo = matchedDb.claveCorporativo || matchedDb.clavecorporativo || '';
         } else {
-          const matchedLocal = ALL_DEALERS.find(d => d.name === chosenDistName);
+          const matchedLocal = ALL_DEALERS.find(d => 
+            d.name === chosenDistName || 
+            (isCodeToken && d.corpKey === codeToken)
+          );
           if (matchedLocal) {
             disId = matchedLocal.id || '';
             leadClaveCorporativo = matchedLocal.corpKey || '';
+          }
+        }
+
+        // Double check if we got a code token but still missing key or disId
+        if (isCodeToken) {
+          if (!leadClaveCorporativo) leadClaveCorporativo = codeToken;
+          if (!disId) {
+            const localDealer = ALL_DEALERS.find(d => d.corpKey === codeToken);
+            if (localDealer) disId = localDealer.id || '';
           }
         }
       }
@@ -1610,6 +1770,9 @@ export default function LeadForm({ c10ImgUrl, t03ImgUrl, b10ImgUrl }: LeadFormPr
 
   // Get list of states from activeDealers
   let availableStates = Array.from(new Set(activeDealers.map(d => d.state))).sort();
+  if (advisorSignedIn && advisorState) {
+    availableStates = [advisorState];
+  }
 
   // Get dealers in the currently selected state, fully deduplicated by name to prevent duplication, and sorted alphabetically
   const stateDealers = activeDealers.filter(d => d.state === formData.state);
@@ -1795,42 +1958,60 @@ export default function LeadForm({ c10ImgUrl, t03ImgUrl, b10ImgUrl }: LeadFormPr
                   />
                 </div>
 
-                <div className="space-y-1 bg-slate-50 p-2.5 rounded-xl border border-[#002A64]/40 focus-within:border-[#002A64] focus-within:ring-2 focus-within:ring-[#002A64]/10 transition-all text-left">
-                  <label className="text-[10px] uppercase font-mono tracking-wider text-[#002A64] font-bold block">
-                    Estado *
-                  </label>
-                  <select
-                    required
-                    value={loginEstado}
-                    onChange={(e) => {
-                      setLoginEstado(e.target.value);
-                      setLoginDistribuidor('');
-                    }}
-                    className="w-full bg-white text-xs text-slate-900 font-mono font-bold outline-none pt-0.5 border-none p-0 focus:ring-0 uppercase cursor-pointer"
-                  >
-                    <option value="" className="text-slate-500">Selecciona Estado</option>
-                    {advisorAvailableStates.map(st => (
-                      <option key={st} value={st} className="text-slate-900 bg-white">{st}</option>
-                    ))}
-                  </select>
-                </div>
+                {!(isAztlanDomain && activeLanding === 'multimarca') && (
+                  <div className="space-y-1 bg-slate-50 p-2.5 rounded-xl border border-[#002A64]/40 focus-within:border-[#002A64] focus-within:ring-2 focus-within:ring-[#002A64]/10 transition-all text-left">
+                    <label className="text-[10px] uppercase font-mono tracking-wider text-[#002A64] font-bold block">
+                      Estado *
+                    </label>
+                    <select
+                      required
+                      value={loginEstado}
+                      onChange={(e) => {
+                        setLoginEstado(e.target.value);
+                        setLoginDistribuidor('');
+                      }}
+                      className="w-full bg-white text-xs text-slate-900 font-mono font-bold outline-none pt-0.5 border-none p-0 focus:ring-0 uppercase cursor-pointer"
+                    >
+                      <option value="" className="text-slate-500">Selecciona Estado</option>
+                      {advisorAvailableStates.map(st => (
+                        <option key={st} value={st} className="text-slate-900 bg-white">{st}</option>
+                      ))}
+                    </select>
+                  </div>
+                )}
 
                 <div className="space-y-1 bg-slate-50 p-2.5 rounded-xl border border-[#002A64]/40 focus-within:border-[#002A64] focus-within:ring-2 focus-within:ring-[#002A64]/10 transition-all text-left">
                   <label className="text-[10px] uppercase font-mono tracking-wider text-[#002A64] font-bold block">
                     Distribuidor *
                   </label>
-                  <select
-                    required
-                    disabled={!loginEstado}
-                    value={loginDistribuidor}
-                    onChange={(e) => setLoginDistribuidor(e.target.value)}
-                    className="w-full bg-white text-xs text-slate-900 font-mono font-bold outline-none pt-0.5 border-none p-0 focus:ring-0 uppercase cursor-pointer disabled:opacity-50"
-                  >
-                    <option value="" className="text-slate-500">{loginEstado ? 'Selecciona Distribuidor' : 'Primero selecciona un Estado'}</option>
-                    {advisorAvailableDistributors.map(d => (
-                      <option key={d.id} value={d.name} className="text-slate-900 bg-white">{d.name}</option>
-                    ))}
-                  </select>
+                  {isAztlanDomain && activeLanding === 'multimarca' ? (
+                    <select
+                      required
+                      value={loginDistribuidor}
+                      onChange={(e) => handleAztlanDealerChange(e.target.value)}
+                      className="w-full bg-white text-xs text-slate-900 font-mono font-bold outline-none pt-0.5 border-none p-0 focus:ring-0 uppercase cursor-pointer"
+                    >
+                      <option value="" className="text-slate-500">Selecciona Distribuidor</option>
+                      {aztlanDistributors.map(d => (
+                        <option key={d.claveCorporativo || d.id} value={d.name} className="text-slate-900 bg-white">
+                          {d.name}
+                        </option>
+                      ))}
+                    </select>
+                  ) : (
+                    <select
+                      required
+                      disabled={!loginEstado}
+                      value={loginDistribuidor}
+                      onChange={(e) => setLoginDistribuidor(e.target.value)}
+                      className="w-full bg-white text-xs text-slate-900 font-mono font-bold outline-none pt-0.5 border-none p-0 focus:ring-0 uppercase cursor-pointer disabled:opacity-50"
+                    >
+                      <option value="" className="text-slate-500">{loginEstado ? 'Selecciona Distribuidor' : 'Primero selecciona un Estado'}</option>
+                      {advisorAvailableDistributors.map(d => (
+                        <option key={d.id} value={d.name} className="text-slate-900 bg-white">{d.name}</option>
+                      ))}
+                    </select>
+                  )}
                 </div>
 
                 <button
@@ -2911,7 +3092,7 @@ export default function LeadForm({ c10ImgUrl, t03ImgUrl, b10ImgUrl }: LeadFormPr
                       {/* Estado selector */}
                       <div className={rowClass}>
                         <label id="frm-state-label" htmlFor="state" className={labelTextClass}>
-                          Estado *
+                          Estado * {advisorSignedIn && <span className="opacity-80 text-[9px] bg-amber-500/10 border border-amber-500/20 px-1.5 py-0.5 rounded text-amber-500 font-bold uppercase tracking-wider ml-1">(fijo - modo asesor)</span>}
                         </label>
                         <div className="relative">
                           <MapPin className={`absolute left-3.5 top-3.5 w-4 h-4 pointer-events-none z-10 ${isFiatPage ? 'text-[#EE395E]' : isPeugeotPage ? 'text-[#0074E8]' : isLeapmotorPage ? 'text-slate-950' : (isLightBg || isJeepPage ? 'text-slate-500' : (isRamPage || isDodgePage ? 'text-white' : 'text-slate-300'))}`} />
@@ -2919,6 +3100,7 @@ export default function LeadForm({ c10ImgUrl, t03ImgUrl, b10ImgUrl }: LeadFormPr
                             id="state"
                             name="state"
                             required
+                            disabled={advisorSignedIn}
                             value={formData.state}
                             onChange={(e) => {
                               const stateValue = e.target.value;
@@ -2928,7 +3110,7 @@ export default function LeadForm({ c10ImgUrl, t03ImgUrl, b10ImgUrl }: LeadFormPr
                               }));
                             }}
                             style={isFiatPage ? { backgroundColor: '#FFFFFF', color: '#EE395E', borderColor: '#EE395E' } : isPeugeotPage ? { backgroundColor: '#0074E8', color: '#ffffff', borderColor: '#0074E8' } : (isRamPage ? { backgroundColor: '#DD4E3C', color: '#ffffff', borderColor: '#DD4E3C' } : (isDodgePage ? { backgroundColor: '#D50000', color: '#ffffff', borderColor: '#D50000' } : (isLeapmotorPage ? { backgroundColor: '#DEFF01', color: '#000000', borderColor: '#DEFF01' } : undefined)))}
-                            className={`w-full rounded-xl pl-11 pr-7 py-2.5 text-base md:text-sm outline-none appearance-none transition uppercase ${activeLanding === 'leapmotor' || isLeapmotorPage ? 'font-sans font-bold text-slate-950 bg-[#DEFF01]' : 'font-mono'} ${
+                            className={`w-full rounded-xl pl-11 pr-7 py-2.5 text-base md:text-sm outline-none appearance-none transition uppercase disabled:opacity-80 disabled:cursor-not-allowed ${activeLanding === 'leapmotor' || isLeapmotorPage ? 'font-sans font-bold text-slate-950 bg-[#DEFF01]' : 'font-mono'} ${
                               isFiatPage
                                 ? 'bg-white border border-[#EE395E] text-[#EE395E] focus:border-[#EE395E] font-black'
                                 : isPeugeotPage
@@ -2961,7 +3143,7 @@ export default function LeadForm({ c10ImgUrl, t03ImgUrl, b10ImgUrl }: LeadFormPr
                       {/* Distribuidor de Preferencia selector */}
                       <div className={rowClass}>
                         <label id="frm-distributor-label" htmlFor="distributor" className={labelTextClass}>
-                          {activeLanding === 'multimarca' ? 'Distribuidor *' : 'Distribuidor de Preferencia *'} {loadingDbDistributors && <span className="text-emerald-400 font-bold animate-pulse text-[9px] lowercase">(consultando BD...)</span>}
+                          {activeLanding === 'multimarca' ? 'Distribuidor *' : 'Distribuidor de Preferencia *'} {loadingDbDistributors && <span className="text-emerald-400 font-bold animate-pulse text-[9px] lowercase">(consultando BD...)</span>} {advisorSignedIn && <span className="opacity-80 text-[9px] bg-amber-500/10 border border-amber-500/20 px-1.5 py-0.5 rounded text-amber-500 font-bold uppercase tracking-wider ml-1">(fijo - modo asesor)</span>}
                         </label>
                         <div className="relative">
                           <Settings className={`absolute left-3.5 top-3.5 w-4 h-4 pointer-events-none z-10 ${isFiatPage ? 'text-[#EE395E]' : isPeugeotPage ? 'text-[#0074E8]' : isLeapmotorPage ? 'text-slate-950' : (isLightBg || isJeepPage ? 'text-slate-500' : (isRamPage || isDodgePage ? 'text-white' : 'text-slate-300'))}`} />
@@ -2969,13 +3151,14 @@ export default function LeadForm({ c10ImgUrl, t03ImgUrl, b10ImgUrl }: LeadFormPr
                             id="distributor"
                             name="distributor"
                             required
+                            disabled={advisorSignedIn}
                             value={formData.distributor}
                             onChange={(e) => {
                               const dealerValue = e.target.value;
                               setFormData(prev => ({ ...prev, distributor: dealerValue }));
                             }}
                             style={isFiatPage ? { backgroundColor: '#FFFFFF', color: '#EE395E', borderColor: '#EE395E' } : isPeugeotPage ? { backgroundColor: '#0074E8', color: '#ffffff', borderColor: '#0074E8' } : (isRamPage ? { backgroundColor: '#DD4E3C', color: '#ffffff', borderColor: '#DD4E3C' } : (isDodgePage ? { backgroundColor: '#D50000', color: '#ffffff', borderColor: '#D50000' } : (isLeapmotorPage ? { backgroundColor: '#DEFF01', color: '#000000', borderColor: '#DEFF01' } : undefined)))}
-                            className={`w-full rounded-xl pl-11 pr-7 py-2.5 text-base md:text-sm outline-none appearance-none transition uppercase ${activeLanding === 'leapmotor' || isLeapmotorPage ? 'font-sans font-bold text-slate-950 bg-[#DEFF01]' : 'font-mono'} ${
+                            className={`w-full rounded-xl pl-11 pr-7 py-2.5 text-base md:text-sm outline-none appearance-none transition uppercase disabled:opacity-80 disabled:cursor-not-allowed ${activeLanding === 'leapmotor' || isLeapmotorPage ? 'font-sans font-bold text-slate-950 bg-[#DEFF01]' : 'font-mono'} ${
                               isFiatPage
                                 ? 'bg-white border border-[#EE395E] text-[#EE395E] focus:border-[#EE395E] font-black'
                                 : isPeugeotPage

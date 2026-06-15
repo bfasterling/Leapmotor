@@ -162,6 +162,26 @@
         }
       },
       "required": ["marca", "claveCorporativo", "disId", "estado", "name"]
+    },
+    "AztlanDistributor": {
+      "title": "AztlanDistributor",
+      "description": "Un registro de distribuidor participante para el programa de Aztlan",
+      "type": "object",
+      "properties": {
+        "claveCorporativo": {
+          "type": "string",
+          "description": "Clave única corporativa"
+        },
+        "name": {
+          "type": "string",
+          "description": "Nombre comercial del distribuidor para Aztlan"
+        },
+        "estado": {
+          "type": "string",
+          "description": "Estado de la república mexicana"
+        }
+      },
+      "required": ["claveCorporativo", "name", "estado"]
     }
   },
   "firestore": {
@@ -176,6 +196,10 @@
     "distributors": {
       "schema": "Distributor",
       "description": "Coleccion de distribuidores de las marcas oficiales para asignar leads"
+    },
+    "aztlan_distributors": {
+      "schema": "AztlanDistributor",
+      "description": "Coleccion de distribuidores de Stellantis para el programa Aztlan"
     }
   }
 }

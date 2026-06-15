@@ -12,6 +12,11 @@ service cloud.firestore {
       allow read, write: if true;
     }
 
+    // Aztlan Distributors Collection: Fully readable and writable by anyone
+    match /aztlan_distributors/{distId} {
+      allow read, write: if true;
+    }
+
     // Advisors Collection: Fully readable and writable to manage sales credentials and active distributors
     match /advisors/{advisorId} {
       allow read, write: if true;
