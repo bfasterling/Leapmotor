@@ -135,6 +135,11 @@ async function runLeadSync() {
         // Resolve dynamic origin based on user guidelines
         let origVal = "LANDING";
         const lLanding = lead.landing ? lead.landing.toLowerCase() : "";
+        const isAztlan = 
+          lLanding === 'aztlan' ||
+          (lead.utm_source && lead.utm_source.toLowerCase().includes('aztlan')) ||
+          (lead.landing && lead.landing.toLowerCase().includes('aztlan'));
+
         const isSoccerhouse = 
           (lead.utm_source && (
             lead.utm_source.toLowerCase().includes('soccer') || 
@@ -149,7 +154,9 @@ async function runLeadSync() {
             lead.selectedBrand.toLowerCase().includes('socer')
           ));
 
-        if (isSoccerhouse) {
+        if (isAztlan) {
+          origVal = lead.requestType === 'prueba' ? "FUTLPM" : "FUTLCO";
+        } else if (isSoccerhouse) {
           origVal = lead.requestType === 'prueba' ? "SHMLPM" : "SHML";
         } else if (lLanding === 'jeep') {
           origVal = lead.requestType === 'prueba' ? "CMCHPM" : "CMCH";
@@ -308,6 +315,11 @@ async function runLeadSync() {
         // Resolve dynamic origin based on user instructions
         let origVal = "LANDING";
         const lLanding = lead.landing ? lead.landing.toLowerCase() : "";
+        const isAztlan = 
+          lLanding === 'aztlan' ||
+          (lead.utm_source && lead.utm_source.toLowerCase().includes('aztlan')) ||
+          (lead.landing && lead.landing.toLowerCase().includes('aztlan'));
+
         const isSoccerhouse = 
           (lead.utm_source && (
             lead.utm_source.toLowerCase().includes('soccer') || 
@@ -322,7 +334,9 @@ async function runLeadSync() {
             lead.selectedBrand.toLowerCase().includes('socer')
           ));
 
-        if (isSoccerhouse) {
+        if (isAztlan) {
+          origVal = lead.requestType === 'prueba' ? "FUTLPM" : "FUTLCO";
+        } else if (isSoccerhouse) {
           origVal = lead.requestType === 'prueba' ? "SHMLPM" : "SHML";
         } else if (lLanding === 'jeep') {
           origVal = lead.requestType === 'prueba' ? "CMCHPM" : "CMCH";
