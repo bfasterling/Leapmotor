@@ -611,7 +611,7 @@ export default function LeadForm({ c10ImgUrl, t03ImgUrl, b10ImgUrl }: LeadFormPr
         if (!active) return;
 
         const defaultList = [
-          { claveCorporativo: '01M1050', name: '01M1050 Kasa Naucalpan', estado: 'ESTADO DE MÉXICO', claveleapmotor: '' },
+          { claveCorporativo: '01M1050', name: '01M1050 Kasa Naucalpan', estado: 'ESTADO DE MÉXICO', claveleapmotor: '01L5360' },
           { claveCorporativo: '01M7680', name: '01M7680 BC Desértica Motors (La Villa)', estado: 'CIUDAD DE MÉXICO', claveleapmotor: '' },
           { claveCorporativo: '01M7830', name: '01M7830 BC Desértica Motors (Anzures)', estado: 'CIUDAD DE MÉXICO', claveleapmotor: '' },
           { claveCorporativo: '01M7840', name: '01M7840 Euro Surman (Santa Fe)', estado: 'CIUDAD DE MÉXICO', claveleapmotor: '' },
@@ -662,7 +662,7 @@ export default function LeadForm({ c10ImgUrl, t03ImgUrl, b10ImgUrl }: LeadFormPr
           { claveCorporativo: '01M7680', name: '01M7680 BC Desértica Motors (La Villa)', estado: 'CIUDAD DE MÉXICO', claveleapmotor: '' },
           { claveCorporativo: '01M7830', name: '01M7830 BC Desértica Motors (Anzures)', estado: 'CIUDAD DE MÉXICO', claveleapmotor: '' },
           { claveCorporativo: '01M7840', name: '01M7840 Euro Surman (Santa Fe)', estado: 'CIUDAD DE MÉXICO', claveleapmotor: '' },
-          { claveCorporativo: '01M7060', name: '01M7060 Automundo', estado: 'CIUDAD DE MÉXICO', claveleapmotor: '' },
+          { claveCorporativo: '01M7060', name: '01M7060 Automundo', estado: 'CIUDAD DE MÉXICO', claveleapmotor: '01L5180' },
           { claveCorporativo: '01M7070', name: '01M7070 Interlomas Mundo Automotriz', estado: 'ESTADO DE MÉXICO', claveleapmotor: '01L5020' },
           { claveCorporativo: '01M7520', name: '01M7520 Automotores de México', estado: 'CIUDAD DE MÉXICO', claveleapmotor: '' }
         ];
