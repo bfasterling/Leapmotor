@@ -610,19 +610,26 @@ export default function LeadForm({ c10ImgUrl, t03ImgUrl, b10ImgUrl }: LeadFormPr
         let snap = await getDocs(collection(db, 'aztlan_distributors'));
         if (!active) return;
 
-        // Auto-seed Aztlan distributors if database collection is empty
-        if (snap.size === 0) {
-          console.warn(`[Firebase Aztlan] 'aztlan_distributors' collection was found empty. Auto-seeding default list...`);
-          const defaultList = [
-            { claveCorporativo: '01M1050', name: '01M1050 Kasa Naucalpan', estado: 'ESTADO DE MÉXICO' },
-            { claveCorporativo: '01M7680', name: '01M7680 BC Desértica Motors (La Villa)', estado: 'CIUDAD DE MÉXICO' },
-            { claveCorporativo: '01M7830', name: '01M7830 BC Desértica Motors (Anzures)', estado: 'CIUDAD DE MÉXICO' },
-            { claveCorporativo: '01M7840', name: '01M7840 Euro Surman (Santa Fe)', estado: 'CIUDAD DE MÉXICO' },
-            { claveCorporativo: '01M7060', name: '01M7060 Automundo', estado: 'CIUDAD DE MÉXICO' },
-            { claveCorporativo: '01M7070', name: '01M7070 Interlomas Mundo Automotriz', estado: 'ESTADO DE MÉXICO' },
-            { claveCorporativo: '01M7520', name: '01M7520 Automotores de México', estado: 'CIUDAD DE MÉXICO' }
-          ];
+        const defaultList = [
+          { claveCorporativo: '01M1050', name: '01M1050 Kasa Naucalpan', estado: 'ESTADO DE MÉXICO', claveleapmotor: '' },
+          { claveCorporativo: '01M7680', name: '01M7680 BC Desértica Motors (La Villa)', estado: 'CIUDAD DE MÉXICO', claveleapmotor: '' },
+          { claveCorporativo: '01M7830', name: '01M7830 BC Desértica Motors (Anzures)', estado: 'CIUDAD DE MÉXICO', claveleapmotor: '' },
+          { claveCorporativo: '01M7840', name: '01M7840 Euro Surman (Santa Fe)', estado: 'CIUDAD DE MÉXICO', claveleapmotor: '' },
+          { claveCorporativo: '01M7060', name: '01M7060 Automundo', estado: 'CIUDAD DE MÉXICO', claveleapmotor: '01L5180' },
+          { claveCorporativo: '01M7070', name: '01M7070 Interlomas Mundo Automotriz', estado: 'ESTADO DE MÉXICO', claveleapmotor: '01L5020' },
+          { claveCorporativo: '01M7520', name: '01M7520 Automotores de México', estado: 'CIUDAD DE MÉXICO', claveleapmotor: '' }
+        ];
 
+        // Self-heal/update if database does not contain Leapmotor codes
+        const needsUpdate = snap.size === 0 || snap.docs.some(docSnap => {
+          const data = docSnap.data();
+          if (data.claveCorporativo === '01M7060' && data.claveleapmotor !== '01L5180') return true;
+          if (data.claveCorporativo === '01M7070' && data.claveleapmotor !== '01L5020') return true;
+          return !('claveleapmotor' in data);
+        });
+
+        if (needsUpdate) {
+          console.warn(`[Firebase Aztlan] 'aztlan_distributors' collection was empty or outdated. Auto-seeding with LeapMotor mappings...`);
           const batch = writeBatch(db);
           defaultList.forEach(d => {
             const docRef = doc(db, 'aztlan_distributors', d.claveCorporativo);
@@ -630,12 +637,12 @@ export default function LeadForm({ c10ImgUrl, t03ImgUrl, b10ImgUrl }: LeadFormPr
               claveCorporativo: d.claveCorporativo,
               name: d.name,
               estado: d.estado,
+              claveleapmotor: d.claveleapmotor,
               createdAt: new Date()
             }, { merge: true });
           });
           await batch.commit();
           console.log(`[Firebase Aztlan] Seeding completed.`);
-          
           snap = await getDocs(collection(db, 'aztlan_distributors'));
         }
 
@@ -651,13 +658,13 @@ export default function LeadForm({ c10ImgUrl, t03ImgUrl, b10ImgUrl }: LeadFormPr
       } catch (err) {
         console.warn("[Firebase Aztlan] Error loading Aztlan distributors, falling back to local presets:", err);
         const fallbackList = [
-          { claveCorporativo: '01M1050', name: '01M1050 Kasa Naucalpan', estado: 'ESTADO DE MÉXICO' },
-          { claveCorporativo: '01M7680', name: '01M7680 BC Desértica Motors (La Villa)', estado: 'CIUDAD DE MÉXICO' },
-          { claveCorporativo: '01M7830', name: '01M7830 BC Desértica Motors (Anzures)', estado: 'CIUDAD DE MÉXICO' },
-          { claveCorporativo: '01M7840', name: '01M7840 Euro Surman (Santa Fe)', estado: 'CIUDAD DE MÉXICO' },
-          { claveCorporativo: '01M7060', name: '01M7060 Automundo', estado: 'CIUDAD DE MÉXICO' },
-          { claveCorporativo: '01M7070', name: '01M7070 Interlomas Mundo Automotriz', estado: 'ESTADO DE MÉXICO' },
-          { claveCorporativo: '01M7520', name: '01M7520 Automotores de México', estado: 'CIUDAD DE MÉXICO' }
+          { claveCorporativo: '01M1050', name: '01M1050 Kasa Naucalpan', estado: 'ESTADO DE MÉXICO', claveleapmotor: '01L5360' },
+          { claveCorporativo: '01M7680', name: '01M7680 BC Desértica Motors (La Villa)', estado: 'CIUDAD DE MÉXICO', claveleapmotor: '' },
+          { claveCorporativo: '01M7830', name: '01M7830 BC Desértica Motors (Anzures)', estado: 'CIUDAD DE MÉXICO', claveleapmotor: '' },
+          { claveCorporativo: '01M7840', name: '01M7840 Euro Surman (Santa Fe)', estado: 'CIUDAD DE MÉXICO', claveleapmotor: '' },
+          { claveCorporativo: '01M7060', name: '01M7060 Automundo', estado: 'CIUDAD DE MÉXICO', claveleapmotor: '' },
+          { claveCorporativo: '01M7070', name: '01M7070 Interlomas Mundo Automotriz', estado: 'ESTADO DE MÉXICO', claveleapmotor: '01L5020' },
+          { claveCorporativo: '01M7520', name: '01M7520 Automotores de México', estado: 'CIUDAD DE MÉXICO', claveleapmotor: '' }
         ];
         if (active) {
           setAztlanDistributors(fallbackList);
@@ -1315,13 +1322,38 @@ export default function LeadForm({ c10ImgUrl, t03ImgUrl, b10ImgUrl }: LeadFormPr
     }
   }, [activeLanding]);
 
+  const getAdvisorTargetDealer = (brandKey: string) => {
+    if (!advisorSignedIn || !advisorDistributor || !advisorState) return null;
+    if (brandKey === 'LEAPMOTOR') {
+      const matchedAztlan = aztlanDistributors.find(d => d.name === advisorDistributor);
+      if (matchedAztlan && matchedAztlan.claveleapmotor) {
+        const lmDealer = ALL_DEALERS.find(d => d.brand === 'LEAPMOTOR' && d.corpKey === matchedAztlan.claveleapmotor);
+        if (lmDealer) {
+          return {
+            name: lmDealer.name,
+            state: lmDealer.state,
+            corpKey: lmDealer.corpKey
+          };
+        }
+      }
+      return null;
+    }
+    return {
+      name: advisorDistributor,
+      state: advisorState,
+      corpKey: advisorDistributor.split(' ')[0]
+    };
+  };
+
   // Update selected state automatically based on landing selection or brand selection
   useEffect(() => {
-    if (advisorSignedIn && advisorState && advisorDistributor) {
+    const activeBrandKey = activeLanding === 'jeep' ? 'JEEP' : selectedBrand.toUpperCase();
+    const advisorTarget = getAdvisorTargetDealer(activeBrandKey);
+    if (advisorTarget) {
       setFormData(prev => ({
         ...prev,
-        state: advisorState,
-        distributor: advisorDistributor
+        state: advisorTarget.state,
+        distributor: advisorTarget.name
       }));
       return;
     }
@@ -1333,7 +1365,6 @@ export default function LeadForm({ c10ImgUrl, t03ImgUrl, b10ImgUrl }: LeadFormPr
         distributor: 'Leapmotor Santa Fe'
       }));
     } else {
-      const activeBrandKey = activeLanding === 'jeep' ? 'JEEP' : selectedBrand.toUpperCase();
       const brandDealers = ALL_DEALERS.filter(d => d.brand === activeBrandKey);
       
       const availableStates = Array.from(new Set(brandDealers.map(d => d.state))).sort();
@@ -1348,25 +1379,26 @@ export default function LeadForm({ c10ImgUrl, t03ImgUrl, b10ImgUrl }: LeadFormPr
         state: defaultState
       }));
     }
-  }, [activeLanding, selectedBrand]);
+  }, [activeLanding, selectedBrand, aztlanDistributors]);
 
   // Query database dynamically for distributors matching the selected brand + selected state
   useEffect(() => {
     const activeBrandKey = activeLanding === 'jeep' ? 'JEEP' : selectedBrand.toUpperCase();
+    const advisorTarget = getAdvisorTargetDealer(activeBrandKey);
 
-    if (advisorSignedIn && advisorDistributor && advisorState) {
+    if (advisorTarget) {
       setDbDistributors([{
-        name: advisorDistributor,
-        estado: advisorState.toUpperCase(),
+        name: advisorTarget.name,
+        estado: advisorTarget.state.toUpperCase(),
         marca: activeBrandKey,
-        claveCorporativo: advisorDistributor.split(' ')[0],
+        claveCorporativo: advisorTarget.corpKey,
         disId: 'advisor-locked'
       }]);
-      if (formData.state !== advisorState || formData.distributor !== advisorDistributor) {
+      if (formData.state !== advisorTarget.state || formData.distributor !== advisorTarget.name) {
         setFormData(prev => ({
           ...prev,
-          state: advisorState,
-          distributor: advisorDistributor
+          state: advisorTarget.state,
+          distributor: advisorTarget.name
         }));
       }
       setLoadingDbDistributors(false);
@@ -1708,7 +1740,10 @@ export default function LeadForm({ c10ImgUrl, t03ImgUrl, b10ImgUrl }: LeadFormPr
       );
       const modelClaveGen = matchedModel ? matchedModel.claveGen : '';
 
-      let chosenDistName = advisorSignedIn ? advisorDistributor : (
+      const submitBrandKey = activeLanding === 'jeep' ? 'JEEP' : selectedBrand.toUpperCase();
+      const submitAdvisorTarget = getAdvisorTargetDealer(submitBrandKey);
+
+      let chosenDistName = (advisorSignedIn && submitAdvisorTarget) ? submitAdvisorTarget.name : (
         activeLanding === 'leapmotor' && formData.requestType !== 'cotizacion' && formData.requestType !== 'prueba'
           ? 'Sin Asignar (Sincronizando con Asesor)' 
           : formData.distributor
@@ -1724,7 +1759,7 @@ export default function LeadForm({ c10ImgUrl, t03ImgUrl, b10ImgUrl }: LeadFormPr
       let leadClaveCorporativo = '';
       if (chosenDistName && chosenDistName !== 'Sin Asignar (Sincronizando con Asesor)') {
         const codeToken = chosenDistName.split(' ')[0];
-        const isCodeToken = /01M\d+/.test(codeToken);
+        const isCodeToken = /01[ML]\d+/.test(codeToken);
 
         // Find inside allDbDistributors (which contains ALL distributors from the DB unfiltered)
         const matchedDb = allDbDistributors?.find(d => 
@@ -1836,6 +1871,8 @@ export default function LeadForm({ c10ImgUrl, t03ImgUrl, b10ImgUrl }: LeadFormPr
 
   // Get active brand based on landing or selection
   const activeBrandKey = activeLanding === 'jeep' ? 'JEEP' : selectedBrand.toUpperCase();
+
+  const hasAdvisorTarget = !!getAdvisorTargetDealer(activeBrandKey);
   
   // Filter dealers. Fallback to JEEP if activeBrandKey is empty or not found
   const activeDealers = ALL_DEALERS.filter(d => d.brand === activeBrandKey).length > 0
@@ -1844,7 +1881,7 @@ export default function LeadForm({ c10ImgUrl, t03ImgUrl, b10ImgUrl }: LeadFormPr
 
   // Get list of states from activeDealers
   let availableStates = Array.from(new Set(activeDealers.map(d => d.state))).sort();
-  if (advisorSignedIn && advisorState) {
+  if (advisorSignedIn && advisorState && hasAdvisorTarget) {
     availableStates = [advisorState];
   }
 
@@ -2695,71 +2732,73 @@ export default function LeadForm({ c10ImgUrl, t03ImgUrl, b10ImgUrl }: LeadFormPr
                             </button>
 
                             {/* PRUEBA DE MANEJO */}
-                            <button
-                              id={`prueba-button-${selectedSubBrand?.toLowerCase()}`}
-                              onClick={() => launchFormWithRequest('prueba', BRAND_MODELS[selectedSubBrand]?.[0])}
-                              style={
-                                selectedSubBrand === 'Jeep'
-                                  ? { backgroundColor: '#487f70' }
-                                  : selectedSubBrand === 'Dodge'
-                                    ? { backgroundColor: '#DD4E3C' }
-                                    : selectedSubBrand === 'Ram'
-                                      ? { backgroundColor: '#DD4E3C' }
-                                      : selectedSubBrand === 'Fiat'
-                                        ? { backgroundColor: '#FFFFFF' }
-                                        : selectedSubBrand === 'Peugeot'
-                                          ? { backgroundColor: '#0074E8' }
-                                        : selectedSubBrand === 'Leapmotor'
-                                          ? { backgroundColor: '#DEFF01' }
-                                          : undefined
-                              }
-                              className={`group w-full p-4 rounded-2xl border flex items-center gap-4 text-left transition-all duration-300 shadow-md transform active:scale-[0.99] ${
-                                selectedSubBrand === 'Jeep'
-                                  ? 'border-[#487f70]/20 hover:opacity-95 hover:shadow-lg hover:shadow-[#487f70]/15'
-                                  : selectedSubBrand === 'Dodge'
-                                    ? 'border-[#DD4E3C]/20 hover:opacity-95 hover:shadow-lg'
-                                    : selectedSubBrand === 'Ram'
-                                      ? 'border-[#DD4E3C]/20 hover:opacity-95 hover:shadow-lg'
-                                      : selectedSubBrand === 'Fiat'
-                                        ? 'border-[#EE395E]/10 hover:shadow-lg font-bold'
-                                        : selectedSubBrand === 'Peugeot'
-                                          ? 'border-[#0074E8]/20 hover:opacity-95 hover:shadow-lg text-white font-bold'
-                                        : selectedSubBrand === 'Leapmotor'
-                                          ? 'border-[#DEFF01]/25 hover:opacity-95 hover:shadow-lg text-slate-950 font-bold'
-                                          : 'bg-[#1b1c1e]/60 hover:bg-[#25272a]/75 border-white/5 hover:border-white/15'
-                              }`}
-                            >
-                              {/* White/Silver outlined badge for Calendar */}
-                              <div 
+                            {selectedSubBrand !== 'Leapmotor' && (
+                              <button
+                                id={`prueba-button-${selectedSubBrand?.toLowerCase()}`}
+                                onClick={() => launchFormWithRequest('prueba', BRAND_MODELS[selectedSubBrand]?.[0])}
                                 style={
-                                  selectedSubBrand === 'Dodge' 
-                                    ? { backgroundColor: '#DD4E3C', borderColor: '#ffffff' } 
-                                    : selectedSubBrand === 'Ram' 
-                                      ? { backgroundColor: '#DD4E3C', borderColor: 'rgba(255, 255, 255, 0.4)' } 
-                                      : selectedSubBrand === 'Fiat'
-                                        ? { borderColor: '#EE395E', backgroundColor: 'rgba(238, 57, 94, 0.08)' }
-                                        : selectedSubBrand === 'Peugeot'
-                                          ? { borderColor: 'rgba(255, 255, 255, 0.35)', backgroundColor: 'rgba(255, 255, 255, 0.12)' }
-                                        : selectedSubBrand === 'Leapmotor'
-                                          ? { borderColor: 'rgba(0, 0, 0, 0.25)', backgroundColor: 'rgba(0, 0, 0, 0.08)' }
-                                          : undefined
+                                  selectedSubBrand === 'Jeep'
+                                    ? { backgroundColor: '#487f70' }
+                                    : selectedSubBrand === 'Dodge'
+                                      ? { backgroundColor: '#DD4E3C' }
+                                      : selectedSubBrand === 'Ram'
+                                        ? { backgroundColor: '#DD4E3C' }
+                                        : selectedSubBrand === 'Fiat'
+                                          ? { backgroundColor: '#FFFFFF' }
+                                          : selectedSubBrand === 'Peugeot'
+                                            ? { backgroundColor: '#0074E8' }
+                                          : selectedSubBrand === 'Leapmotor'
+                                            ? { backgroundColor: '#DEFF01' }
+                                            : undefined
                                 }
-                                className="w-11 h-11 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center shrink-0 transition-colors duration-300 group-hover:bg-white/10"
+                                className={`group w-full p-4 rounded-2xl border flex items-center gap-4 text-left transition-all duration-300 shadow-md transform active:scale-[0.99] ${
+                                  selectedSubBrand === 'Jeep'
+                                    ? 'border-[#487f70]/20 hover:opacity-95 hover:shadow-lg hover:shadow-[#487f70]/15'
+                                    : selectedSubBrand === 'Dodge'
+                                      ? 'border-[#DD4E3C]/20 hover:opacity-95 hover:shadow-lg'
+                                      : selectedSubBrand === 'Ram'
+                                        ? 'border-[#DD4E3C]/20 hover:opacity-95 hover:shadow-lg'
+                                        : selectedSubBrand === 'Fiat'
+                                          ? 'border-[#EE395E]/10 hover:shadow-lg font-bold'
+                                          : selectedSubBrand === 'Peugeot'
+                                            ? 'border-[#0074E8]/20 hover:opacity-95 hover:shadow-lg text-white font-bold'
+                                          : selectedSubBrand === 'Leapmotor'
+                                            ? 'border-[#DEFF01]/25 hover:opacity-95 hover:shadow-lg text-slate-950 font-bold'
+                                            : 'bg-[#1b1c1e]/60 hover:bg-[#25272a]/75 border-white/5 hover:border-white/15'
+                                }`}
                               >
-                                <Calendar className={`w-5 h-5 ${selectedSubBrand === 'Fiat' ? 'text-[#EE395E]' : selectedSubBrand === 'Leapmotor' ? 'text-slate-950' : 'text-white'} animate-pulse-slow`} />
-                              </div>
-                              
-                              <div className="flex flex-col">
-                                <span className={`font-bold text-xs sm:text-sm tracking-wider uppercase font-encode ${selectedSubBrand === 'Fiat' ? 'text-[#EE395E]' : selectedSubBrand === 'Leapmotor' ? 'text-slate-950' : 'text-white'}`}>
-                                  PRUEBA DE MANEJO
-                                </span>
-                                <span className={`text-[10px] sm:text-[11px] font-medium ${(selectedSubBrand === 'Jeep' || selectedSubBrand === 'Dodge' || selectedSubBrand === 'Ram' || selectedSubBrand === 'Peugeot') ? 'text-white' : (selectedSubBrand === 'Fiat' ? 'text-slate-600 font-semibold' : selectedSubBrand === 'Leapmotor' ? 'text-slate-800 font-bold' : 'text-slate-400')}`}>
-                                  Agenda tu prueba de manejo
-                                </span>
-                              </div>
-                              
-                              <ChevronRight className={`w-4 h-4 group-hover:translate-x-0.5 transition-all duration-300 shrink-0 ml-auto ${(selectedSubBrand === 'Jeep' || selectedSubBrand === 'Dodge' || selectedSubBrand === 'Ram' || selectedSubBrand === 'Peugeot') ? 'text-white' : (selectedSubBrand === 'Fiat' ? 'text-[#EE395E]' : selectedSubBrand === 'Leapmotor' ? 'text-slate-950' : 'text-slate-500 group-hover:text-slate-300')}`} />
-                            </button>
+                                {/* White/Silver outlined badge for Calendar */}
+                                <div 
+                                  style={
+                                    selectedSubBrand === 'Dodge' 
+                                      ? { backgroundColor: '#DD4E3C', borderColor: '#ffffff' } 
+                                      : selectedSubBrand === 'Ram' 
+                                        ? { backgroundColor: '#DD4E3C', borderColor: 'rgba(255, 255, 255, 0.4)' } 
+                                        : selectedSubBrand === 'Fiat'
+                                          ? { borderColor: '#EE395E', backgroundColor: 'rgba(238, 57, 94, 0.08)' }
+                                          : selectedSubBrand === 'Peugeot'
+                                            ? { borderColor: 'rgba(255, 255, 255, 0.35)', backgroundColor: 'rgba(255, 255, 255, 0.12)' }
+                                          : selectedSubBrand === 'Leapmotor'
+                                            ? { borderColor: 'rgba(0, 0, 0, 0.25)', backgroundColor: 'rgba(0, 0, 0, 0.08)' }
+                                            : undefined
+                                  }
+                                  className="w-11 h-11 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center shrink-0 transition-colors duration-300 group-hover:bg-white/10"
+                                >
+                                  <Calendar className={`w-5 h-5 ${selectedSubBrand === 'Fiat' ? 'text-[#EE395E]' : selectedSubBrand === 'Leapmotor' ? 'text-slate-950' : 'text-white'} animate-pulse-slow`} />
+                                </div>
+                                
+                                <div className="flex flex-col">
+                                  <span className={`font-bold text-xs sm:text-sm tracking-wider uppercase font-encode ${selectedSubBrand === 'Fiat' ? 'text-[#EE395E]' : selectedSubBrand === 'Leapmotor' ? 'text-slate-950' : 'text-white'}`}>
+                                    PRUEBA DE MANEJO
+                                  </span>
+                                  <span className={`text-[10px] sm:text-[11px] font-medium ${(selectedSubBrand === 'Jeep' || selectedSubBrand === 'Dodge' || selectedSubBrand === 'Ram' || selectedSubBrand === 'Peugeot') ? 'text-white' : (selectedSubBrand === 'Fiat' ? 'text-slate-600 font-semibold' : selectedSubBrand === 'Leapmotor' ? 'text-slate-800 font-bold' : 'text-slate-400')}`}>
+                                    Agenda tu prueba de manejo
+                                  </span>
+                                </div>
+                                
+                                <ChevronRight className={`w-4 h-4 group-hover:translate-x-0.5 transition-all duration-300 shrink-0 ml-auto ${(selectedSubBrand === 'Jeep' || selectedSubBrand === 'Dodge' || selectedSubBrand === 'Ram' || selectedSubBrand === 'Peugeot') ? 'text-white' : (selectedSubBrand === 'Fiat' ? 'text-[#EE395E]' : selectedSubBrand === 'Leapmotor' ? 'text-slate-950' : 'text-slate-500 group-hover:text-slate-300')}`} />
+                              </button>
+                            )}
                           </div>
                         </div>
                       );
@@ -3166,7 +3205,7 @@ export default function LeadForm({ c10ImgUrl, t03ImgUrl, b10ImgUrl }: LeadFormPr
                       {/* Estado selector */}
                       <div className={rowClass}>
                         <label id="frm-state-label" htmlFor="state" className={labelTextClass}>
-                          Estado * {advisorSignedIn && <span className="opacity-80 text-[9px] bg-amber-500/10 border border-amber-500/20 px-1.5 py-0.5 rounded text-amber-500 font-bold uppercase tracking-wider ml-1">(fijo - modo asesor)</span>}
+                          Estado * {(advisorSignedIn && hasAdvisorTarget) && <span className="opacity-80 text-[9px] bg-amber-500/10 border border-amber-500/20 px-1.5 py-0.5 rounded text-amber-500 font-bold uppercase tracking-wider ml-1">(fijo - modo asesor)</span>}
                         </label>
                         <div className="relative">
                           <MapPin className={`absolute left-3.5 top-3.5 w-4 h-4 pointer-events-none z-10 ${isFiatPage ? 'text-[#EE395E]' : isPeugeotPage ? 'text-[#0074E8]' : isLeapmotorPage ? 'text-slate-950' : (isLightBg || isJeepPage ? 'text-slate-500' : (isRamPage || isDodgePage ? 'text-white' : 'text-slate-300'))}`} />
@@ -3174,7 +3213,7 @@ export default function LeadForm({ c10ImgUrl, t03ImgUrl, b10ImgUrl }: LeadFormPr
                             id="state"
                             name="state"
                             required
-                            disabled={advisorSignedIn}
+                            disabled={advisorSignedIn && hasAdvisorTarget}
                             value={formData.state}
                             onChange={(e) => {
                               const stateValue = e.target.value;
@@ -3217,7 +3256,7 @@ export default function LeadForm({ c10ImgUrl, t03ImgUrl, b10ImgUrl }: LeadFormPr
                       {/* Distribuidor de Preferencia selector */}
                       <div className={rowClass}>
                         <label id="frm-distributor-label" htmlFor="distributor" className={labelTextClass}>
-                          {activeLanding === 'multimarca' ? 'Distribuidor *' : 'Distribuidor de Preferencia *'} {loadingDbDistributors && <span className="text-emerald-400 font-bold animate-pulse text-[9px] lowercase">(consultando BD...)</span>} {advisorSignedIn && <span className="opacity-80 text-[9px] bg-amber-500/10 border border-amber-500/20 px-1.5 py-0.5 rounded text-amber-500 font-bold uppercase tracking-wider ml-1">(fijo - modo asesor)</span>}
+                          {activeLanding === 'multimarca' ? 'Distribuidor *' : 'Distribuidor de Preferencia *'} {loadingDbDistributors && <span className="text-emerald-400 font-bold animate-pulse text-[9px] lowercase">(consultando BD...)</span>} {(advisorSignedIn && hasAdvisorTarget) && <span className="opacity-80 text-[9px] bg-amber-500/10 border border-amber-500/20 px-1.5 py-0.5 rounded text-amber-500 font-bold uppercase tracking-wider ml-1">(fijo - modo asesor)</span>}
                         </label>
                         <div className="relative">
                           <Settings className={`absolute left-3.5 top-3.5 w-4 h-4 pointer-events-none z-10 ${isFiatPage ? 'text-[#EE395E]' : isPeugeotPage ? 'text-[#0074E8]' : isLeapmotorPage ? 'text-slate-950' : (isLightBg || isJeepPage ? 'text-slate-500' : (isRamPage || isDodgePage ? 'text-white' : 'text-slate-300'))}`} />
@@ -3225,7 +3264,7 @@ export default function LeadForm({ c10ImgUrl, t03ImgUrl, b10ImgUrl }: LeadFormPr
                             id="distributor"
                             name="distributor"
                             required
-                            disabled={advisorSignedIn}
+                            disabled={advisorSignedIn && hasAdvisorTarget}
                             value={formData.distributor}
                             onChange={(e) => {
                               const dealerValue = e.target.value;
