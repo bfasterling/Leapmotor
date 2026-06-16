@@ -2634,9 +2634,15 @@ export default function LeadForm({ c10ImgUrl, t03ImgUrl, b10ImgUrl }: LeadFormPr
                             </div>
                             {/* Brand tagline of selected brand in clean text, strictly single-line */}
                             <div className="mt-3 text-center w-full overflow-hidden">
-                              <p className={`${isLightBg ? 'text-slate-900' : 'text-white'} ${(selectedSubBrand === 'Peugeot' || selectedSubBrand === 'Leapmotor') ? 'text-[11px] xs:text-xs sm:text-sm md:text-base' : 'text-sm sm:text-base'} font-extrabold tracking-widest uppercase text-center block w-full whitespace-nowrap`}>
-                                {brandDetail.tagline}
-                              </p>
+                              {selectedSubBrand === 'Peugeot' ? (
+                                <p className={`${isLightBg ? 'text-slate-900' : 'text-white'} text-[11px] xs:text-xs sm:text-sm md:text-base font-extrabold tracking-widest uppercase text-center block w-full leading-relaxed`}>
+                                  Súbete y entenderás<br />lo extraordinario
+                                </p>
+                              ) : (
+                                <p className={`${isLightBg ? 'text-slate-900' : 'text-white'} ${(selectedSubBrand === 'Peugeot' || selectedSubBrand === 'Leapmotor') ? 'text-[11px] xs:text-xs sm:text-sm md:text-base' : 'text-sm sm:text-base'} font-extrabold tracking-widest uppercase text-center block w-full whitespace-nowrap`}>
+                                  {brandDetail.tagline}
+                                </p>
+                              )}
                             </div>
                           </div>
 
