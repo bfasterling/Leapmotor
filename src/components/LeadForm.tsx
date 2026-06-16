@@ -1171,7 +1171,40 @@ export default function LeadForm({ c10ImgUrl, t03ImgUrl, b10ImgUrl }: LeadFormPr
         (searchParams.get('landing') || '').toLowerCase().includes('soccer') || 
         (searchParams.get('landing') || '').toLowerCase().includes('socer');
 
-      if (isSoccerhouse) {
+      if (isAztlanDomain) {
+        if (!(window as any).gtmAztlanInjected) {
+          (window as any).gtmAztlanInjected = true;
+
+          // Custom GTM script injection (placed as the second instruction in <head> dynamically)
+          const script = document.createElement('script');
+          script.type = 'text/javascript';
+          script.innerHTML = `
+            (function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+            new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+            j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+            'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+            })(window,document,'script','dataLayer','GTM-WVTTFQ4H');
+          `;
+          
+          const head = document.head;
+          if (head.children.length > 1) {
+            head.insertBefore(script, head.children[1]);
+          } else {
+            head.appendChild(script);
+          }
+
+          // Noscript alternative placed at the end of <body> dynamically
+          const noscript = document.createElement('noscript');
+          const iframe = document.createElement('iframe');
+          iframe.src = "https://www.googletagmanager.com/ns.html?id=GTM-WVTTFQ4H";
+          iframe.height = "0";
+          iframe.width = "0";
+          iframe.style.display = "none";
+          iframe.style.visibility = "hidden";
+          noscript.appendChild(iframe);
+          document.body.appendChild(noscript);
+        }
+      } else if (isSoccerhouse) {
         if (!(window as any).gtmSoccerhouseInjected) {
           (window as any).gtmSoccerhouseInjected = true;
 
