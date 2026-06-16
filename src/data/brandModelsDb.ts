@@ -87,17 +87,6 @@ export const BRAND_MODELS_DB: BrandModelInfo[] = [
     anio: '26',
     precioLista: 512900
   },
-  {
-    brand: 'Fiat',
-    model: 'PULSE ABARTH STRANGER THINGS',
-    claveGen: 'PABE26',
-    desc: 'Edición exclusiva Stranger Things, diseño retro futurista y potencia deportiva de pista.',
-    img: FPAB25_IMG,
-    version: 'Abarth',
-    idVersion: 'FIPABE2601',
-    anio: '26',
-    precioLista: 512000
-  },
 
   // --- JEEP BRAND ---
   {
