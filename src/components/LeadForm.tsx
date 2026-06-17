@@ -2632,7 +2632,7 @@ export default function LeadForm({ c10ImgUrl, t03ImgUrl, b10ImgUrl }: LeadFormPr
                       </div>
 
                       {/* Stacked Brand boxes (All identical size, stacked vertically, centering the brand logos) */}
-                      <div className="flex flex-col gap-1 xs:gap-1.5 sm:gap-2 pt-0.5">
+                      <div className="flex flex-col gap-1.5 xs:gap-2.5 sm:gap-3 pt-0.5">
                         {['Jeep', 'Ram', 'Dodge', 'Fiat', 'Peugeot', 'Alfa Romeo', 'Leapmotor'].map((brand) => {
                           if (brand === 'Leapmotor') {
                             return (
@@ -2642,8 +2642,8 @@ export default function LeadForm({ c10ImgUrl, t03ImgUrl, b10ImgUrl }: LeadFormPr
                                   handleBrandSelect(brand);
                                   setSelectedSubBrand(brand);
                                 }}
-                                style={{ backgroundColor: 'rgba(0, 0, 0, 0.7)' }}
-                                className="group relative overflow-hidden rounded-2xl border border-black/5 bg-black/70 h-[52px] xs:h-[60px] sm:h-20 lg:h-24 w-full flex items-center justify-center select-none shadow-lg shadow-black/5 hover:bg-black/80 transition-all duration-300 cursor-pointer"
+                                style={{ backgroundColor: 'rgba(0, 0, 0, 0.7)', height: 'clamp(56px, 8.5vh, 96px)' }}
+                                className="group relative overflow-hidden rounded-2xl border border-black/5 bg-black/70 w-full flex items-center justify-center select-none shadow-lg shadow-black/5 hover:bg-black/80 transition-all duration-300 cursor-pointer"
                               >
                                 <img 
                                   src={MULTIMARCA_LEAPMOTOR_LOGO} 
@@ -2662,8 +2662,8 @@ export default function LeadForm({ c10ImgUrl, t03ImgUrl, b10ImgUrl }: LeadFormPr
                                   handleBrandSelect(brand);
                                   setSelectedSubBrand(brand);
                                 }}
-                                style={{ backgroundColor: 'rgba(0, 0, 0, 0.7)' }}
-                                className="group relative overflow-hidden rounded-2xl border border-black/5 bg-black/70 h-[52px] xs:h-[60px] sm:h-20 lg:h-24 w-full flex items-center justify-center select-none shadow-lg shadow-black/5 hover:bg-black/80 transition-all duration-300 cursor-pointer"
+                                style={{ backgroundColor: 'rgba(0, 0, 0, 0.7)', height: 'clamp(56px, 8.5vh, 96px)' }}
+                                className="group relative overflow-hidden rounded-2xl border border-black/5 bg-black/70 w-full flex items-center justify-center select-none shadow-lg shadow-black/5 hover:bg-black/80 transition-all duration-300 cursor-pointer"
                               >
                                 <img 
                                   src={MULTIMARCA_ALFA_ROMEO_LOGO} 
@@ -2682,8 +2682,8 @@ export default function LeadForm({ c10ImgUrl, t03ImgUrl, b10ImgUrl }: LeadFormPr
                                   handleBrandSelect(brand);
                                   setSelectedSubBrand(brand);
                                 }}
-                                style={{ backgroundColor: 'rgba(0, 0, 0, 0.7)' }}
-                                className="group relative overflow-hidden rounded-2xl border border-black/5 bg-black/70 h-[52px] xs:h-[60px] sm:h-20 lg:h-24 w-full flex items-center justify-center select-none shadow-lg shadow-black/5 hover:bg-black/80 transition-all duration-300 cursor-pointer"
+                                style={{ backgroundColor: 'rgba(0, 0, 0, 0.7)', height: 'clamp(56px, 8.5vh, 96px)' }}
+                                className="group relative overflow-hidden rounded-2xl border border-black/5 bg-black/70 w-full flex items-center justify-center select-none shadow-lg shadow-black/5 hover:bg-black/80 transition-all duration-300 cursor-pointer"
                               >
                                 <img 
                                   src={MULTIMARCA_JEEP_LOGO} 
@@ -2702,8 +2702,8 @@ export default function LeadForm({ c10ImgUrl, t03ImgUrl, b10ImgUrl }: LeadFormPr
                                   handleBrandSelect(brand);
                                   setSelectedSubBrand(brand);
                                 }}
-                                style={{ backgroundColor: 'rgba(0, 0, 0, 0.7)' }}
-                                className="group relative overflow-hidden rounded-2xl border border-black/5 bg-black/70 h-[52px] xs:h-[60px] sm:h-20 lg:h-24 w-full flex items-center justify-center select-none shadow-lg shadow-black/5 hover:bg-black/80 transition-all duration-300 cursor-pointer"
+                                style={{ backgroundColor: 'rgba(0, 0, 0, 0.7)', height: 'clamp(56px, 8.5vh, 96px)' }}
+                                className="group relative overflow-hidden rounded-2xl border border-black/5 bg-black/70 w-full flex items-center justify-center select-none shadow-lg shadow-black/5 hover:bg-black/80 transition-all duration-300 cursor-pointer"
                               >
                                 <img 
                                   src={MULTIMARCA_FIAT_LOGO} 
@@ -2722,8 +2722,8 @@ export default function LeadForm({ c10ImgUrl, t03ImgUrl, b10ImgUrl }: LeadFormPr
                                   handleBrandSelect(brand);
                                   setSelectedSubBrand(brand);
                                 }}
-                                style={{ backgroundColor: 'rgba(0, 0, 0, 0.7)' }}
-                                className="group relative overflow-hidden rounded-2xl border border-black/5 bg-black/70 h-[52px] xs:h-[60px] sm:h-20 lg:h-24 w-full flex items-center justify-center select-none shadow-lg shadow-[rgba(0,0,0,0.05)] hover:bg-black/80 transition-all duration-300 cursor-pointer"
+                                style={{ backgroundColor: 'rgba(0, 0, 0, 0.7)', height: 'clamp(56px, 8.5vh, 96px)' }}
+                                className="group relative overflow-hidden rounded-2xl border border-black/5 bg-black/70 w-full flex items-center justify-center select-none shadow-lg shadow-[rgba(0,0,0,0.05)] hover:bg-black/80 transition-all duration-300 cursor-pointer"
                               >
                                 <img 
                                   src={MULTIMARCA_DODGE_LOGO} 
@@ -2742,8 +2742,8 @@ export default function LeadForm({ c10ImgUrl, t03ImgUrl, b10ImgUrl }: LeadFormPr
                                   handleBrandSelect(brand);
                                   setSelectedSubBrand(brand);
                                 }}
-                                style={{ backgroundColor: 'rgba(0, 0, 0, 0.7)' }}
-                                className="group relative overflow-hidden rounded-2xl border border-black/5 bg-black/70 h-[52px] xs:h-[60px] sm:h-20 lg:h-24 w-full flex items-center justify-center select-none shadow-lg shadow-black/5 hover:bg-black/80 transition-all duration-300 cursor-pointer"
+                                style={{ backgroundColor: 'rgba(0, 0, 0, 0.7)', height: 'clamp(56px, 8.5vh, 96px)' }}
+                                className="group relative overflow-hidden rounded-2xl border border-black/5 bg-black/70 w-full flex items-center justify-center select-none shadow-lg shadow-black/5 hover:bg-black/80 transition-all duration-300 cursor-pointer"
                               >
                                 <img 
                                   src={MULTIMARCA_PEUGEOT_LOGO} 
@@ -2762,8 +2762,8 @@ export default function LeadForm({ c10ImgUrl, t03ImgUrl, b10ImgUrl }: LeadFormPr
                                   handleBrandSelect(brand);
                                   setSelectedSubBrand(brand);
                                 }}
-                                style={{ backgroundColor: 'rgba(0, 0, 0, 0.7)' }}
-                                className="group relative overflow-hidden rounded-2xl border border-black/5 bg-black/70 h-[52px] xs:h-[60px] sm:h-20 lg:h-24 w-full flex items-center justify-center select-none shadow-lg shadow-black/5 hover:bg-black/80 transition-all duration-300 cursor-pointer"
+                                style={{ backgroundColor: 'rgba(0, 0, 0, 0.7)', height: 'clamp(56px, 8.5vh, 96px)' }}
+                                className="group relative overflow-hidden rounded-2xl border border-black/5 bg-black/70 w-full flex items-center justify-center select-none shadow-lg shadow-black/5 hover:bg-black/80 transition-all duration-300 cursor-pointer"
                               >
                                 <img 
                                   src={MULTIMARCA_RAM_LOGO} 
