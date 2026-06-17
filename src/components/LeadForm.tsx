@@ -1380,6 +1380,9 @@ export default function LeadForm({ c10ImgUrl, t03ImgUrl, b10ImgUrl }: LeadFormPr
 
   const getAdvisorTargetDealer = (brandKey: string) => {
     if (!advisorSignedIn || !advisorDistributor || !advisorState) return null;
+    if (brandKey?.toLowerCase() === 'alfa romeo' || selectedSubBrand?.toLowerCase() === 'alfa romeo') {
+      return null;
+    }
     if (brandKey === 'LEAPMOTOR') {
       const matchedAztlan = aztlanDistributors.find(d => d.name === advisorDistributor);
       if (matchedAztlan && matchedAztlan.claveleapmotor) {
