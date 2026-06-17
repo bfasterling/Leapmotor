@@ -609,8 +609,24 @@ export default function LeadForm({ c10ImgUrl, t03ImgUrl, b10ImgUrl }: LeadFormPr
   // Experience selector: 'leapmotor' | 'jeep' | 'multimarca'
   const [activeLanding, setActiveLanding] = useState<'leapmotor' | 'jeep' | 'multimarca'>(() => {
     if (typeof window !== 'undefined') {
-      const host = window.location.hostname.toLowerCase();
       const searchParams = new URLSearchParams(window.location.search);
+      const brandParam = searchParams.get('marca');
+      if (brandParam) {
+        const lBrand = brandParam.trim().toLowerCase();
+        const keys = ['Leapmotor', 'Jeep', 'Fiat', 'Dodge', 'Peugeot', 'Ram', 'Alfa Romeo'];
+        for (const key of keys) {
+          if (
+            lBrand === key.toLowerCase() ||
+            lBrand.replace(/\s+/g, '') === key.toLowerCase().replace(/\s+/g, '') ||
+            (key === 'Alfa Romeo' && (lBrand === 'alfa' || lBrand === 'romeo' || lBrand === 'alfaromeo')) ||
+            (key === 'Leapmotor' && (lBrand === 'leap' || lBrand === 'leap motor'))
+          ) {
+            return 'multimarca';
+          }
+        }
+      }
+
+      const host = window.location.hostname.toLowerCase();
       const landingParam = searchParams.get('landing') || searchParams.get('campaign') || searchParams.get('site');
       
       const isSoccerhouseParam = landingParam && (
@@ -715,8 +731,24 @@ export default function LeadForm({ c10ImgUrl, t03ImgUrl, b10ImgUrl }: LeadFormPr
   // Multimarca active brand
   const [selectedBrand, setSelectedBrand] = useState<string>(() => {
     if (typeof window !== 'undefined') {
-      const host = window.location.hostname.toLowerCase();
       const searchParams = new URLSearchParams(window.location.search);
+      const brandParam = searchParams.get('marca');
+      if (brandParam) {
+        const lBrand = brandParam.trim().toLowerCase();
+        const keys = ['Leapmotor', 'Jeep', 'Fiat', 'Dodge', 'Peugeot', 'Ram', 'Alfa Romeo'];
+        for (const key of keys) {
+          if (
+            lBrand === key.toLowerCase() ||
+            lBrand.replace(/\s+/g, '') === key.toLowerCase().replace(/\s+/g, '') ||
+            (key === 'Alfa Romeo' && (lBrand === 'alfa' || lBrand === 'romeo' || lBrand === 'alfaromeo')) ||
+            (key === 'Leapmotor' && (lBrand === 'leap' || lBrand === 'leap motor'))
+          ) {
+            return key;
+          }
+        }
+      }
+
+      const host = window.location.hostname.toLowerCase();
       const landingParam = searchParams.get('landing') || searchParams.get('campaign') || searchParams.get('site');
       
       if (landingParam === 'jeep' || host.startsWith('jeep')) {
@@ -725,7 +757,27 @@ export default function LeadForm({ c10ImgUrl, t03ImgUrl, b10ImgUrl }: LeadFormPr
     }
     return 'Leapmotor';
   });
-  const [selectedSubBrand, setSelectedSubBrand] = useState<string | null>(null);
+  const [selectedSubBrand, setSelectedSubBrand] = useState<string | null>(() => {
+    if (typeof window !== 'undefined') {
+      const searchParams = new URLSearchParams(window.location.search);
+      const brandParam = searchParams.get('marca');
+      if (brandParam) {
+        const lBrand = brandParam.trim().toLowerCase();
+        const keys = ['Leapmotor', 'Jeep', 'Fiat', 'Dodge', 'Peugeot', 'Ram', 'Alfa Romeo'];
+        for (const key of keys) {
+          if (
+            lBrand === key.toLowerCase() ||
+            lBrand.replace(/\s+/g, '') === key.toLowerCase().replace(/\s+/g, '') ||
+            (key === 'Alfa Romeo' && (lBrand === 'alfa' || lBrand === 'romeo' || lBrand === 'alfaromeo')) ||
+            (key === 'Leapmotor' && (lBrand === 'leap' || lBrand === 'leap motor'))
+          ) {
+            return key;
+          }
+        }
+      }
+    }
+    return null;
+  });
 
   // Modal displays states
   const [showStellantisMap, setShowStellantisMap] = useState(false);
@@ -736,12 +788,49 @@ export default function LeadForm({ c10ImgUrl, t03ImgUrl, b10ImgUrl }: LeadFormPr
     let initialLanding: 'leapmotor' | 'jeep' | 'multimarca' = 'leapmotor';
     let defaultState = 'Ciudad de México (CDMX)';
     let defaultDistributor = 'Leapmotor Santa Fe';
+    let matchedBrand: string | null = null;
+    let matchedModel: string | null = null;
 
     if (typeof window !== 'undefined') {
       const host = window.location.hostname.toLowerCase();
       const searchParams = new URLSearchParams(window.location.search);
       const landingParam = searchParams.get('landing') || searchParams.get('campaign') || searchParams.get('site');
       
+      const brandParam = searchParams.get('marca');
+      const modelParam = searchParams.get('modelo');
+      if (brandParam) {
+        const lBrand = brandParam.trim().toLowerCase();
+        const keys = ['Leapmotor', 'Jeep', 'Fiat', 'Dodge', 'Peugeot', 'Ram', 'Alfa Romeo'];
+        for (const key of keys) {
+          if (
+            lBrand === key.toLowerCase() ||
+            lBrand.replace(/\s+/g, '') === key.toLowerCase().replace(/\s+/g, '') ||
+            (key === 'Alfa Romeo' && (lBrand === 'alfa' || lBrand === 'romeo' || lBrand === 'alfaromeo')) ||
+            (key === 'Leapmotor' && (lBrand === 'leap' || lBrand === 'leap motor'))
+          ) {
+            matchedBrand = key;
+            initialLanding = 'multimarca';
+            break;
+          }
+        }
+      }
+
+      if (matchedBrand && modelParam) {
+        const lModel = modelParam.trim().toLowerCase();
+        const modelsForBrand = BRAND_MODELS[matchedBrand] || [];
+        for (const m of modelsForBrand) {
+          if (
+            lModel === m.toLowerCase() ||
+            lModel.replace(/\s+/g, '') === m.toLowerCase().replace(/\s+/g, '') ||
+            m.toLowerCase().includes(lModel) ||
+            lModel.includes(m.toLowerCase())
+          ) {
+            matchedModel = m;
+            break;
+          }
+        }
+      }
+
       const isSoccerhouseParam = landingParam && (
         landingParam.toLowerCase().includes('soccer') || 
         landingParam.toLowerCase().includes('socer')
@@ -753,10 +842,12 @@ export default function LeadForm({ c10ImgUrl, t03ImgUrl, b10ImgUrl }: LeadFormPr
       const isAztlanHost = host.includes('aztlan');
       const isAztlanQuery = window.location.search.toLowerCase().includes('aztlan');
 
-      if (landingParam === 'jeep' || host.startsWith('jeep')) {
-        initialLanding = 'jeep';
-      } else if (landingParam === 'multimarca' || host.startsWith('multimarca') || host.startsWith('stellantis') || host.startsWith('soccerhouse') || isSoccerhouseParam || isSoccerhouseHost || isSoccerhouseQuery || isAztlanParam || isAztlanHost || isAztlanQuery) {
-        initialLanding = 'multimarca';
+      if (!matchedBrand) {
+        if (landingParam === 'jeep' || host.startsWith('jeep')) {
+          initialLanding = 'jeep';
+        } else if (landingParam === 'multimarca' || host.startsWith('multimarca') || host.startsWith('stellantis') || host.startsWith('soccerhouse') || isSoccerhouseParam || isSoccerhouseHost || isSoccerhouseQuery || isAztlanParam || isAztlanHost || isAztlanQuery) {
+          initialLanding = 'multimarca';
+        }
       }
 
       const advState = sessionStorage.getItem('aztlan_advisor_state');
@@ -767,10 +858,19 @@ export default function LeadForm({ c10ImgUrl, t03ImgUrl, b10ImgUrl }: LeadFormPr
       } else if (initialLanding === 'jeep') {
         defaultState = 'CIUDAD DE MÉXICO';
         defaultDistributor = 'Autokasa Viaducto';
+      } else if (matchedBrand) {
+        const activeBrandKey = matchedBrand.toUpperCase();
+        const brandDealers = ALL_DEALERS.filter(d => d.brand === activeBrandKey);
+        const availableStates = Array.from(new Set(brandDealers.map(d => d.state))).sort();
+        defaultState = availableStates.includes('CIUDAD DE MÉXICO') 
+          ? 'CIUDAD DE MÉXICO' 
+          : (availableStates[0] || 'Ciudad de México (CDMX)');
+        const dealersInState = brandDealers.filter(d => d.state === defaultState);
+        defaultDistributor = dealersInState[0]?.name || '';
       }
     }
 
-    const defaultModel = initialLanding === 'jeep' ? 'Cherokee' : 'B10';
+    const defaultModel = matchedModel || (initialLanding === 'jeep' ? 'Cherokee' : (matchedBrand ? (BRAND_MODELS[matchedBrand]?.[0] || 'B10') : 'B10'));
 
     return {
       name: '',
@@ -1129,8 +1229,31 @@ export default function LeadForm({ c10ImgUrl, t03ImgUrl, b10ImgUrl }: LeadFormPr
   };
 
   useEffect(() => {
-    const host = window.location.hostname.toLowerCase();
     const searchParams = new URLSearchParams(window.location.search);
+    const brandParam = searchParams.get('marca');
+    let hasMatchedBrand = false;
+    if (brandParam) {
+      const lBrand = brandParam.trim().toLowerCase();
+      const keys = ['Leapmotor', 'Jeep', 'Fiat', 'Dodge', 'Peugeot', 'Ram', 'Alfa Romeo'];
+      for (const key of keys) {
+        if (
+          lBrand === key.toLowerCase() ||
+          lBrand.replace(/\s+/g, '') === key.toLowerCase().replace(/\s+/g, '') ||
+          (key === 'Alfa Romeo' && (lBrand === 'alfa' || lBrand === 'romeo' || lBrand === 'alfaromeo')) ||
+          (key === 'Leapmotor' && (lBrand === 'leap' || lBrand === 'leap motor'))
+        ) {
+          hasMatchedBrand = true;
+          break;
+        }
+      }
+    }
+
+    if (hasMatchedBrand) {
+      // Already initialized fully in states, skip handleLandingSwitch as it would reset states.
+      return;
+    }
+
+    const host = window.location.hostname.toLowerCase();
     const landingParam = searchParams.get('landing') || searchParams.get('campaign') || searchParams.get('site');
     
     const isSoccerhouseParam = landingParam && (
@@ -1663,6 +1786,16 @@ export default function LeadForm({ c10ImgUrl, t03ImgUrl, b10ImgUrl }: LeadFormPr
       testDriveDate: '',
       requestType: reqType
     };
+  };
+
+  // Helper to resolve preferred initialized model from url parameter
+  const getPreferredInitModel = (brandKey: string | null) => {
+    if (!brandKey) return undefined;
+    const availableModels = BRAND_MODELS[brandKey] || [];
+    if (formData.modelOfInterest && availableModels.includes(formData.modelOfInterest)) {
+      return formData.modelOfInterest;
+    }
+    return availableModels[0];
   };
 
   // Launch Form sheet instantly from landing CTA clicks
@@ -2762,7 +2895,7 @@ export default function LeadForm({ c10ImgUrl, t03ImgUrl, b10ImgUrl }: LeadFormPr
                             {/* COTIZA */}
                             <button
                               id={`cotiza-button-${selectedSubBrand?.toLowerCase()}`}
-                              onClick={() => launchFormWithRequest('cotizacion', BRAND_MODELS[selectedSubBrand]?.[0])}
+                              onClick={() => launchFormWithRequest('cotizacion', getPreferredInitModel(selectedSubBrand))}
                               style={
                                 selectedSubBrand === 'Jeep'
                                   ? { backgroundColor: '#487f70' }
@@ -2834,7 +2967,7 @@ export default function LeadForm({ c10ImgUrl, t03ImgUrl, b10ImgUrl }: LeadFormPr
                             {selectedSubBrand !== 'Leapmotor' && (
                               <button
                                 id={`prueba-button-${selectedSubBrand?.toLowerCase()}`}
-                                onClick={() => launchFormWithRequest('prueba', BRAND_MODELS[selectedSubBrand]?.[0])}
+                                onClick={() => launchFormWithRequest('prueba', getPreferredInitModel(selectedSubBrand))}
                                 style={
                                   selectedSubBrand === 'Jeep'
                                     ? { backgroundColor: '#487f70' }
