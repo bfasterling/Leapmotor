@@ -330,5 +330,76 @@ export const BRAND_MODELS_METADATA: BrandModelMetadata[] = [
     idVersion: 'LMLC162701',
     anio: '27',
     precioLista: 999000
+  },
+  // --- ALFA ROMEO BRAND ---
+  {
+    brand: 'Alfa Romeo',
+    model: 'GIULIA',
+    claveGen: 'GILV24',
+    desc: 'El sedán deportivo italiano que redefine la elegancia y deportividad con un manejo sublime.',
+    version: 'Sprint',
+    idVersion: 'ARGILV2401',
+    anio: '24',
+    precioLista: 1032000
+  },
+  {
+    brand: 'Alfa Romeo',
+    model: 'GIULIA QV',
+    claveGen: 'GIQU24',
+    desc: 'La máxima expresión de deportividad, con motor V6 de origen Ferrari y prestaciones de pista.',
+    version: 'QV',
+    idVersion: 'ARGIQU2401',
+    anio: '24',
+    precioLista: 2222000
+  },
+  {
+    brand: 'Alfa Romeo',
+    model: 'JUNIOR',
+    claveGen: 'AJUN26',
+    desc: 'El nuevo SUV compacto deportivo, combinando tecnología de vanguardia y diseño italiano irreverente.',
+    version: 'TI',
+    idVersion: 'ARAJUN2601',
+    anio: '26',
+    precioLista: 695900
+  },
+  {
+    brand: 'Alfa Romeo',
+    model: 'STELVIO',
+    claveGen: 'STVV24',
+    desc: 'Un SUV premium de alto desempeño con tracción integral y alma de deportivo pura sangre.',
+    version: 'Ti',
+    idVersion: 'ARSTVV2401',
+    anio: '24',
+    precioLista: 1194000
+  },
+  {
+    brand: 'Alfa Romeo',
+    model: 'STELVIO QV',
+    claveGen: 'STQU24',
+    desc: 'El SUV más rápido de su clase, dominador de circuitos con potencia salvaje y refinamiento italiano.',
+    version: 'QV',
+    idVersion: 'ARSTQU2401',
+    anio: '24',
+    precioLista: 2237000
+  },
+  {
+    brand: 'Alfa Romeo',
+    model: 'TONALE',
+    claveGen: 'TONA24',
+    desc: 'El SUV compacto que marca la electrificación y sofisticación de la marca, con gran conectividad.',
+    version: 'Sprint',
+    idVersion: 'ARTONA2401',
+    anio: '24',
+    precioLista: 874900
+  },
+  {
+    brand: 'Alfa Romeo',
+    model: 'TONALE HIBRIDO',
+    claveGen: 'TOPH24',
+    desc: 'Eficiencia híbrida enchufable avanzada con el dinamismo y emoción inconfundibles de Alfa Romeo.',
+    version: 'Ti PHEV',
+    idVersion: 'ARTONA2403',
+    anio: '24',
+    precioLista: 1119900
   }
 ];

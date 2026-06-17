@@ -95,13 +95,14 @@ import DODGE_LANDING_BG_26 from '../assets/images/dodge_landing_2026_17807677838
 import MULTIMARCA_REGENERATED_JEEP_BG from '../assets/images/regenerated_image_1781147422783.jpg';
 import MULTIMARCA_RAM_BG_NEW from '../assets/images/regenerated_image_1781154956518.jpg';
 
-// Independent logo assets decoupled specifically for the Multimarca experience to prevent cascading overrides
+/// Independent logo assets decoupled specifically for the Multimarca experience to prevent cascading overrides
 import MULTIMARCA_BUTTON_LEAPMOTOR_LOGO from '../assets/images/leapmotor_outline_white_1780977081063.png';
 import MULTIMARCA_BUTTON_JEEP_LOGO from '../assets/images/regenerated_image_1781121932966.png';
 import MULTIMARCA_BUTTON_FIAT_LOGO from '../assets/images/regenerated_image_1781152936359.png';
 import MULTIMARCA_BUTTON_DODGE_LOGO from '../assets/images/regenerated_image_1781152935486.png';
 import MULTIMARCA_BUTTON_PEUGEOT_LOGO from '../assets/images/peugeot_logo_new_1780716886504.png';
 import MULTIMARCA_BUTTON_RAM_LOGO from '../assets/images/ram_logo_new_1780717149923.png';
+import MULTIMARCA_BUTTON_ALFA_ROMEO_LOGO from '../assets/images/regenerated_image_1781657429864.png';
 
 const MULTIMARCA_LEAPMOTOR_LOGO = MULTIMARCA_BUTTON_LEAPMOTOR_LOGO;
 const MULTIMARCA_JEEP_LOGO = MULTIMARCA_BUTTON_JEEP_LOGO;
@@ -109,26 +110,33 @@ const MULTIMARCA_FIAT_LOGO = MULTIMARCA_BUTTON_FIAT_LOGO;
 const MULTIMARCA_DODGE_LOGO = MULTIMARCA_BUTTON_DODGE_LOGO;
 const MULTIMARCA_PEUGEOT_LOGO = MULTIMARCA_BUTTON_PEUGEOT_LOGO;
 const MULTIMARCA_RAM_LOGO = MULTIMARCA_BUTTON_RAM_LOGO;
+const MULTIMARCA_ALFA_ROMEO_LOGO = MULTIMARCA_BUTTON_ALFA_ROMEO_LOGO;
 
 // Decoupled brand sub-page top logo assets for the multimarca brand pages
 import DODGE_SUBPAGE_LOGO_NEW from '../assets/images/regenerated_image_1781157409570.png';
 import FIAT_SUBPAGE_LOGO_NEW from '../assets/images/regenerated_image_1781159406377.png';
+import ALFA_ROMEO_SUBPAGE_LOGO_NEW from '../assets/images/regenerated_image_1781657290836.png';
+
 const BRAND_PAGE_TOP_LEAPMOTOR_LOGO = LEAPMOTOR_LOGO_IMG;
 const BRAND_PAGE_TOP_JEEP_LOGO = JEEP_LOGO_IMG;
 const BRAND_PAGE_TOP_FIAT_LOGO = FIAT_SUBPAGE_LOGO_NEW;
 const BRAND_PAGE_TOP_DODGE_LOGO = DODGE_SUBPAGE_LOGO_NEW;
 const BRAND_PAGE_TOP_PEUGEOT_LOGO = PEUGEOT_LOGO_IMG;
 const BRAND_PAGE_TOP_RAM_LOGO = RAM_LOGO_IMG;
+const BRAND_PAGE_TOP_ALFA_ROMEO_LOGO = ALFA_ROMEO_SUBPAGE_LOGO_NEW;
 
 // Decoupled background/hero images for the multimarca brand pages to ensure independent workability
 import DODGE_SUBPAGE_BG_NEW from '../assets/images/regenerated_image_1781157409037.jpg';
 import FIAT_SUBPAGE_BG_NEW from '../assets/images/regenerated_image_1781159053736.jpg';
 import PEUGEOT_SUBPAGE_BG_NEW from '../assets/images/regenerated_image_1781160996776.jpg';
+import ALFA_ROMEO_SUBPAGE_BG_NEW from '../assets/images/alfa_subpage_bg_1781656192674.jpg';
+
 const MULTIMARCA_JEEP_BG = MULTIMARCA_REGENERATED_JEEP_BG;
 const MULTIMARCA_FIAT_BG = FIAT_SUBPAGE_BG_NEW;
 const MULTIMARCA_DODGE_BG = DODGE_SUBPAGE_BG_NEW;
 const MULTIMARCA_PEUGEOT_BG = PEUGEOT_SUBPAGE_BG_NEW;
 const MULTIMARCA_RAM_BG = MULTIMARCA_RAM_BG_NEW;
+const MULTIMARCA_ALFA_ROMEO_BG = ALFA_ROMEO_SUBPAGE_BG_NEW;
 
 const MEX_STATES = [
   'Aguascalientes',
@@ -344,6 +352,21 @@ const SUB_BRAND_DETAILS: Record<string, {
       { title: 'Lujo en Cada Rincón', desc: 'Pantalla vertical de 12 pulgadas, acabados premium y sistema de audio de alta fidelidad.' },
       { title: 'Capacidad Legendaria', desc: 'Chasis de acero de alta resistencia diseñado para remolcar y cargar con total holgura.' }
     ]
+  },
+  'Alfa Romeo': {
+    name: 'Alfa Romeo',
+    modelName: 'Tonale',
+    tagline: 'Máquina de Emozione Italiana',
+    bgImage: MULTIMARCA_ALFA_ROMEO_BG,
+    pantoneHex: '#ffffff',
+    accentBg: 'from-[#ffffff]/90 via-[#ffffff]/25 to-[#ffffff]/10',
+    btnBg: 'bg-[#BA0816] hover:bg-[#970611] text-white',
+    btnBorder: 'border-[#BA0816]/25',
+    highlights: [
+      { title: 'Conducción Emocional', desc: 'Una dinámica de manejo única diseñada para despertar todos tus sentidos en carretera.' },
+      { title: 'Líneas Esculturales', desc: 'El legendario diseño italiano de la mítica trilobo que destila clase y agresividad.' },
+      { title: 'Tecnología de Vanguardia', desc: 'Innovación puramente enfocada en el piloto, fusionando conectividad y un desempeño excelso.' }
+    ]
   }
 };
 
@@ -422,6 +445,17 @@ export default function LeadForm({ c10ImgUrl, t03ImgUrl, b10ImgUrl }: LeadFormPr
           img: b10ImgUrl || 'https://images.unsplash.com/photo-1617788138017-80ad40651399?w=600&q=80',
           isLight: false,
           logoBg: '#DEFF01'
+        };
+      case 'alfa romeo':
+        return {
+          bg: '#FFFFFF',
+          btnBg: '#BA0816',
+          btnText: '#FFFFFF',
+          textColor: '#1e293b',
+          subtextColor: '#475569',
+          img: MULTIMARCA_ALFA_ROMEO_BG,
+          isLight: true,
+          logoBg: '#BA0816'
         };
       default:
         return {
@@ -967,6 +1001,17 @@ export default function LeadForm({ c10ImgUrl, t03ImgUrl, b10ImgUrl }: LeadFormPr
             />
           </div>
         );
+      case 'Alfa Romeo':
+        return (
+          <div className="flex flex-col items-center justify-center w-full px-0.5" id="brand-logo-alfa">
+            <img 
+              src={BRAND_PAGE_TOP_ALFA_ROMEO_LOGO} 
+              alt="Alfa Romeo"
+              referrerPolicy="no-referrer"
+              className={`w-full ${isLarge ? 'max-w-[400px] sm:max-w-[490px] h-24 sm:h-26' : 'max-w-[105px] sm:max-w-[125px] h-6.5 sm:h-7.5'} object-contain transition-all duration-300`} 
+            />
+          </div>
+        );
       default:
         return <span className="font-black text-xs">{brandName}</span>;
     }
@@ -1042,6 +1087,17 @@ export default function LeadForm({ c10ImgUrl, t03ImgUrl, b10ImgUrl }: LeadFormPr
               alt="Peugeot"
               referrerPolicy="no-referrer"
               className="w-full max-w-[400px] sm:max-w-[490px] h-28 sm:h-32 object-contain transition-all duration-300" 
+            />
+          </div>
+        );
+      case 'Alfa Romeo':
+        return (
+          <div className="flex flex-col items-center justify-center w-full px-0.5" id="top-brand-logo-alfa">
+            <img 
+              src={BRAND_PAGE_TOP_ALFA_ROMEO_LOGO} 
+              alt="Alfa Romeo"
+              referrerPolicy="no-referrer"
+              className="w-full max-w-[400px] sm:max-w-[490px] h-24 sm:h-26 object-contain transition-all duration-300" 
             />
           </div>
         );
@@ -1420,9 +1476,10 @@ export default function LeadForm({ c10ImgUrl, t03ImgUrl, b10ImgUrl }: LeadFormPr
         let snap = await getDocs(collection(db, 'distributors'));
         if (!active) return;
 
-        // Auto-seed if the database is completely empty so that the user gets real database values instantly
-        if (snap.size === 0) {
-          console.warn(`[Firebase] distributors collection in database was found empty. Auto-seeding catalog to collection...`);
+        // Auto-seed if the database is completely empty or missing recently added brands like ALFA ROMEO
+        const hasAlfaRomeo = snap.docs.some(docSnap => String(docSnap.data().marca || '').toUpperCase() === 'ALFA ROMEO');
+        if (snap.size === 0 || !hasAlfaRomeo) {
+          console.warn(`[Firebase] distributors collection in database was empty or missing ALFA ROMEO. Auto-seeding catalog to collection...`);
           const chunkSize = 400;
           for (let i = 0; i < ALL_DEALERS.length; i += chunkSize) {
             const batch = writeBatch(db);
@@ -1954,14 +2011,17 @@ export default function LeadForm({ c10ImgUrl, t03ImgUrl, b10ImgUrl }: LeadFormPr
   const isFiatPage = selectedSubBrand?.toLowerCase() === 'fiat' || activeMultimarcaBrandKey?.toLowerCase() === 'fiat';
   const isPeugeotPage = selectedSubBrand?.toLowerCase() === 'peugeot' || activeMultimarcaBrandKey?.toLowerCase() === 'peugeot';
   const isLeapmotorPage = selectedSubBrand?.toLowerCase() === 'leapmotor' || activeMultimarcaBrandKey?.toLowerCase() === 'leapmotor' || activeLanding === 'leapmotor';
+  const isAlfaPage = selectedSubBrand?.toLowerCase() === 'alfa romeo' || activeMultimarcaBrandKey?.toLowerCase() === 'alfa romeo';
 
   // Dynamic input styling based on active branding
   const rowClass = isFiatPage
     ? 'space-y-1 bg-transparent p-1 transition-all duration-350'
     : isPeugeotPage
       ? 'space-y-1 bg-transparent p-1 transition-all duration-350'
-      : isLeapmotorPage
+      : isAlfaPage
         ? 'space-y-1 bg-transparent p-1 transition-all duration-350'
+        : isLeapmotorPage
+          ? 'space-y-1 bg-transparent p-1 transition-all duration-350'
       : isRamPage
         ? 'space-y-1 bg-slate-900/60 p-2 sm:p-2.5 rounded-xl border border-[#DD4E3C] hover:border-[#DD4E3C]/80 transition-all duration-350 shadow-inner'
         : isDodgePage
@@ -1980,8 +2040,10 @@ export default function LeadForm({ c10ImgUrl, t03ImgUrl, b10ImgUrl }: LeadFormPr
     ? 'w-full bg-white border border-[#EE395E] focus:border-[#EE395E] focus:ring-1 focus:ring-[#EE395E]/30 rounded-xl pl-9 pr-3 py-2 sm:py-2.5 text-base md:text-xs text-slate-900 placeholder-[#EE395E]/50 outline-none transition font-semibold shadow-sm'
     : isPeugeotPage
       ? 'w-full bg-white border border-[#0074E8] focus:border-[#0074E8] focus:ring-1 focus:ring-[#0074E8]/30 rounded-xl pl-9 pr-3 py-2 sm:py-2.5 text-base md:text-xs text-slate-900 placeholder-[#0074E8]/50 outline-none transition font-semibold shadow-sm'
-      : isLeapmotorPage
-        ? 'w-full bg-[#000000] border border-[#DEFF01] focus:border-[#DEFF01] focus:ring-1 focus:ring-[#DEFF01]/30 rounded-xl pl-9 pr-3 py-2 sm:py-2.5 text-base md:text-xs text-white placeholder-slate-400 outline-none transition font-semibold font-sans shadow-sm'
+      : isAlfaPage
+        ? 'w-full bg-white border border-[#BA0816] focus:border-[#BA0816] focus:ring-1 focus:ring-[#BA0816]/30 rounded-xl pl-9 pr-3 py-2 sm:py-2.5 text-base md:text-xs text-slate-900 placeholder-[#BA0816]/50 outline-none transition font-semibold shadow-sm'
+        : isLeapmotorPage
+          ? 'w-full bg-[#000000] border border-[#DEFF01] focus:border-[#DEFF01] focus:ring-1 focus:ring-[#DEFF01]/30 rounded-xl pl-9 pr-3 py-2 sm:py-2.5 text-base md:text-xs text-white placeholder-slate-400 outline-none transition font-semibold font-sans shadow-sm'
       : isRamPage
         ? 'w-full bg-[#0a0f18] border border-[#DD4E3C] focus:border-[#DD4E3C] focus:ring-1 focus:ring-[#DD4E3C]/40 rounded-xl pl-9 pr-3 py-2 sm:py-2.5 text-base md:text-xs text-white placeholder-slate-400 outline-none transition font-semibold'
         : isDodgePage
@@ -2000,7 +2062,7 @@ export default function LeadForm({ c10ImgUrl, t03ImgUrl, b10ImgUrl }: LeadFormPr
     <div 
       className="w-full text-slate-100 flex flex-col justify-start items-center min-h-screen transition-all duration-500" 
       id="landing-page-view"
-      style={isPeugeotPage ? { backgroundColor: '#FFFFFF' } : (isRamPage || isDodgePage ? { backgroundColor: '#000000' } : (isFiatPage ? { backgroundColor: '#EE395E' } : (activeLanding === 'multimarca' ? { backgroundColor: subBrandBgColor || '#ffffff' } : undefined)))}
+      style={isPeugeotPage || isAlfaPage ? { backgroundColor: '#FFFFFF' } : (isRamPage || isDodgePage ? { backgroundColor: '#000000' } : (isFiatPage ? { backgroundColor: '#EE395E' } : (activeLanding === 'multimarca' ? { backgroundColor: subBrandBgColor || '#ffffff' } : undefined)))}
     >
       
       {/* Outer Mobile Mock Wrapper with Pantone 2427C and Highlight R0 G145 B0 theme */}
@@ -2010,7 +2072,7 @@ export default function LeadForm({ c10ImgUrl, t03ImgUrl, b10ImgUrl }: LeadFormPr
           backgroundSize: 'cover',
           backgroundPosition: 'center',
         } : (activeLanding === 'multimarca' ? {
-          backgroundColor: isPeugeotPage ? '#FFFFFF' : (isFiatPage ? '#EE395E' : (subBrandBgColor || '#ffffff'))
+          backgroundColor: isPeugeotPage || isAlfaPage ? '#FFFFFF' : (isFiatPage ? '#EE395E' : (subBrandBgColor || '#ffffff'))
         } : undefined)}
         className={`w-full max-w-md mx-auto h-[100dvh] sm:h-auto sm:min-h-[82vh] border-0 sm:border rounded-none sm:rounded-[40px] shadow-2xl relative overflow-hidden flex flex-col justify-between mt-0 sm:mt-1 mb-0 sm:mb-6 transition-all duration-500 ${
           activeLanding === 'leapmotor'
@@ -2435,7 +2497,7 @@ export default function LeadForm({ c10ImgUrl, t03ImgUrl, b10ImgUrl }: LeadFormPr
 
                       {/* Stacked Brand boxes (All identical size, stacked vertically, centering the brand logos) */}
                       <div className="flex flex-col gap-1.5 pt-1">
-                        {['Jeep', 'Ram', 'Dodge', 'Fiat', 'Peugeot', 'Leapmotor'].map((brand) => {
+                        {['Jeep', 'Ram', 'Dodge', 'Fiat', 'Peugeot', 'Alfa Romeo', 'Leapmotor'].map((brand) => {
                           if (brand === 'Leapmotor') {
                             return (
                               <button
@@ -2452,6 +2514,26 @@ export default function LeadForm({ c10ImgUrl, t03ImgUrl, b10ImgUrl }: LeadFormPr
                                   alt="Leapmotor"
                                   referrerPolicy="no-referrer"
                                   className="max-h-[40%] max-w-[75%] object-contain pointer-events-none transition-transform duration-300 group-hover:scale-[1.03]"
+                                />
+                              </button>
+                            );
+                          }
+                          if (brand === 'Alfa Romeo') {
+                            return (
+                              <button
+                                key={brand}
+                                onClick={() => {
+                                  handleBrandSelect(brand);
+                                  setSelectedSubBrand(brand);
+                                }}
+                                style={{ backgroundColor: 'rgba(0, 0, 0, 0.7)' }}
+                                className="group relative overflow-hidden rounded-2xl border border-black/5 bg-black/70 h-20 sm:h-24 w-full flex items-center justify-center select-none shadow-lg shadow-black/5 hover:bg-black/80 transition-all duration-300 cursor-pointer"
+                              >
+                                <img 
+                                  src={MULTIMARCA_ALFA_ROMEO_LOGO} 
+                                  alt="Alfa Romeo"
+                                  referrerPolicy="no-referrer"
+                                  className="max-h-[55%] max-w-[55%] object-contain pointer-events-none transition-transform duration-300 group-hover:scale-[1.03]"
                                 />
                               </button>
                             );
@@ -2599,7 +2681,9 @@ export default function LeadForm({ c10ImgUrl, t03ImgUrl, b10ImgUrl }: LeadFormPr
                                           ? { backgroundColor: '#DD4E3C', borderColor: '#DD4E3C', color: '#ffffff' }
                                           : selectedSubBrand === 'Leapmotor'
                                             ? { backgroundColor: '#DEFF01', borderColor: '#DEFF01', color: '#000000' }
-                                            : undefined
+                                            : selectedSubBrand === 'Alfa Romeo'
+                                              ? { backgroundColor: '#BA0816', borderColor: '#BA0816', color: '#ffffff' }
+                                              : undefined
                               }
                               className={`flex items-center gap-2 px-4 py-2 rounded-full text-xs font-bold uppercase tracking-wider transition duration-300 active:scale-[0.98] shadow-md border ${
                                 selectedSubBrand === 'Leapmotor'
@@ -2614,9 +2698,11 @@ export default function LeadForm({ c10ImgUrl, t03ImgUrl, b10ImgUrl }: LeadFormPr
                                           ? 'text-white border-[#D50000]'
                                           : selectedSubBrand === 'Ram'
                                             ? 'text-white border-[#DD4E3C]'
-                                            : (isLightBg 
-                                              ? 'bg-black/5 hover:bg-black/10 border border-black/10 text-slate-800 hover:text-slate-950' 
-                                              : 'bg-white/5 hover:bg-white/10 border border-white/10 text-slate-200 hover:text-white')
+                                            : selectedSubBrand === 'Alfa Romeo'
+                                              ? 'text-white border-[#BA0816]'
+                                              : (isLightBg 
+                                                ? 'bg-black/5 hover:bg-black/10 border border-black/10 text-slate-800 hover:text-slate-950' 
+                                                : 'bg-white/5 hover:bg-white/10 border border-white/10 text-slate-200 hover:text-white')
                               }`}
                               aria-label="Regresar"
                             >
@@ -2687,6 +2773,8 @@ export default function LeadForm({ c10ImgUrl, t03ImgUrl, b10ImgUrl }: LeadFormPr
                                           ? { backgroundColor: '#0074E8' }
                                         : selectedSubBrand === 'Leapmotor'
                                           ? { backgroundColor: '#DEFF01' }
+                                        : selectedSubBrand === 'Alfa Romeo'
+                                          ? { backgroundColor: '#BA0816' }
                                           : undefined
                               }
                               className={`group w-full p-4 rounded-2xl border flex items-center gap-4 text-left transition-all duration-300 shadow-md transform active:scale-[0.99] ${
@@ -2700,6 +2788,8 @@ export default function LeadForm({ c10ImgUrl, t03ImgUrl, b10ImgUrl }: LeadFormPr
                                         ? 'border-[#EE395E]/10 hover:shadow-lg font-bold'
                                         : selectedSubBrand === 'Peugeot'
                                           ? 'border-[#0074E8]/20 hover:opacity-95 hover:shadow-lg text-white font-bold'
+                                        : selectedSubBrand === 'Alfa Romeo'
+                                          ? 'border-[#BA0816]/20 hover:opacity-95 hover:shadow-lg text-white font-bold'
                                         : selectedSubBrand === 'Leapmotor'
                                           ? 'border-[#DEFF01]/25 hover:opacity-95 hover:shadow-lg text-slate-950 font-bold'
                                           : 'bg-[#1b1c1e]/60 hover:bg-[#25272a]/75 border-white/5 hover:border-white/15'
@@ -2729,12 +2819,12 @@ export default function LeadForm({ c10ImgUrl, t03ImgUrl, b10ImgUrl }: LeadFormPr
                                 <span className={`font-bold text-xs sm:text-sm tracking-wider uppercase font-encode ${selectedSubBrand === 'Fiat' ? 'text-[#EE395E]' : selectedSubBrand === 'Leapmotor' ? 'text-slate-950' : 'text-white'}`}>
                                   COTIZA
                                 </span>
-                                <span className={`text-[10px] sm:text-[11px] font-medium ${(selectedSubBrand === 'Jeep' || selectedSubBrand === 'Dodge' || selectedSubBrand === 'Ram' || selectedSubBrand === 'Peugeot') ? 'text-white' : (selectedSubBrand === 'Fiat' ? 'text-slate-600 font-semibold' : selectedSubBrand === 'Leapmotor' ? 'text-slate-800 font-bold' : 'text-slate-400')}`}>
+                                <span className={`text-[10px] sm:text-[11px] font-medium ${(selectedSubBrand === 'Jeep' || selectedSubBrand === 'Dodge' || selectedSubBrand === 'Ram' || selectedSubBrand === 'Peugeot' || selectedSubBrand === 'Alfa Romeo') ? 'text-white' : (selectedSubBrand === 'Fiat' ? 'text-slate-600 font-semibold' : selectedSubBrand === 'Leapmotor' ? 'text-slate-800 font-bold' : 'text-slate-400')}`}>
                                   Recibe una cotización personalizada
                                 </span>
                               </div>
                               
-                              <ChevronRight className={`w-4 h-4 group-hover:translate-x-0.5 transition-all duration-300 shrink-0 ml-auto ${(selectedSubBrand === 'Jeep' || selectedSubBrand === 'Dodge' || selectedSubBrand === 'Ram' || selectedSubBrand === 'Peugeot') ? 'text-white' : (selectedSubBrand === 'Fiat' ? 'text-[#EE395E]' : selectedSubBrand === 'Leapmotor' ? 'text-slate-950' : 'text-slate-500 group-hover:text-slate-300')}`} />
+                              <ChevronRight className={`w-4 h-4 group-hover:translate-x-0.5 transition-all duration-300 shrink-0 ml-auto ${(selectedSubBrand === 'Jeep' || selectedSubBrand === 'Dodge' || selectedSubBrand === 'Ram' || selectedSubBrand === 'Peugeot' || selectedSubBrand === 'Alfa Romeo') ? 'text-white' : (selectedSubBrand === 'Fiat' ? 'text-[#EE395E]' : selectedSubBrand === 'Leapmotor' ? 'text-slate-950' : 'text-slate-500 group-hover:text-slate-300')}`} />
                             </button>
 
                             {/* PRUEBA DE MANEJO */}
@@ -2755,6 +2845,8 @@ export default function LeadForm({ c10ImgUrl, t03ImgUrl, b10ImgUrl }: LeadFormPr
                                             ? { backgroundColor: '#0074E8' }
                                           : selectedSubBrand === 'Leapmotor'
                                             ? { backgroundColor: '#DEFF01' }
+                                          : selectedSubBrand === 'Alfa Romeo'
+                                            ? { backgroundColor: '#BA0816' }
                                             : undefined
                                 }
                                 className={`group w-full p-4 rounded-2xl border flex items-center gap-4 text-left transition-all duration-300 shadow-md transform active:scale-[0.99] ${
@@ -2768,6 +2860,8 @@ export default function LeadForm({ c10ImgUrl, t03ImgUrl, b10ImgUrl }: LeadFormPr
                                           ? 'border-[#EE395E]/10 hover:shadow-lg font-bold'
                                           : selectedSubBrand === 'Peugeot'
                                             ? 'border-[#0074E8]/20 hover:opacity-95 hover:shadow-lg text-white font-bold'
+                                          : selectedSubBrand === 'Alfa Romeo'
+                                            ? 'border-[#BA0816]/20 hover:opacity-95 hover:shadow-lg text-white font-bold'
                                           : selectedSubBrand === 'Leapmotor'
                                             ? 'border-[#DEFF01]/25 hover:opacity-95 hover:shadow-lg text-slate-950 font-bold'
                                             : 'bg-[#1b1c1e]/60 hover:bg-[#25272a]/75 border-white/5 hover:border-white/15'
@@ -2797,12 +2891,12 @@ export default function LeadForm({ c10ImgUrl, t03ImgUrl, b10ImgUrl }: LeadFormPr
                                   <span className={`font-bold text-xs sm:text-sm tracking-wider uppercase font-encode ${selectedSubBrand === 'Fiat' ? 'text-[#EE395E]' : selectedSubBrand === 'Leapmotor' ? 'text-slate-950' : 'text-white'}`}>
                                     PRUEBA DE MANEJO
                                   </span>
-                                  <span className={`text-[10px] sm:text-[11px] font-medium ${(selectedSubBrand === 'Jeep' || selectedSubBrand === 'Dodge' || selectedSubBrand === 'Ram' || selectedSubBrand === 'Peugeot') ? 'text-white' : (selectedSubBrand === 'Fiat' ? 'text-slate-600 font-semibold' : selectedSubBrand === 'Leapmotor' ? 'text-slate-800 font-bold' : 'text-slate-400')}`}>
+                                  <span className={`text-[10px] sm:text-[11px] font-medium ${(selectedSubBrand === 'Jeep' || selectedSubBrand === 'Dodge' || selectedSubBrand === 'Ram' || selectedSubBrand === 'Peugeot' || selectedSubBrand === 'Alfa Romeo') ? 'text-white' : (selectedSubBrand === 'Fiat' ? 'text-slate-600 font-semibold' : selectedSubBrand === 'Leapmotor' ? 'text-slate-800 font-bold' : 'text-slate-400')}`}>
                                     Agenda tu prueba de manejo
                                   </span>
                                 </div>
                                 
-                                <ChevronRight className={`w-4 h-4 group-hover:translate-x-0.5 transition-all duration-300 shrink-0 ml-auto ${(selectedSubBrand === 'Jeep' || selectedSubBrand === 'Dodge' || selectedSubBrand === 'Ram' || selectedSubBrand === 'Peugeot') ? 'text-white' : (selectedSubBrand === 'Fiat' ? 'text-[#EE395E]' : selectedSubBrand === 'Leapmotor' ? 'text-slate-950' : 'text-slate-500 group-hover:text-slate-300')}`} />
+                                <ChevronRight className={`w-4 h-4 group-hover:translate-x-0.5 transition-all duration-300 shrink-0 ml-auto ${(selectedSubBrand === 'Jeep' || selectedSubBrand === 'Dodge' || selectedSubBrand === 'Ram' || selectedSubBrand === 'Peugeot' || selectedSubBrand === 'Alfa Romeo') ? 'text-white' : (selectedSubBrand === 'Fiat' ? 'text-[#EE395E]' : selectedSubBrand === 'Leapmotor' ? 'text-slate-950' : 'text-slate-500 group-hover:text-slate-300')}`} />
                               </button>
                             )}
                           </div>

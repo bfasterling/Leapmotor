@@ -391,9 +391,17 @@ async function runLeadSync() {
           params.append('IP', '');
         }
 
-        const apiUrl = isPruebaPM 
-          ? "http://servicios.chv3.netcar.com.mx/admin/ws/Leads.asmx/RegistraPM"
-          : "http://servicios.chv3.netcar.com.mx/admin/ws/Leads.asmx/RegistraCOT";
+        const isAlfaRomeoLead = 
+          (autoMarca && autoMarca.toLowerCase() === 'alfa romeo') || 
+          (lead.selectedBrand && lead.selectedBrand.toLowerCase() === 'alfa romeo');
+
+        const apiUrl = isAlfaRomeoLead
+          ? (isPruebaPM 
+              ? "http://servicios.arv4.netcar.com.mx/admin/ws/Leads.asmx/RegistraPM"
+              : "http://servicios.arv4.netcar.com.mx/admin/ws/Leads.asmx/RegistraCOT")
+          : (isPruebaPM 
+              ? "http://servicios.chv3.netcar.com.mx/admin/ws/Leads.asmx/RegistraPM"
+              : "http://servicios.chv3.netcar.com.mx/admin/ws/Leads.asmx/RegistraCOT");
 
         const response = await fetch(apiUrl, {
           method: "POST",

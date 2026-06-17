@@ -39,6 +39,16 @@ import PEUGEOT_EXPERT_26 from '../assets/images/pnex26_img_1780767167222.png';
 import PEUGEOT_3008_26 from '../assets/images/psva26_img_1780767178761.png';
 import PEUGEOT_MANAGER_26 from '../assets/images/pgra26_img_1780767190869.png';
 import PEUGEOT_5008_26 from '../assets/images/ptsv26_img_1780767209886.png';
+import ALFA_ROMEO_MODEL_BG from '../assets/images/alfa_subpage_bg_1781656192674.jpg';
+
+// Import newly generated Alfa Romeo model images
+import ALFA_AJUN26_IMG from '../assets/images/ajun26_img_1781658604748.jpg';
+import ALFA_GILV24_IMG from '../assets/images/gilv24_img_1781658616580.jpg';
+import ALFA_GIQU24_IMG from '../assets/images/giqu24_img_1781658626076.jpg';
+import ALFA_STVV24_IMG from '../assets/images/stvv24_img_1781658637619.jpg';
+import ALFA_STQU24_IMG from '../assets/images/stqu24_img_1781658649822.jpg';
+import ALFA_TONA24_IMG from '../assets/images/tona24_img_1781658660935.jpg';
+import ALFA_TOPH24_IMG from '../assets/images/toph24_img_1781658672380.jpg';
 
 export interface BrandModelInfo {
   brand: string;        // E.g., 'Fiat', 'Jeep', 'Dodge', 'Ram', 'Peugeot', 'Leapmotor'
@@ -404,6 +414,84 @@ export const BRAND_MODELS_DB: BrandModelInfo[] = [
     idVersion: 'LMLC162701',
     anio: '27',
     precioLista: 999000
+  },
+  // --- ALFA ROMEO BRAND ---
+  {
+    brand: 'Alfa Romeo',
+    model: 'GIULIA',
+    claveGen: 'GILV24',
+    desc: 'El sedán deportivo italiano que redefine la elegancia y deportividad con un manejo sublime.',
+    img: ALFA_GILV24_IMG,
+    version: 'Sprint',
+    idVersion: 'ARGILV2401',
+    anio: '24',
+    precioLista: 1032000
+  },
+  {
+    brand: 'Alfa Romeo',
+    model: 'GIULIA QV',
+    claveGen: 'GIQU24',
+    desc: 'La máxima expresión de deportividad, con motor V6 de origen Ferrari y prestaciones de pista.',
+    img: ALFA_GIQU24_IMG,
+    version: 'QV',
+    idVersion: 'ARGIQU2401',
+    anio: '24',
+    precioLista: 2222000
+  },
+  {
+    brand: 'Alfa Romeo',
+    model: 'JUNIOR',
+    claveGen: 'AJUN26',
+    desc: 'El nuevo SUV compacto deportivo, combinando tecnología de vanguardia y diseño italiano irreverente.',
+    img: ALFA_AJUN26_IMG,
+    version: 'TI',
+    idVersion: 'ARAJUN2601',
+    anio: '26',
+    precioLista: 695900
+  },
+  {
+    brand: 'Alfa Romeo',
+    model: 'STELVIO',
+    claveGen: 'STVV24',
+    desc: 'Un SUV premium de alto desempeño con tracción integral y alma de deportivo pura sangre.',
+    img: ALFA_STVV24_IMG,
+    version: 'Ti',
+    idVersion: 'ARSTVV2401',
+    anio: '24',
+    precioLista: 1194000
+  },
+  {
+    brand: 'Alfa Romeo',
+    model: 'STELVIO QV',
+    claveGen: 'STQU24',
+    desc: 'El SUV más rápido de su clase, dominador de circuitos con potencia salvaje y refinamiento italiano.',
+    img: ALFA_STQU24_IMG,
+    version: 'QV',
+    idVersion: 'ARSTQU2401',
+    anio: '24',
+    precioLista: 2237000
+  },
+  {
+    brand: 'Alfa Romeo',
+    model: 'TONALE',
+    claveGen: 'TONA24',
+    desc: 'El SUV compacto que marca la electrificación y sofisticación de la marca, con gran conectividad.',
+    img: ALFA_TONA24_IMG,
+    version: 'Sprint',
+    idVersion: 'ARTONA2401',
+    anio: '24',
+    precioLista: 874900
+  },
+  {
+    brand: 'Alfa Romeo',
+    model: 'TONALE HIBRIDO',
+    claveGen: 'TOPH24',
+    desc: 'Eficiencia híbrida enchufable avanzada con el dinamismo y emoción inconfundibles de Alfa Romeo.',
+    img: ALFA_TOPH24_IMG,
+    version: 'Ti PHEV',
+    idVersion: 'ARTONA2403',
+    anio: '24',
+    precioLista: 1119900
   }
 ];
 

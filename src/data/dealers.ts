@@ -715,7 +715,18 @@ const compactDealers: string[][] = [
   ["LEAPMOTOR", "01L5250", "65036", "CIUDAD DE MÉXICO", "Leapmotor Pedregal", "leapmotorpedregal.mx"],
   ["LEAPMOTOR", "01L5010", "65044", "QUERETARO", "Leapmotor Pedregal", "leapmotorqueretaro.mx"],
   ["LEAPMOTOR", "01L5170", "65046", "ESTADO DE MÉXICO", "Leapmotor Interlomas", "leapmotorinterlomas.mx"],
-  ["LEAPMOTOR", "01L520", "65047", "ESTADO DE MÉXICO", "Leapmotor Santa Fe", "leapmotorsantafe.mx"]
+  ["LEAPMOTOR", "01L520", "65047", "ESTADO DE MÉXICO", "Leapmotor Santa Fe", "leapmotorsantafe.mx"],
+  // --- ALFA ROMEO DEALERS ---
+  ["ALFA ROMEO", "01M6190", "8815", "AGUASCALIENTES", "Alfa Romeo Aguascalientes", "alfaromeoags.mx"],
+  ["ALFA ROMEO", "01M6120", "8803", "CIUDAD DE MÉXICO", "Alfa Romeo Interlomas", "alfaromeointerlomas.mx"],
+  ["ALFA ROMEO", "01M6070", "8808", "CIUDAD DE MÉXICO", "Alfa Romeo CDMX Pedregal", "alfaromeopedregal.com.mx"],
+  ["ALFA ROMEO", "01M6080", "8806", "GUANAJUATO", "Alfa Romeo León", "alfaromeoleon.com.mx"],
+  ["ALFA ROMEO", "01M6101", "8820", "JALISCO", "Alfa Romeo Guadalajara Country", "alfaromeocountry.mx"],
+  ["ALFA ROMEO", "01M6110", "8807", "ESTADO DE MÉXICO", "Alfa Romeo Toluca", "alfaromeo-toluca.com.mx"],
+  ["ALFA ROMEO", "01M6220", "8816", "MICHOACÁN", "Alfa Romeo Morelia", "alfaromeosoldemichoacan.com"],
+  ["ALFA ROMEO", "01M6170", "8814", "NUEVO LEÓN", "Alfa Romeo Monterrey", "alfaromeomty.com.mx"],
+  ["ALFA ROMEO", "M6240", "8821", "SAN LUIS POTOSÍ", "Alfa Romeo San Luis Potosi", "alfaromeosanluis.com"],
+  ["ALFA ROMEO", "01M6230", "8817", "YUCATÁN", "Alfa Romeo Merida", "alfaromeomerida.mx"]
 ];
 
 export const ALL_DEALERS: Dealer[] = compactDealers.map((d) => ({
