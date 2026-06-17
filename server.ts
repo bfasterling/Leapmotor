@@ -135,10 +135,14 @@ async function runLeadSync() {
         // Resolve dynamic origin based on user guidelines
         let origVal = "LANDING";
         const lLanding = lead.landing ? lead.landing.toLowerCase() : "";
-        const isAztlan = 
-          lLanding === 'aztlan' ||
-          (lead.utm_source && lead.utm_source.toLowerCase().includes('aztlan')) ||
-          (lead.landing && lead.landing.toLowerCase().includes('aztlan'));
+        let isAztlan = false;
+        if (lLanding === 'aztlan' || (lead.landing && String(lead.landing).toLowerCase().includes('aztlan'))) {
+          isAztlan = true;
+        } else if (lLanding === 'multimarca' || lLanding === 'jeep' || lLanding === 'leapmotor') {
+          isAztlan = false;
+        } else if (lead.utm_source && String(lead.utm_source).toLowerCase().includes('aztlan')) {
+          isAztlan = true;
+        }
 
         const isSoccerhouse = 
           (lead.utm_source && (
@@ -271,6 +275,14 @@ async function runLeadSync() {
           (lead.name && lead.name.toLowerCase().includes('test')) || 
           (lead.lastName && lead.lastName.toLowerCase().includes('test'));
 
+        const isAlfaRomeo = 
+          (lead.selectedBrand && lead.selectedBrand.toLowerCase() === 'alfa romeo') ||
+          (lead.modelOfInterest && BRAND_MODELS_METADATA.some(m => m.model.toLowerCase() === lead.modelOfInterest.toLowerCase() && m.brand.toLowerCase() === 'alfa romeo'));
+
+        if (isAlfaRomeo && isTestLead) {
+          urlDistVal = "demo1.goarv4.netcar.com.mx";
+        }
+
         if (!isTestLead && lead.distributor) {
           const matchedLocal = ALL_DEALERS.find(d => d.name === lead.distributor);
           if (matchedLocal && matchedLocal.url) {
@@ -315,10 +327,14 @@ async function runLeadSync() {
         // Resolve dynamic origin based on user instructions
         let origVal = "LANDING";
         const lLanding = lead.landing ? lead.landing.toLowerCase() : "";
-        const isAztlan = 
-          lLanding === 'aztlan' ||
-          (lead.utm_source && lead.utm_source.toLowerCase().includes('aztlan')) ||
-          (lead.landing && lead.landing.toLowerCase().includes('aztlan'));
+        let isAztlan = false;
+        if (lLanding === 'aztlan' || (lead.landing && String(lead.landing).toLowerCase().includes('aztlan'))) {
+          isAztlan = true;
+        } else if (lLanding === 'multimarca' || lLanding === 'jeep' || lLanding === 'leapmotor') {
+          isAztlan = false;
+        } else if (lead.utm_source && String(lead.utm_source).toLowerCase().includes('aztlan')) {
+          isAztlan = true;
+        }
 
         const isSoccerhouse = 
           (lead.utm_source && (
