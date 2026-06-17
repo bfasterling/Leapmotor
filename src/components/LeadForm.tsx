@@ -3412,7 +3412,7 @@ export default function LeadForm({ c10ImgUrl, t03ImgUrl, b10ImgUrl }: LeadFormPr
                    {/* Test drive preferred date steps */}
                   {formData.requestType === 'prueba' && (
                     <div className="space-y-1 w-full max-w-full overflow-hidden">
-                      <label id="frm-date-label" htmlFor="testDriveDate" className={`text-[10px] uppercase font-mono tracking-wider ${activeLanding === 'jeep' ? 'text-emerald-400 font-extrabold' : (isFiatPage ? 'text-white font-extrabold' : isPeugeotPage ? 'text-[#0074E8]' : (isRamPage ? 'text-[#DD4E3C]' : (isDodgePage ? 'text-[#D50000]' : isLeapmotorPage ? 'text-[#DEFF01]' : 'text-amber-400')))} font-bold block flex items-center gap-1`}>
+                      <label id="frm-date-label" htmlFor="testDriveDate" className={`text-[10px] uppercase font-mono tracking-wider ${activeLanding === 'jeep' ? 'text-emerald-400 font-extrabold' : (isFiatPage ? 'text-[#EE395E] font-extrabold' : isPeugeotPage ? 'text-[#0074E8]' : (isAlfaPage ? 'text-[#BA0816]' : (isRamPage ? 'text-[#DD4E3C]' : (isDodgePage ? 'text-[#D50000]' : isLeapmotorPage ? 'text-[#DEFF01]' : 'text-amber-400'))))} font-bold block flex items-center gap-1`}>
                         <Calendar className="w-3.5 h-3.5" /> Selecciona la Fecha para tu Prueba *
                       </label>
                       <input
@@ -3427,9 +3427,11 @@ export default function LeadForm({ c10ImgUrl, t03ImgUrl, b10ImgUrl }: LeadFormPr
                           activeLanding === 'jeep'
                             ? 'bg-[#0d1411] border-[#424D07] focus:border-[#424D07] text-white [&::-webkit-calendar-picker-indicator]:invert [&::-webkit-calendar-picker-indicator]:opacity-100'
                             : isFiatPage
-                              ? 'bg-white border-[#EE395E] text-[#EE395E] focus:border-[#EE395E]'
+                              ? 'bg-white border-[#EE395E] text-[#EE395E] focus:border-[#EE395E] fiat-date-picker'
                               : isPeugeotPage
                                 ? 'bg-white border-[#0074E8] text-slate-900 focus:border-[#0074E8]'
+                                : isAlfaPage
+                                  ? 'bg-white border-[#BA0816] text-[#BA0816] focus:border-[#BA0816] alfa-date-picker'
                                 : isLeapmotorPage
                                   ? 'bg-black border-[#DEFF01] text-white focus:border-[#DEFF01]'
                                 : isRamPage 
@@ -3447,6 +3449,16 @@ export default function LeadForm({ c10ImgUrl, t03ImgUrl, b10ImgUrl }: LeadFormPr
                             : undefined
                         }
                       />
+                      <style>{`
+                        .fiat-date-picker::-webkit-calendar-picker-indicator {
+                          filter: invert(41%) sepia(87%) saturate(3054%) hue-rotate(326deg) brightness(95%) contrast(97%) !important;
+                          cursor: pointer;
+                        }
+                        .alfa-date-picker::-webkit-calendar-picker-indicator {
+                          filter: invert(12%) sepia(91%) saturate(5412%) hue-rotate(345deg) brightness(84%) contrast(100%) !important;
+                          cursor: pointer;
+                        }
+                      `}</style>
                     </div>
                   )}
 
