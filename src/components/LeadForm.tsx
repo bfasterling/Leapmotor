@@ -2048,6 +2048,41 @@ export default function LeadForm({ c10ImgUrl, t03ImgUrl, b10ImgUrl }: LeadFormPr
       // This allows grouping and processing of all leads overnight using the designated Netcar/Stellantis APIs.
 
       setRegisteredLeadId(leadId);
+
+      // Trigger GTM dataLayer push strictly for the Multimarca landing page
+      if (activeLanding === 'multimarca' && typeof window !== 'undefined') {
+        const targetWindow = window as any;
+        targetWindow.dataLayer = targetWindow.dataLayer || [];
+        if (formData.requestType === 'prueba') {
+          const dlEvent = {
+            event: 'prueba_manejo_exitosa_pixels',
+            form_type: 'test_drive',
+            form_lead_id: leadId,
+            form_brand: selectedBrand,
+            form_model: formData.modelOfInterest,
+            form_state: formData.state,
+            form_dealer: chosenDistName,
+            test_drive_date: formData.testDriveDate || '',
+            landing: window.location.hostname
+          };
+          targetWindow.dataLayer.push(dlEvent);
+          console.log('[GTM dataLayer] Pushed test_drive event:', dlEvent);
+        } else {
+          const dlEvent = {
+            event: 'cotizacion_exitosa_pixels',
+            form_type: 'quote',
+            form_lead_id: leadId,
+            form_brand: selectedBrand,
+            form_model: formData.modelOfInterest,
+            form_state: formData.state,
+            form_dealer: chosenDistName,
+            landing: window.location.hostname
+          };
+          targetWindow.dataLayer.push(dlEvent);
+          console.log('[GTM dataLayer] Pushed quote event:', dlEvent);
+        }
+      }
+
       setSuccess(true);
     } catch (err: any) {
       console.error("Firestore submit error details:", err);
