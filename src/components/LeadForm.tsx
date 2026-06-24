@@ -2049,37 +2049,52 @@ export default function LeadForm({ c10ImgUrl, t03ImgUrl, b10ImgUrl }: LeadFormPr
 
       setRegisteredLeadId(leadId);
 
-      // Trigger GTM dataLayer push strictly for the Multimarca landing page
-      if (activeLanding === 'multimarca' && typeof window !== 'undefined') {
+      // Trigger GTM dataLayer push for Multimarca, Leapmotor, and Jeep landing pages
+      if (typeof window !== 'undefined') {
         const targetWindow = window as any;
         targetWindow.dataLayer = targetWindow.dataLayer || [];
-        if (formData.requestType === 'prueba') {
-          const dlEvent = {
-            event: 'prueba_manejo_exitosa_pixels',
-            form_type: 'test_drive',
-            form_lead_id: leadId,
-            form_brand: selectedBrand,
-            form_model: formData.modelOfInterest,
-            form_state: formData.state,
-            form_dealer: chosenDistName,
-            test_drive_date: formData.testDriveDate || '',
-            landing: window.location.hostname
-          };
-          targetWindow.dataLayer.push(dlEvent);
-          console.log('[GTM dataLayer] Pushed test_drive event:', dlEvent);
-        } else {
-          const dlEvent = {
-            event: 'cotizacion_exitosa_pixels',
-            form_type: 'quote',
-            form_lead_id: leadId,
-            form_brand: selectedBrand,
-            form_model: formData.modelOfInterest,
-            form_state: formData.state,
-            form_dealer: chosenDistName,
-            landing: window.location.hostname
-          };
-          targetWindow.dataLayer.push(dlEvent);
-          console.log('[GTM dataLayer] Pushed quote event:', dlEvent);
+        const allowedLandings = ['multimarca', 'jeep', 'leapmotor'];
+        
+        if (allowedLandings.includes(activeLanding || '')) {
+          if (activeLanding === 'leapmotor' && formData.requestType === 'asesor') {
+            const dlEvent = {
+              event: 'atencion_personalizada_pixels',
+              form_type: 'immediate_attention',
+              form_brand: 'Leapmotor',
+              form_lead_id: leadId,
+              landing: window.location.hostname
+            };
+            targetWindow.dataLayer.push(dlEvent);
+            console.log('[GTM dataLayer] Pushed advisor attention event:', dlEvent);
+          } else if (formData.requestType === 'prueba') {
+            const dlEvent = {
+              event: 'prueba_manejo_exitosa_pixels',
+              form_type: 'test_drive',
+              form_lead_id: leadId,
+              form_brand: activeBrand,
+              form_model: formData.modelOfInterest,
+              form_state: formData.state,
+              form_dealer: chosenDistName,
+              test_drive_date: formData.testDriveDate || '',
+              landing: window.location.hostname
+            };
+            targetWindow.dataLayer.push(dlEvent);
+            console.log('[GTM dataLayer] Pushed test_drive event:', dlEvent);
+          } else {
+            // Default to quote (cotizacion) event for any other requestTypes (cotizacion, or fallback)
+            const dlEvent = {
+              event: 'cotizacion_exitosa_pixels',
+              form_type: 'quote',
+              form_lead_id: leadId,
+              form_brand: activeBrand,
+              form_model: formData.modelOfInterest,
+              form_state: formData.state,
+              form_dealer: chosenDistName,
+              landing: window.location.hostname
+            };
+            targetWindow.dataLayer.push(dlEvent);
+            console.log('[GTM dataLayer] Pushed quote event:', dlEvent);
+          }
         }
       }
 
