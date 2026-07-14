@@ -105,6 +105,16 @@ async function runLeadSync() {
 
     results.processedCount++;
 
+    const lLanding = lead.landing ? lead.landing.toLowerCase() : "";
+    let isAztlan = false;
+    if (lLanding === 'aztlan' || (lead.landing && String(lead.landing).toLowerCase().includes('aztlan'))) {
+      isAztlan = true;
+    } else if (lLanding === 'multimarca' || lLanding === 'jeep' || lLanding === 'leapmotor') {
+      isAztlan = false;
+    } else if (lead.utm_source && String(lead.utm_source).toLowerCase().includes('aztlan')) {
+      isAztlan = true;
+    }
+
     const isLeapmotor = 
       (lead.landing === 'leapmotor') || 
       (lead.selectedBrand && lead.selectedBrand.toLowerCase() === 'leapmotor');
@@ -134,15 +144,6 @@ async function runLeadSync() {
 
         // Resolve dynamic origin based on user guidelines
         let origVal = "LANDING";
-        const lLanding = lead.landing ? lead.landing.toLowerCase() : "";
-        let isAztlan = false;
-        if (lLanding === 'aztlan' || (lead.landing && String(lead.landing).toLowerCase().includes('aztlan'))) {
-          isAztlan = true;
-        } else if (lLanding === 'multimarca' || lLanding === 'jeep' || lLanding === 'leapmotor') {
-          isAztlan = false;
-        } else if (lead.utm_source && String(lead.utm_source).toLowerCase().includes('aztlan')) {
-          isAztlan = true;
-        }
 
         const isSoccerhouse = 
           (lead.utm_source && (
@@ -189,7 +190,9 @@ async function runLeadSync() {
             const hasDesignatedAdvisor = lead.advisorName && 
               lead.advisorName.trim() !== '' && 
               !lead.advisorName.toLowerCase().includes('sin asignar');
-            if (lead.requestType === 'asesor' && hasDesignatedAdvisor) {
+            if (isAztlan && lead.advisorName) {
+              comments += ` | Asesor: ${lead.advisorName.trim()}`;
+            } else if (lead.requestType === 'asesor' && hasDesignatedAdvisor) {
               comments += ` Asesor : ${lead.advisorName.trim()}`;
             }
             return comments;
@@ -284,7 +287,21 @@ async function runLeadSync() {
         }
 
         if (!isTestLead && lead.distributor) {
-          const matchedLocal = ALL_DEALERS.find(d => d.name === lead.distributor);
+          let matchedLocal = ALL_DEALERS.find(d => d.name === lead.distributor);
+          if (!matchedLocal && isAztlan) {
+            // Find by corporate key for Aztlan leads
+            const targetCorpKey = (lead.claveCorporativo || lead.clavecorporativo || lead.distributor.split(' ')[0] || '').trim().toUpperCase();
+            if (targetCorpKey) {
+              const brandLower = (lead.selectedBrand || '').toLowerCase();
+              const matchedWithBrand = ALL_DEALERS.find(d => 
+                (d.corpKey || '').toUpperCase() === targetCorpKey && 
+                d.brand.toLowerCase() === brandLower
+              );
+              matchedLocal = matchedWithBrand || ALL_DEALERS.find(d => 
+                (d.corpKey || '').toUpperCase() === targetCorpKey
+              );
+            }
+          }
           if (matchedLocal && matchedLocal.url) {
             urlDistVal = matchedLocal.url;
           }
@@ -326,15 +343,6 @@ async function runLeadSync() {
 
         // Resolve dynamic origin based on user instructions
         let origVal = "LANDING";
-        const lLanding = lead.landing ? lead.landing.toLowerCase() : "";
-        let isAztlan = false;
-        if (lLanding === 'aztlan' || (lead.landing && String(lead.landing).toLowerCase().includes('aztlan'))) {
-          isAztlan = true;
-        } else if (lLanding === 'multimarca' || lLanding === 'jeep' || lLanding === 'leapmotor') {
-          isAztlan = false;
-        } else if (lead.utm_source && String(lead.utm_source).toLowerCase().includes('aztlan')) {
-          isAztlan = true;
-        }
 
         const isSoccerhouse = 
           (lead.utm_source && (
@@ -373,7 +381,11 @@ async function runLeadSync() {
           params.append('AutoClaveGen', autoClaveGen);
           params.append('fecha', lead.testDriveDate || '');
           params.append('horario', '2');
-          params.append('PMComentarios', lead.postalCode ? `C.P. ${lead.postalCode}` : 'C.P. No Asignado');
+          let commentsVal = lead.postalCode ? `C.P. ${lead.postalCode}` : 'C.P. No Asignado';
+          if (isAztlan && lead.advisorName) {
+            commentsVal += ` | Asesor: ${lead.advisorName}`;
+          }
+          params.append('PMComentarios', commentsVal);
           params.append('PMOrigen', origVal);
           params.append('UTMsource', lead.utm_source || '');
           params.append('UTMmedium', lead.utm_medium || '');
@@ -391,7 +403,11 @@ async function runLeadSync() {
           params.append('AutoClaveGen', autoClaveGen);
           params.append('AutoVersion', autoVersion);
           params.append('AutoIDClaveversion', autoIDClaveversion);
-          params.append('CotComentarios', lead.postalCode ? `C.P. ${lead.postalCode}` : 'C.P. No Asignado');
+          let commentsVal = lead.postalCode ? `C.P. ${lead.postalCode}` : 'C.P. No Asignado';
+          if (isAztlan && lead.advisorName) {
+            commentsVal += ` | Asesor: ${lead.advisorName}`;
+          }
+          params.append('CotComentarios', commentsVal);
           params.append('CotOrigen', origVal);
           params.append('CotIDTipodeContacto', '1');
           params.append('CotIDTipodeCompra', '1');
